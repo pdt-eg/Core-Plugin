@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: PEX UI Plugin
+Bundle-SymbolicName: com.pex.ui;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: com.pex.ui.PEXUIPlugin
+Bundle-Vendor: PEX
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.php.core,
+ org.eclipse.php.ui,
+ org.eclipse.core.resources,
+ com.pex.core,
+ org.eclipse.dltk.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
