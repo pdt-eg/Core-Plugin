@@ -21,7 +21,7 @@ public class PDTExtensionsPreferencePage extends PropertyAndPreferencePage
 		comp.setLayout(layout);
 
 		Label descLabel = new Label(comp, SWT.NONE);
-		descLabel.setText("Expand the tree to edit PHP tools preferences");
+		descLabel.setText("Expand the tree to edit PDT Extensions preferences");
 
 		return comp;
 	}

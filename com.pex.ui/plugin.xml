@@ -77,5 +77,14 @@
             class="com.pex.ui.preferences.PEXPreferenceInitializer">
       </initializer>
    </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="com.pex.ui.command.phpcsfixer"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+P">
+      </key>
+   </extension>
 
 </plugin>

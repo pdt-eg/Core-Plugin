@@ -4,11 +4,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.php.internal.ui.preferences.IStatusChangeListener;
 import org.eclipse.php.internal.ui.preferences.OptionsConfigurationBlock;
 import org.eclipse.php.internal.ui.preferences.util.Key;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 import com.pex.ui.PEXUIPlugin;
@@ -44,21 +41,5 @@ public abstract class AbstractOptionsConfigurationBlock extends
 		return new String[] {
 				"To activate the new settings, a full build is required.",
 				"Run a full build now?" };
-	}
-
-	protected Composite getDefaultComposite(Composite parent) {
-		
-		GridLayout defaultLayout = new GridLayout();
-		defaultLayout.marginHeight = 5;
-		defaultLayout.marginWidth = 0;
-		defaultLayout.numColumns = 3;
-
-		Group defaultGroup = new Group(parent, SWT.NULL);
-		defaultGroup.setText("CS Fixer Settings");
-		defaultGroup.setLayout(defaultLayout);
-		defaultGroup.setFont(parent.getFont());
-		
-		return defaultGroup;
-
 	}
 }
