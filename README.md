@@ -9,8 +9,7 @@ Currently the core plugin supports following features:
 
 - [PHP Coding Standard Fixer](http://cs.sensiolabs.org/) integration
 
-
-We are in the process of migrating general functionalities of our plugins into the core plugin, and add more core features to
+We are in the process of migrating general functionality of our plugins into the core plugin, and add more core features for
 other PDT extenders.
 
 Join our [mailinglist](https://groups.google.com/forum/?fromgroups#!forum/pdt-extensions-platform) if you are interested in the discussion or want to help improve the PDT ecosystem.
