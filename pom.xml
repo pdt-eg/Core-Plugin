@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.pex</groupId>
+  <groupId>org.pex</groupId>
   <artifactId>parent</artifactId>
-  <version>1.0.0.qualifier</version>
+  <version>0.0.1.qualifier</version>
   <packaging>pom</packaging>
   <modules>
-    <module>com.pex.core</module>
-    <module>com.pex.ui</module>
-    <module>com.pex.feature</module>
+    <module>org.pex.core</module>
+    <module>org.pex.ui</module>
+    <module>org.pex.feature</module>
   </modules>
 
   <properties>
