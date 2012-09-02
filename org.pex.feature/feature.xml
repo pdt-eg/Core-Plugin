@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.pex.feature"
-      label="PDT Extensions Feature"
+      label="PDT Core Extensions"
       version="0.0.1.qualifier"
       provider-name="https://github.com/pdt-eg">
 
