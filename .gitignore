@@ -1,4 +1,6 @@
 .DS_Store
 
 com.pex.ui/bin/*
+com.pex.ui/target/*
 com.pex.core/bin/*
+com.pex.core/target/*

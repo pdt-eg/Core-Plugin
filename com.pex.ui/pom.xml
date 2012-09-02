@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.pex.aggregator</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0.0.qualifier</version>	
+  </parent>
+
+  <artifactId>com.pex.ui</artifactId>
+  <packaging>eclipse-plugin</packaging>
+
+</project>

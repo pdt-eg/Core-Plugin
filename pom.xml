@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.pex.aggregator</groupId>
+  <artifactId>parent</artifactId>
+  <version>1.0.0.qualifier</version>
+  <packaging>pom</packaging>
+  <modules>
+    <module>com.pex.core</module>
+    <module>com.pex.ui</module>
+  </modules>
+
+  <properties>
+    <tycho-version>0.15.0</tycho-version>
+  </properties>
+
+  <repositories>
+   <repository>
+     <id>juno</id>
+     <layout>p2</layout>
+     <url>http://download.eclipse.org/releases/juno</url>
+   </repository>	
+  </repositories>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <extensions>true</extensions>
+      </plugin>
+      <plugin>
+	    <groupId>org.eclipse.tycho</groupId>
+	    <artifactId>tycho-compiler-plugin</artifactId>
+	    <version>${tycho-version}</version>
+	    <configuration>
+		  <source>1.6</source>
+		  <target>1.6</target>
+	    </configuration>
+      </plugin>	  
+    </plugins>
+  </build>  
+  
+</project>
