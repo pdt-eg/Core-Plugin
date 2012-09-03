@@ -15,6 +15,7 @@ import org.osgi.framework.Bundle;
 import org.pex.core.PEXCorePlugin;
 
 
+@SuppressWarnings("restriction")
 public class Logger {
 
 	private static final String PLUGIN_ID = PEXCorePlugin.PLUGIN_ID;
@@ -126,6 +127,10 @@ public class Logger {
 		return false;
 	}
 
+	public static void debug(String message) {
+		_log(INFO_DEBUG, message, null);
+	}
+	
 	public static void log(int level, String message) {
 		_log(level, message, null);
 	}

@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.pex</groupId>
     <artifactId>parent</artifactId>
-    <version>0.0.11-SNAPSHOT</version>
+    <version>0.0.12-SNAPSHOT</version>
   </parent>
 
   <artifactId>org.pex.feature</artifactId>

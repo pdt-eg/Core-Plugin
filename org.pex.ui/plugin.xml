@@ -14,6 +14,19 @@
                   icon="ico/full/obj16/cs-fixer.png"
                   label="Run PHP-CS-Fixer"
                   tooltip="Run PHP-CS-Fixer on files and folders">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeMenuSelection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.core.resources.IResource">
+                        </adapt>
+                     </iterate>
+                  </with>
+               </visibleWhen>
             </command>
          </menu>
       </menuContribution>
@@ -81,7 +94,7 @@
          point="org.eclipse.ui.bindings">
       <key
             commandId="org.pex.ui.command.phpcsfixer"
-            contextId="org.eclipse.ui.textEditorScope"
+            contextId="org.eclipse.php.core.phpsource"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+P">
       </key>

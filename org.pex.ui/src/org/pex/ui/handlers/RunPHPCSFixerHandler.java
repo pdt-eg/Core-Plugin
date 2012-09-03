@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IScriptFolder;
 import org.eclipse.dltk.core.ISourceModule;
@@ -44,7 +45,7 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 	private IPHPLauncher launcher = new DefaultExecutableLauncher();
 	private String fixerPath;
 	
-	final public static URL CS_FIXER = PEXUIPlugin.getDefault().getBundle().getEntry("Resources/phpcsfixer/php-cs-fixer.phar");
+	final public static URL CS_FIXER = Platform.getBundle(PEXUIPlugin.PLUGIN_ID).getEntry("Resources/phpcsfixer/php-cs-fixer.phar");
 	
 
 	@Override
@@ -59,7 +60,7 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 			try {
 				fixerPath = getDefaultPhar();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				Logger.debug("Unable to get default phar");
 				return null;
 			}
 		}
@@ -116,7 +117,13 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 						runFixer((ISourceModule) element);
 					}
 				} catch (Exception e) {
+					if (e != null) {
+						Logger.debug(e.getMessage());
+					} else {
+						System.err.println("ERror running laucher");
+					}
 					
+					Logger.logException(e);
 				}
 			}
 		}
@@ -135,7 +142,7 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 				}
 			}
 		} catch (ModelException e) {
-//			Logger.logException(e);
+			Logger.logException(e);
 		}
 	}
 
@@ -145,11 +152,13 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 		String fileToFix =  resource.getLocation().toOSString();
 		fixerArgs.set(1, fileToFix);
 		
+		System.err.println("############# RUN FIXER + " + fixerPath);
+		Logger.debug("Running cs-fixer: " + fixerPath + " => " + fixerArgs.get(1));
 		launcher.launch(fixerPath, fixerArgs.toArray(new String[fixerArgs.size()]), new ILaunchResponseHandler() {
 			
 			@Override
 			public void handle(String response) {
-				Logger.debugMSG(response);
+				Logger.debug(response);
 			}
 		} );
 		

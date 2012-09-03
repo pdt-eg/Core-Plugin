@@ -380,6 +380,10 @@ public class PHPCSFixerConfigurationBlock extends
 
 	private FixerOption unpackOption(String option) {
 
+		if (option == null || option.indexOf("::") == -1) {
+			return null;
+		}
+		
 		String[] values = option.split("::");
 		FixerOption opt = new FixerOption();
 		opt.internal = values[0];
@@ -399,9 +403,13 @@ public class PHPCSFixerConfigurationBlock extends
 	private void unpackFixerOptions() {
 
 		for (String key : PEXPreferenceNames.getPHPCSFixerOptions()) {
-			fixerOptions.add(unpackOption(getValue(getPEXKey(key))));
+			
+			FixerOption option = unpackOption(getValue(getPEXKey(key)));
+			
+			if (option != null) {
+				fixerOptions.add(option);
+			}
 		}
-
 	}
 
 	private void unpackPhars() {

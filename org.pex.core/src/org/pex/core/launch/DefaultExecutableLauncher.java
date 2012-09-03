@@ -8,9 +8,11 @@
 package org.pex.core.launch;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.eclipse.core.runtime.Path;
 import org.pex.core.exception.ExecutableNotFoundException;
 import org.pex.core.log.Logger;
 import org.pex.core.util.LaunchUtil;
@@ -33,22 +35,30 @@ public class DefaultExecutableLauncher implements IPHPLauncher {
 		
 	}
 	
-	public void doLaunch(String scriptPath, String[] arguments, ILaunchResponseHandler handler, boolean async) throws IOException, InterruptedException {
+	protected void doLaunch(String scriptPath, String[] arguments, ILaunchResponseHandler handler, boolean async) throws IOException, InterruptedException {
 		
 		String phpExe = null;
 		
 		try {
+			Logger.debug("Getting default executable");
 			phpExe = LaunchUtil.getPHPExecutable();
 		} catch (ExecutableNotFoundException e) {
+			Logger.debug("Error retrieving executable");
 			Logger.logException(e);
+			return;
 		}
 		
 		String[] args = new String[arguments.length + 2];
 		args[0] = phpExe;
 		args[1] = scriptPath;
 		
+		Logger.debug("Launching workspace php executable: " + phpExe + " using target " + scriptPath);
+		
 		System.arraycopy(arguments, 0, args, 2, arguments.length);
-		Process p=Runtime.getRuntime().exec(args);
+		
+		Runtime runtime = Runtime.getRuntime();
+		Path path = new Path(scriptPath);
+		Process p = runtime.exec(args, new String[]{}, new File(path.removeLastSegments(1).toOSString()));
 		
 		if (async == false) {
 			p.waitFor();
