@@ -2,7 +2,7 @@
 <feature
       id="org.pex.feature"
       label="PDT Core Extensions"
-      version="0.0.1.qualifier"
+      version="0.0.11.qualifier"
       provider-name="https://github.com/pdt-eg">
 
    <description url="https://github.com/pdt-eg">
