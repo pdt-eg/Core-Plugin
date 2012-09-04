@@ -14,8 +14,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.PaintEvent;
@@ -49,7 +47,7 @@ public abstract class AbstractItemInstallerPage extends WizardPage implements
 	protected ScrolledComposite bodyScrolledComposite;
 	protected Color colorWhite;
 
-	protected List<InstallableItem> items;
+	protected List<? extends InstallableItem> items;
 
 	/** the previous filter text. */
 	protected String previousFilterText = ""; //$NON-NLS-1$
@@ -82,6 +80,9 @@ public abstract class AbstractItemInstallerPage extends WizardPage implements
 	protected Color colorCategoryGradientEnd;
 
 	protected Cursor handCursor;
+	protected Composite categoryChildrenContainer;
+	
+	protected Composite scrolledContentsComposite;
 
 	protected AbstractItemInstallerPage(String pageName) {
 		super(pageName);
@@ -99,76 +100,80 @@ public abstract class AbstractItemInstallerPage extends WizardPage implements
 		createRefreshJob();
 
 		final Composite container = new Composite(parent, SWT.NULL);
-		container.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-			}
-		});
 
 		container.setLayout(new GridLayout(1, false));
 
 		// mostly taken from
 		// http://dev.eclipse.org/viewcvs/viewvc.cgi/trunk/org.eclipse.team.svn.ui/src/org/eclipse/team/svn/ui/discovery/wizards/ConnectorDiscoveryWizardMainPage.java?view=co&root=Technology_SUBVERSIVE
 		{ // header
-			final Composite header = new Composite(container, SWT.NULL);
-			GridLayoutFactory.fillDefaults().applyTo(header);
-			GridDataFactory.fillDefaults().grab(true, false).applyTo(header);
 
-			Composite filterContainer = new Composite(header, SWT.NULL);
-			GridDataFactory.fillDefaults().grab(true, false)
-					.applyTo(filterContainer);
-
-			int numColumns = 2; // 1 for label, 2 for text filter
-			GridLayoutFactory.fillDefaults().numColumns(numColumns)
-					.applyTo(filterContainer);
-			final Label label = new Label(filterContainer, SWT.NULL);
-			label.setText("Find package");
-
-			final Composite textFilterContainer = new Composite(
-					filterContainer, SWT.NULL);
-			GridDataFactory.fillDefaults().grab(true, false)
-					.applyTo(textFilterContainer);
-			GridLayoutFactory.fillDefaults().numColumns(2)
-					.applyTo(textFilterContainer);
-
-			this.filterText = new Text(textFilterContainer, SWT.SINGLE
-					| SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL);
-
-			this.filterText.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					filterTextChanged();
-				}
-			});
-
-			this.filterText.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-					if (e.detail == SWT.ICON_CANCEL) {
-						clearFilterText();
-					}
-				}
-
-				protected void clearFilterText() {
-					// TODO Auto-generated method stub
-
-				}
-			});
-
+			createHeader(container);
 			body = new Composite(container, SWT.NULL);
 			GridDataFactory.fillDefaults().grab(true, true)
 					.hint(SWT.DEFAULT, 480).applyTo(body);
 
-			GridDataFactory.fillDefaults().grab(true, false).span(2, 1)
-					.applyTo(this.filterText);
 			setControl(container);
 			createBodyContents();
 		}
 	}
+	
+	protected void createHeader(Composite container) {
+		
+		final Composite header = new Composite(container, SWT.NULL);
+		GridLayoutFactory.fillDefaults().applyTo(header);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(header);
+
+		Composite filterContainer = new Composite(header, SWT.NULL);
+		GridDataFactory.fillDefaults().grab(true, false)
+				.applyTo(filterContainer);
+
+		int numColumns = 2; // 1 for label, 2 for text filter
+		GridLayoutFactory.fillDefaults().numColumns(numColumns)
+				.applyTo(filterContainer);
+		final Label label = new Label(filterContainer, SWT.NULL);
+		label.setText("Find package");
+
+		final Composite textFilterContainer = new Composite(
+				filterContainer, SWT.NULL);
+		GridDataFactory.fillDefaults().grab(true, false)
+				.applyTo(textFilterContainer);
+		GridLayoutFactory.fillDefaults().numColumns(2)
+				.applyTo(textFilterContainer);
+
+		this.filterText = new Text(textFilterContainer, SWT.SINGLE
+				| SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL);
+
+		GridDataFactory.fillDefaults().grab(true, false).span(2, 1)
+			.applyTo(this.filterText);
+		
+		this.filterText.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				filterTextChanged();
+			}
+		});
+
+		this.filterText.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				if (e.detail == SWT.ICON_CANCEL) {
+					clearFilterText();
+				}
+			}
+
+			protected void clearFilterText() {
+				// TODO Auto-generated method stub
+
+			}
+		});
+	}
 
 	protected void filterTextChanged() {
-		refreshJob.cancel();
-		refreshJob.schedule(200L);
+		
+		if (refreshJob != null) {
+			refreshJob.cancel();
+			refreshJob.schedule(200L);
+		}
 	}
 
 	/**
@@ -176,10 +181,11 @@ public abstract class AbstractItemInstallerPage extends WizardPage implements
 	 */
 	protected void createBodyContents() {
 		// remove any existing contents
-		for (Control child : this.body.getChildren()) {
+		for (Control child : body.getChildren()) {
 			child.dispose();
 		}
-		this.clearDisposables();
+		
+		clearDisposables();
 		initializeCursors();
 		initializeImages();
 		initializeFonts();
@@ -187,16 +193,16 @@ public abstract class AbstractItemInstallerPage extends WizardPage implements
 
 		GridLayoutFactory.fillDefaults().applyTo(this.body);
 
-		this.bodyScrolledComposite = new ScrolledComposite(this.body,
+		this.bodyScrolledComposite = new ScrolledComposite(body,
 				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 
-		configureLook(this.bodyScrolledComposite, this.colorWhite);
+		configureLook(this.bodyScrolledComposite, colorWhite);
 		GridDataFactory.fillDefaults().grab(true, true)
 				.applyTo(this.bodyScrolledComposite);
 
-		final Composite scrolledContentsComposite = new Composite(
+		scrolledContentsComposite = new Composite(
 				this.bodyScrolledComposite, SWT.NONE);
-		configureLook(scrolledContentsComposite, this.colorWhite);
+		configureLook(scrolledContentsComposite, colorWhite);
 		scrolledContentsComposite.setRedraw(false);
 		try {
 			createPackageContents(scrolledContentsComposite);
@@ -205,13 +211,13 @@ public abstract class AbstractItemInstallerPage extends WizardPage implements
 			scrolledContentsComposite.setRedraw(true);
 		}
 		Point size = scrolledContentsComposite.computeSize(
-				this.body.getSize().x, SWT.DEFAULT, true);
+				body.getSize().x, SWT.DEFAULT, true);
 		scrolledContentsComposite.setSize(size);
 
-		this.bodyScrolledComposite.setExpandHorizontal(true);
-		this.bodyScrolledComposite.setMinWidth(100);
-		this.bodyScrolledComposite.setExpandVertical(true);
-		this.bodyScrolledComposite.setMinHeight(1);
+		bodyScrolledComposite.setExpandHorizontal(true);
+		bodyScrolledComposite.setMinWidth(100);
+		bodyScrolledComposite.setExpandVertical(true);
+		bodyScrolledComposite.setMinHeight(1);
 
 		this.bodyScrolledComposite.addControlListener(new ControlAdapter() {
 			@Override
@@ -228,11 +234,17 @@ public abstract class AbstractItemInstallerPage extends WizardPage implements
 
 		this.bodyScrolledComposite.setContent(scrolledContentsComposite);
 
-		Dialog.applyDialogFont(this.body);
+		Dialog.applyDialogFont(body);
 		// we've changed it so it needs to know
-		this.body.layout(true);
+		body.layout(true);
+		body.redraw();
+		
 	}
-
+	
+	protected AbstractDescriptorItemUi getItemUI(InstallableItem item, Composite container, Color background) {
+		return new AbstractDescriptorItemUi(this, item, container, background);
+	}
+		
 	protected void createPackageContents(Composite container) {
 		
 		final Color background = container.getBackground();
@@ -240,7 +252,7 @@ public abstract class AbstractItemInstallerPage extends WizardPage implements
 				.applyTo(container);
 
 		int numChildren = 0;
-		final Composite categoryChildrenContainer = new Composite(container,
+		categoryChildrenContainer = new Composite(container,
 				SWT.NULL);
 		configureLook(categoryChildrenContainer, background);
 		GridDataFactory.fillDefaults().span(2, 1).grab(true, false)
@@ -253,7 +265,7 @@ public abstract class AbstractItemInstallerPage extends WizardPage implements
 			items = new ArrayList<InstallableItem>();
 		}
 
-		for (final InstallableItem phppackage : items) {
+		for (final InstallableItem item : items) {
 
 			if (++numChildren > 1) {
 				// a separator between connector descriptors
@@ -265,9 +277,8 @@ public abstract class AbstractItemInstallerPage extends WizardPage implements
 				border.addPaintListener(new ConnectorBorderPaintListener());
 			}
 
-			AbstractDescriptorItemUi itemUi = new AbstractDescriptorItemUi(
-					this, phppackage, categoryChildrenContainer, background);
-			itemUi.updateAvailability();
+			AbstractDescriptorItemUi itemUI = getItemUI(item, categoryChildrenContainer, background);
+			itemUI.updateAvailability();
 		}
 
 		// last one gets a border
@@ -359,13 +370,14 @@ public abstract class AbstractItemInstallerPage extends WizardPage implements
 	}
 
 	protected void clearDisposables() {
-		this.disposables.clear();
-		this.h1Font = null;
-		this.h2Font = null;
+		
+		disposables.clear();
+		h1Font = null;
+		h2Font = null;
 		// infoImage = null;
-		this.handCursor = null;
-		this.colorCategoryGradientStart = null;
-		this.colorCategoryGradientEnd = null;
+		handCursor = null;
+		colorCategoryGradientStart = null;
+		colorCategoryGradientEnd = null;
 	}
 
 	public void configureLook(Control control, Color background) {

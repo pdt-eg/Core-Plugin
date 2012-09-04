@@ -26,36 +26,29 @@ public class AbstractDescriptorItemUi implements PropertyChangeListener,
 
     private final InstallableItem installableItem;
 
-    /** */
-    private final Button checkbox;
+    private final Display display;
+    
+    private final ItemInstaller installer;
+    
+    private Button checkbox;
 
-    /** */
-    private final Label iconLabel;
+    private Label iconLabel;
 
-    /** */
-    private final Label nameLabel;
+    private Label nameLabel;
 
 //    /** */
 //    private ToolItem infoButton;
 
-    /** */
-    private final Label providerLabel;
+    private Label providerLabel;
 
-    /** */
-    private final Label description;
+    private Label description;
 
-    /** */
-    private final Composite checkboxContainer;
+    private Composite checkboxContainer;
 
-    /** */
-    private final Composite connectorContainer;
+    protected Composite connectorContainer;
 
-    /** */
-    private final Display display;
-
-	private ItemInstaller installer;
+	private Color background;
 	
-    
 //    private Image iconImage;
 
 //    /** */
@@ -72,8 +65,15 @@ public class AbstractDescriptorItemUi implements PropertyChangeListener,
     	
         this.installer = installer;
         this.installableItem = installItem;
+        this.background = background;
+        this.display = categoryChildrenContainer.getDisplay();
         
-		display = categoryChildrenContainer.getDisplay();
+        createBody(categoryChildrenContainer);
+
+    }
+    
+    protected void createBody(Composite categoryChildrenContainer) {
+    	
         // TODO installableItem.addPropertyChangeListener(this);
 
         connectorContainer = new Composite(categoryChildrenContainer, SWT.NULL);
@@ -187,7 +187,8 @@ public class AbstractDescriptorItemUi implements PropertyChangeListener,
         iconLabel.addMouseListener(connectorItemMouseListener);
         nameLabel.addMouseListener(connectorItemMouseListener);
         providerLabel.addMouseListener(connectorItemMouseListener);
-        description.addMouseListener(connectorItemMouseListener);
+        description.addMouseListener(connectorItemMouseListener);    	
+    	
     }
 
     /**
