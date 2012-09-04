@@ -15,4 +15,5 @@ Export-Package: org.pex.core,
  org.pex.core.exception,
  org.pex.core.launch,
  org.pex.core.log,
+ org.pex.core.model,
  org.pex.core.util

@@ -11,6 +11,11 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.php.ui,
  org.eclipse.core.resources,
  org.eclipse.dltk.core,
- org.pex.core
+ org.pex.core,
+ org.eclipse.dltk.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Export-Package: org.pex.ui,
+ org.pex.ui.handlers,
+ org.pex.ui.preferences,
+ org.pex.ui.wizards.iteminstaller
