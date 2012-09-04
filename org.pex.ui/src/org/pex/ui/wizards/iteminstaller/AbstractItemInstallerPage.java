@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.pex.core.model.InstallableItem;
 
+
 public abstract class AbstractItemInstallerPage extends WizardPage implements
 		ItemInstaller {
 
@@ -406,6 +407,11 @@ public abstract class AbstractItemInstallerPage extends WizardPage implements
 	}
 
 	@Override
+	public Font getH1Font() {
+		return h1Font;
+	}
+
+	@Override
 	public Font getH2Font() {
 		return h2Font;
 	}
@@ -418,6 +424,6 @@ public abstract class AbstractItemInstallerPage extends WizardPage implements
 	public void itemGainedFocus(
 			AbstractDescriptorItemUi abstractDescriptorItemUi) {
 		bodyScrolledComposite.showControl(abstractDescriptorItemUi
-				.getConnectorContainer());
+				.getItemContainer());
 	}
 }

@@ -10,6 +10,8 @@ public interface ItemInstaller {
 
 	void configureLook(Control control, Color background);	
 
+	Font getH1Font();
+	
 	Font getH2Font();
 	
 	Color getDisabledColor();

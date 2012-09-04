@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.pex.core.model.InstallableItem;
@@ -24,30 +25,33 @@ import org.pex.core.model.InstallableItem;
 public class AbstractDescriptorItemUi implements PropertyChangeListener,
 		Runnable {
 
-    private final InstallableItem installableItem;
+	protected final InstallableItem installableItem;
 
-    private final Display display;
+    protected final Display display;
     
-    private final ItemInstaller installer;
+    protected final ItemInstaller installer;
     
-    private Button checkbox;
+    protected Button checkbox;
 
-    private Label iconLabel;
+    protected Label iconLabel;
 
-    private Label nameLabel;
+    protected Label nameLabel;
 
+    protected Label providerLabel;
+
+    protected Label description;
+
+    protected Composite checkboxContainer;
+
+    protected Composite itemContainer;
+
+    protected Color background;
+	
+	protected final Composite parent;
+	
+	
 //    /** */
 //    private ToolItem infoButton;
-
-    private Label providerLabel;
-
-    private Label description;
-
-    private Composite checkboxContainer;
-
-    protected Composite connectorContainer;
-
-	private Color background;
 	
 //    private Image iconImage;
 
@@ -57,36 +61,37 @@ public class AbstractDescriptorItemUi implements PropertyChangeListener,
     /**
      * Constructor.
      * @param installableItem
-     * @param categoryChildrenContainer
+     * @param parent
      * @param background
      */
-    public AbstractDescriptorItemUi(final ItemInstaller installer, InstallableItem installItem, Composite categoryChildrenContainer,
+    public AbstractDescriptorItemUi(final ItemInstaller installer, InstallableItem installItem, Composite parent,
             Color background) {
     	
         this.installer = installer;
         this.installableItem = installItem;
         this.background = background;
-        this.display = categoryChildrenContainer.getDisplay();
+        this.display = parent.getDisplay();
+        this.parent = parent;
         
-        createBody(categoryChildrenContainer);
+        createBody(parent);
 
     }
     
-    protected void createBody(Composite categoryChildrenContainer) {
+    protected void createBody(Composite parent) {
     	
         // TODO installableItem.addPropertyChangeListener(this);
 
-        connectorContainer = new Composite(categoryChildrenContainer, SWT.NULL);
+        itemContainer = new Composite(parent, SWT.NULL);
 
-        installer.configureLook(getConnectorContainer(), background);
-        GridDataFactory.fillDefaults().grab(true, false).applyTo(getConnectorContainer());
+        installer.configureLook(itemContainer, background);
+        GridDataFactory.fillDefaults().grab(true, false).applyTo(itemContainer);
         GridLayout layout = new GridLayout(4, false);
         layout.marginLeft = 7;
         layout.marginTop = 2;
         layout.marginBottom = 2;
-        getConnectorContainer().setLayout(layout);
+        itemContainer.setLayout(layout);
 
-        checkboxContainer = new Composite(getConnectorContainer(), SWT.NULL);
+        checkboxContainer = new Composite(itemContainer, SWT.NULL);
         installer.configureLook(checkboxContainer, background);
         GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.BEGINNING).span(1, 2).applyTo(checkboxContainer);
         GridLayoutFactory.fillDefaults().spacing(1, 1).numColumns(2).applyTo(checkboxContainer);
@@ -118,13 +123,13 @@ public class AbstractDescriptorItemUi implements PropertyChangeListener,
 //            }
 //        }
 
-        nameLabel = new Label(getConnectorContainer(), SWT.NULL);
+        nameLabel = new Label(itemContainer, SWT.NULL);
         installer.configureLook(nameLabel, background);
         GridDataFactory.fillDefaults().grab(true, false).applyTo(nameLabel);
         nameLabel.setFont(installer.getH2Font());
         nameLabel.setText(installableItem.getName());
 
-        providerLabel = new Label(getConnectorContainer(), SWT.NULL);
+        providerLabel = new Label(itemContainer, SWT.NULL);
         installer.configureLook(providerLabel, background);
         GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).applyTo(providerLabel);
         // TODO
@@ -132,20 +137,20 @@ public class AbstractDescriptorItemUi implements PropertyChangeListener,
 //                new Object[]{connector.getProvider(), connector.getLicense()}));
 
 //        if (hasTooltip(connector)) {
-//            ToolBar toolBar = new ToolBar(connectorContainer, SWT.FLAT);
+//            ToolBar toolBar = new ToolBar(itemContainer, SWT.FLAT);
 //            toolBar.setBackground(background);
 //
 //            infoButton = new ToolItem(toolBar, SWT.PUSH);
 //            infoButton.setImage(infoImage);
 //            infoButton.setToolTipText(SVNUIMessages.ConnectorDiscoveryWizardMainPage_tooltip_showOverview);
-//            hookTooltip(toolBar, infoButton, connectorContainer, nameLabel, connector.getSource(),
+//            hookTooltip(toolBar, infoButton, itemContainer, nameLabel, connector.getSource(),
 //                    connector.getOverview());
 //            GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).applyTo(toolBar);
 //        } else {
-            new Label(getConnectorContainer(), SWT.NULL).setText(" "); //$NON-NLS-1$
+            new Label(itemContainer, SWT.NULL).setText(" "); //$NON-NLS-1$
 //        }
 
-        description = new Label(getConnectorContainer(), SWT.NULL | SWT.WRAP);
+        description = new Label(itemContainer, SWT.NULL | SWT.WRAP);
         installer.configureLook(description, background);
 
         GridDataFactory.fillDefaults().grab(true, false).span(3, 1).hint(100, SWT.DEFAULT).applyTo(description);
@@ -183,7 +188,7 @@ public class AbstractDescriptorItemUi implements PropertyChangeListener,
             }
         };
         checkboxContainer.addMouseListener(connectorItemMouseListener);
-        getConnectorContainer().addMouseListener(connectorItemMouseListener);
+        itemContainer.addMouseListener(connectorItemMouseListener);
         iconLabel.addMouseListener(connectorItemMouseListener);
         nameLabel.addMouseListener(connectorItemMouseListener);
         providerLabel.addMouseListener(connectorItemMouseListener);
@@ -205,15 +210,20 @@ public class AbstractDescriptorItemUi implements PropertyChangeListener,
      * Updates the availability.
      */
     public void updateAvailability() {
+    	
         boolean enabled = /*connector.getAvailable() != null && connector.getAvailable()*/ true;
 
-        getCheckbox().setEnabled(enabled);
+        if (checkbox == null) {
+        	return;
+        }
+        
+        checkbox.setEnabled(enabled);
         nameLabel.setEnabled(enabled);
         providerLabel.setEnabled(enabled);
         description.setEnabled(enabled);
         Color foreground;
         if (enabled) {
-            foreground = getConnectorContainer().getForeground();
+            foreground = itemContainer.getForeground();
         } else {
             foreground = installer.getDisabledColor();
         }
@@ -242,7 +252,7 @@ public class AbstractDescriptorItemUi implements PropertyChangeListener,
 
     @Override
     public void run() {
-        if (!getConnectorContainer().isDisposed()) {
+        if (!itemContainer.isDisposed()) {
             updateAvailability();
         }
     }
@@ -251,11 +261,12 @@ public class AbstractDescriptorItemUi implements PropertyChangeListener,
 		return checkbox;
 	}
 
-	public Composite getConnectorContainer() {
-		return connectorContainer;
-	}
-	
 	public InstallableItem getItem() {
 		return installableItem;
+	}
+
+	public Control getItemContainer()
+	{
+		return itemContainer;
 	}
 }
