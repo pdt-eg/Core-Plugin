@@ -132,7 +132,7 @@ public abstract class AbstractItemInstallerPage extends WizardPage implements
 		GridLayoutFactory.fillDefaults().numColumns(numColumns)
 				.applyTo(filterContainer);
 		final Label label = new Label(filterContainer, SWT.NULL);
-		label.setText("Find package");
+		label.setText("Search");
 
 		final Composite textFilterContainer = new Composite(
 				filterContainer, SWT.NULL);
