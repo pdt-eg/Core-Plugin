@@ -1,0 +1,1 @@
+http://servicemix.apache.org/old/extending-eclipse-wtp-to-support-jbi.html
