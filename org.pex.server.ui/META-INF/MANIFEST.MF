@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: PDT Extensions Server UI Plugin
+Bundle-SymbolicName: org.pex.server.ui;singleton:=true
+Bundle-Version: 0.0.12.qualifier
+Bundle-Activator: org.pex.server.ui.PEXServerUiPlugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.wst.server.ui;bundle-version="1.4.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Vendor: https://github.com/pdt-eg

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+	<extension point="org.eclipse.wst.server.core.moduleTypes">
+		<moduleType id="org.eclipse.php.moduleType" name="%pexserver.module.type" />
+	</extension>
+	
+	<extension point="org.eclipse.wst.server.core.runtimeTypes">
+		<runtimeType
+			id="org.eclipse.php.lhttpd.runtimeType"
+			name="%pexserver.lhttpd.runtime.name"
+			description="%pexserver.lhttpd.runtime.description"
+			vendor="%pexserver.lhttpd.runtime.vendor"
+			version="1.0"
+			class="org.eclipse.php.internal.lhttp.LHttpdServerRuntime">
+			<moduleType types="org.eclipse.php.moduleType" versions="1.0" />
+		</runtimeType>
+	</extension>
+
+	<extension point="org.eclipse.wst.server.core.serverTypes">
+         <serverType
+         	id="org.pex.server.lhttpd.serverType"
+         	name="%pexserver.lhttpd.server.name"
+         	description="%pexserver.lhttpd.server.description"
+         	supportsRemoteHosts="false"
+         	runtime="true"
+         	initialState="stopped"
+         	hasConfiguration="true"
+         	launchConfigId="org.pex.server.lhttpd.launchConfigurationType"
+         	runtimeTypeId="org.eclipse.php.lhttpd.runtimeType"
+         	class="org.pex.server.internal.lhttpd.LHttpdServerDelegate"
+         	behaviourClass="org.pex.server.internal.lhttpd.LHttpdServerBehaviourDelegate"
+         	startTimeout="60000"
+         	stopTimeout="60000"
+         	launchMode="run,debug"
+         	startBeforePublish="false"
+         />
+	</extension>
+
+</plugin>

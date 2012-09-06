@@ -8,6 +8,8 @@
   <modules>
     <module>org.pex.core</module>
     <module>org.pex.ui</module>
+    <module>org.pex.server</module>
+    <module>org.pex.server.ui</module>
     <module>org.pex.feature</module>
   </modules>
 

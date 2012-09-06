@@ -4,4 +4,8 @@ org.pex.ui/bin/*
 org.pex.ui/target/*
 org.pex.core/bin/*
 org.pex.core/target/*
+org.pex.server/bin/*
+org.pex.server/target/*
+org.pex.server.ui/bin/*
+org.pex.server.ui/target/*
 org.pex.feature/target/*
