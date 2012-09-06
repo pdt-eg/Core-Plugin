@@ -122,14 +122,28 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </requires>
 
    <plugin
-         id="org.pex.core"
+         id="org.pdtextensions.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.pex.ui"
+         id="org.pdtextensions.server"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.pdtextensions.server.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.pdtextensions.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

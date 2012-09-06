@@ -6,11 +6,11 @@
   <version>0.0.12-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
-    <module>org.pex.core</module>
-    <module>org.pex.ui</module>
+    <module>org.pdtextensions.core</module>
+    <module>org.pdtextensions.ui</module>
     <module>org.pdtextensions.server</module>
     <module>org.pdtextensions.server.ui</module>
-    <module>org.pex.feature</module>
+    <module>org.pdtextensions.feature</module>
   </modules>
 
   <properties>
