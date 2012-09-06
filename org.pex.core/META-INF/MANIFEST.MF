@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PDT Extensions Core Plugin
-Bundle-SymbolicName: org.pex.core
+Bundle-SymbolicName: org.pdtextensions.core
 Bundle-Version: 0.0.12.qualifier
-Bundle-Activator: org.pex.core.PEXCorePlugin
+Bundle-Activator: org.pdtextensions.core.PEXCorePlugin
 Bundle-Vendor: https://github.com/pdt-eg
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.php.core,
@@ -11,9 +11,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Export-Package: org.pex.core,
- org.pex.core.exception,
- org.pex.core.launch,
- org.pex.core.log,
- org.pex.core.model,
- org.pex.core.util
+Export-Package: org.pdtextensions.core,
+ org.pdtextensions.core.exception,
+ org.pdtextensions.core.launch,
+ org.pdtextensions.core.log,
+ org.pdtextensions.core.model,
+ org.pdtextensions.core.util

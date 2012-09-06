@@ -42,20 +42,20 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.pex.ui.handlers.RunPHPCSFixerHandler"
+            class="org.pdtextensions.ui.handlers.RunPHPCSFixerHandler"
             commandId="org.pex.ui.command.phpcsfixer">
       </handler>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="org.pex.ui.preferences.PDTExtensionsPreferencePage"
+            class="org.pdtextensions.ui.preferences.PDTExtensionsPreferencePage"
             id="org.pex.ui.preferences.PEXPreferencePage"
             name="PDT Extensions">
       </page>
       <page
             category="org.pex.ui.preferences.PEXPreferencePage"
-            class="org.pex.ui.preferences.csfixer.PHPCSFixerPreferencePage"
+            class="org.pdtextensions.ui.preferences.csfixer.PHPCSFixerPreferencePage"
             id="org.pex.ui.preferences.PHPCSFixerPreferencePage"
             name="CS Fixer">
       </page>
@@ -63,7 +63,7 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            class="org.pex.ui.preferences.PDTExtensionsPreferencePage"
+            class="org.pdtextensions.ui.preferences.PDTExtensionsPreferencePage"
             id="org.pex.ui.preferences.PEXPropertyPage"
             name="PDT Extensions">
  			<enabledWhen>
@@ -74,7 +74,7 @@
       </page>
       <page
             category="org.pex.ui.preferences.PEXPropertyPage"
-            class="org.pex.ui.preferences.csfixer.PHPCSFixerPreferencePage"
+            class="org.pdtextensions.ui.preferences.csfixer.PHPCSFixerPreferencePage"
             id="org.pex.ui.propertyPages.PHPCSFixerPreferencePage"
             name="CS Fixer">
  			<enabledWhen>
@@ -87,7 +87,7 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="org.pex.ui.preferences.PEXPreferenceInitializer">
+            class="org.pdtextensions.ui.preferences.PEXPreferenceInitializer">
       </initializer>
    </extension>
    <extension

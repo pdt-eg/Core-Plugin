@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.pex.feature"
-      label="PDT Core Extensions"
+      id="org.pdtextensions.feature"
+      label="PDT Extensions"
       version="0.0.12.qualifier"
-      provider-name="https://github.com/pdt-eg">
+      provider-name="http://pdt-extensions.org">
 
    <description url="https://github.com/pdt-eg">
       The Core Plugin of the PDT Extensions Group. Currently it provides the following features:

@@ -1,11 +1,11 @@
 .DS_Store
 
-org.pex.ui/bin/*
-org.pex.ui/target/*
-org.pex.core/bin/*
-org.pex.core/target/*
+org.pdtextensions.ui/bin/*
+org.pdtextensions.ui/target/*
+org.pdtextensions.core/bin/*
+org.pdtextensions.core/target/*
 org.pdtextensions.server/bin/*
 org.pdtextensions.server/target/*
 org.pdtextensions.server.ui/bin/*
 org.pdtextensions.server.ui/target/*
-org.pex.feature/target/*
+org.pdtextensions.feature/target/*
