@@ -19,17 +19,17 @@
 
 	<extension point="org.eclipse.wst.server.core.serverTypes">
          <serverType
-         	id="org.pex.server.lhttpd.serverType"
+         	id="org.pdtextensions.server.lhttpd.serverType"
          	name="%pexserver.lhttpd.server.name"
          	description="%pexserver.lhttpd.server.description"
          	supportsRemoteHosts="false"
          	runtime="true"
          	initialState="stopped"
          	hasConfiguration="true"
-         	launchConfigId="org.pex.server.lhttpd.launchConfigurationType"
+         	launchConfigId="org.pdtextensions.server.lhttpd.launchConfigurationType"
          	runtimeTypeId="org.eclipse.php.lhttpd.runtimeType"
-         	class="org.pex.server.internal.lhttpd.LHttpdServerDelegate"
-         	behaviourClass="org.pex.server.internal.lhttpd.LHttpdServerBehaviourDelegate"
+         	class="org.pdtextensions.server.internal.lhttpd.LHttpdServerDelegate"
+         	behaviourClass="org.pdtextensions.server.internal.lhttpd.LHttpdServerBehaviourDelegate"
          	startTimeout="60000"
          	stopTimeout="60000"
          	launchMode="run,debug"

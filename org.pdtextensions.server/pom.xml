@@ -8,7 +8,7 @@
     <version>0.0.12-SNAPSHOT</version>	
   </parent>
 
-  <artifactId>org.pex.server.ui</artifactId>
-  <packaging>eclipse-plugin for server support (UI)</packaging>
+  <artifactId>org.pdtextensions.server</artifactId>
+  <packaging>eclipse-plugin for server support</packaging>
 
 </project>

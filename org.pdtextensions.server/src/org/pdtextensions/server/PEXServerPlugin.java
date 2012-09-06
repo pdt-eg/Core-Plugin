@@ -1,4 +1,4 @@
-package org.pex.server;
+package org.pdtextensions.server;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

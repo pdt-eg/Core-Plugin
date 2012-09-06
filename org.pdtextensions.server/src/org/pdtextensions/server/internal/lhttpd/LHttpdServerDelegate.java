@@ -1,4 +1,4 @@
-package org.pex.server.internal.lhttpd;
+package org.pdtextensions.server.internal.lhttpd;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

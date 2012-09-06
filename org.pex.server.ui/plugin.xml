@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.4"?>
-<plugin>
-	<extension point="org.eclipse.wst.server.ui.serverImages">
-		<image icon="/icons/server.gif" id="org.pex.server.ui.image.server" typeIds="org.pex.server.lhttpd.serverType" />
-		<image icon="/icons/server.gif" id="org.pex.server.ui.image.server" typeIds="org.eclipse.php.lhttpd.runtimeType" />
-	</extension>
-
-</plugin>
