@@ -8,6 +8,8 @@
   <modules>
     <module>org.pdtextensions.core</module>
     <module>org.pdtextensions.ui</module>
+    <module>org.pdtextensions.repos</module>
+    <module>org.pdtextensions.repos.ui</module>
     <module>org.pdtextensions.server</module>
     <module>org.pdtextensions.server.ui</module>
     <module>org.pdtextensions.feature</module>
