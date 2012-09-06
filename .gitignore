@@ -8,4 +8,8 @@ org.pdtextensions.server/bin/*
 org.pdtextensions.server/target/*
 org.pdtextensions.server.ui/bin/*
 org.pdtextensions.server.ui/target/*
+org.pdtextensions.repos/bin/*
+org.pdtextensions.repos/target/*
+org.pdtextensions.repos.ui/bin/*
+org.pdtextensions.repos.ui/target/*
 org.pdtextensions.feature/target/*
