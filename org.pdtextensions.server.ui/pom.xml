@@ -9,6 +9,6 @@
   </parent>
 
   <artifactId>org.pdtextensions.server.ui</artifactId>
-  <packaging>eclipse-plugin for server support (UI)</packaging>
+  <packaging>eclipse-plugin</packaging>
 
 </project>
