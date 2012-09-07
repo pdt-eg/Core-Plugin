@@ -20,6 +20,12 @@ public interface IRepositoryProvider {
 	String getId();
 	
 	/**
+	 * Returns the type of repository
+	 * @return type of repository
+	 */
+	String getType();
+	
+	/**
 	 * Searches for a specific module (case-insensitive search)
 	 * @param vendor The vendor name of the module; may contain '*' wildcard
 	 * @param name The module name of the module; may be null to search for all modules of the vendor; may contain '*' wildcard
