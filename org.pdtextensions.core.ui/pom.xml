@@ -8,7 +8,7 @@
     <version>0.0.12-SNAPSHOT</version>	
   </parent>
 
-  <artifactId>org.pdtextensions.ui</artifactId>
+  <artifactId>org.pdtextensions.core.ui</artifactId>
   <packaging>eclipse-plugin</packaging>
 
 </project>

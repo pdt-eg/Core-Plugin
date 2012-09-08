@@ -1,4 +1,4 @@
-package org.pdtextensions.ui.wizards.iteminstaller;
+package org.pdtextensions.core.ui.wizards.iteminstaller;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;

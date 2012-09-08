@@ -1,7 +1,7 @@
 .DS_Store
 
-org.pdtextensions.ui/bin/*
-org.pdtextensions.ui/target/*
+org.pdtextensions.core.ui/bin/*
+org.pdtextensions.core.ui/target/*
 org.pdtextensions.core/bin/*
 org.pdtextensions.core/target/*
 org.pdtextensions.server/bin/*

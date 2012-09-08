@@ -1,4 +1,4 @@
-package org.pdtextensions.ui.wizards.iteminstaller;
+package org.pdtextensions.core.ui.wizards.iteminstaller;
 
 import java.util.ArrayList;
 import java.util.List;

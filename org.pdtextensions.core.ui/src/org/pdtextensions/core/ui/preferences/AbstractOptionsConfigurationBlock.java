@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.ui.preferences;
+package org.pdtextensions.core.ui.preferences;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.php.internal.ui.preferences.IStatusChangeListener;
@@ -14,7 +14,7 @@ import org.eclipse.php.internal.ui.preferences.util.Key;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-import org.pdtextensions.ui.PEXUIPlugin;
+import org.pdtextensions.core.ui.PEXUIPlugin;
 
 
 @SuppressWarnings("restriction")

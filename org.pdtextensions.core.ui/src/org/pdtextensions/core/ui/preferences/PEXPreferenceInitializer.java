@@ -5,11 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.ui.preferences;
+package org.pdtextensions.core.ui.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.pdtextensions.ui.PEXUIPlugin;
+import org.pdtextensions.core.ui.PEXUIPlugin;
 
 
 public class PEXPreferenceInitializer extends AbstractPreferenceInitializer {

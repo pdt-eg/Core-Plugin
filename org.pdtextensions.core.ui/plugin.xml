@@ -7,10 +7,10 @@
             allPopups="false"
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
          <menu
-               id="org.pdtextensions.ui.menu"
+               id="org.pdtextensions.core.ui.menu"
                label="PDT Extensions">
             <command
-                  commandId="org.pdtextensions.ui.command.phpcsfixer"
+                  commandId="org.pdtextensions.core.ui.command.phpcsfixer"
                   icon="ico/full/obj16/cs-fixer.png"
                   label="Run PHP-CS-Fixer"
                   tooltip="Run PHP-CS-Fixer on files and folders">
@@ -35,36 +35,36 @@
          point="org.eclipse.ui.commands">
       <command
             description="Run PHP-CS-Fixer on files and folders"
-            id="org.pdtextensions.ui.command.phpcsfixer"
+            id="org.pdtextensions.core.ui.command.phpcsfixer"
             name="Run PHP-CS-Fixer">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.pdtextensions.ui.handlers.RunPHPCSFixerHandler"
-            commandId="org.pdtextensions.ui.command.phpcsfixer">
+            class="org.pdtextensions.core.ui.handlers.RunPHPCSFixerHandler"
+            commandId="org.pdtextensions.core.ui.command.phpcsfixer">
       </handler>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="org.pdtextensions.ui.preferences.PDTExtensionsPreferencePage"
-            id="org.pdtextensions.ui.preferences.PEXPreferencePage"
+            class="org.pdtextensions.core.ui.preferences.PDTExtensionsPreferencePage"
+            id="org.pdtextensions.core.ui.preferences.PEXPreferencePage"
             name="PDT Extensions">
       </page>
       <page
-            category="org.pdtextensions.ui.preferences.PEXPreferencePage"
-            class="org.pdtextensions.ui.preferences.csfixer.PHPCSFixerPreferencePage"
-            id="org.pdtextensions.ui.preferences.PHPCSFixerPreferencePage"
+            category="org.pdtextensions.core.ui.preferences.PEXPreferencePage"
+            class="org.pdtextensions.core.ui.preferences.csfixer.PHPCSFixerPreferencePage"
+            id="org.pdtextensions.core.ui.preferences.PHPCSFixerPreferencePage"
             name="CS Fixer">
       </page>
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            class="org.pdtextensions.ui.preferences.PDTExtensionsPreferencePage"
-            id="org.pdtextensions.ui.preferences.PEXPropertyPage"
+            class="org.pdtextensions.core.ui.preferences.PDTExtensionsPreferencePage"
+            id="org.pdtextensions.core.ui.preferences.PEXPropertyPage"
             name="PDT Extensions">
  			<enabledWhen>
 				<adapt type="org.eclipse.core.resources.IProject">
@@ -73,9 +73,9 @@
 			<filter name="nature" value="org.eclipse.php.core.PHPNature" />
       </page>
       <page
-            category="org.pdtextensions.ui.preferences.PEXPropertyPage"
-            class="org.pdtextensions.ui.preferences.csfixer.PHPCSFixerPreferencePage"
-            id="org.pdtextensions.ui.propertyPages.PHPCSFixerPreferencePage"
+            category="org.pdtextensions.core.ui.preferences.PEXPropertyPage"
+            class="org.pdtextensions.core.ui.preferences.csfixer.PHPCSFixerPreferencePage"
+            id="org.pdtextensions.core.ui.propertyPages.PHPCSFixerPreferencePage"
             name="CS Fixer">
  			<enabledWhen>
 				<adapt type="org.eclipse.core.resources.IProject">
@@ -87,13 +87,13 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="org.pdtextensions.ui.preferences.PEXPreferenceInitializer">
+            class="org.pdtextensions.core.ui.preferences.PEXPreferenceInitializer">
       </initializer>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
       <key
-            commandId="org.pdtextensions.ui.command.phpcsfixer"
+            commandId="org.pdtextensions.core.ui.command.phpcsfixer"
             contextId="org.eclipse.php.core.phpsource"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+P">

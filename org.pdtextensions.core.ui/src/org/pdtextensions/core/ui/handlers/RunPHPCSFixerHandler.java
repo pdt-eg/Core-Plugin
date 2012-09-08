@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.ui.handlers;
+package org.pdtextensions.core.ui.handlers;
 
 import java.io.IOException;
 import java.net.URL;
@@ -34,9 +34,9 @@ import org.pdtextensions.core.launch.DefaultExecutableLauncher;
 import org.pdtextensions.core.launch.ILaunchResponseHandler;
 import org.pdtextensions.core.launch.IPHPLauncher;
 import org.pdtextensions.core.log.Logger;
+import org.pdtextensions.core.ui.PEXUIPlugin;
+import org.pdtextensions.core.ui.preferences.PEXPreferenceNames;
 import org.pdtextensions.core.util.ArrayUtil;
-import org.pdtextensions.ui.PEXUIPlugin;
-import org.pdtextensions.ui.preferences.PEXPreferenceNames;
 
 
 public class RunPHPCSFixerHandler extends AbstractHandler {

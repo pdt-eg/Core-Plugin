@@ -5,19 +5,19 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.ui.preferences.csfixer;
+package org.pdtextensions.core.ui.preferences.csfixer;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-import org.pdtextensions.ui.PEXUIPlugin;
-import org.pdtextensions.ui.preferences.AbstractPropertyAndPreferencePage;
+import org.pdtextensions.core.ui.PEXUIPlugin;
+import org.pdtextensions.core.ui.preferences.AbstractPropertyAndPreferencePage;
 
 
 @SuppressWarnings("restriction")
 public class PHPCSFixerPreferencePage extends AbstractPropertyAndPreferencePage {
 
-	public static final String PREF_ID = "org.pdtextensions.ui.preferences.PHPCSFixerPreferencePage"; //$NON-NLS-1$
-	public static final String PROP_ID = "org.pdtextensions.ui.propertyPages.PHPCSFixerPreferencePage"; //$NON-NLS-1$
+	public static final String PREF_ID = "org.pdtextensions.core.ui.preferences.PHPCSFixerPreferencePage"; //$NON-NLS-1$
+	public static final String PROP_ID = "org.pdtextensions.core.ui.propertyPages.PHPCSFixerPreferencePage"; //$NON-NLS-1$
 
 	public PHPCSFixerPreferencePage() {
 		setPreferenceStore(PEXUIPlugin.getDefault().getPreferenceStore());

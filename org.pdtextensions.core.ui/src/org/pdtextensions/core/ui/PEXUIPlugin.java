@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.ui;
+package org.pdtextensions.core.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -16,7 +16,7 @@ import org.osgi.framework.BundleContext;
 public class PEXUIPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.pdtextensions.ui"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.pdtextensions.core.ui"; //$NON-NLS-1$
 
 	// The shared instance
 	private static PEXUIPlugin plugin;

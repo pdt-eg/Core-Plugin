@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.ui.preferences;
+package org.pdtextensions.core.ui.preferences;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.php.internal.ui.preferences.PropertyAndPreferencePage;
