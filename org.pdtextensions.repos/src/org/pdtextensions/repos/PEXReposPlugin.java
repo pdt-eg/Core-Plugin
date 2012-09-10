@@ -18,7 +18,9 @@ import org.pdtextensions.repos.internal.wrapper.GlobalRepositoryProvider;
 
 public class PEXReposPlugin implements BundleActivator {
 
-	private static final String PLUGIN_ID = "org.pdtextensions.repos";
+	public static final String PLUGIN_ID = "org.pdtextensions.repos";
+
+	private static PEXReposPlugin plugin;
 
 	private static BundleContext context;
 	
@@ -34,12 +36,17 @@ public class PEXReposPlugin implements BundleActivator {
 	static BundleContext getContext() {
 		return context;
 	}
+	
+	public static PEXReposPlugin getDefault() {
+		return plugin;
+	}
 
 	/**
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		PEXReposPlugin.context = bundleContext;
+		plugin = this;
 		init();
 	}
 
@@ -48,6 +55,7 @@ public class PEXReposPlugin implements BundleActivator {
 	 */
 	public void stop(BundleContext bundleContext) throws Exception {
 		FACTORIES = null;
+		plugin = null;
 		GLOBAL_PROVIDER = null;
 		PEXReposPlugin.context = null;
 	}
@@ -128,6 +136,35 @@ public class PEXReposPlugin implements BundleActivator {
 	public static Iterable<IRepositoryProviderFactory> getFactories() {
 		init();
 		return Collections.unmodifiableList(FACTORIES);
+	}
+	
+	/**
+	 * Mask search Strings, for example given to {@see IRepositoryProvider#findModule(String, String, String)} to represent a regex
+	 * @param searchString search string (must not be null)
+	 * @return the regex string
+	 */
+	public static String maskSearchStringToRegexp(String searchString) {
+		return searchString.toLowerCase()
+				.replace("\\", "\\\\")
+				.replace(".", "\\.")
+				.replace("[", "\\[")
+				.replace("]", "\\]")
+				.replace("^", "\\^")
+				.replace("$", "\\$")
+				.replace("|", "\\|")
+				.replace("?", "\\?")
+				.replace("+", "\\+")
+				.replace("(", "\\(")
+				.replace(")", "\\)")
+				// allowed wildcards
+				.replace("*", ".*");
+	}
+	
+
+	public static boolean debug() {
+		final String debugOption = Platform.getDebugOption("org.pdtextensions.repos/debug"); //$NON-NLS-1$
+		return "true".equalsIgnoreCase(debugOption); 
+		
 	}
 	
 }

@@ -1,7 +1,5 @@
 package org.pdtextensions.repos.api;
 
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -20,6 +18,12 @@ public interface IRepositoryProvider {
 	String getId();
 	
 	/**
+	 * Returns the provider uri.
+	 * @return provider uri
+	 */
+	String getUri();
+	
+	/**
 	 * Returns the type of repository
 	 * @return type of repository
 	 */
@@ -31,9 +35,8 @@ public interface IRepositoryProvider {
 	 * @param name The module name of the module; may be null to search for all modules of the vendor; may contain '*' wildcard
 	 * @param version The version number of the module; may be null to search for all versions; may contain '*' wildcard
 	 * @return the result of this search
-	 * @throws CoreException thrown if the remote repository could not be contacted
 	 */
-	IFindResult findModule(String vendor, String name, String version) throws CoreException;
+	IFindResult findModule(String vendor, String name, String version);
 	
 	/**
 	 * Lists all modules in the repository. Notice: This may be very slow. Instead you should do a more finer search with find method
@@ -41,6 +44,6 @@ public interface IRepositoryProvider {
 	 * @return The modules list.
 	 * @throws CoreException thrown if the remote repository could not be contacted
 	 */
-	List<IModule> listModules() throws CoreException;
+	Iterable<IModule> listModules() throws CoreException;
 
 }

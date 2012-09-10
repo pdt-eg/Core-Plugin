@@ -42,9 +42,8 @@ public interface ITag {
 	 * @param name The module name of the module; may be null to search for all modules of the vendor; may contain '*' wildcard
 	 * @param version The version number of the module; may be null to search for all versions; may contain '*' wildcard
 	 * @return the result of this search
-	 * @throws CoreException thrown if the remote repository could not be contacted
 	 */
-	IFindResult findModule(String vendor, String name, String version) throws CoreException;
+	IFindResult findModule(String vendor, String name, String version);
 	
 	/**
 	 * Lists all modules in the tag. 
