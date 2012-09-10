@@ -15,7 +15,13 @@ public interface IModuleVersion {
 	 * Returns the owning module.
 	 * @return owning module.
 	 */
-	IModule getModule();
+	String getModuleName();
+	
+	/**
+	 * Returns the owning vendor.
+	 * @return owning vendor.
+	 */
+	String getVendorName();
 	
 	/**
 	 * Returns the version name.
@@ -38,14 +44,16 @@ public interface IModuleVersion {
 	/**
 	 * Returns the list of files associated with this version.
 	 * @return files for this version.
+	 * @throws CoreException 
 	 */
-	Iterable<String> getFiles();
+	Iterable<String> getFiles() throws CoreException;
 	
 	/**
 	 * Returns the primary file for this version. The primary file should represent the phar file that contains the php files of this version.
 	 * @return primary file name or {@code null} if there is no primary file (empty/unknown/broken/obselete module version).
+	 * @throws CoreException 
 	 */
-	String getPrimaryFile();
+	String getPrimaryFile() throws CoreException;
 	
 	/**
 	 * Downloads the file with given name
@@ -57,6 +65,6 @@ public interface IModuleVersion {
 	 * @return the file
 	 * @throws CoreException thrown if the file could not be fully downloaded or the file was not found.
 	 */
-	IFile download(String name, boolean useCache, IProgressMonitor monitor);
+	IFile download(String name, boolean useCache, IProgressMonitor monitor) throws CoreException;
 
 }

@@ -1,5 +1,7 @@
 package org.pdtextensions.repos.api;
 
+import org.eclipse.core.runtime.CoreException;
+
 /**
  * A single module within a repository.
  * 
@@ -17,7 +19,7 @@ public interface IModule {
 	 * Returns the vendor of the module.
 	 * @return module vendor.
 	 */
-	String getVendor();
+	String getVendorName();
 	
 	/**
 	 * Returns the name of the module.
@@ -26,33 +28,59 @@ public interface IModule {
 	String getName();
 	
 	/**
+	 * Searches for a specific version (case-insensitive search)
+	 * @param version The version number of the module; must not be null; may contain '*' wildcard
+	 * @return the result of this search
+	 */
+	IFindResult findVersion(String version);
+	
+	/**
+	 * Searches for a specific version (case-insensitive search)
+	 * @param version The version number of the module; must not be null; may contain '*' wildcard
+	 * @return the result of this search
+	 */
+	IFindResult findReleaseVersion(String version);
+	/**
+	 * Searches for a specific version (case-insensitive search)
+	 * @param version The version number of the module; must not be null; may contain '*' wildcard
+	 * @return the result of this search
+	 */
+	IFindResult findDevVersion(String version);
+	
+
+	/**
 	 * Lists the release versions of this module.
 	 * @return release versions that are known by this repository.
+	 * @throws CoreException 
 	 */
-	Iterable<IModuleVersion> listReleaseVersions();
+	Iterable<IModuleVersion> listReleaseVersions() throws CoreException;
 	
 	/**
 	 * Lists the developer versions of this module
 	 * @return developer versions that are known by this repository
+	 * @throws CoreException 
 	 */
-	Iterable<IModuleVersion> listDevVersions();
+	Iterable<IModuleVersion> listDevVersions() throws CoreException;
 	
 	/**
 	 * Lists all versions of this module
 	 * @return versions that are known by this repository
+	 * @throws CoreException 
 	 */
-	Iterable<IModuleVersion> listVersions();
+	Iterable<IModuleVersion> listVersions() throws CoreException;
 	
 	/**
 	 * Returns the newest release version of the module
 	 * @return newest release version of the module or {@code null} if there is no known release version
+	 * @throws CoreException 
 	 */
-	IModuleVersion getNewestReleaseVersion();
+	IModuleVersion getNewestReleaseVersion() throws CoreException;
 	
 	/**
 	 * Returns the newest snapshot version of the module
 	 * @return newest snapshot version of the module or {@code null} if there is no known snapshot version
+	 * @throws CoreException 
 	 */
-	IModuleVersion getNewestDevVersion();
+	IModuleVersion getNewestDevVersion() throws CoreException;
 	
 }

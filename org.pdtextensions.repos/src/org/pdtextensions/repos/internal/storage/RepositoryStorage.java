@@ -1,6 +1,7 @@
 package org.pdtextensions.repos.internal.storage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
@@ -80,6 +81,10 @@ public class RepositoryStorage {
 		} catch (BackingStoreException e) {
 			// TODO Error logging
 		}
+	}
+	
+	public Iterable<Provider> providers() {
+		return Collections.unmodifiableList(this.providers);
 	}
 
 }

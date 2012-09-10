@@ -16,15 +16,15 @@ public interface IVendorAwareProvider extends IRepositoryProvider {
 	 * @return vendors.
 	 * @throws CoreException thrown if the remote repository could not be contacted
 	 */
-	List<IVendor> getVendors() throws CoreException;
+	Iterable<IVendor> getVendors() throws CoreException;
 	
 	/**
 	 * Searches the repository for a specific vendor
-	 * @param name The vendor name; must not contain any wildcards
+	 * @param name The vendor name; must not contain be null; may conatin '*' as wildcard
 	 * @return the list of vendors that were found.
 	 * @throws CoreException thrown if the remote repository could not be contacted
 	 */
-	List<IVendor> searchVendor(String name) throws CoreException;
+	Iterable<IVendor> searchVendor(String name) throws CoreException;
 	
 	/**
 	 * Returns true if the repository supports regular expression search
