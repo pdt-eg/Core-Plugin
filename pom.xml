@@ -7,7 +7,7 @@
   <packaging>pom</packaging>
   <modules>
     <module>org.pdtextensions.core</module>
-    <module>org.pdtextensions.ui</module>
+    <module>org.pdtextensions.core.ui</module>
     <module>org.pdtextensions.repos</module>
     <module>org.pdtextensions.repos.ui</module>
     <module>org.pdtextensions.server</module>
