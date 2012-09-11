@@ -110,7 +110,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </url>
 
    <requires>
-      <import feature="org.eclipse.php" version="3.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.php.core"/>
       <import plugin="org.eclipse.php.debug.core"/>
@@ -119,6 +118,9 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <import plugin="org.eclipse.php.ui"/>
       <import plugin="org.eclipse.dltk.core"/>
       <import plugin="org.eclipse.dltk.ui"/>
+      <import feature="org.eclipse.php" version="3.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.wst.server.core" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.wst.server.ui" version="1.4.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -129,21 +131,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
          unpack="false"/>
 
    <plugin
-         id="org.pdtextensions.server"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.pdtextensions.server.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.pdtextensions.ui"
+         id="org.pdtextensions.core.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -158,6 +146,20 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <plugin
          id="org.pdtextensions.repos.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.pdtextensions.server"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.pdtextensions.server.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
