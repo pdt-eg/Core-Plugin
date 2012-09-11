@@ -17,5 +17,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.pdtextensions.core.ui,
  org.pdtextensions.core.ui.handlers,
- org.pdtextensions.core.ui.preferences,
- org.pdtextensions.core.ui.wizards.iteminstaller
+ org.pdtextensions.core.ui.preferences
