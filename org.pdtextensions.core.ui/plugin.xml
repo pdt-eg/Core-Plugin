@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+
+   <extension-point id="profileContributor" name="Formatter Profile Contributor" schema="schema/profileContributor.exsd"/>
+
+   <extension
+         point="org.eclipse.php.ui.phpFormatterPrefBlock">
+      <block
+            class="org.pdtextensions.core.ui.preferences.PDTFormatterConfigurationBlockWrapper"
+            id="com.dubture.pde.formatter.codeFormatterBlock"
+            name="PDT Extensions Code Formatter">
+      </block>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.ui.preferencePages.GeneralTextEditor"
+            class="org.pdtextensions.core.ui.preferences.IndentGuidePreferencePage"
+            id="jp.sourceforge.pdt_tools.indentguide.preferences.PreferencePage"
+            name="%indentpage.name">
+      </page>
+   </extension>
+   
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -12,4 +34,39 @@
          </menu>
       </menuContribution>
    </extension>
+   
+   
+   <extension
+         point="org.eclipse.php.ui.phpFormatterProcessor">
+         <processor class="org.pdtextensions.core.ui.ast.Formatter"
+            id="jp.sourceforge.pdt_tools.formatter.core.ast.Formatter"
+            name="pdt_tools.formatter"/>
+   </extension>
+   
+   <extension
+         id="jp.sourceforge.pdt_tools.formatter.problem"
+         name="%extension.name"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.pdtextensions.core.ui.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>   
+
+	<extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="org.pdtextensions.core.ui.Starter">
+      </startup>
+   </extension>
+   
+   
 </plugin>
