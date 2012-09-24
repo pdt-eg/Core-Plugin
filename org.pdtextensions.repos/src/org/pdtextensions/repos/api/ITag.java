@@ -3,6 +3,7 @@ package org.pdtextensions.repos.api;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A single tag within the repository.
@@ -31,35 +32,39 @@ public interface ITag {
 	
 	/**
 	 * Returns the child tags
+	 * @param monitor the progress monitor; support to cancel a long search; maybe null
 	 * @return child tags
 	 * @throws CoreException thrown if the remote repository could not be contacted
 	 */
-	List<ITag> getChildren() throws CoreException;
+	List<ITag> getChildren(IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Searches for a specific module (case-insensitive search)
 	 * @param vendor The vendor name of the module; may contain '*' wildcard
 	 * @param name The module name of the module; may be null to search for all modules of the vendor; may contain '*' wildcard
 	 * @param version The version number of the module; may be null to search for all versions; may contain '*' wildcard
+	 * @param monitor the progress monitor; support to cancel a long search; maybe null
 	 * @return the result of this search
 	 */
-	IFindResult findModule(String vendor, String name, String version);
+	IFindResult findModule(String vendor, String name, String version, IProgressMonitor monitor);
 	
 	/**
 	 * Lists all modules in the tag. 
+	 * @param monitor the progress monitor; support to cancel a long search 
 	 * @return The modules list.
 	 * @throws CoreException thrown if the remote repository could not be contacted
 	 */
-	List<IModule> listModules() throws CoreException;
+	List<IModule> listModules(IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Searches the child tags for a specific tag
 	 * @param name The tag name; must not contain any wildcards
 	 * @param deep true to search for deep tags; false to search on top level
+	 * @param monitor the progress monitor; support to cancel a long search; maybe null
 	 * @return the list of tags that were found.
 	 * @throws CoreException thrown if the remote repository could not be contacted
 	 */
-	List<ITag> searchTag(String name, boolean deep) throws CoreException;
+	List<ITag> searchTag(String name, boolean deep, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Returns true if the repository supports regular expression search
@@ -71,9 +76,10 @@ public interface ITag {
 	 * Searches the child tags for a specific tag (supports regular expressions)
 	 * @param name The tag name
 	 * @param deep true to search for deep tags; false to search on top level
+	 * @param monitor the progress monitor; support to cancel a long search; maybe null
 	 * @return the list of tags that were found.
 	 * @throws CoreException thrown if the remote repository could not be contacted
 	 */
-	List<ITag> searchTagRegex(String name, boolean deep) throws CoreException;
+	List<ITag> searchTagRegex(String name, boolean deep, IProgressMonitor monitor) throws CoreException;
 
 }

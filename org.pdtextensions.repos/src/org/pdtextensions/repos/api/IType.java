@@ -3,6 +3,7 @@ package org.pdtextensions.repos.api;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A single type within the repository.
@@ -31,35 +32,39 @@ public interface IType {
 	
 	/**
 	 * Returns the child types
+	 * @param monitor the progress monitor; support to cancel a long search; maybe null
 	 * @return child types
 	 * @throws CoreException thrown if the remote repository could not be contacted
 	 */
-	List<IType> getChildren() throws CoreException;
+	List<IType> getChildren(IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Searches for a specific module (case-insensitive search)
 	 * @param vendor The vendor name of the module; may contain '*' wildcard
 	 * @param name The module name of the module; may be null to search for all modules of the vendor; may contain '*' wildcard
 	 * @param version The version number of the module; may be null to search for all versions; may contain '*' wildcard
+	 * @param monitor the progress monitor; support to cancel a long search; maybe null
 	 * @return the result of this search
 	 */
-	IFindResult findModule(String vendor, String name, String version);
+	IFindResult findModule(String vendor, String name, String version, IProgressMonitor monitor);
 	
 	/**
 	 * Lists all modules in the types. 
+	 * @param monitor the progress monitor; support to cancel a long search; maybe null
 	 * @return The modules list.
 	 * @throws CoreException thrown if the remote repository could not be contacted
 	 */
-	List<IModule> listModules() throws CoreException;
+	List<IModule> listModules(IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Searches the child types for a specific type
 	 * @param name The tag name; must not contain any wildcards
 	 * @param deep true to search for deep types; false to search on top level
+	 * @param monitor the progress monitor; support to cancel a long search; maybe null
 	 * @return the list of types that were found.
 	 * @throws CoreException thrown if the remote repository could not be contacted
 	 */
-	List<IType> searchType(String name, boolean deep) throws CoreException;
+	List<IType> searchType(String name, boolean deep, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Returns true if the repository supports regular expression search
@@ -71,9 +76,10 @@ public interface IType {
 	 * Searches the child types for a specific type (supports regular expressions)
 	 * @param name The type name
 	 * @param deep true to search for deep types; false to search on top level
+	 * @param monitor the progress monitor; support to cancel a long search; maybe null
 	 * @return the list of types that were found.
 	 * @throws CoreException thrown if the remote repository could not be contacted
 	 */
-	List<IType> searchTypeRegex(String name, boolean deep) throws CoreException;
+	List<IType> searchTypeRegex(String name, boolean deep, IProgressMonitor monitor) throws CoreException;
 
 }

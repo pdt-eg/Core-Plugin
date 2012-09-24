@@ -1,6 +1,7 @@
 package org.pdtextensions.repos.api;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A single module within a repository.
@@ -30,57 +31,65 @@ public interface IModule {
 	/**
 	 * Searches for a specific version (case-insensitive search)
 	 * @param version The version number of the module; must not be null; may contain '*' wildcard
+	 * @param monitor the progress monitor; support to cancel a long search; maybe null
 	 * @return the result of this search
 	 */
-	IFindResult findVersion(String version);
+	IFindResult findVersion(String version, IProgressMonitor monitor);
 	
 	/**
 	 * Searches for a specific version (case-insensitive search)
 	 * @param version The version number of the module; must not be null; may contain '*' wildcard
+	 * @param monitor the progress monitor; support to cancel a long search; maybe null
 	 * @return the result of this search
 	 */
-	IFindResult findReleaseVersion(String version);
+	IFindResult findReleaseVersion(String version, IProgressMonitor monitor);
 	/**
 	 * Searches for a specific version (case-insensitive search)
 	 * @param version The version number of the module; must not be null; may contain '*' wildcard
+	 * @param monitor the progress monitor; support to cancel a long search; maybe null
 	 * @return the result of this search
 	 */
-	IFindResult findDevVersion(String version);
+	IFindResult findDevVersion(String version, IProgressMonitor monitor);
 	
 
 	/**
 	 * Lists the release versions of this module.
+	 * @param monitor the progress monitor; support to cancel a long search; maybe null
 	 * @return release versions that are known by this repository.
 	 * @throws CoreException 
 	 */
-	Iterable<IModuleVersion> listReleaseVersions() throws CoreException;
+	Iterable<IModuleVersion> listReleaseVersions(IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Lists the developer versions of this module
+	 * @param monitor the progress monitor; support to cancel a long search; maybe null
 	 * @return developer versions that are known by this repository
 	 * @throws CoreException 
 	 */
-	Iterable<IModuleVersion> listDevVersions() throws CoreException;
+	Iterable<IModuleVersion> listDevVersions(IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Lists all versions of this module
+	 * @param monitor the progress monitor; support to cancel a long search; maybe null
 	 * @return versions that are known by this repository
 	 * @throws CoreException 
 	 */
-	Iterable<IModuleVersion> listVersions() throws CoreException;
+	Iterable<IModuleVersion> listVersions(IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Returns the newest release version of the module
+	 * @param monitor the progress monitor; support to cancel a long search; maybe null
 	 * @return newest release version of the module or {@code null} if there is no known release version
 	 * @throws CoreException 
 	 */
-	IModuleVersion getNewestReleaseVersion() throws CoreException;
+	IModuleVersion getNewestReleaseVersion(IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Returns the newest snapshot version of the module
+	 * @param monitor the progress monitor; support to cancel a long search; maybe null
 	 * @return newest snapshot version of the module or {@code null} if there is no known snapshot version
 	 * @throws CoreException 
 	 */
-	IModuleVersion getNewestDevVersion() throws CoreException;
+	IModuleVersion getNewestDevVersion(IProgressMonitor monitor) throws CoreException;
 	
 }

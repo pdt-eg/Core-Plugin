@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.pdtextensions.repos.api.IFindResult;
@@ -83,7 +84,7 @@ public class Vendor implements IVendor {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public IFindResult findModule(String name, String version) {
+	public IFindResult findModule(String name, String version, IProgressMonitor monitor) {
 		try {
 			this.init();
 		} catch (CoreException e) {
@@ -95,8 +96,11 @@ public class Vendor implements IVendor {
 		final List<IModuleVersion> result = new ArrayList<IModuleVersion>();
 		
 		for (final Map.Entry<String, IModule> module : this.modules.entrySet()) {
+			if (monitor.isCanceled()) {
+				break;
+			}
 			if (patternName.matcher(module.getKey().toLowerCase()).matches()) {
-				final IFindResult findResult = module.getValue().findVersion(searchVersion);
+				final IFindResult findResult = module.getValue().findVersion(searchVersion, monitor);
 				// return the error if there is any
 				if (!findResult.isOk()) {
 					return findResult;
@@ -111,7 +115,7 @@ public class Vendor implements IVendor {
 	}
 
 	@Override
-	public Iterable<IModule> listModules() throws CoreException {
+	public Iterable<IModule> listModules(IProgressMonitor monitor) throws CoreException {
 		this.init();
 		return new ArrayList<IModule>(modules.values());
 	}

@@ -1,16 +1,21 @@
 package org.pdtextensions.repos;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.pdtextensions.repos.api.IDependency;
+import org.pdtextensions.repos.api.IDownloadFileCallback;
+import org.pdtextensions.repos.api.IDownloadStreamCallback;
 import org.pdtextensions.repos.api.IModuleVersion;
 
 /**
- * Default implementation for module versions taht already know their files.
+ * Default implementation for module versions that already know their files.
  * 
  * @author mepeisen
  */
@@ -24,6 +29,11 @@ public class ModuleVersion implements IModuleVersion {
 	private Map<String, IFileDownload> files = new HashMap<String, IFileDownload>();
 	
 	private String primaryFile;
+	
+	private List<IDependency> dependencies;
+	private List<IDependency> deepDependencies;
+	
+	private IDependencyLoader dependencyLoader;
 	
 	/**
 	 * Constructor for implementations that are knowing their files
@@ -136,13 +146,13 @@ public class ModuleVersion implements IModuleVersion {
 	}
 
 	@Override
-	public Iterable<String> getFiles() throws CoreException  {
+	public Iterable<String> getFiles(IProgressMonitor monitor) throws CoreException  {
 		this.init();
 		return new ArrayList<String>(this.files.keySet());
 	}
 
 	@Override
-	public String getPrimaryFile() throws CoreException  {
+	public String getPrimaryFile(IProgressMonitor monitor) throws CoreException  {
 		this.init();
 		return this.primaryFile;
 	}
@@ -153,16 +163,28 @@ public class ModuleVersion implements IModuleVersion {
 		this.init();
 		final IFileDownload download = this.files.get(name);
 		if (download != null) {
-			download.download(useCache, monitor);
+			return download.download(useCache, monitor);
+		}
+		return null;
+	}
+
+	@Override
+	public InputStream openStream(String name, boolean useCache,
+			IProgressMonitor monitor) throws CoreException {
+		this.init();
+		final IFileDownload download = this.files.get(name);
+		if (download != null) {
+			return download.openStream(useCache, monitor);
 		}
 		return null;
 	}
 	
 	public interface IFileDownload {
-		IFile download(boolean useCache, IProgressMonitor monitor)throws CoreException ;
+		IFile download(boolean useCache, IProgressMonitor monitor) throws CoreException;
+		InputStream openStream(boolean useCache, IProgressMonitor monitor) throws CoreException;
 	}
 	
-	protected static final class FileWrapper implements IFileDownload {
+	public static final class FileWrapper implements IFileDownload {
 		
 		private IFile file;
 		
@@ -174,6 +196,58 @@ public class ModuleVersion implements IModuleVersion {
 		public IFile download(boolean useCache, IProgressMonitor monitor) throws CoreException {
 			return file;
 		}
+
+		@Override
+		public InputStream openStream(boolean useCache, IProgressMonitor monitor)
+				throws CoreException {
+			return file.getContents();
+		}
+		
+	}
+	
+	/**
+	 * Dependency loader.
+	 */
+	public interface IDependencyLoader {
+		
+		/**
+		 * Loads direct dependencies
+		 * @param monitor progress monitor
+		 * @return result; should be null if the monitor was canceled.
+		 * @throws CoreException
+		 */
+		Iterable<IDependency> loadDependencies(IProgressMonitor monitor) throws CoreException;
+		
+		/**
+		 * Loads deep dependencies
+		 * @param monitor progress monitor
+		 * @return result; should be null if the monitor was canceled.
+		 * @throws CoreException
+		 */
+		Iterable<IDependency> loadDeepDependencies(IProgressMonitor monitor) throws CoreException;
+		
+	}
+
+	@Override
+	public Iterable<IDependency> getDependencies(boolean deep,
+			IProgressMonitor monitor) throws CoreException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void downloadDependencies(boolean deep, boolean useCache,
+			IProgressMonitor monitor, IDownloadFileCallback callback)
+			throws CoreException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void openDependenciesStream(boolean deep, boolean useCache,
+			IProgressMonitor monitor, IDownloadStreamCallback callback)
+			throws CoreException {
+		// TODO Auto-generated method stub
 		
 	}
 

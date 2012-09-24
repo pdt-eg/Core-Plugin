@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.pdtextensions.repos.api.IFindResult;
@@ -133,7 +134,7 @@ public class Module implements IModule {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public IFindResult findVersion(String version) {
+	public IFindResult findVersion(String version, IProgressMonitor monitor) {
 		try {
 			this.init();
 		} catch (CoreException e) {
@@ -152,7 +153,7 @@ public class Module implements IModule {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public IFindResult findReleaseVersion(String version) {
+	public IFindResult findReleaseVersion(String version, IProgressMonitor monitor) {
 		try {
 			this.init();
 		} catch (CoreException e) {
@@ -171,7 +172,7 @@ public class Module implements IModule {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public IFindResult findDevVersion(String version) {
+	public IFindResult findDevVersion(String version, IProgressMonitor monitor) {
 		try {
 			this.init();
 		} catch (CoreException e) {
@@ -189,7 +190,7 @@ public class Module implements IModule {
 	}
 
 	@Override
-	public Iterable<IModuleVersion> listReleaseVersions() throws CoreException {
+	public Iterable<IModuleVersion> listReleaseVersions(IProgressMonitor monitor) throws CoreException {
 		this.init();
 		final List<IModuleVersion> result = new ArrayList<IModuleVersion>();
 		for (final IModuleVersion v : this.versions.values()) {
@@ -201,7 +202,7 @@ public class Module implements IModule {
 	}
 
 	@Override
-	public Iterable<IModuleVersion> listDevVersions() throws CoreException {
+	public Iterable<IModuleVersion> listDevVersions(IProgressMonitor monitor) throws CoreException {
 		this.init();
 		final List<IModuleVersion> result = new ArrayList<IModuleVersion>();
 		for (final IModuleVersion v : this.versions.values()) {
@@ -213,19 +214,19 @@ public class Module implements IModule {
 	}
 
 	@Override
-	public Iterable<IModuleVersion> listVersions() throws CoreException {
+	public Iterable<IModuleVersion> listVersions(IProgressMonitor monitor) throws CoreException {
 		this.init();
 		return new ArrayList<IModuleVersion>(this.versions.values());
 	}
 
 	@Override
-	public IModuleVersion getNewestReleaseVersion() throws CoreException {
+	public IModuleVersion getNewestReleaseVersion(IProgressMonitor monitor) throws CoreException {
 		this.init();
 		return this.newestRelease;
 	}
 
 	@Override
-	public IModuleVersion getNewestDevVersion() throws CoreException {
+	public IModuleVersion getNewestDevVersion(IProgressMonitor monitor) throws CoreException {
 		this.init();
 		return this.newestSnapshot;
 	}

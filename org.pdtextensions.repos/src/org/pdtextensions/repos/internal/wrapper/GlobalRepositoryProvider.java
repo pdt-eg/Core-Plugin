@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.pdtextensions.repos.FindResult;
 import org.pdtextensions.repos.PEXReposPlugin;
@@ -47,10 +48,13 @@ public class GlobalRepositoryProvider implements IRepositoryProvider {
 	}
 
 	@Override
-	public Iterable<IModule> listModules() throws CoreException {
+	public Iterable<IModule> listModules(IProgressMonitor monitor) throws CoreException {
 		final List<IModule> modules = new ArrayList<IModule>();
 		for (final IRepositoryProvider provider : this.providers) {
-			for (final IModule module : provider.listModules()) {
+			if (monitor.isCanceled()) {
+				break;
+			}
+			for (final IModule module : provider.listModules(monitor)) {
 				modules.add(module);
 			}
 		}
@@ -106,10 +110,13 @@ public class GlobalRepositoryProvider implements IRepositoryProvider {
 	}
 
 	@Override
-	public IFindResult findModule(String vendor, String name, String version) {
+	public IFindResult findModule(String vendor, String name, String version, IProgressMonitor monitor) {
 		final List<IModuleVersion> versions = new ArrayList<IModuleVersion>();
 		for (final IRepositoryProvider provider : this.providers) {
-			final IFindResult result = provider.findModule(vendor, name, version);
+			if (monitor.isCanceled()) {
+				break;
+			}
+			final IFindResult result = provider.findModule(vendor, name, version, monitor);
 			if (!result.isOk()) {
 				return result;
 			}
@@ -123,6 +130,11 @@ public class GlobalRepositoryProvider implements IRepositoryProvider {
 	@Override
 	public String getUri() {
 		return TYPE;
+	}
+
+	@Override
+	public boolean supportsDependencies() {
+		return true;
 	}
 
 }

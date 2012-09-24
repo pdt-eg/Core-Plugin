@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.pdtextensions.repos.FindResult;
@@ -58,14 +59,17 @@ public class DebugProvider implements IRepositoryProvider, IVendorAwareProvider 
 	}
 
 	@Override
-	public IFindResult findModule(String vendor, String name, String version) {
+	public IFindResult findModule(String vendor, String name, String version, IProgressMonitor monitor) {
 		final String searchName = name == null ? "*" : name;
 		final String searchVersion = version == null ? "*" : version;
 		final List<IModuleVersion> result = new ArrayList<IModuleVersion>();
 		
 		try {
-			for (final IVendor v : this.searchVendor(vendor)) {
-				final IFindResult findResult = v.findModule(searchName, searchVersion);
+			for (final IVendor v : this.searchVendor(vendor, monitor)) {
+				if (monitor.isCanceled()) {
+					break;
+				}
+				final IFindResult findResult = v.findModule(searchName, searchVersion, monitor);
 				// return the error if there is any
 				if (!findResult.isOk()) {
 					return findResult;
@@ -83,10 +87,13 @@ public class DebugProvider implements IRepositoryProvider, IVendorAwareProvider 
 	}
 
 	@Override
-	public Iterable<IModule> listModules() throws CoreException {
+	public Iterable<IModule> listModules(IProgressMonitor monitor) throws CoreException {
 		final List<IModule> result = new ArrayList<IModule>();
 		for (final IVendor vendor : this.dummyModules.values()) {
-			for (final IModule module : vendor.listModules()) {
+			if (monitor.isCanceled()) {
+				break;
+			}
+			for (final IModule module : vendor.listModules(monitor)) {
 				result.add(module);
 			}
 		}
@@ -94,14 +101,14 @@ public class DebugProvider implements IRepositoryProvider, IVendorAwareProvider 
 	}
 
 	@Override
-	public Iterable<IVendor> getVendors() throws CoreException {
+	public Iterable<IVendor> getVendors(IProgressMonitor monitor) throws CoreException {
 		return new ArrayList<IVendor>(this.dummyModules.values());
 	}
 
 	@Override
-	public Iterable<IVendor> searchVendor(String name) throws CoreException {
+	public Iterable<IVendor> searchVendor(String name, IProgressMonitor monitor) throws CoreException {
 		final String searchVendor = PEXReposPlugin.maskSearchStringToRegexp(name);
-		return searchVendorRegex(searchVendor);
+		return searchVendorRegex(searchVendor, monitor);
 	}
 
 	@Override
@@ -110,7 +117,7 @@ public class DebugProvider implements IRepositoryProvider, IVendorAwareProvider 
 	}
 
 	@Override
-	public List<IVendor> searchVendorRegex(String name) throws CoreException {
+	public List<IVendor> searchVendorRegex(String name, IProgressMonitor monitor) throws CoreException {
 		final Pattern patternVendor = Pattern.compile(name);
 		final List<IVendor> result = new ArrayList<IVendor>();
 		
@@ -125,6 +132,11 @@ public class DebugProvider implements IRepositoryProvider, IVendorAwareProvider 
 	@Override
 	public String getUri() {
 		return TYPE;
+	}
+
+	@Override
+	public boolean supportsDependencies() {
+		return false;
 	}
 
 }

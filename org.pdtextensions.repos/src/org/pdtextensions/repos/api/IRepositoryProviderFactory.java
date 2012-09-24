@@ -22,6 +22,12 @@ public interface IRepositoryProviderFactory {
 	IRepositoryProvider createTemporary(String uri, String id);
 	
 	/**
+	 * Creates the default repositories
+	 * @return the default repositories that are self-registered as soon as the underlying plugin is activated
+	 */
+	Iterable<IRepositoryProvider> createDefaultRepositories();
+	
+	/**
 	 * Persists the provider, changes the id to a persistent id and should save all additional provider options to the workspace storage
 	 * so that {@see #recoverPersistent(String, String)} is able to reload the additional options.
 	 * @param provider
