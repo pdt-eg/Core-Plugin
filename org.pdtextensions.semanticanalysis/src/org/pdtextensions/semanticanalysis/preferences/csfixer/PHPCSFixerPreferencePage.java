@@ -5,12 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.core.ui.preferences.csfixer;
+package org.pdtextensions.semanticanalysis.preferences.csfixer;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.preferences.AbstractPropertyAndPreferencePage;
+import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 
 
 @SuppressWarnings("restriction")
@@ -20,7 +20,7 @@ public class PHPCSFixerPreferencePage extends AbstractPropertyAndPreferencePage 
 	public static final String PROP_ID = "org.pdtextensions.core.ui.propertyPages.PHPCSFixerPreferencePage"; //$NON-NLS-1$
 
 	public PHPCSFixerPreferencePage() {
-		setPreferenceStore(PEXUIPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(PEXAnalysisPlugin.getDefault().getPreferenceStore());
 		setDescription("Configure PHP CS-Fixer phars and fixer options");
 	}
 

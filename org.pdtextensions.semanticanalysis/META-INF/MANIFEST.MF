@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: PEX Semanticanalysis Plugin
+Bundle-SymbolicName: org.pdtextensions.semanticanalysis;singleton:=true
+Bundle-Version: 0.0.12.qualifier
+Bundle-Activator: org.pdtextensions.semanticanalysis.PEXAnalysisPlugin
+Bundle-Vendor: PEX
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.pdtextensions.core,
+ org.pdtextensions.core.ui,
+ org.eclipse.dltk.core,
+ org.eclipse.dltk.ui,
+ org.eclipse.php.core,
+ org.eclipse.php.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: org.pdtextensions.semanticanalysis.handlers

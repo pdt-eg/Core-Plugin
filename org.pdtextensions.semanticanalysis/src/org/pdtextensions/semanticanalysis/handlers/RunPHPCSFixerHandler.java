@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.core.ui.handlers;
+package org.pdtextensions.semanticanalysis.handlers;
 
 import java.io.IOException;
 import java.net.URL;
@@ -34,9 +34,9 @@ import org.pdtextensions.core.launch.DefaultExecutableLauncher;
 import org.pdtextensions.core.launch.ILaunchResponseHandler;
 import org.pdtextensions.core.launch.IPHPLauncher;
 import org.pdtextensions.core.log.Logger;
-import org.pdtextensions.core.ui.PEXUIPlugin;
-import org.pdtextensions.core.ui.preferences.PEXPreferenceNames;
 import org.pdtextensions.core.util.ArrayUtil;
+import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
+import org.pdtextensions.semanticanalysis.preferences.PEXPreferenceNames;
 
 
 public class RunPHPCSFixerHandler extends AbstractHandler {
@@ -45,14 +45,14 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 	private IPHPLauncher launcher = new DefaultExecutableLauncher();
 	private String fixerPath;
 	
-	final public static URL CS_FIXER = Platform.getBundle(PEXUIPlugin.PLUGIN_ID).getEntry("Resources/phpcsfixer/php-cs-fixer.phar");
+	final public static URL CS_FIXER = Platform.getBundle(PEXAnalysisPlugin.PLUGIN_ID).getEntry("Resources/phpcsfixer/php-cs-fixer.phar");
 	
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		IPreferenceStore store = PEXUIPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = PEXAnalysisPlugin.getDefault().getPreferenceStore();
 		
 		fixerPath = store.getString(PEXPreferenceNames.PREF_PHPCS_PHAR_LOCATION);
 		

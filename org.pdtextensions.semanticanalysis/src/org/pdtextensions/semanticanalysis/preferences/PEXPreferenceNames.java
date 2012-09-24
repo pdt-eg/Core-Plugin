@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.core.ui.preferences;
+package org.pdtextensions.semanticanalysis.preferences;
 
 
 public class PEXPreferenceNames {

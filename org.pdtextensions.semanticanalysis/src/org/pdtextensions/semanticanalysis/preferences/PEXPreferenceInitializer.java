@@ -5,11 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.core.ui.preferences;
+package org.pdtextensions.semanticanalysis.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.pdtextensions.core.ui.PEXUIPlugin;
+import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 
 
 public class PEXPreferenceInitializer extends AbstractPreferenceInitializer {
@@ -17,7 +17,7 @@ public class PEXPreferenceInitializer extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
 		
-		IPreferenceStore store = PEXUIPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = PEXAnalysisPlugin.getDefault().getPreferenceStore();
 		
 		store.setDefault(PEXPreferenceNames.PREF_PHPCS_USE_DEFAULT_FIXERS, "yes");
 		store.setDefault(PEXPreferenceNames.PREF_PHPCS_CONFIG, "phpcs_config_default");

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.core.ui.preferences.csfixer;
+package org.pdtextensions.semanticanalysis.preferences.csfixer;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.pdtextensions.core.ui.preferences.AbstractOptionsConfigurationBlock;
-import org.pdtextensions.core.ui.preferences.PEXPreferenceNames;
+import org.pdtextensions.semanticanalysis.preferences.PEXPreferenceNames;
 
 
 @SuppressWarnings("restriction")
