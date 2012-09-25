@@ -2,8 +2,25 @@
 <?eclipse version="3.4"?>
 <plugin>
 	<extension point="org.eclipse.wst.server.ui.serverImages">
-		<image icon="/icons/server.gif" id="org.pdtextensions.server.ui.image.server" typeIds="org.pex.server.lhttpd.serverType" />
-		<image icon="/icons/server.gif" id="org.pdtextensions.server.ui.image.server" typeIds="org.eclipse.php.lhttpd.runtimeType" />
+		<image icon="/icons/server.gif" id="org.pdtextensions.server.ui.image.server" typeIds="org.pdtextensions.server.lhttpd.serverType" />
+		<image icon="/icons/server.gif" id="org.pdtextensions.server.ui.image.server" typeIds="org.pdtextensions.server.lhttpd.runtimeType" />
 	</extension>
+	
+	<extension point="org.eclipse.wst.server.ui.editorPages">
+		<page
+        	id="org.pdtextensions.server.ui.lhttpd.configuration.editor"
+        	order="20"
+        	name="%configurationEditorWebModulesPage"
+        	typeIds="org.pdtextensions.server.lhttpd.serverType"
+       		class="org.pdtextensions.server.ui.internal.lhttpd.ServerConfigurationEditorPart">
+        </page>
+	</extension>
+	
+	<extension point="org.eclipse.wst.server.ui.wizardFragments">
+        <fragment
+            id="org.pdtextensions.server.lhttpd.runtimeType"
+            typeIds="org.pdtextensions.server.lhttpd.runtimeType"
+            class="org.pdtextensions.server.ui.internal.lhttpd.RuntimeWizardFragment"/>
+    </extension>
 
 </plugin>

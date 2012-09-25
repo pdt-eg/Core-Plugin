@@ -6,7 +6,10 @@ Bundle-Version: 0.0.12.qualifier
 Bundle-Activator: org.pdtextensions.server.ui.PEXServerUiPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.wst.server.ui;bundle-version="1.4.0"
+ org.eclipse.wst.server.ui;bundle-version="1.4.0",
+ org.eclipse.wst.server.core;bundle-version="1.4.0",
+ org.pdtextensions.server,
+ org.eclipse.ui.forms;bundle-version="3.5.200"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: https://github.com/pdt-eg

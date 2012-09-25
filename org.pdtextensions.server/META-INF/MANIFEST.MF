@@ -6,7 +6,10 @@ Bundle-SymbolicName: org.pdtextensions.server;singleton:=true
 Bundle-Version: 0.0.12.qualifier
 Bundle-Activator: org.pdtextensions.server.PEXServerPlugin
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.wst.server.core;bundle-version="1.4.0"
+ org.eclipse.wst.server.core;bundle-version="1.4.0",
+ org.eclipse.equinox.p2.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: https://github.com/pdt-eg
+Export-Package: org.pdtextensions.server,
+ org.pdtextensions.server.lhttpd

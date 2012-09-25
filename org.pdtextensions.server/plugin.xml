@@ -2,18 +2,18 @@
 <?eclipse version="3.4"?>
 <plugin>
 	<extension point="org.eclipse.wst.server.core.moduleTypes">
-		<moduleType id="org.eclipse.php.moduleType" name="%pexserver.module.type" />
+		<moduleType id="org.pdtextensions.server.lhttpd.moduleType" name="%pexserver.module.type" />
 	</extension>
 	
 	<extension point="org.eclipse.wst.server.core.runtimeTypes">
 		<runtimeType
-			id="org.eclipse.php.lhttpd.runtimeType"
+			id="org.pdtextensions.server.lhttpd.runtimeType"
 			name="%pexserver.lhttpd.runtime.name"
 			description="%pexserver.lhttpd.runtime.description"
 			vendor="%pexserver.lhttpd.runtime.vendor"
 			version="1.0"
-			class="org.eclipse.php.internal.lhttp.LHttpdServerRuntime">
-			<moduleType types="org.eclipse.php.moduleType" versions="1.0" />
+			class="org.pdtextensions.server.internal.lhttpd.LHttpdServerRuntime">
+			<moduleType types="org.pdtextensions.server.lhttpd.moduleType" versions="1.0" />
 		</runtimeType>
 	</extension>
 
@@ -27,7 +27,7 @@
          	initialState="stopped"
          	hasConfiguration="true"
          	launchConfigId="org.pdtextensions.server.lhttpd.launchConfigurationType"
-         	runtimeTypeId="org.eclipse.php.lhttpd.runtimeType"
+         	runtimeTypeId="org.pdtextensions.server.lhttpd.runtimeType"
          	class="org.pdtextensions.server.internal.lhttpd.LHttpdServerDelegate"
          	behaviourClass="org.pdtextensions.server.internal.lhttpd.LHttpdServerBehaviourDelegate"
          	startTimeout="60000"
@@ -36,5 +36,37 @@
          	startBeforePublish="false"
          />
 	</extension>
+	
+	<extension point="org.eclipse.wst.common.project.facet.core.runtimes">
+		<runtime-component-type id="org.pdtextensions.server.lhttpd.runtimeType" />
+		<runtime-component-version type="org.pdtextensions.server.lhttpd.runtimeType" version="1.0"/>
+		
+		<!-- <adapter>
+			<runtime-component id="org.pdtextensions.server.runtimeType" />
+      <factory
+         class="org.eclipse.jst.server.core.internal.RuntimeClasspathProvider$Factory"/>
+      <type
+         class="org.eclipse.jst.common.project.facet.core.IClasspathProvider"/>
+    </adapter> -->
 
+    	<supported>
+    	    <runtime-component id="org.pdtextensions.server.lhttpd.runtimeType" version="1.0"/>
+    	    <facet id="php.core.component" version="1"/>
+        </supported>
+	</extension>
+	
+	<extension point="org.eclipse.wst.server.core.installableRuntimes">
+    	<runtime
+    		id="org.pdtextensions.server.lhttpd.runtimeType"
+    		licenseUrl="http://www.gnu.org/licenses/gpl-2.0.txt"
+    		archiveUrl="http://www.apachefriends.org/download.php?xampp-win32-1.8.0-VC9.zip"
+    		archivePath="XAMPP 1.8.0 (Windows)"
+    		os="win32"/>
+   		<runtime
+    		id="org.pdtextensions.server.lhttpd.runtimeType"
+    		licenseUrl="http://www.gnu.org/licenses/gpl-2.0.txt"
+    		archiveUrl="http://www.apachefriends.org/download.php?xampp-linux-1.8.0.tar.gz"
+    		archivePath="XAMPP 1.8.0 (Linux)"
+    		os="linux"/>
+    </extension>
 </plugin>
