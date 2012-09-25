@@ -5,6 +5,15 @@
 		<moduleType id="org.pdtextensions.server.lhttpd.moduleType" name="%pexserver.module.type" />
 	</extension>
 	
+	<extension point="org.eclipse.wst.server.core.moduleFactories">
+		<moduleFactory
+			id="org.pdtextensions.server.lhttpd.moduleTypeFactory"
+			class="org.pdtextensions.server.internal.lhttpd.LHttpdModuleFactoryDelegate"
+			projects="true">
+			<moduleType types="org.pdtextensions.server.lhttpd.moduleType" versions="1.0" />
+		</moduleFactory>
+	</extension>
+	
 	<extension point="org.eclipse.wst.server.core.runtimeTypes">
 		<runtimeType
 			id="org.pdtextensions.server.lhttpd.runtimeType"
@@ -42,7 +51,7 @@
 		<runtime-component-version type="org.pdtextensions.server.lhttpd.runtimeType" version="1.0"/>
 		
 		<!-- <adapter>
-			<runtime-component id="org.pdtextensions.server.runtimeType" />
+			<runtime-component id="org.pdtextensions.server.lhttpd.runtimeType" />
       <factory
          class="org.eclipse.jst.server.core.internal.RuntimeClasspathProvider$Factory"/>
       <type

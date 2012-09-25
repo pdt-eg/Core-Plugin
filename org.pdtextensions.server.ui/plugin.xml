@@ -3,7 +3,8 @@
 <plugin>
 	<extension point="org.eclipse.wst.server.ui.serverImages">
 		<image icon="/icons/server.gif" id="org.pdtextensions.server.ui.image.server" typeIds="org.pdtextensions.server.lhttpd.serverType" />
-		<image icon="/icons/server.gif" id="org.pdtextensions.server.ui.image.server" typeIds="org.pdtextensions.server.lhttpd.runtimeType" />
+		<image icon="/icons/server.gif" id="org.pdtextensions.server.ui.image.runtime" typeIds="org.pdtextensions.server.lhttpd.runtimeType" />
+		<image icon="/icons/server.gif" id="org.pdtextensions.server.ui.image.module" typeIds="org.pdtextensions.server.lhttpd.moduleType" />
 	</extension>
 	
 	<extension point="org.eclipse.wst.server.ui.editorPages">
