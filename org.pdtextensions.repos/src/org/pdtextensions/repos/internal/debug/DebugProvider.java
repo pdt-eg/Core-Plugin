@@ -38,9 +38,9 @@ public class DebugProvider implements IRepositoryProvider, IVendorAwareProvider 
 		// initialize dummies
 		final Vendor vendor1 = new Vendor("org.vendor1", this, new IModule[]{
 				new Module("foo-lib", "org.vendor1", this, new IModuleVersion[]{
-						new ModuleVersion("org.vendor1",  "foo-lib", "0.9", true, (String) null, null),
-						new ModuleVersion("org.vendor1",  "foo-lib", "1.0", true, (String) null, null),
-						new ModuleVersion("org.vendor1",  "foo-lib", "1.1-SNAPSHOT", false, (String) null, null)
+						new ModuleVersion("org.vendor1",  "foo-lib", "0.9", true, (String) null, null, null),
+						new ModuleVersion("org.vendor1",  "foo-lib", "1.0", true, (String) null, null, null),
+						new ModuleVersion("org.vendor1",  "foo-lib", "1.1-SNAPSHOT", false, (String) null, null, null)
 				}, "1.0", "1.1-SNAPSHOT")
 		});
 		final Vendor vendor2 = new Vendor("com.vendor2", this, new IModule[]{});

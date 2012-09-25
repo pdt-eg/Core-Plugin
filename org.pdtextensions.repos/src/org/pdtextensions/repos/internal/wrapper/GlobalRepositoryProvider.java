@@ -37,6 +37,12 @@ public class GlobalRepositoryProvider implements IRepositoryProvider {
 			this.providers.add(new DebugProvider());
 		}
 		
+		for (final IRepositoryProviderFactory factory : PEXReposPlugin.getFactories()) {
+			for (final IRepositoryProvider provider : factory.createDefaultRepositories()) {
+				this.providers.add(provider);
+			}
+		}
+		
 		for (final Provider provider : RepositoryStorage.instance().providers()) {
 			for (final IRepositoryProviderFactory factory : PEXReposPlugin.getFactories()) {
 				if (factory.getType().equals(provider.getType())) {

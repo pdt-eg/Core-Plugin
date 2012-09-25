@@ -2,6 +2,7 @@ package org.pdtextensions.repos;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,8 +44,9 @@ public class ModuleVersion implements IModuleVersion {
 	 * @param isRelease
 	 * @param files
 	 * @param primaryFileName may be null if there are no files
+	 * @param depLoader helper to load the dependencies; maybe null if no dependencies are available
 	 */
-	public ModuleVersion(String vendor, String module, String name, boolean isRelease, Map<String, IFile> files, String primaryFileName) {
+	public ModuleVersion(String vendor, String module, String name, boolean isRelease, Map<String, IFile> files, String primaryFileName, IDependencyLoader depLoader) {
 		this.moduleName = module;
 		this.vendorName = vendor;
 		this.name = name;
@@ -54,6 +56,7 @@ public class ModuleVersion implements IModuleVersion {
 			this.files.put(entry.getKey(), new FileWrapper(entry.getValue()));
 		}
 		this.primaryFile = primaryFileName;
+		this.dependencyLoader = depLoader;
 	}
 	
 	/**
@@ -64,8 +67,9 @@ public class ModuleVersion implements IModuleVersion {
 	 * @param isRelease
 	 * @param primaryFileName may be null if there are no files
 	 * @param primaryFile may be null if there are no files
+	 * @param depLoader helper to load the dependencies; maybe null if no dependencies are available
 	 */
-	public ModuleVersion(String vendor, String module, String name, boolean isRelease, String primaryFileName, IFile primaryFile) {
+	public ModuleVersion(String vendor, String module, String name, boolean isRelease, String primaryFileName, IFile primaryFile, IDependencyLoader depLoader) {
 		this.moduleName = module;
 		this.vendorName = vendor;
 		this.isRelease = isRelease;
@@ -74,6 +78,7 @@ public class ModuleVersion implements IModuleVersion {
 			this.files.put(primaryFileName, new FileWrapper(primaryFile));
 		}
 		this.primaryFile = primaryFileName;
+		this.dependencyLoader = depLoader;
 	}
 	
 	/**
@@ -82,12 +87,14 @@ public class ModuleVersion implements IModuleVersion {
 	 * @param module
 	 * @param name
 	 * @param isRelease
+	 * @param depLoader helper to load the dependencies; maybe null if no dependencies are available
 	 */
-	protected ModuleVersion(String vendor, String module, String name, boolean isRelease) {
+	protected ModuleVersion(String vendor, String module, String name, boolean isRelease, IDependencyLoader depLoader) {
 		this.moduleName = module;
 		this.vendorName = vendor;
 		this.name = name;
 		this.isRelease = isRelease;
+		this.dependencyLoader = depLoader;
 	}
 	
 	/**
@@ -216,7 +223,7 @@ public class ModuleVersion implements IModuleVersion {
 		 * @return result; should be null if the monitor was canceled.
 		 * @throws CoreException
 		 */
-		Iterable<IDependency> loadDependencies(IProgressMonitor monitor) throws CoreException;
+		List<IDependency> loadDependencies(IProgressMonitor monitor) throws CoreException;
 		
 		/**
 		 * Loads deep dependencies
@@ -224,31 +231,55 @@ public class ModuleVersion implements IModuleVersion {
 		 * @return result; should be null if the monitor was canceled.
 		 * @throws CoreException
 		 */
-		Iterable<IDependency> loadDeepDependencies(IProgressMonitor monitor) throws CoreException;
+		List<IDependency> loadDeepDependencies(IProgressMonitor monitor) throws CoreException;
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Iterable<IDependency> getDependencies(boolean deep,
 			IProgressMonitor monitor) throws CoreException {
-		// TODO Auto-generated method stub
-		return null;
+		if (deep) {
+			if (this.deepDependencies == null) {
+				if (this.dependencyLoader == null) {
+					return Collections.EMPTY_LIST;
+				}
+				this.deepDependencies = this.dependencyLoader.loadDeepDependencies(monitor);
+			}
+			return Collections.unmodifiableList(this.deepDependencies);
+		}
+		
+		if (this.dependencies == null) {
+			if (this.dependencyLoader == null) {
+				return Collections.EMPTY_LIST;
+			}
+			this.dependencies = this.dependencyLoader.loadDependencies(monitor);
+		}
+		return Collections.unmodifiableList(this.dependencies);
 	}
 
 	@Override
 	public void downloadDependencies(boolean deep, boolean useCache,
 			IProgressMonitor monitor, IDownloadFileCallback callback)
 			throws CoreException {
-		// TODO Auto-generated method stub
-		
+		for (final IDependency dep : this.getDependencies(deep, monitor)) {
+			if (monitor.isCanceled()) {
+				return;
+			}
+			callback.onDependency(dep.download(useCache, monitor), this, dep, monitor);
+		}
 	}
 
 	@Override
 	public void openDependenciesStream(boolean deep, boolean useCache,
 			IProgressMonitor monitor, IDownloadStreamCallback callback)
 			throws CoreException {
-		// TODO Auto-generated method stub
-		
+		for (final IDependency dep : this.getDependencies(deep, monitor)) {
+			if (monitor.isCanceled()) {
+				return;
+			}
+			callback.onDependency(dep.openStream(useCache, monitor), this, dep, monitor);
+		}
 	}
 
 }
