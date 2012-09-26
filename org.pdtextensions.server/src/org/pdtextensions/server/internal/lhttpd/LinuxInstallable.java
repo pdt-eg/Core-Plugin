@@ -10,27 +10,27 @@ public class LinuxInstallable extends InstallableRuntime2 {
 
 	@Override
 	public String getId() {
-		return "org.pdtextensions.server.lhttpd.LinuxInstallable";
+		return "org.pdtextensions.server.lhttpd.LinuxInstallable"; //$NON-NLS-1$
 	}
 
 	@Override
 	public String getName() {
-		return "XAMPP 1.8.0 for Linux";
+		return Messages.LinuxInstallable_Xampp180LinuxName;
 	}
 
 	@Override
 	public String getArchiveUrl() {
-		return "http://www.apachefriends.org/download.php?xampp-linux-1.8.0.tar.gz";
+		return "http://www.apachefriends.org/download.php?xampp-linux-1.8.0.tar.gz"; //$NON-NLS-1$
 	}
 
 	@Override
 	public String getArchivePath() {
-		return "lampp";
+		return "lampp"; //$NON-NLS-1$
 	}
 
 	@Override
 	public String getLicenseURL() {
-		return "http://www.gnu.org/licenses/gpl-2.0.txt";
+		return "http://www.gnu.org/licenses/gpl-2.0.txt"; //$NON-NLS-1$
 	}
 
 	@Override

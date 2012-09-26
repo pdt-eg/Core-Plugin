@@ -12,6 +12,8 @@ import org.eclipse.wst.server.core.IRuntimeType;
 import org.eclipse.wst.server.core.model.RuntimeDelegate;
 import org.pdtextensions.server.IPEXInstallableRuntime;
 import org.pdtextensions.server.PEXServerPlugin;
+import org.pdtextensions.server.lhttpd.ILHttpdLocationConfig;
+import org.pdtextensions.server.lhttpd.ILHttpdPortConfig;
 import org.pdtextensions.server.lhttpd.ILHttpdRuntime;
 import org.pdtextensions.server.lhttpd.ILHttpdRuntimeWorkingCopy;
 
@@ -24,16 +26,16 @@ public class LHttpdServerRuntime extends RuntimeDelegate implements ILHttpdRunti
 	
 	private static final String[] HTTPD_EXECUTABLES = new String[] {
 		// classic executable
-		"httpd.exe", "bin/httpd.exe", "apache2ctl", "bin/apache2ctl", "apache2", "bin/apache2", "httpd", "bin/httpd"
+		"httpd.exe", "bin/httpd.exe", "apache2ctl", "bin/apache2ctl", "apache2", "bin/apache2", "httpd", "bin/httpd"  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
 		,
 		// xampp directory layout
-		"apache/bin/httpd.exe", "apache/bin/apache2ctl", "apache/bin/apache2", "apache/bin/httpd"
+		"apache/bin/httpd.exe", "apache/bin/apache2ctl", "apache/bin/apache2", "apache/bin/httpd" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	};
 
 	@Override
 	public void setDefaults(IProgressMonitor monitor) {
 		IRuntimeType type = getRuntimeWorkingCopy().getRuntimeType();
-		getRuntimeWorkingCopy().setLocation(new Path(PEXServerPlugin.getPreference("location" + type.getId())));
+		getRuntimeWorkingCopy().setLocation(new Path(PEXServerPlugin.getPreference("location" + type.getId()))); //$NON-NLS-1$
 	}
 
 	/**
@@ -54,7 +56,7 @@ public class LHttpdServerRuntime extends RuntimeDelegate implements ILHttpdRunti
 	
 	protected IStatus verifyLocation() {
 		if (getExecutable() == null) {
-			return new Status(IStatus.ERROR, PEXServerPlugin.PLUGIN_ID, "Installation directory invalid; httpd executable not found.");
+			return new Status(IStatus.ERROR, PEXServerPlugin.PLUGIN_ID, Messages.LHttpdServerRuntime_HttpdExecutableNotFound);
 		}
 		return Status.OK_STATUS;
 	}
@@ -80,6 +82,42 @@ public class LHttpdServerRuntime extends RuntimeDelegate implements ILHttpdRunti
 		if (Platform.OS_LINUX.equals(Platform.getOS())) {
 			return new LinuxInstallable();
 		}
+		return null;
+	}
+
+	@Override
+	public ILHttpdPortConfig[] getPortConfigurations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getHttpdConf() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getHttpdConf(int flags) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getDefaultHtdocs() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ILHttpdLocationConfig[] getLocationConfigs() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getAllowOverride() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

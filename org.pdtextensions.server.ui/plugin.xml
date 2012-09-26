@@ -11,7 +11,7 @@
 		<page
         	id="org.pdtextensions.server.ui.lhttpd.configuration.editor"
         	order="20"
-        	name="%configurationEditorWebModulesPage"
+        	name="%ServerConfigGeneral"
         	typeIds="org.pdtextensions.server.lhttpd.serverType"
        		class="org.pdtextensions.server.ui.internal.lhttpd.ServerConfigurationEditorPart">
         </page>

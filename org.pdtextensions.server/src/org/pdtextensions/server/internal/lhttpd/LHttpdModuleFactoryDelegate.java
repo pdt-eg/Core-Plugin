@@ -14,6 +14,8 @@ import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
 import org.eclipse.wst.server.core.IModule;
 import org.eclipse.wst.server.core.model.ModuleDelegate;
 import org.eclipse.wst.server.core.util.ProjectModuleFactoryDelegate;
+import org.pdtextensions.server.LHttpdConstants;
+import org.pdtextensions.server.PEXServerPlugin;
 
 public class LHttpdModuleFactoryDelegate extends ProjectModuleFactoryDelegate {
 	
@@ -79,12 +81,11 @@ public class LHttpdModuleFactoryDelegate extends ProjectModuleFactoryDelegate {
 		try {
 			if(isValidModule(project)) {
 				moduleDelegate = new LHttpdModule(project);
-				module = createModule(project.getName(), project.getName(), "org.pdtextensions.server.lhttpd.moduleType", "1.0", moduleDelegate.getProject());
+				module = createModule(project.getName(), project.getName(), LHttpdConstants.MODULE_TYPE_ID, LHttpdConstants.MODULE_TYPE_VERSION, moduleDelegate.getProject());
 				moduleDelegate.initialize(module);
 			}
 		} catch (Exception e) {
-			// TODO WSTWebPlugin.logError(e);
-			e.printStackTrace();
+			PEXServerPlugin.logError(e);
 		} finally {
 			if (module != null) {
 				if (getModuleDelegate(module) == null)

@@ -52,7 +52,7 @@ public class RuntimeWizardFragment extends WizardFragment {
 		IRuntimeWorkingCopy runtime = (IRuntimeWorkingCopy) getTaskModel().getObject(TaskModel.TASK_RUNTIME);
 		IPath path = runtime.getLocation();
 		if (runtime.validate(null).getSeverity() != IStatus.ERROR)
-			PEXServerPlugin.setPreference("location" + runtime.getRuntimeType().getId(), path.toString());
+			PEXServerPlugin.setPreference("location" + runtime.getRuntimeType().getId(), path.toString()); //$NON-NLS-1$
 	}
 
 }

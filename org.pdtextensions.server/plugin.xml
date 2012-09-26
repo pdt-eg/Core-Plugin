@@ -63,19 +63,4 @@
     	    <facet id="php.core.component" version="1"/>
         </supported>
 	</extension>
-	
-	<extension point="org.eclipse.wst.server.core.installableRuntimes">
-    	<runtime
-    		id="org.pdtextensions.server.lhttpd.runtimeType"
-    		licenseUrl="http://www.gnu.org/licenses/gpl-2.0.txt"
-    		archiveUrl="http://www.apachefriends.org/download.php?xampp-win32-1.8.0-VC9.zip"
-    		archivePath="XAMPP 1.8.0 (Windows)"
-    		os="win32"/>
-   		<runtime
-    		id="org.pdtextensions.server.lhttpd.runtimeType"
-    		licenseUrl="http://www.gnu.org/licenses/gpl-2.0.txt"
-    		archiveUrl="http://www.apachefriends.org/download.php?xampp-linux-1.8.0.tar.gz"
-    		archivePath="XAMPP 1.8.0 (Linux)"
-    		os="linux"/>
-    </extension>
 </plugin>

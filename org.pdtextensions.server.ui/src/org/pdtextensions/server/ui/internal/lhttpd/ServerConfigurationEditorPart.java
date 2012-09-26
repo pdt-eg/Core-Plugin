@@ -19,12 +19,14 @@ public class ServerConfigurationEditorPart extends ServerEditorPart {
 		
 		ScrolledForm form = toolkit.createScrolledForm(parent);
 		toolkit.decorateFormHeading(form.getForm());
-		form.setText("General configuration");
+		form.setText(Messages.ServerConfigurationEditorPart_FormTitle);
 		/* TODO form.setImage(TomcatUIPlugin.getImage(TomcatUIPlugin.IMG_WEB_MODULE));*/
 		GridLayout layout = new GridLayout();
 		layout.marginTop = 6;
 		layout.marginLeft = 6;
 		form.getBody().setLayout(layout);
+		
+		
 		// TODO Auto-generated method stub
 
 	}

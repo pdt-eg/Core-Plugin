@@ -41,6 +41,7 @@ import org.pdtextensions.server.PEXServerPlugin;
  * mostly taken from wst
  * 
  */
+@SuppressWarnings("restriction")
 public abstract class InstallableRuntime2 implements IPEXInstallableRuntime {
 	private byte[] BUFFER = null;
 
@@ -83,7 +84,7 @@ public abstract class InstallableRuntime2 implements IPEXInstallableRuntime {
 //				Trace.trace(Trace.STRING_WARNING, "Error loading license", e);
 //			}
 			throw new CoreException(new Status(IStatus.ERROR, PEXServerPlugin.PLUGIN_ID, 0,
-					NLS.bind("Error occurred installing server: {0}", e.getLocalizedMessage()), e));
+					NLS.bind(Messages.InstallableRuntime2_ErrorInstallingServer, e.getLocalizedMessage()), e));
 		} finally {
 			try {
 				if (out != null)
@@ -98,7 +99,7 @@ public abstract class InstallableRuntime2 implements IPEXInstallableRuntime {
 	 * @see IInstallableRuntime#install(IPath)
 	 */
 	public void install(final IPath path) {
-		Job installRuntimeJob = new Job("Install runtime " + this.getName()) {
+		Job installRuntimeJob = new Job(NLS.bind(Messages.InstallableRuntime2_TaskInstallRuntime, this.getName())) {
 			public boolean belongsTo(Object family) {
 				return PEXServerPlugin.PLUGIN_ID.equals(family);
 			}
@@ -133,9 +134,9 @@ public abstract class InstallableRuntime2 implements IPEXInstallableRuntime {
 		if (BUFFER == null)
 			BUFFER = new byte[8192];
 		
-		String msg = NLS.bind((size > 0) ? "Downloading: {0}, received {1} of {2} kbytes" : "Downloading: {0}, received {1} kbytes",
-				new Object [] { name, "{0}", Integer.toString(size / 1024) });
-		SubMonitor progress = SubMonitor.convert(monitor, NLS.bind(msg, "0"), (size > 0) ? size : DEFAULT_DOWNLOAD_SIZE);
+		String msg = NLS.bind((size > 0) ? Messages.InstallableRuntime2_DownloadKnownSize : Messages.InstallableRuntime2_DownloadUnknownSize,
+				new Object [] { name, "{0}", Integer.toString(size / 1024) }); //$NON-NLS-1$
+		SubMonitor progress = SubMonitor.convert(monitor, NLS.bind(msg, "0"), (size > 0) ? size : DEFAULT_DOWNLOAD_SIZE); //$NON-NLS-1$
 		
 		int r = in.read(BUFFER);
 		int total = 0;
@@ -167,7 +168,7 @@ public abstract class InstallableRuntime2 implements IPEXInstallableRuntime {
 		File temp = null;
 		try {
 			url = new URL(getArchiveUrl());
-			temp = File.createTempFile("runtime", "");
+			temp = File.createTempFile("runtime", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			temp.deleteOnExit();
 		} catch (IOException e) {
 			if (monitor != null)
@@ -176,7 +177,7 @@ public abstract class InstallableRuntime2 implements IPEXInstallableRuntime {
 //				Trace.trace(Trace.STRING_WARNING, "Error creating url and temp file", e);
 //			}
 			throw new CoreException(new Status(IStatus.ERROR, PEXServerPlugin.PLUGIN_ID, 0,
-				NLS.bind("Error occurred installing server: {0}", e.getLocalizedMessage()), e));
+				NLS.bind(Messages.InstallableRuntime2_ErrorInstallingServer, e.getLocalizedMessage()), e));
 		}
 		String name = url.getQuery();
 //		int slashIdx = name.lastIndexOf('/');
@@ -199,7 +200,7 @@ public abstract class InstallableRuntime2 implements IPEXInstallableRuntime {
 //				Trace.trace(Trace.STRING_WARNING, "Error downloading runtime", e);
 //			}
 			throw new CoreException(new Status(IStatus.ERROR, PEXServerPlugin.PLUGIN_ID, 0,
-				NLS.bind("Error occurred installing server: {0}", e.getLocalizedMessage()), e));
+				NLS.bind(Messages.InstallableRuntime2_ErrorInstallingServer, e.getLocalizedMessage()), e));
 		} finally {
 			try {
 				if (fout != null)
@@ -214,16 +215,16 @@ public abstract class InstallableRuntime2 implements IPEXInstallableRuntime {
 		FileInputStream in = null;
 		try {
 			in = new FileInputStream(temp);
-			if (name.endsWith("zip"))
+			if (name.endsWith("zip")) //$NON-NLS-1$
 				unzip(in, path, progress.newChild(500));
-			else if (name.endsWith("tar"))
+			else if (name.endsWith("tar")) //$NON-NLS-1$
 				untar(in, path, progress.newChild(500));
-			else if (name.endsWith("tar.gz")) {
-				File tarFile = File.createTempFile("runtime", ".tar");
+			else if (name.endsWith("tar.gz")) { //$NON-NLS-1$
+				File tarFile = File.createTempFile("runtime", ".tar"); //$NON-NLS-1$ //$NON-NLS-2$
 				tarFile.deleteOnExit();
 				String tarName = name;
 				
-				progress.subTask(NLS.bind("Uncompressing: {0}", tarName));
+				progress.subTask(NLS.bind(Messages.InstallableRuntime2_TaskUncompressing, tarName));
 				int tempSize = Integer.MAX_VALUE;
 				if (temp.length() < Integer.MAX_VALUE)
 					tempSize = (int)temp.length();
@@ -240,7 +241,7 @@ public abstract class InstallableRuntime2 implements IPEXInstallableRuntime {
 //				Trace.trace(Trace.STRING_SEVERE, "Error uncompressing runtime", e);
 //			}
 			throw new CoreException(new Status(IStatus.ERROR, PEXServerPlugin.PLUGIN_ID, 0,
-				NLS.bind("Error occurred installing server: {0}", e.getLocalizedMessage()), e));
+				NLS.bind(Messages.InstallableRuntime2_ErrorInstallingServer, e.getLocalizedMessage()), e));
 		} finally {
 			try {
 				if (in != null)
@@ -269,7 +270,7 @@ public abstract class InstallableRuntime2 implements IPEXInstallableRuntime {
 		ZipEntry entry = zin.getNextEntry();
 		while (entry != null) {
 			String name = entry.getName();
-			progress.subTask(NLS.bind("Uncompressing: {0}", name));
+			progress.subTask(NLS.bind(Messages.InstallableRuntime2_TaskUncompressing, name));
 			if (archivePath != null && name.startsWith(archivePath)) {
 				name = name.substring(archivePath.length());
 				if (name.length() > 1)
@@ -312,7 +313,7 @@ public abstract class InstallableRuntime2 implements IPEXInstallableRuntime {
 			TarEntry entry = zin.getNextEntry();
 			while (entry != null) {
 				String name = entry.getName();
-				progress.subTask(NLS.bind("Uncompressing: {0}", name));
+				progress.subTask(NLS.bind(Messages.InstallableRuntime2_TaskUncompressing, name));
 				if (archivePath != null && name.startsWith(archivePath)) {
 					name = name.substring(archivePath.length());
 					if (name.length() > 1)
@@ -368,6 +369,6 @@ public abstract class InstallableRuntime2 implements IPEXInstallableRuntime {
 	}
 
 	public String toString() {
-		return "InstallableRuntime2[" + getId() + "]";
+		return "InstallableRuntime2[" + getId() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

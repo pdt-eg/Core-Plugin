@@ -31,14 +31,16 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wst.server.core.IRuntimeWorkingCopy;
 import org.eclipse.wst.server.core.TaskModel;
-import org.eclipse.wst.server.core.internal.ServerPlugin;
 import org.eclipse.wst.server.ui.internal.wizard.TaskWizard;
 import org.eclipse.wst.server.ui.internal.wizard.fragment.LicenseWizardFragment;
 import org.eclipse.wst.server.ui.wizard.IWizardHandle;
 import org.eclipse.wst.server.ui.wizard.WizardFragment;
 import org.pdtextensions.server.IPEXInstallableRuntime;
+import org.pdtextensions.server.PEXServerPlugin;
 import org.pdtextensions.server.lhttpd.ILHttpdRuntimeWorkingCopy;
+import org.pdtextensions.server.ui.PEXServerUiPlugin;
 
+@SuppressWarnings("restriction")
 public class LHttpdRuntimeComposite extends Composite {
 
 	private IWizardHandle wizard;
@@ -56,8 +58,8 @@ public class LHttpdRuntimeComposite extends Composite {
 		super(parent, SWT.NONE);
 		this.wizard = wizard;
 		
-		wizard.setTitle("Local httpd runtime");
-		wizard.setDescription("Choose the local httpd installation");
+		wizard.setTitle(Messages.LHttpdRuntimeComposite_Title);
+		wizard.setDescription(Messages.LHttpdRuntimeComposite_Description);
 		// TODO
 		/*wizard.setImageDescriptor(TomcatUIPlugin.getImageDescriptor(TomcatUIPlugin.IMG_WIZ_TOMCAT));*/
 		
@@ -72,7 +74,7 @@ public class LHttpdRuntimeComposite extends Composite {
 		/*PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ContextIds.RUNTIME_COMPOSITE);*/
 		
 		Label label = new Label(this, SWT.NONE);
-		label.setText("Na&me:");
+		label.setText(Messages.LHttpdRuntimeComposite_Name);
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -88,7 +90,7 @@ public class LHttpdRuntimeComposite extends Composite {
 		});
 	
 		label = new Label(this, SWT.NONE);
-		label.setText("Apache httpd installation &directory:");
+		label.setText(Messages.LHttpdRuntimeComposite_InstallDir);
 		data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -103,11 +105,11 @@ public class LHttpdRuntimeComposite extends Composite {
 			}
 		});
 		
-		Button browse = SWTUtil.createButton(this, "B&rowse...");
+		Button browse = SWTUtil.createButton(this, Messages.LHttpdRuntimeComposite_Browse);
 		browse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent se) {
 				DirectoryDialog dialog = new DirectoryDialog(LHttpdRuntimeComposite.this.getShell());
-				dialog.setMessage("Select apache httpd or xampp installation directory.");
+				dialog.setMessage(Messages.LHttpdRuntimeComposite_SelectApacheXamppInstallDir);
 				dialog.setFilterPath(installDir.getText());
 				String selectedDirectory = dialog.open();
 				if (selectedDirectory != null)
@@ -120,7 +122,7 @@ public class LHttpdRuntimeComposite extends Composite {
 		data.horizontalIndent = 10;
 		installLabel.setLayoutData(data);
 		
-		install = SWTUtil.createButton(this, "&Install...");
+		install = SWTUtil.createButton(this, Messages.LHttpdRuntimeComposite_Install);
 		install.setEnabled(false);
 		install.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent se) {
@@ -128,12 +130,12 @@ public class LHttpdRuntimeComposite extends Composite {
 				try {
 					license = ir.getLicense(new NullProgressMonitor());
 				} catch (CoreException e) {
-					// TODO Trace.trace(Trace.SEVERE, "Error getting license", e);
+					PEXServerPlugin.logError("Error getting license", e); //$NON-NLS-1$
 				}
 				TaskModel taskModel = new TaskModel();
 				taskModel.putObject(LicenseWizardFragment.LICENSE, license);
-				TaskWizard wizard2 = new TaskWizard("Download and install", new WizardFragment() {
-					protected void createChildFragments(List list) {
+				TaskWizard wizard2 = new TaskWizard(Messages.LHttpdRuntimeComposite_TitleDownloadAndInstall, new WizardFragment() {
+					protected void createChildFragments(List<WizardFragment> list) {
 						list.add(new LicenseWizardFragment());
 					}
 				}, taskModel);
@@ -143,15 +145,14 @@ public class LHttpdRuntimeComposite extends Composite {
 					return;
 				
 				DirectoryDialog dialog = new DirectoryDialog(LHttpdRuntimeComposite.this.getShell());
-				dialog.setMessage("Select xampp installation directory");
+				dialog.setMessage(Messages.LHttpdRuntimeComposite_SelectXamppInstallDir);
 				dialog.setFilterPath(installDir.getText());
 				String selectedDirectory = dialog.open();
 				if (selectedDirectory != null) {
-//					ir.install(new Path(selectedDirectory));
 					final IPath installPath = new Path(selectedDirectory);
-					installRuntimeJob = new Job("Installing server runtime environment") {
+					installRuntimeJob = new Job(Messages.LHttpdRuntimeComposite_TaskInstallingRuntime) {
 						public boolean belongsTo(Object family) {
-							return ServerPlugin.PLUGIN_ID.equals(family);
+							return PEXServerUiPlugin.PLUGIN_ID.equals(family);
 						}
 						
 						protected IStatus run(IProgressMonitor monitor) {
@@ -210,7 +211,7 @@ public class LHttpdRuntimeComposite extends Composite {
 		}
 		
 		install.setEnabled(false);
-		installLabel.setText("");
+		installLabel.setText(""); //$NON-NLS-1$
 		if (runtimeWC == null) {
 			ir = null;
 		} else {
@@ -232,17 +233,17 @@ public class LHttpdRuntimeComposite extends Composite {
 		if (runtimeWC.getName() != null)
 			name.setText(runtimeWC.getName());
 		else
-			name.setText("");
+			name.setText(""); //$NON-NLS-1$
 		
 		if (runtimeWC.getLocation() != null)
 			installDir.setText(runtimeWC.getLocation().toOSString());
 		else
-			installDir.setText("");
+			installDir.setText(""); //$NON-NLS-1$
 	}
 
 	protected void validate() {
 		if (runtime == null) {
-			wizard.setMessage("", IMessageProvider.ERROR);
+			wizard.setMessage("", IMessageProvider.ERROR); //$NON-NLS-1$
 			return;
 		}
 		
