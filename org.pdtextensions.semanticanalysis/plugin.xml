@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="org.pdtextensions.core.ui.menu?after=additions">
+            <command
+                  commandId="org.pdtextensions.core.ui.command.phpcsfixer"
+                  icon="ico/full/obj16/cs-fixer.png"
+                  label="Run PHP-CS-Fixer"
+                  tooltip="Run PHP-CS-Fixer on files and folders">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeMenuSelection">
+                     <iterate
+                           ifEmpty="false"
+                           operator="or">
+                        <adapt
+                              type="org.eclipse.core.resources.IResource">
+                        </adapt>
+                     </iterate>
+                  </with>
+               </visibleWhen>
+            </command>
+      </menuContribution>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            description="Run PHP-CS-Fixer on files and folders"
+            id="org.pdtextensions.core.ui.command.phpcsfixer"
+            name="Run PHP-CS-Fixer">
+      </command>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.pdtextensions.semanticanalysis.handlers.RunPHPCSFixerHandler"
+            commandId="org.pdtextensions.core.ui.command.phpcsfixer">
+      </handler>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.php.ui.preferences.CodeStylePreferencePage"
+            class="org.pdtextensions.semanticanalysis.preferences.csfixer.PHPCSFixerPreferencePage"
+            id="org.pdtextensions.semanticanalysis.preferences.PHPCSFixerPreferencePage"
+            name="CS Fixer">
+      </page>
+   </extension>
+   
+   
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            category="org.eclipse.php.ui.propertyPages.CodeStylePreferencePage"
+            class="org.pdtextensions.semanticanalysis.preferences.csfixer.PHPCSFixerPreferencePage"
+            id="org.pdtextensions.core.ui.propertyPages.PHPCSFixerPreferencePage"
+            name="CS Fixer">
+ 			<enabledWhen>
+				<adapt type="org.eclipse.core.resources.IProject">
+				</adapt>
+			</enabledWhen>
+			<filter name="nature" value="org.eclipse.php.core.PHPNature" />
+      </page>
+   </extension>
+   
+   
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.pdtextensions.core.ui.command.phpcsfixer"
+            contextId="org.eclipse.php.core.phpsource"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+P">
+      </key>
+   </extension>
+   
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.pdtextensions.core.ui.preferences.PEXPreferenceInitializer">
+      </initializer>
+   </extension>
+   
+   
+
+</plugin>
