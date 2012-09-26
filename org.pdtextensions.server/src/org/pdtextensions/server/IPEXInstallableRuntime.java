@@ -14,6 +14,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 /**
+ * mostly taken from wst.
+ * 
  * Represents an installable runtime.
  * <p>
  * This interface is not intended to be implemented by clients.
