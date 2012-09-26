@@ -1,13 +1,25 @@
 package org.pdtextensions.server;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.php.internal.core.facet.PHPFacets;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.prefs.BackingStoreException;
+import org.pdtextensions.server.internal.web.PhpWebProject;
+import org.pdtextensions.server.web.IPhpWebProject;
 
 public class PEXServerPlugin extends Plugin implements BundleActivator {
 
@@ -38,6 +50,11 @@ public class PEXServerPlugin extends Plugin implements BundleActivator {
 	public void stop(BundleContext bundleContext) throws Exception {
 		PEXServerPlugin.context = null;
 		plugin = null;
+		webProjects.clear();
+		if (projectListener != null) {
+			ResourcesPlugin.getWorkspace().removeResourceChangeListener(projectListener);
+			projectListener = null;
+		}
 	}
 
 	/**
@@ -78,6 +95,45 @@ public class PEXServerPlugin extends Plugin implements BundleActivator {
 			final IStatus status = new Status(IStatus.ERROR, PLUGIN_ID, message, t);
 			plugin.getLog().log(status);
 		}
+	}
+	
+	private static Map<IProject, PhpWebProject> webProjects = new HashMap<IProject, PhpWebProject>();
+	
+	private static IResourceChangeListener projectListener;
+	
+	/**
+	 * Creates a php web project from given eclipse project
+	 * @param project eclipse project
+	 * @return php web project
+	 * @throws CoreException thrown if the given project is invalid (not a php/ faceted project)
+	 */
+	public static synchronized IPhpWebProject create(IProject project) throws CoreException {
+		if (projectListener == null) {
+			projectListener = new IResourceChangeListener() {
+				
+				@Override
+				public void resourceChanged(IResourceChangeEvent event) {
+					if (event.getType() == IResourceChangeEvent.PRE_CLOSE && event.getResource() instanceof IResource) {
+						final PhpWebProject webProject = webProjects.get((IProject) event.getResource());
+						if (webProject != null) {
+							webProject.notifyProjectClosed();
+							webProjects.remove((IProject) event.getResource());
+						}
+					}
+				}
+			};
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(projectListener, IResourceChangeEvent.PRE_CLOSE);
+		}
+		PhpWebProject webProject = webProjects.get(project);
+		if (webProject == null) {
+			if (PHPFacets.isFacetedProject(project)) {
+				webProject = new PhpWebProject(project);
+				webProjects.put(project, webProject);
+			} else {
+				throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID, "Given project is not a php faceted project")); //$NON-NLS-1$
+			}
+		}
+		return webProject;
 	}
 
 }
