@@ -5,62 +5,25 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.server.web;
+
+package org.pdtextensions.server.internal.web;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.dltk.core.IScriptProject;
-import org.eclipse.wst.common.project.facet.core.IFacetedProject;
+import org.pdtextensions.server.web.IPhpWebFolder;
 
 /**
- * The php web project
+ * A storage for web projects.
  * 
  * @author mepeisen
  */
-public interface IPhpWebProject {
-	
-	/** the facets id for the extended web project. */
-	String FACET_ID = "php.web.project"; //$NON-NLS-1$
-	
-	/** the faceted version 1.0 */
-	String FACET_VERSION_1_0 = "1.0"; //$NON-NLS-1$
-	
-	/**
-	 * Returns the underlying eclipse project.
-	 * @return eclipse project
-	 */
-	IProject getEclipseProject();
-	
-	/**
-	 * Returns the dltk script project
-	 * @return dltk script project
-	 */
-	IScriptProject getScriptProject();
-	
-	/**
-	 * Returns the faceted project
-	 * @return faceted project
-	 */
-	IFacetedProject getFacetedProject();
+public interface IWebProjectStorage {
 	
 	/**
 	 * Returns the default web folder used as webroot
 	 * @return default web folder.
 	 */
 	IContainer getDefaultWebFolder();
-
-	/**
-	 * Returns true if the project has an installed web facet
-	 * @return true for the web facet
-	 */
-	boolean hasWebFacet();
-	
-	/**
-	 * Activates the web project facet
-	 * @throws CoreException thrown while errors during facet installation
-	 */
-	void activateWebFacet() throws CoreException;
 	
 	/**
 	 * Sets the default web folder. Can only be used on projects with web facets. Projects
@@ -91,17 +54,5 @@ public interface IPhpWebProject {
 	 * @throws CoreException thrown on failures
 	 */
 	void removeWebFolder(IPhpWebFolder folder) throws CoreException;
-	
-	/**
-	 * Registers a project listener to watch for web project changes.
-	 * @param listener project listener to be added
-	 */
-	void registerProjectListener(IPhpWebProjectListener listener);
-	
-	/**
-	 * Removes the project listener
-	 * @param listener project listener to be removed
-	 */
-	void removeProjectListener(IPhpWebProjectListener listener);
 
 }

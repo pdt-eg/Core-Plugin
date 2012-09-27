@@ -7,13 +7,22 @@
  ******************************************************************************/
 package org.pdtextensions.server.internal.web;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.wst.common.project.facet.core.IFacetedProject;
+import org.eclipse.wst.common.project.facet.core.IProjectFacet;
+import org.eclipse.wst.common.project.facet.core.IProjectFacetVersion;
 import org.eclipse.wst.common.project.facet.core.ProjectFacetsManager;
+import org.osgi.service.prefs.BackingStoreException;
 import org.pdtextensions.server.PEXServerPlugin;
 import org.pdtextensions.server.web.IPhpWebFolder;
 import org.pdtextensions.server.web.IPhpWebProject;
@@ -30,6 +39,10 @@ public class PhpWebProject implements IPhpWebProject {
 	 * the underlying project
 	 */
 	private IProject project;
+	
+	private IWebProjectStorage storage;
+	
+	private List<IPhpWebProjectListener> listeners = new ArrayList<IPhpWebProjectListener>();
 
 	/**
 	 * Constructor
@@ -60,71 +73,155 @@ public class PhpWebProject implements IPhpWebProject {
 	}
 
 	private void init() {
-		// TODO Auto-generated method stub
+		if (this.storage == null) {
+			if (this.hasWebFacet()) {
+				try {
+					this.storage = new SettingsPhpProjectStorage(project);
+				} catch (BackingStoreException e) {
+					PEXServerPlugin.logError(e);
+					this.storage = new PlainPhpProjectStorage(project);
+				}
+			} else {
+				this.storage = new PlainPhpProjectStorage(project);
+			}
+		}
 	}
 
 	@Override
 	public IContainer getDefaultWebFolder() {
 		init();
-		// TODO Auto-generated method stub
-		return null;
+		return this.storage.getDefaultWebFolder();
 	}
 
 	@Override
 	public boolean hasWebFacet() {
 		final IFacetedProject faceted = this.getFacetedProject();
 		if (faceted != null) {
-			
+			final IProjectFacet webFacet = ProjectFacetsManager
+					.getProjectFacet(FACET_ID);
+			return faceted.hasProjectFacet(webFacet);
 		}
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void activateWebFacet() {
-		// TODO Auto-generated method stub
-
+	public void activateWebFacet() throws CoreException {
+		final IFacetedProject faceted = this.getFacetedProject();
+		if (faceted != null) {
+			final IProjectFacet webFacet = ProjectFacetsManager
+					.getProjectFacet(FACET_ID);
+			if (faceted.hasProjectFacet(webFacet)) {
+				return;
+			}
+			final IProjectFacetVersion version = webFacet.getVersion(FACET_VERSION_1_0);
+			faceted.installProjectFacet(version, null, new NullProgressMonitor());
+			try {
+				this.storage = new SettingsPhpProjectStorage(project);
+			} catch (BackingStoreException e) {
+				throw new CoreException(new Status(IStatus.ERROR, PEXServerPlugin.PLUGIN_ID, "Error reading preferences", e)); //$NON-NLS-1$
+			}
+		}
 	}
 
 	@Override
 	public void setDefaultWebFolder(IContainer folder) throws CoreException {
-		// TODO Auto-generated method stub
-
+		init();
+		final IContainer oldValue = this.getDefaultWebFolder();
+		if (!oldValue.equals(folder)) {
+			this.storage.setDefaultWebFolder(folder);
+		}
 	}
 
 	@Override
 	public IPhpWebFolder[] getWebFolders() {
-		// TODO Auto-generated method stub
-		return null;
+		init();
+		return this.storage.getWebFolders();
 	}
 
 	@Override
 	public IPhpWebFolder createWebFolder(IContainer folder, String pathName)
 			throws CoreException {
-		// TODO Auto-generated method stub
-		return null;
+		init();
+		final WebFolder result = new WebFolder(storage.createWebFolder(folder, pathName));
+		for (final IPhpWebProjectListener listener : listeners) {
+			listener.onAddedWebFolder(this, result);
+		}
+		return result;
 	}
 
 	@Override
 	public void removeWebFolder(IPhpWebFolder folder) throws CoreException {
-		// TODO Auto-generated method stub
-
+		init();
+		this.storage.removeWebFolder(((WebFolder)folder).folder);
+		for (final IPhpWebProjectListener listener : listeners) {
+			listener.onRemovedFolder(this, folder);
+		}
 	}
 
 	@Override
 	public void registerProjectListener(IPhpWebProjectListener listener) {
-		// TODO Auto-generated method stub
-
+		this.listeners.add(listener);
 	}
 
 	@Override
 	public void removeProjectListener(IPhpWebProjectListener listener) {
-		// TODO Auto-generated method stub
-
+		this.listeners.remove(listener);
 	}
 
 	public void notifyProjectClosed() {
-		// TODO Auto-generated method stub
+		for (final IPhpWebProjectListener listener : listeners) {
+			listener.onProjectClosed(this);
+		}
+	}
+
+	public void notifySettingsChanged() {
+		if (storage instanceof SettingsPhpProjectStorage) {
+			try {
+				((SettingsPhpProjectStorage) storage).reload();
+			} catch (BackingStoreException e) {
+				PEXServerPlugin.logError(e);
+			}
+			// TODO Notify listeners about changes
+		}
+	}
+	
+	private class WebFolder implements IPhpWebFolder {
+		
+		private IPhpWebFolder folder;
+		
+		public WebFolder(IPhpWebFolder folder) {
+			this.folder = folder;
+		}
+
+		/**
+		 * @see org.pdtextensions.server.web.IPhpWebFolder#getFolder()
+		 */
+		@Override
+		public IContainer getFolder() {
+			return folder.getFolder();
+		}
+
+		/**
+		 * @see org.pdtextensions.server.web.IPhpWebFolder#getPathName()
+		 */
+		@Override
+		public String getPathName() {
+			return folder.getPathName();
+		}
+
+		/**
+		 * @see org.pdtextensions.server.web.IPhpWebFolder#set(org.eclipse.core.resources.IContainer, java.lang.String)
+		 */
+		@Override
+		public void set(IContainer folder, String pathName)
+				throws CoreException {
+			final IContainer oldFolder = this.folder.getFolder();
+			final String oldPath = this.folder.getPathName();
+			this.folder.set(folder, pathName);
+			for (final IPhpWebProjectListener listener : listeners) {
+				listener.onChangedFolder(PhpWebProject.this, this.folder, oldFolder, folder, oldPath, pathName);
+			}
+		}
 		
 	}
 

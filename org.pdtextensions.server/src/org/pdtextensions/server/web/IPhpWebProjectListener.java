@@ -55,4 +55,10 @@ public interface IPhpWebProjectListener {
 	 */
 	void onChangedFolder(IPhpWebProject project, IPhpWebFolder changed, IContainer oldFolder, IContainer newFolder, String oldPath, String newPath);
 
+	/**
+	 * Invoked on a removed project
+	 * @param phpWebProject
+	 */
+	void onProjectClosed(IPhpWebProject phpWebProject);
+
 }

@@ -8,6 +8,7 @@
 package org.pdtextensions.server.web;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.runtime.CoreException;
 
 public interface IPhpWebFolder {
 	
@@ -15,6 +16,6 @@ public interface IPhpWebFolder {
 	
 	String getPathName();
 	
-	void set(IContainer folder, String pathName);
+	void set(IContainer folder, String pathName) throws CoreException;
 
 }

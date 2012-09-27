@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -26,6 +27,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.prefs.BackingStoreException;
 import org.pdtextensions.server.internal.web.PhpWebProject;
+import org.pdtextensions.server.internal.web.SettingsPhpProjectStorage;
 import org.pdtextensions.server.web.IPhpWebProject;
 
 public class PEXServerPlugin extends Plugin implements BundleActivator {
@@ -126,10 +128,21 @@ public class PEXServerPlugin extends Plugin implements BundleActivator {
 							webProject.notifyProjectClosed();
 							webProjects.remove((IProject) event.getResource());
 						}
+					} else if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
+						final IResourceDelta delta = event.getDelta();
+						if (delta != null) {
+							for (final PhpWebProject project : webProjects.values()) {
+								final IResourceDelta settingsDelta = delta.findMember(project.getEclipseProject().getFile(SettingsPhpProjectStorage.SETTINGS_FILENAME).getFullPath());
+								if (settingsDelta != null) {
+									project.notifySettingsChanged();
+								}
+							}
+						}
 					}
 				}
 			};
-			ResourcesPlugin.getWorkspace().addResourceChangeListener(projectListener, IResourceChangeEvent.PRE_CLOSE);
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(projectListener,
+					IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.POST_CHANGE);
 		}
 		PhpWebProject webProject = webProjects.get(project);
 		if (webProject == null) {
