@@ -2,13 +2,40 @@
 <?eclipse version="3.4"?>
 <plugin>
 
-   <extension-point id="profileContributor" name="Formatter Profile Contributor" schema="schema/profileContributor.exsd"/>
+   <extension-point id="formatterProfileContributor" name="Formatter Profile Contributor" schema="schema/formatterProfileContributor.exsd"/>
+   <extension-point id="namespaceresolver" name="PDT Namespaceresolver" schema="schema/namespaceresolver.exsd"/>
+
+	<extension point="org.eclipse.ui.perspectiveExtensions">
+		<perspectiveExtension targetID="org.eclipse.php.perspective">			
+			<newWizardShortcut id="org.pdtextensions.core.ui.wizards.classes.ClassCreationWizard" />
+		</perspectiveExtension>		
+	</extension>	
+	
+   <extension
+         point="org.eclipse.ui.newWizards">         
+		<wizard
+        	category="org.eclipse.php.project.ui"
+        	class="org.pdtextensions.core.ui.wizards.NewClassWizard"
+        	icon="ico/full/obj16/phpclassdata.gif"
+        	id="org.pdtextensions.core.ui.wizards.classes.ClassCreationWizard"
+        	name="New Class"
+        	project="false">
+        </wizard>
+  <wizard
+        category="org.eclipse.php.project.ui"
+        class="org.pdtextensions.core.ui.wizards.CreateInterfaceWizard"
+        icon="ico/full/obj16/newint_wiz.gif"
+        id="org.pdtextensions.core.ui.wizards.interface"
+        name="New Interface">
+  </wizard>
+   </extension>
+	
 
    <extension
          point="org.eclipse.php.ui.phpFormatterPrefBlock">
       <block
             class="org.pdtextensions.core.ui.preferences.PDTFormatterConfigurationBlockWrapper"
-            id="com.dubture.pde.formatter.codeFormatterBlock"
+            id="org.pdtextensions.core.ui.formatter.codeFormatterBlock"
             name="PDT Extensions Code Formatter">
       </block>
    </extension>
@@ -31,8 +58,47 @@
          <menu
                id="org.pdtextensions.core.ui.menu"
                label="PDT Extensions">
+               <!--
+            <command
+                  commandId="org.pdtextensions.core.ui.command.phpcsfixer"
+                  label="Test"
+                  style="push">
+            </command>
+            -->
          </menu>
       </menuContribution>
+      
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:sourceMenuId?before=sourceBegin">
+         <command
+               commandId="org.pdtextensions.core.ui.generategetters"
+               label="Generate Getters and Setters"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.php.ui.phpContentType.definition">
+               </reference>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:sourcePopupMenuId?after=sourceBegin">
+         <command
+               commandId="org.pdtextensions.core.ui.generategetters"
+               label="Generate Getters and Setters"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.eclipse.php.ui.phpContentType.definition">
+               </reference>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      
    </extension>
    
    
@@ -68,5 +134,59 @@
       </startup>
    </extension>
    
+   <extension point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.ui.category.edit"
+            description="Generate Getters and Setters"
+            id="org.pdtextensions.core.ui.generategetters"
+            name="Generate Getters and Setters">
+      </command>
+   </extension>
+   
+   
+      <extension point="org.eclipse.ui.handlers">
+      <handler
+            class="org.pdtextensions.core.ui.actions.GenerateGettersHandler"
+            commandId="org.pdtextensions.core.ui.generategetters">
+         <activeWhen>
+            <reference
+                  definitionId="org.eclipse.php.ui.phpContentType.definition">
+            </reference>
+         </activeWhen>
+         <enabledWhen>
+            <reference
+                  definitionId="org.eclipse.php.ui.phpContentType.definition">
+            </reference>
+         </enabledWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.php.ui.quickFixProcessors">
+      <quickFixProcessor
+            class="org.pdtextensions.core.ui.quickfix.InterfaceMethodQuickFixProcessor"
+            id="org.pdtextensions.core.ui.quickFixProcessor">
+      </quickFixProcessor>
+   </extension>
+   <extension
+         id="org.pdtextensions.core.ui.scriptCompletionProposalComputer"
+         point="org.eclipse.dltk.ui.scriptCompletionProposalComputer">
+      <scriptCompletionProposalComputer
+            categoryId="org.eclipse.dltk.ui.scriptTypeProposalCategory"
+            class="org.pdtextensions.core.ui.contentassist.ScriptCompletionProposalComputer"
+            toolkitId="org.eclipse.php.core.PHPNature">
+         <partition
+               type="org.eclipse.php.PHP_DEFAULT">
+         </partition>
+      </scriptCompletionProposalComputer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.pdtextensions.core.ui.generategetters"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="Ctrl+G">
+      </key>
+   </extension>
    
 </plugin>

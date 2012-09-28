@@ -37,7 +37,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option to format html region
-	 *     - option id:         "com.dubture.pdt.formatter.format_html_region
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.format_html_region
 	 *     - possible values:   { TRUE, FALSE }
 	 *     - default:           FALSE
 	 * </pre>
@@ -51,7 +51,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option to align php region with open tag
-	 *     - option id:         "com.dubture.pdt.formatter.align_php_region_with_open_tag
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.align_php_region_with_open_tag
 	 *     - possible values:   { TRUE, FALSE }
 	 *     - default:           FALSE
 	 * </pre>
@@ -65,7 +65,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option to indent body declarations compare to its enclosing namespace
-	 *     - option id:         "com.dubture.pdt.formatter.indent_body_declarations_compare_to_namespace"
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.indent_body_declarations_compare_to_namespace"
 	 *     - possible values:   { TRUE, FALSE }
 	 *     - default:           FALSE
 	 * </pre>
@@ -79,7 +79,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option to position the braces of a namespace declaration
-	 *     - option id:         "com.dubture.pdt.formatter.brace_position_for_namespace_declaration"
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.brace_position_for_namespace_declaration"
 	 *     - possible values:   { END_OF_LINE, NEXT_LINE, NEXT_LINE_SHIFTED, NEXT_LINE_ON_WRAP }
 	 *     - default:           END_OF_LINE
 	 * </pre>
@@ -95,7 +95,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option to insert a new line after the opening brace in an array initializer even if in arguments
-	 *     - option id:         "com.dubture.pdt.formatter.insert_new_line_after_opening_brace_in_array_initializer_in_arguments"
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.insert_new_line_after_opening_brace_in_array_initializer_in_arguments"
 	 *     - possible values:   { INSERT, DO_NOT_INSERT }
 	 *     - default:           INSERT
 	 * </pre>
@@ -109,7 +109,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option to insert a space before the opening brace in a namespace declaration
-	 *     - option id:         "com.dubture.pdt.formatter.insert_space_before_opening_brace_in_namespace_declaration"
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.insert_space_before_opening_brace_in_namespace_declaration"
 	 *     - possible values:   { INSERT, DO_NOT_INSERT }
 	 *     - default:           INSERT
 	 * </pre>
@@ -123,7 +123,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option to insert a space before an double arrow operator
-	 *     - option id:         "com.dubture.pdt.formatter.insert_space_before_double_arrow_operator"
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.insert_space_before_double_arrow_operator"
 	 *     - possible values:   { INSERT, DO_NOT_INSERT }
 	 *     - default:           INSERT
 	 * </pre>
@@ -137,7 +137,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option to insert a space before an double arrow operator with filler
-	 *     - option id:         "com.dubture.pdt.formatter.insert_space_before_double_arrow_operator_with_filler"
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.insert_space_before_double_arrow_operator_with_filler"
 	 *     - possible values:   { INSERT, DO_NOT_INSERT }
 	 *     - default:           DO_NOT_INSERT
 	 * </pre>
@@ -151,7 +151,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option to insert a space after an double arrow operator
-	 *     - option id:         "com.dubture.pdt.formatter.insert_space_after_double_arrow_operator"
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.insert_space_after_double_arrow_operator"
 	 *     - possible values:   { INSERT, DO_NOT_INSERT }
 	 *     - default:           INSERT
 	 * </pre>
@@ -165,7 +165,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option to insert a space before a double colon operator
-	 *     - option id:         "com.dubture.pdt.formatter.insert_space_before_double_colon_operator"
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.insert_space_before_double_colon_operator"
 	 *     - possible values:   { INSERT, DO_NOT_INSERT }
 	 *     - default:           DO_NOT_INSERT
 	 * </pre>
@@ -179,7 +179,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option to insert a space after a double colon operator
-	 *     - option id:         "com.dubture.pdt.formatter.insert_space_after_double_colon_operator"
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.insert_space_after_double_colon_operator"
 	 *     - possible values:   { INSERT, DO_NOT_INSERT }
 	 *     - default:           DO_NOT_INSERT
 	 * </pre>
@@ -193,7 +193,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option to insert a space before an object operator
-	 *     - option id:         "com.dubture.pdt.formatter.insert_space_before_object_operator"
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.insert_space_before_object_operator"
 	 *     - possible values:   { INSERT, DO_NOT_INSERT }
 	 *     - default:           DO_NOT_INSERT
 	 * </pre>
@@ -207,7 +207,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option to insert a space after an object operator
-	 *     - option id:         "com.dubture.pdt.formatter.insert_space_after_object_operator"
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.insert_space_after_object_operator"
 	 *     - possible values:   { INSERT, DO_NOT_INSERT }
 	 *     - default:           DO_NOT_INSERT
 	 * </pre>
@@ -221,7 +221,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option to insert a space before parenthesized expression in echo statement
-	 *     - option id:         "com.dubture.pdt.formatter.insert_space_before_parenthesized_expression_in_echo"
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.insert_space_before_parenthesized_expression_in_echo"
 	 *     - possible values:   { INSERT, DO_NOT_INSERT }
 	 *     - default:           INSERT
 	 * </pre>
@@ -236,7 +236,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option to wrap array() even if it is in arguments
-	 *     - option id:         "com.dubture.pdt.formatter.wrap_array_in_arguments"
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.wrap_array_in_arguments"
 	 *     - possible values:   { TRUE, FALSE }
 	 *     - default:           TRUE
 	 * </pre>
@@ -251,7 +251,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option for alignment of concatenation expression
-	 *     - option id:         "com.dubture.pdt.formatter.alignment_for_concat_expression"
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.alignment_for_concat_expression"
 	 *     - possible values:   values returned by <code>createAlignmentValue(boolean, int, int)</code> call
 	 *     - default:           createAlignmentValue(false, WRAP_COMPACT, INDENT_DEFAULT)
 	 * </pre>
@@ -265,7 +265,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option to insert a space before a concatenation operator
-	 *     - option id:         "com.dubture.pdt.formatter.insert_space_before_concat_operator"
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.insert_space_before_concat_operator"
 	 *     - possible values:   { INSERT, DO_NOT_INSERT }
 	 *     - default:           INSERT
 	 * </pre>
@@ -280,7 +280,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option to insert a space after a concatenation operator
-	 *     - option id:         "com.dubture.pdt.formatter.insert_space_after_concat_operator"
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.insert_space_after_concat_operator"
 	 *     - possible values:   { INSERT, DO_NOT_INSERT }
 	 *     - default:           INSERT
 	 * </pre>
@@ -295,7 +295,7 @@ public class CodeFormatterConstants {
 	 * pdt_tools.formatter
 	 * <pre>
 	 * FORMATTER / Option to wrap before the binary operator
-	 *     - option id:         "com.dubture.pdt.formatter.wrap_before_concat_operator"
+	 *     - option id:         "org.pdtextensions.core.ui.formatter.wrap_before_concat_operator"
 	 *     - possible values:   { TRUE, FALSE }
 	 *     - default:           TRUE
 	 * </pre>

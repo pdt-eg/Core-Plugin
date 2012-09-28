@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Require-Bundle: org.eclipse.ui,org.eclipse.core.runtime
+Bundle-Vendor: https://github.com/pdt-eg
+Bundle-ActivationPolicy: lazy
+Bundle-Version: 0.0.12.201209111655
+Bundle-Name: PDT Extensions Repository UI Plugin
+Bundle-Activator: org.pdtextensions.repos.ui.PEXReposUiPlugin
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.pdtextensions.repos.ui
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+

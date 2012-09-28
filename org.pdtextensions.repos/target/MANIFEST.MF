@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Export-Package: org.pdtextensions.repos,org.pdtextensions.repos.api
+Require-Bundle: org.eclipse.core.runtime,org.eclipse.core.resources;bu
+ ndle-version="3.8.0"
+Bundle-Vendor: https://github.com/pdt-eg
+Bundle-ActivationPolicy: lazy
+Bundle-Version: 0.0.12.201209111655
+Bundle-Name: PDT Extensions Repository Plugin
+Bundle-Activator: org.pdtextensions.repos.PEXReposPlugin
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.pdtextensions.repos;singleton:=true
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+

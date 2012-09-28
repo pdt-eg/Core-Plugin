@@ -2,6 +2,7 @@ package org.pdtextensions.semanticanalysis;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.pdtextensions.core.ui.PEXUIPlugin;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -27,6 +28,7 @@ public class PEXAnalysisPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
 	}
 
 	/*

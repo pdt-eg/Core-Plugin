@@ -22,8 +22,8 @@ import org.pdtextensions.core.ui.preferences.formatter.ProfileConfigurationBlock
  */
 public class CodeFormatterPreferencePage extends ProfilePreferencePage {
 
-	public static final String PREF_ID = "com.dubture.pdt.formatter.ui.preferences.CodeFormatterPreferencePage"; //$NON-NLS-1$
-	public static final String PROP_ID = "com.dubture.pdt.formatter.ui.propertyPages.CodeFormatterPropertyPage"; //$NON-NLS-1$
+	public static final String PREF_ID = "org.pdtextensions.core.ui.formatter.preferences.CodeFormatterPreferencePage"; //$NON-NLS-1$
+	public static final String PROP_ID = "org.pdtextensions.core.ui.formatter.propertyPages.CodeFormatterPropertyPage"; //$NON-NLS-1$
 
 	public CodeFormatterPreferencePage() {
 		// only used when page is shown programatically

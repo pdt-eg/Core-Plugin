@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?artifactRepository version='1.1.0'?>
+<artifacts size='1'>
+  <artifact classifier='osgi.bundle' id='org.pdtextensions.repos' version='0.0.12.201209111655'>
+    <properties size='5'>
+      <property name='artifact.size' value='29148'/>
+      <property name='download.size' value='29148'/>
+      <property name='maven-groupId' value='org.pdtextensions'/>
+      <property name='maven-artifactId' value='org.pdtextensions.repos'/>
+      <property name='maven-version' value='0.0.12-SNAPSHOT'/>
+    </properties>
+  </artifact>
+</artifacts>

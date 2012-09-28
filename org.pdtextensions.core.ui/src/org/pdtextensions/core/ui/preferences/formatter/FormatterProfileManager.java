@@ -24,7 +24,7 @@ import org.pdtextensions.core.ui.preferences.PreferencesAccess;
 
 public class FormatterProfileManager extends ProfileManager {
 
-	private static final String PROFILE_CONTRIBUTOR_ID = "com.dubture.pdt.formatter.profileContributor";	
+	private static final String PROFILE_CONTRIBUTOR_ID = "org.pdtextensions.core.ui.formatterProfileContributor";	
 	
 	public final static String ECLIPSE_PROFILE = PEXUIPlugin.PLUGIN_ID
 			+ ".default.eclipse_profile"; //$NON-NLS-1$

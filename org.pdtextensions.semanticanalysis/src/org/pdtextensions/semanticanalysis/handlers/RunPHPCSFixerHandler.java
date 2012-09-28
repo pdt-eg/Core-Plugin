@@ -34,6 +34,8 @@ import org.pdtextensions.core.launch.DefaultExecutableLauncher;
 import org.pdtextensions.core.launch.ILaunchResponseHandler;
 import org.pdtextensions.core.launch.IPHPLauncher;
 import org.pdtextensions.core.log.Logger;
+import org.pdtextensions.core.ui.PEXUIPlugin;
+import org.pdtextensions.core.ui.preferences.PreferenceConstants;
 import org.pdtextensions.core.util.ArrayUtil;
 import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 import org.pdtextensions.semanticanalysis.preferences.PEXPreferenceNames;
@@ -45,16 +47,16 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 	private IPHPLauncher launcher = new DefaultExecutableLauncher();
 	private String fixerPath;
 	
-	final public static URL CS_FIXER = Platform.getBundle(PEXAnalysisPlugin.PLUGIN_ID).getEntry("Resources/phpcsfixer/php-cs-fixer.phar");
+	final public static URL CS_FIXER = Platform.getBundle(PEXAnalysisPlugin.PLUGIN_ID).getEntry("Resources/phpcsfixer/phpcsfixer.phar");
 	
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		IPreferenceStore store = PEXAnalysisPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = PEXUIPlugin.getDefault().getPreferenceStore();
 		
-		fixerPath = store.getString(PEXPreferenceNames.PREF_PHPCS_PHAR_LOCATION);
+		fixerPath = store.getString(PreferenceConstants.PREF_PHPCS_PHAR_LOCATION);
 		
 		if (fixerPath == null || fixerPath.length() == 0) {
 			try {
@@ -65,15 +67,15 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 			}
 		}
 		
-		String defaultFixers = store.getString(PEXPreferenceNames.PREF_PHPCS_USE_DEFAULT_FIXERS);
-		String config = store.getString(PEXPreferenceNames.PREF_PHPCS_CONFIG);
+		String defaultFixers = store.getString(PreferenceConstants.PREF_PHPCS_USE_DEFAULT_FIXERS);
+		String config = store.getString(PreferenceConstants.PREF_PHPCS_CONFIG);
 		
 		fixerArgs = new ArrayList<String>();
 		
 		fixerArgs.add("fix");
 		fixerArgs.add("file");
 		
-		if (!PEXPreferenceNames.PREF_PHPCS_CONFIG_DEFAULT.equals(config)) {
+		if (!PreferenceConstants.PREF_PHPCS_CONFIG_DEFAULT.equals(config)) {
 			fixerArgs.add(" --config=" + config.replace("phpcs_config_", ""));
 		}
 		
@@ -117,12 +119,6 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 						runFixer((ISourceModule) element);
 					}
 				} catch (Exception e) {
-					if (e != null) {
-						Logger.debug(e.getMessage());
-					} else {
-						System.err.println("ERror running laucher");
-					}
-					
 					Logger.logException(e);
 				}
 			}
@@ -152,7 +148,6 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 		String fileToFix =  resource.getLocation().toOSString();
 		fixerArgs.set(1, fileToFix);
 		
-		System.err.println("############# RUN FIXER + " + fixerPath);
 		Logger.debug("Running cs-fixer: " + fixerPath + " => " + fixerArgs.get(1));
 		launcher.launch(fixerPath, fixerArgs.toArray(new String[fixerArgs.size()]), new ILaunchResponseHandler() {
 			

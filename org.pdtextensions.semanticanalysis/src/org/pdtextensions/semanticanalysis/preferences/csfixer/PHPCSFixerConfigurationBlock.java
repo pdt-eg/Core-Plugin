@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.pdtextensions.core.ui.preferences.AbstractOptionsConfigurationBlock;
+import org.pdtextensions.core.ui.preferences.PreferenceConstants;
 import org.pdtextensions.semanticanalysis.preferences.PEXPreferenceNames;
 
 
@@ -54,15 +55,15 @@ import org.pdtextensions.semanticanalysis.preferences.PEXPreferenceNames;
 public class PHPCSFixerConfigurationBlock extends
 		AbstractOptionsConfigurationBlock {
 
-	private static final Key PREF_PHPCS_PHAR_LOCATION = getPEXKey(PEXPreferenceNames.PREF_PHPCS_PHAR_LOCATION);
-	private static final Key PREF_PHPCS_PHAR_NAME = getPEXKey(PEXPreferenceNames.PREF_PHPCS_PHAR_NAME);
+	private static final Key PREF_PHPCS_PHAR_LOCATION = getPEXKey(PreferenceConstants.PREF_PHPCS_PHAR_LOCATION);
+	private static final Key PREF_PHPCS_PHAR_NAME = getPEXKey(PreferenceConstants.PREF_PHPCS_PHAR_NAME);
 
-	private static final Key PREF_PHPCS_CUSTOM_PHAR_LOCATIONS = getPEXKey(PEXPreferenceNames.PREF_PHPCS_CUSTOM_PHAR_LOCATIONS);
-	private static final Key PREF_PHPCS_CUSTOM_PHAR_NAMES = getPEXKey(PEXPreferenceNames.PREF_PHPCS_CUSTOM_PHAR_NAMES);
+	private static final Key PREF_PHPCS_CUSTOM_PHAR_LOCATIONS = getPEXKey(PreferenceConstants.PREF_PHPCS_CUSTOM_PHAR_LOCATIONS);
+	private static final Key PREF_PHPCS_CUSTOM_PHAR_NAMES = getPEXKey(PreferenceConstants.PREF_PHPCS_CUSTOM_PHAR_NAMES);
 
-	private static final Key PREF_PHPCS_USE_DEFAULT_FIXERS = getPEXKey(PEXPreferenceNames.PREF_PHPCS_USE_DEFAULT_FIXERS);
+	private static final Key PREF_PHPCS_USE_DEFAULT_FIXERS = getPEXKey(PreferenceConstants.PREF_PHPCS_USE_DEFAULT_FIXERS);
 
-	private static final Key PREF_PHPCS_CONFIG = getPEXKey(PEXPreferenceNames.PREF_PHPCS_CONFIG);
+	private static final Key PREF_PHPCS_CONFIG = getPEXKey(PreferenceConstants.PREF_PHPCS_CONFIG);
 
 	private static final int IDX_ADD = 0;
 	private static final int IDX_EDIT = 1;

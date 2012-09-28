@@ -7,6 +7,7 @@
  ******************************************************************************/
 package org.pdtextensions.core.ui;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -25,12 +26,17 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.dltk.ui.viewsupport.ImageDescriptorRegistry;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.templates.ContextTypeRegistry;
+import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.php.internal.core.ast.nodes.ASTNode;
+import org.eclipse.php.internal.ui.corext.template.php.CodeTemplateContextType;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.themes.ColorUtil;
@@ -38,6 +44,7 @@ import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.osgi.framework.BundleContext;
 import org.pdtextensions.core.ui.formatter.CodeFormatterOptions;
+import org.pdtextensions.core.ui.preferences.PDTTemplateStore;
 import org.pdtextensions.core.ui.preferences.PreferenceConstants;
 
 /**
@@ -54,7 +61,7 @@ public class PEXUIPlugin extends AbstractUIPlugin {
 	public static final String FORMATTER_PROFILE = PLUGIN_ID
 			+ ".formatter_profile"; //$NON-NLS-1$
 
-	public static final String HELP_ID = "com.dubture.pdt.formatter.help." //$NON-NLS-1$
+	public static final String HELP_ID = "org.pdtextensions.core.ui.formatter.help." //$NON-NLS-1$
 			+ Locale.getDefault().getLanguage();
 	public static final String HELP_ID_FORMATTER = HELP_ID + ".formatter"; //$NON-NLS-1$
 	public static final String HELP_ID_SETTINGS = HELP_ID + ".settings"; //$NON-NLS-1$
@@ -62,6 +69,12 @@ public class PEXUIPlugin extends AbstractUIPlugin {
 	public static final String MARKER_ID = PLUGIN_ID + ".problem"; //$NON-NLS-1$
 	
 	private IPreferenceStore fCombinedPreferenceStore;
+	
+	private PDTTemplateStore fCodeTemplateStore;
+	
+	protected ContextTypeRegistry codeTypeRegistry = null;
+
+	private ImageDescriptorRegistry fImageDescriptorRegistry;
 	
 
 	// The shared instance
@@ -217,5 +230,46 @@ public class PEXUIPlugin extends AbstractUIPlugin {
 		}
 		return file;
 	}
+	
+	public TemplateStore getCodeTemplateStore() {
+		if (fCodeTemplateStore == null) {
+
+			fCodeTemplateStore = new PDTTemplateStore(
+					getCodeTemplateContextRegistry(), getPreferenceStore(),
+					PreferenceConstants.CODE_TEMPLATES_KEY);
+
+			try {
+				fCodeTemplateStore.load();
+			} catch (IOException e) {
+//				Logger.logException(e);
+			}
+		}
+
+		return fCodeTemplateStore;
+	}
+	
+	public ContextTypeRegistry getCodeTemplateContextRegistry() {
+		if (codeTypeRegistry == null) {
+			ContributionContextTypeRegistry registry = new ContributionContextTypeRegistry();
+
+			
+			CodeTemplateContextType.registerContextTypes(registry);
+
+			codeTypeRegistry = registry;
+		}
+
+		return codeTypeRegistry;
+	}
+	
+	public static ImageDescriptorRegistry getImageDescriptorRegistry() {
+		return PEXUIPlugin.getDefault().internalGetImageDescriptorRegistry();
+	}
+
+	private ImageDescriptorRegistry internalGetImageDescriptorRegistry() {
+		if (fImageDescriptorRegistry == null) {
+			fImageDescriptorRegistry = new ImageDescriptorRegistry();
+		}
+		return fImageDescriptorRegistry;
+	}	
 	
 }
