@@ -23,5 +23,35 @@
             typeIds="org.pdtextensions.server.lhttpd.runtimeType"
             class="org.pdtextensions.server.ui.internal.lhttpd.RuntimeWizardFragment"/>
     </extension>
+ <extension
+       point="org.eclipse.ui.propertyPages">
+    <page
+          class="org.pdtextensions.server.ui.internal.web.ProjectPropertyPage"
+          id="org.pdtextensions.server.ui.web.propertyPage"
+          name="PHP Web"
+          selectionFilter="single">
+       <enabledWhen>
+          <and>
+             <adapt
+                   type="org.eclipse.core.resources.IProject">
+             </adapt>
+             <test
+                   property="org.pdtextensions.server.expressions.hasFacet"
+                   value="php.web.project">
+             </test>
+          </and>
+       </enabledWhen>
+    </page>
+ </extension>
+ <extension
+       point="org.eclipse.core.expressions.propertyTesters">
+    <propertyTester
+          class="org.pdtextensions.server.ui.internal.expressions.FacetTester"
+          id="org.pdtextensions.server.expressions.facettester"
+          namespace="org.pdtextensions.server.expressions"
+          properties="hasFacet"
+          type="java.lang.Object">
+    </propertyTester>
+ </extension>
 
 </plugin>

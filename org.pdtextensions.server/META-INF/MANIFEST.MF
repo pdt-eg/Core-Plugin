@@ -16,4 +16,5 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: https://github.com/pdt-eg
 Export-Package: org.pdtextensions.server,
- org.pdtextensions.server.lhttpd
+ org.pdtextensions.server.lhttpd,
+ org.pdtextensions.server.web

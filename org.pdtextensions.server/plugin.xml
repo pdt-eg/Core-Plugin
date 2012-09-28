@@ -63,4 +63,26 @@
     	    <facet id="php.core.component" version="1"/>
         </supported>
 	</extension>
+
+   <extension
+         point="org.eclipse.wst.common.project.facet.core.facets">
+      <project-facet
+            id="php.web.project">
+         <label>%PHPFacet.webproject.label</label>
+         <description>%PHPFacet.webproject.description</description>
+      </project-facet>
+      <project-facet-version facet="php.web.project" version="1.0">
+         <constraint>
+             <and>
+             	<requires facet="php.core.component" />
+             </and>
+         </constraint>
+      </project-facet-version>
+      <action facet="php.web.project" version="1.0" type="install">
+         <delegate class="org.pdtextensions.server.internal.web.InstallActionDelegate" />
+      </action>
+      <action facet="php.web.project" version="1.0" type="uninstall">
+         <delegate class="org.pdtextensions.server.internal.web.UninstallActionDelegate" />
+      </action>
+   </extension>
 </plugin>

@@ -238,6 +238,8 @@ public class SettingsPhpProjectStorage implements IWebProjectStorage {
 					throw new CoreException(new Status(IStatus.ERROR, PEXServerPlugin.PLUGIN_ID, "Duplicate path namne")); //$NON-NLS-1$
 				}
 			}
+			this.folder = folder;
+			this.pathName = pathName;
 			saveFolders();
 		}
 		
