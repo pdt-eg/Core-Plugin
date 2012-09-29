@@ -166,6 +166,10 @@
             class="org.pdtextensions.core.ui.quickfix.InterfaceMethodQuickFixProcessor"
             id="org.pdtextensions.core.ui.quickFixProcessor">
       </quickFixProcessor>
+      <quickFixProcessor
+            class="org.pdtextensions.core.ui.quickfix.ReferenceQuickFixProcessor"
+            id="org.pdtextensions.core.ui.referenceQuickFixProcessor">
+      </quickFixProcessor>
    </extension>
    <extension
          id="org.pdtextensions.core.ui.scriptCompletionProposalComputer"

@@ -69,6 +69,9 @@ public class PDTVisitor extends PHPASTVisitor {
 		nameStart = s.getNameStart();
 		nameEnd = s.getNameEnd();
 
+		
+		// TODO: Refactor to use PHPModelUtils.getUnimplementedMethods 
+		// i actually found this here... org.eclipse.php.internal.core.typeinference.PHPModelUtils.getUnimplementedMethods(IType, IModelAccessCache, IProgressMonitor)
 		ImplementationValidator impVal = new ImplementationValidator(
 				buildContext, context, s);
 		impVal.reportUnimplementedMethods();
