@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Pdtextensions
+Bundle-SymbolicName: org.pdtextensions;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.pdtextensions.PEXIDEPlugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.equinox.p2.ui,
+ org.eclipse.equinox.p2.ui.sdk,
+ org.eclipse.equinox.p2.ui.sdk.scheduler
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

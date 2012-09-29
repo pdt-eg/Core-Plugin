@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature id="org.pdtextensions.feature" version="0.0.0">
+      <category name="PDTExtensions"/>
+   </feature>
+
+  <category-def name="PDTExtensions" label="PDTExtensions">
+      <description>
+         PDT extensions
+      </description>
+   </category-def>
+
+</site>

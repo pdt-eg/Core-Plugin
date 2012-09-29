@@ -15,3 +15,7 @@ org.pdtextensions.repos.ui/target/*
 org.pdtextensions.feature/target/*
 org.pdtextensions.semanticanalysis/bin/*
 org.pdtextensions.semanticanalysis/target/*
+org.pdtextensions.updatesite/target/*
+org.pdtextensions.updatesite/bin/*
+org.pdtextensions/target/*
+org.pdtextensions/bin/*

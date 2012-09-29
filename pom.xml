@@ -13,6 +13,7 @@
     <module>org.pdtextensions.server</module>
     <module>org.pdtextensions.server.ui</module>
     <module>org.pdtextensions.feature</module>
+    <module>org.pdtextensions.updatesite</module>
   </modules>
 
   <properties>
