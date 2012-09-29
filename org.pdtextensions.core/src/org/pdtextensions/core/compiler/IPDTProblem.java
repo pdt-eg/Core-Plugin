@@ -11,5 +11,6 @@ package org.pdtextensions.core.compiler;
 public interface IPDTProblem {
 
 	int InterfaceRelated = 0x01100000;
+	int UsageRelated = 0x01200000;
 	
 }

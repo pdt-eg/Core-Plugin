@@ -14,7 +14,13 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.pdtextensions.core,
+ org.pdtextensions.core.builder,
+ org.pdtextensions.core.codeassist,
+ org.pdtextensions.core.codeassist.context,
+ org.pdtextensions.core.codeassist.strategy,
+ org.pdtextensions.core.compiler,
  org.pdtextensions.core.exception,
  org.pdtextensions.core.launch,
  org.pdtextensions.core.log,
- org.pdtextensions.core.util
+ org.pdtextensions.core.util,
+ org.pdtextensions.core.visitor
