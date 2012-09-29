@@ -15,10 +15,14 @@ import org.eclipse.dltk.core.search.SearchEngine;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ClassInstanceCreation;
 import org.eclipse.php.internal.core.compiler.ast.nodes.FormalParameter;
 import org.eclipse.php.internal.core.compiler.ast.nodes.FullyQualifiedReference;
+import org.eclipse.php.internal.core.compiler.ast.nodes.StaticConstantAccess;
+import org.eclipse.php.internal.core.compiler.ast.nodes.StaticFieldAccess;
+import org.eclipse.php.internal.core.compiler.ast.nodes.StaticMethodInvocation;
 import org.eclipse.php.internal.core.compiler.ast.nodes.UsePart;
 import org.eclipse.php.internal.core.compiler.ast.nodes.UseStatement;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.php.internal.core.model.PhpModelAccess;
+import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.pdtextensions.core.compiler.IPDTProblem;
 
 /**
@@ -49,7 +53,7 @@ public class UsageValidator extends PHPASTVisitor {
 	 * and checks if it can be resolved in the project.
 	 * @param s
 	 */
-	public void addUseStatement(UseStatement s) {
+	public boolean visit(UseStatement s) {
 		
 		statements.add(s);
 
@@ -61,30 +65,39 @@ public class UsageValidator extends PHPASTVisitor {
 				
 			}
 		}
+		
+		return false;
 	}
 
 	/**
 	 * Checks if a FormalParameter can be resolved.
 	 * @param s
 	 */
-	public void checkParameter(FormalParameter s) {
+	public boolean visit(FormalParameter s) {
 
 		if (s.getParameterType() == null) {
-			return;
+			return false;
 		}
 		
 		if (s.getParameterType() instanceof FullyQualifiedReference) {
 			
-			for (UseStatement statement : statements) {
-				if (isReferenced((FullyQualifiedReference)s.getParameterType(), statement)) {
-					return;
+			if (isReferenced((FullyQualifiedReference)s.getParameterType())) {
+				return false;
+			}
+			
+			IType namespace = PHPModelUtils.getCurrentNamespace(buildContext.getSourceModule(), s.sourceStart());
+			
+			if (namespace != null) {
+				String name = namespace.getFullyQualifiedName() + "\\" + s.getParameterType().getName();
+				if (isResolved(name)) {
+					return false;
 				}
 			}
 		}
 		
 		for (UseStatement statement : statements) {
 			if (isReferenced(s, statement)) {
-				return;
+				return false;
 			}
 		}
 
@@ -92,65 +105,88 @@ public class UsageValidator extends PHPASTVisitor {
 				+ " cannot be resolved.";
 
 		reportProblem(message, IPDTProblem.UsageRelated, s.getParameterType().sourceStart(), s.getParameterType().sourceEnd());
+		
+		return false;
 
 	}
 	
-	/**
-	 * Report a reference problem.
-	 * 
-	 * @param message
-	 * @param type
-	 * @param start
-	 * @param end
-	 */
-	@SuppressWarnings("deprecation")
-	protected void reportProblem(String message, int type, int start, int end) {
-
-		ProblemSeverity severity = ProblemSeverity.WARNING;
-
-		int lineNo = buildContext.getLineTracker()
-				.getLineInformationOfOffset(start)
-				.getOffset();
-		
-		// TODO: how can we check against ints to use the proper constructor
-		// here
-		// in InterfaceMethodQuickFixProcessor.hasCorrections
-		// IProblem problem = new DefaultProblem(message,
-		// PEXProblem.INTERFACE_IMPLEMENTATION,
-		// new String[0], severity, miss.getStart(), miss.getEnd(),lineNo);
-
-		IProblem problem = new DefaultProblem(message,
-				IPDTProblem.UsageRelated, new String[0], severity, start, end, lineNo);
-
-		buildContext.getProblemReporter().reportProblem(problem);
-	}
 	
 	/**
 	 * Check if ClassInstanceCreations can be resolved.
 	 * @param s
 	 */
-	public void checkClassUsage(ClassInstanceCreation s) {
+	public boolean visit(ClassInstanceCreation s) {
 		
 		if (s.getClassName() instanceof FullyQualifiedReference) {
 			
 			FullyQualifiedReference fqr = (FullyQualifiedReference) s.getClassName();
-			boolean report = true;
 			
-			for (UseStatement stmt : statements) {
-				if (isReferenced(fqr, stmt)) {
-					report = false;
-					break;
+			if (isReferenced(fqr)) {
+				return false;
+			}
+			
+			IType namespace = PHPModelUtils.getCurrentNamespace(buildContext.getSourceModule(), s.sourceStart());
+			
+			if (namespace != null) {
+				String name = namespace.getFullyQualifiedName() + "\\" + fqr.getName();
+				if (isResolved(name)) {
+					return false;
 				}
 			}
 			
-			if (report) {
-				String message = "The type " + fqr.getFullyQualifiedName()
-						+ " cannot be resolved.";
+			String message = "The type " + fqr.getFullyQualifiedName()
+					+ " cannot be resolved.";
 
-				reportProblem(message, IPDTProblem.Unresolvable, fqr.sourceStart(), fqr.sourceEnd());
+			reportProblem(message, IPDTProblem.Unresolvable, fqr.sourceStart(), fqr.sourceEnd());
+		}
+		
+		return false;
+	}
+	
+	
+	@Override
+	public boolean visit(StaticConstantAccess s) throws Exception {
+		
+		if (s.getDispatcher() instanceof FullyQualifiedReference) {
+			
+			FullyQualifiedReference fqr = (FullyQualifiedReference) s.getDispatcher();
+			if (!isReferenced(fqr) && !isResolved(fqr)) {
+				reportProblem("Unable to resolve " + fqr.getFullyQualifiedName(), IPDTProblem.UsageRelated, fqr.sourceStart(), fqr.sourceEnd());
 			}
 		}
+		
+		return false;
 	}
+	
+	
+	@Override
+	public boolean visit(StaticFieldAccess s) throws Exception {
+		
+		if (s.getDispatcher() instanceof FullyQualifiedReference) {
+			
+			FullyQualifiedReference fqr = (FullyQualifiedReference) s.getDispatcher();
+			if (!isReferenced(fqr) && !isResolved(fqr)) {
+				reportProblem("Unable to resolve " + fqr.getFullyQualifiedName(), IPDTProblem.UsageRelated, fqr.sourceStart(), fqr.sourceEnd());
+			}
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public boolean visit(StaticMethodInvocation s) throws Exception {
+		
+		if (s.getReceiver() instanceof FullyQualifiedReference) {
+			
+			FullyQualifiedReference fqr = (FullyQualifiedReference) s.getReceiver();
+			if (!isReferenced(fqr) && !isResolved(fqr)) {
+				reportProblem("Unable to resolve " + fqr.getFullyQualifiedName(), IPDTProblem.UsageRelated, fqr.sourceStart(), fqr.sourceEnd());
+			}
+		}
+		
+		return false;
+	}
+	
 	
 
 	/**
@@ -229,6 +265,18 @@ public class UsageValidator extends PHPASTVisitor {
 		return false;
 	}
 	
+	private boolean isReferenced(FullyQualifiedReference fqr) {
+		
+		for (UseStatement statement : statements) {
+			if (isReferenced(fqr, statement)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	
 	/**
 	 * Check if the fqr be resolved in the project.
 	 * 
@@ -237,15 +285,59 @@ public class UsageValidator extends PHPASTVisitor {
 	 */
 	private boolean isResolved(FullyQualifiedReference fqr) {
 
+		if (fqr != null) {
+			return isResolved(fqr.getFullyQualifiedName());
+		}
+		
+		return true;
+	}
+	
+	private boolean isResolved(String fullyQualifiedReference) {
+		
+		if (buildContext == null) {
+			return true;
+		}
+		
 		IDLTKSearchScope searchScope = SearchEngine.createSearchScope(buildContext.getSourceModule().getScriptProject());
-		IType[] types = PhpModelAccess.getDefault().findTypes(fqr.getFullyQualifiedName(), MatchRule.EXACT, 0, 0, searchScope, new NullProgressMonitor());
+		IType[] types = PhpModelAccess.getDefault().findTypes(fullyQualifiedReference, MatchRule.EXACT, 0, 0, searchScope, new NullProgressMonitor());
 
 		for (IType type : types) {
-			if (fqr.getFullyQualifiedName().equals(type.getFullyQualifiedName("\\"))) {
+			if (fullyQualifiedReference.equals(type.getFullyQualifiedName("\\"))) {
 				return true;
 			}
 		}
 		
 		return false;
 	}
+	
+	/**
+	 * Report a reference problem.
+	 * 
+	 * @param message
+	 * @param type
+	 * @param start
+	 * @param end
+	 */
+	@SuppressWarnings("deprecation")
+	protected void reportProblem(String message, int type, int start, int end) {
+
+		ProblemSeverity severity = ProblemSeverity.WARNING;
+
+		int lineNo = buildContext.getLineTracker()
+				.getLineInformationOfOffset(start)
+				.getOffset();
+		
+		// TODO: how can we check against ints to use the proper constructor
+		// here
+		// in InterfaceMethodQuickFixProcessor.hasCorrections
+		// IProblem problem = new DefaultProblem(message,
+		// PEXProblem.INTERFACE_IMPLEMENTATION,
+		// new String[0], severity, miss.getStart(), miss.getEnd(),lineNo);
+
+		IProblem problem = new DefaultProblem(message,
+				IPDTProblem.UsageRelated, new String[0], severity, start, end, lineNo);
+
+		buildContext.getProblemReporter().reportProblem(problem);
+	}
+	
 }

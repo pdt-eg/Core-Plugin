@@ -16,6 +16,9 @@ import org.eclipse.dltk.core.builder.IBuildContext;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ClassDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ClassInstanceCreation;
 import org.eclipse.php.internal.core.compiler.ast.nodes.FormalParameter;
+import org.eclipse.php.internal.core.compiler.ast.nodes.StaticConstantAccess;
+import org.eclipse.php.internal.core.compiler.ast.nodes.StaticFieldAccess;
+import org.eclipse.php.internal.core.compiler.ast.nodes.StaticMethodInvocation;
 import org.eclipse.php.internal.core.compiler.ast.nodes.UseStatement;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.pdtextensions.core.compiler.MissingMethodImplementation;
@@ -42,25 +45,48 @@ public class PDTVisitor extends PHPASTVisitor {
 
 	public PDTVisitor(ISourceModule sourceModule) {
 		context = sourceModule;
+		usageValidator = new UsageValidator(null);
 	}
 
 	@Override
 	public boolean visit(UseStatement s) throws Exception {
 
-		usageValidator.addUseStatement(s);
+		usageValidator.visit(s);
 		return false;
 	}
 	
 	@Override
 	public boolean visit(ClassInstanceCreation s) throws Exception {
-		usageValidator.checkClassUsage(s);
+		usageValidator.visit(s);
 		return false;
 	}
 
 	@Override
 	public boolean visit(FormalParameter s) throws Exception {
 
-		usageValidator.checkParameter(s);
+		usageValidator.visit(s);
+		return false;
+	}
+	
+	@Override
+	public boolean visit(StaticConstantAccess s) throws Exception {
+		
+		usageValidator.visit(s);
+		return false;
+	}
+	
+	
+	@Override
+	public boolean visit(StaticFieldAccess s) throws Exception {
+		
+		usageValidator.visit(s);
+		return false;
+	}
+	
+	@Override
+	public boolean visit(StaticMethodInvocation s) throws Exception {
+		
+		usageValidator.visit(s);
 		return false;
 	}
 
