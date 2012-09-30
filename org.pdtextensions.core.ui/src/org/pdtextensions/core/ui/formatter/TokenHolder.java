@@ -1,4 +1,4 @@
-package org.pdtextensions.core.ui;
+package org.pdtextensions.core.ui.formatter;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -16,6 +16,7 @@ import org.eclipse.wst.sse.core.internal.provisional.text.ITextRegion;
 import org.eclipse.wst.xml.core.internal.parser.ContextRegionContainer;
 import org.eclipse.wst.xml.core.internal.parser.regions.XMLCDataTextRegion;
 import org.eclipse.wst.xml.core.internal.parser.regions.XMLContentRegion;
+import org.pdtextensions.core.ui.PEXUIPlugin;
 
 public class TokenHolder {
 

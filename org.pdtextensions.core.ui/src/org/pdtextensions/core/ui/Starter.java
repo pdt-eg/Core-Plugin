@@ -15,6 +15,7 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
+import org.pdtextensions.core.ui.formatter.IndentGuidePainter;
 import org.pdtextensions.core.ui.preferences.PreferenceConstants;
 
 

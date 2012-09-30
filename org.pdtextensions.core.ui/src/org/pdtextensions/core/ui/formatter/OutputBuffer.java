@@ -1,10 +1,9 @@
-package org.pdtextensions.core.ui;
+package org.pdtextensions.core.ui.formatter;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.pdtextensions.core.ui.formatter.CodeFormatterOptions;
 
 
 public class OutputBuffer {
