@@ -43,35 +43,62 @@ public class MethodStub {
 		buffer.append(lineDelimiter);
 		buffer.append(generateAccess());
 		buffer.append(" function " + method.getElementName());
-		buffer.append(generateParams());
+		buffer.append("(" + generateParamsWithTypes() + ")");
 		buffer.append(generateBody());
 
 		code = buffer.toString();
 	}
 
-	private String generateParams() {
-		String code = "(";
+	private String generateParamsWithoutTypes() {
+		return generateParams(false);
+	}
+	
+	private String generateParamsWithTypes() {
+		return generateParams(true);
+	}
+	
+	private String generateParams(boolean withTypes) {
+		String code = "";
 		try {
 			for (IParameter parameter : method.getParameters()) {
-				if (parameter.getType() != null) {
+				if (withTypes == true && parameter.getType() != null) {
 					code += parameter.getType();
 				}
+				code += " ";
 				code += parameter.getName();
 				if (parameter.getDefaultValue() != null) {
 					code += "=" + parameter.getDefaultValue();
 				}
+				code += ",";
+			}
+			// Remove last ",", but only when we have some parameters.
+			if (code.length() > 0) {
+				code = code.substring(0, code.length() - 1);
 			}
 		} catch (ModelException e) {
 			e.printStackTrace();
 		}
-		return code + ")";
+		return code;
 	}
 
 	private String generateBody() {
 
-		return "{ " + lineDelimiter + "// TODO Auto-generated method stub " + lineDelimiter + "}" + lineDelimiter
-				+ lineDelimiter;
+		String body = "";
+		body = "{ " + lineDelimiter + "// TODO Auto-generated method stub " + lineDelimiter;
+
+		try {
+			if (method.isConstructor()) {
+				body += "parent::__construct(" + generateParamsWithoutTypes() + ");" + lineDelimiter;
+			}
+		} catch (ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		body += "}" + lineDelimiter;
+		return body;
 	}
+
 
 	private String generateAccess() {
 		String access = new String();
@@ -88,20 +115,24 @@ public class MethodStub {
 		return access;
 	}
 
-	private String generateComments() throws CoreException {
-		code = null;
+	private String generateComments() {
+		String comment = "";
 		if (generateComments == true) {
-			code = CodeGeneration.getMethodComment(scriptProject,
-				null,
-				method.getElementName(),
-				null,
-				null,
-				null,
-				method,
-				lineDelimiter,
-				null);
+			try {
+				comment = CodeGeneration.getMethodComment(scriptProject,
+					null,
+					method.getElementName(),
+					null,
+					null,
+					null,
+					method,
+					lineDelimiter,
+					null);
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
 		}
-		return code;
+		return comment;
 	}
 
 	public String toString() {
@@ -115,15 +146,8 @@ public class MethodStub {
 		return code;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
-
 	/**
-	 * 
 	 * Retrieve the code stub for a given {@link IMethod}
-	 * 
 	 */
 	public static String getMethodStub(String parent, IMethod method, String indent, String lineDelim, boolean comments)
 			throws ModelException {
