@@ -5,6 +5,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.compiler.problem.DefaultProblem;
 import org.eclipse.dltk.compiler.problem.DefaultProblemFactory;
@@ -15,10 +16,12 @@ import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IScriptModelMarker;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.SourceParserUtil;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.php.internal.core.PHPCoreConstants;
 import org.eclipse.php.internal.core.PHPToolkitUtil;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.sse.core.internal.provisional.tasks.TaskTag;
@@ -27,6 +30,8 @@ import org.eclipse.wst.validation.AbstractValidator;
 import org.eclipse.wst.validation.ValidationResult;
 import org.eclipse.wst.validation.ValidationState;
 import org.eclipse.wst.validation.internal.provisional.core.IReporter;
+import org.pdtextensions.core.CorePreferenceConstants;
+import org.pdtextensions.core.PEXCorePlugin;
 import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.validation.validator.ImplementationValidator;
 import org.pdtextensions.core.validation.validator.UsageValidator;
@@ -51,6 +56,7 @@ public class PEXValidator extends AbstractValidator {
 	private ModuleDeclaration moduleDeclaration;
 	private ISourceModule source;
 	private IFile file;
+	private IPreferenceStore prefStore;
 	
 	public ValidationResult validate(IResource resource, int kind,
 			ValidationState state, IProgressMonitor monitor) {
@@ -76,6 +82,11 @@ public class PEXValidator extends AbstractValidator {
 			file.deleteMarkers(PHPCoreConstants.PHP_MARKER_TYPE, false,
 					IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
+		}
+		
+
+		if (!getPreferenceStore().getBoolean(CorePreferenceConstants.PREF_SA_ENABLE)) {
+			return;
 		}
 		
 		this.file = file;
@@ -175,12 +186,19 @@ public class PEXValidator extends AbstractValidator {
 
 		//TODO: make severity configurable
 		IProblem problem = new DefaultProblem(message,
-				type, new String[0], ProblemSeverity.WARNING, offset, charEnd, lineNumber + 1);
+				type, new String[0], ProblemSeverity.ERROR, offset, charEnd, lineNumber + 1);
+		
+		int severity = getSeverity(type);
+		
+		// -1 == ignore
+		if (severity == -1) {
+			return;
+		}
 		
 		IMarker marker = factory.createMarker(resource, problem);
 //		IMarker marker = file.createMarker(PEXCoreConstants.MISSING_METHOD_MARKER);
 		marker.setAttribute(IMarker.PROBLEM, true);
-		marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+		marker.setAttribute(IMarker.SEVERITY, severity);
 		marker.setAttribute(IMarker.LINE_NUMBER, lineNumber + 1);
 		marker.setAttribute(IMarker.CHAR_START, offset);
 		marker.setAttribute(IMarker.CHAR_END, charEnd);
@@ -192,4 +210,40 @@ public class PEXValidator extends AbstractValidator {
 				DefaultProblemIdentifier.encode(problem.getID()));
 		
 	}
+	
+	protected int getSeverity(int type) {
+		
+		switch (type) {
+		
+		case IPDTProblem.UsageRelated:
+			return translateSeverity(getPreferenceStore().getString(CorePreferenceConstants.PREF_SA_MISSING_USE_STMT_SEVERITY));
+			
+		case IPDTProblem.InterfaceRelated:
+			return translateSeverity(getPreferenceStore().getString(CorePreferenceConstants.PREF_SA_MISSING_METHOD_SEVERITY));
+		}
+		
+		// ignore
+		return -1;
+	}
+	
+	protected int translateSeverity(String pref) {
+
+		if (CorePreferenceConstants.PREF_ERROR.equals(pref)) {
+			return IMarker.SEVERITY_ERROR;
+		} else if (CorePreferenceConstants.PREF_WARN.equals(pref)) {
+			return IMarker.SEVERITY_WARNING;
+		}
+		
+		return -1;
+	}
+	
+	protected IPreferenceStore getPreferenceStore() {
+		
+		if (prefStore == null) {
+			prefStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, PEXCorePlugin.PLUGIN_ID); 
+		}
+		
+		return prefStore;
+	}
+	
 }

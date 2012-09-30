@@ -48,6 +48,20 @@
             id="jp.sourceforge.pdt_tools.indentguide.preferences.PreferencePage"
             name="%indentpage.name">
       </page>
+      <page
+            category="org.eclipse.php.ui.preferences.PHPBasePreferencePage"
+            class="org.pdtextensions.core.ui.preferences.SemanticAnalysisPreferencePage"
+            id="org.pdtextensions.core.ui.preferences.semanticAnalysis"
+            name="Semantic Analysis">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.pdtextensions.core.ui.preferences.SemanticAnalysisPreferencePage"
+            id="org.pdtextensions.core.ui.propertyPages.semanticAnalysis"
+            name="Semantic Analysis">
+      </page>
    </extension>
    
    <extension
