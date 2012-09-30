@@ -189,7 +189,7 @@ public class ClassStub {
 
 	private String generateMethods() {
 		String code = "";
-		if (generateInheritedMethods == true) {
+		if (generateInheritedMethods == true && superclass instanceof IType) {
 			code += getUnimplementedMethods(superclass);
 
 			for (IType interfaceObject : interfaces.toArray(new IType[interfaces.size()])) {
