@@ -1,4 +1,4 @@
-package org.pdtextensions.core.ui.preferences;
+package org.pdtextensions.core.ui.preferences.formatter;
 
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -21,6 +21,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.pdtextensions.core.ui.PEXUIPlugin;
+import org.pdtextensions.core.ui.preferences.PreferenceConstants;
+import org.pdtextensions.core.ui.preferences.PreferencesMessages;
 
 public class IndentGuidePreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {

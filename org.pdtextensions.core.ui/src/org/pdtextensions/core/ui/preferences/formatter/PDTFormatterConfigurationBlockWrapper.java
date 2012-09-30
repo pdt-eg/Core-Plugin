@@ -1,4 +1,4 @@
-package org.pdtextensions.core.ui.preferences;
+package org.pdtextensions.core.ui.preferences.formatter;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.php.internal.ui.preferences.IStatusChangeListener;
@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
 import org.eclipse.ui.preferences.WorkingCopyManager;
-import org.pdtextensions.core.ui.preferences.formatter.CodeFormatterConfigurationBlock;
+import org.pdtextensions.core.ui.preferences.PreferencesAccess;
 
 
 @SuppressWarnings("restriction")
