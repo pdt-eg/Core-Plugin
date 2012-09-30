@@ -11,7 +11,7 @@
  *     Anton Leherbauer (Wind River Systems) - [painting] Whitespace characters not drawn when scrolling to right slowly - https://bugs.eclipse.org/bugs/show_bug.cgi?id=206633
  *     Tom Eicher (Avaloq Evolution AG) - block selection mode
  *******************************************************************************/
-package org.pdtextensions.core.ui;
+package org.pdtextensions.core.ui.formatter;
 
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -30,6 +30,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.LineAttributes;
 import org.eclipse.swt.graphics.Point;
+import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.preferences.PreferenceConstants;
 
 

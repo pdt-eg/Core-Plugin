@@ -34,7 +34,7 @@
    <extension
          point="org.eclipse.php.ui.phpFormatterPrefBlock">
       <block
-            class="org.pdtextensions.core.ui.preferences.PDTFormatterConfigurationBlockWrapper"
+            class="org.pdtextensions.core.ui.preferences.formatter.PDTFormatterConfigurationBlockWrapper"
             id="org.pdtextensions.core.ui.formatter.codeFormatterBlock"
             name="PDT Extensions Code Formatter">
       </block>
@@ -44,9 +44,23 @@
          point="org.eclipse.ui.preferencePages">
       <page
             category="org.eclipse.ui.preferencePages.GeneralTextEditor"
-            class="org.pdtextensions.core.ui.preferences.IndentGuidePreferencePage"
+            class="org.pdtextensions.core.ui.preferences.formatter.IndentGuidePreferencePage"
             id="jp.sourceforge.pdt_tools.indentguide.preferences.PreferencePage"
             name="%indentpage.name">
+      </page>
+      <page
+            category="org.eclipse.php.ui.preferences.PHPBasePreferencePage"
+            class="org.pdtextensions.core.ui.preferences.SemanticAnalysisPreferencePage"
+            id="org.pdtextensions.core.ui.preferences.semanticAnalysis"
+            name="Semantic Analysis">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.pdtextensions.core.ui.preferences.SemanticAnalysisPreferencePage"
+            id="org.pdtextensions.core.ui.propertyPages.semanticAnalysis"
+            name="Semantic Analysis">
       </page>
    </extension>
    

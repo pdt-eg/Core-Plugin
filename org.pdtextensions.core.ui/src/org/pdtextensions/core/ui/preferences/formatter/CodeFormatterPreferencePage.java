@@ -8,14 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.pdtextensions.core.ui.preferences;
+package org.pdtextensions.core.ui.preferences.formatter;
 
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.pdtextensions.core.ui.PEXUIPlugin;
-import org.pdtextensions.core.ui.preferences.formatter.CodeFormatterConfigurationBlock;
-import org.pdtextensions.core.ui.preferences.formatter.ProfileConfigurationBlock;
+import org.pdtextensions.core.ui.preferences.PreferencesAccess;
+import org.pdtextensions.core.ui.preferences.PreferencesMessages;
+import org.pdtextensions.core.ui.preferences.ProfilePreferencePage;
 
 /*
  * The page to configure the code formatter options.

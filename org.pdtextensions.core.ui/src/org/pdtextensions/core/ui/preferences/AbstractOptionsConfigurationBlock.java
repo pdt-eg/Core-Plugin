@@ -14,6 +14,7 @@ import org.eclipse.php.internal.ui.preferences.util.Key;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
+import org.pdtextensions.core.PEXCorePlugin;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 
 
@@ -30,6 +31,11 @@ public abstract class AbstractOptionsConfigurationBlock extends
 	protected final static Key getPEXKey(String key) {
 		return getKey(PEXUIPlugin.PLUGIN_ID, key);
 	}
+	
+	protected final static Key getCoreKey(String key) {
+		return getKey(PEXCorePlugin.PLUGIN_ID, key);
+	}
+	
 
 	abstract public Control createBlockContents(Composite parent);
 

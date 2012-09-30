@@ -95,14 +95,14 @@ import org.eclipse.php.internal.core.ast.nodes.WhileStatement;
 import org.eclipse.php.internal.core.documentModel.parser.PHPRegionContext;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
-import org.pdtextensions.core.ui.OutputBuffer;
 import org.pdtextensions.core.ui.PEXUIPlugin;
-import org.pdtextensions.core.ui.Token;
-import org.pdtextensions.core.ui.TokenHolder;
-import org.pdtextensions.core.ui.TokenTypes;
-import org.pdtextensions.core.ui.Utils;
 import org.pdtextensions.core.ui.formatter.CodeFormatterConstants;
 import org.pdtextensions.core.ui.formatter.CodeFormatterOptions;
+import org.pdtextensions.core.ui.formatter.OutputBuffer;
+import org.pdtextensions.core.ui.formatter.Token;
+import org.pdtextensions.core.ui.formatter.TokenHolder;
+import org.pdtextensions.core.ui.formatter.TokenTypes;
+import org.pdtextensions.core.ui.formatter.Utils;
 import org.pdtextensions.core.ui.formatter.align.Alignment;
 
 @SuppressWarnings("restriction")

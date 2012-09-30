@@ -1,4 +1,4 @@
-package org.pdtextensions.core.ui;
+package org.pdtextensions.core.ui.formatter;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
