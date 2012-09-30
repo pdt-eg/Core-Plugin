@@ -12,12 +12,12 @@ package org.pdtextensions.core.ui.codemanipulation;
 
 import java.util.List;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
-import org.eclipse.dltk.internal.core.SourceType;
-import org.eclipse.php.core.compiler.PHPFlags;
+import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.eclipse.php.ui.CodeGeneration;
 
 /**
@@ -89,13 +89,35 @@ public class ClassStub {
 		buffer.append("{" + lineDelim);
 
 		if (generateConstructor) {
-			// TODO: generate Constructor
+			buffer.append(generateConstructor());
 		}
 
 		buffer.append(generateMethods());
 
 		buffer.append(lineDelim + "}");
 		code = buffer.toString();
+	}
+
+	private String generateConstructor() {
+		String constructor = "";
+		try {
+			IMethod[] constructors;
+			// Searching for constructor in parent class;
+			constructors = PHPModelUtils.getTypeMethod(superclass, "__construct", true);
+			if (constructors.length == 0) {
+				// Searching for constructor in hierarchy;
+				constructors = PHPModelUtils.getSuperTypeHierarchyMethod(superclass,
+					"__construct",
+					true,
+					new NullProgressMonitor());
+			}
+			if (constructors.length != 0) {
+				constructor = new MethodStub(scriptProject, constructors[0], generateComments).toString();
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return constructor;
 	}
 
 	private String generateSuperclassPart() {
@@ -137,9 +159,10 @@ public class ClassStub {
 
 		if (superclass != null && superclass.getParent() != null && getNamespace(superclass) != null
 				&& !getNamespace(superclass).equals(namespace)) {
-			code += "use " + getNamespace(superclass) + ";\n";
+			code += "use " + superclass.getFullyQualifiedName().replace("$", "\\") + ";" + lineDelim;
 		}
 
+		// TODO: Check why this don't work.
 		if (interfaces != null) {
 			for (IType interfaceObject : interfaces) {
 				if (interfaceObject.getParent() != null && getNamespace(interfaceObject) != null
@@ -167,21 +190,34 @@ public class ClassStub {
 	private String generateMethods() {
 		String code = "";
 		if (generateInheritedMethods == true) {
-			try {
-				for (IMethod method : ((SourceType) superclass).getMethods()) {
-					if (PHPFlags.isAbstract(method.getFlags())) {
-						code += new MethodStub(method, generateComments).toString();
-					}
-				}
-			} catch (ModelException e) {
-				e.printStackTrace();
+			code += getUnimplementedMethods(superclass);
+
+			for (IType interfaceObject : interfaces.toArray(new IType[interfaces.size()])) {
+				code += getUnimplementedMethods(interfaceObject);
 			}
 		}
 
 		return code;
 	}
 
+	private String getUnimplementedMethods(IType type) {
+		String code = "";
+		IMethod[] methods;
+		try {
+			methods = PHPModelUtils.getUnimplementedMethods(type, new NullProgressMonitor());
+			for (IMethod method : methods) {
+				code += new MethodStub(scriptProject, method, generateComments).toString();
+			}
+		} catch (ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return code;
+	}
+
 	public String toString() {
+
 		if (code == null) {
 			try {
 				generateCode();
