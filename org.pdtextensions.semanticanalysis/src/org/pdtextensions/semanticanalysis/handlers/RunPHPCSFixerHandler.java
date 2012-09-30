@@ -7,6 +7,9 @@
  ******************************************************************************/
 package org.pdtextensions.semanticanalysis.handlers;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -20,13 +23,16 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IScriptFolder;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ModelException;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -108,35 +114,47 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 		
 		if (selection != null && selection instanceof IStructuredSelection) {
 			
-			IStructuredSelection strucSelection = (IStructuredSelection) selection;
+			final IStructuredSelection strucSelection = (IStructuredSelection) selection;
 			
-			for (Iterator<Object> iterator = strucSelection.iterator(); iterator.hasNext();) {
+			Job fixerJob = new Job("Running PHP-CS-Fixer") {
 				
-				try {
-					Object element = iterator.next();
-					if (element instanceof IScriptFolder) {
-						IScriptFolder folder = (IScriptFolder) element;
-						processFolder(folder);
-					} else if (element instanceof ISourceModule) {
-						runFixer((ISourceModule) element);
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					
+					for (Iterator<Object> iterator = strucSelection.iterator(); iterator.hasNext();) {
+						
+						try {
+							Object element = iterator.next();
+							if (element instanceof IScriptFolder) {
+								IScriptFolder folder = (IScriptFolder) element;
+								processFolder(folder, monitor);
+							} else if (element instanceof ISourceModule) {
+								runFixer((ISourceModule) element, monitor);
+							}
+						} catch (Exception e) {
+							Logger.logException(e);
+						}
 					}
-				} catch (Exception e) {
-					Logger.logException(e);
+					
+					return Status.OK_STATUS;
 				}
-			}
+			};
+			
+			fixerJob.schedule();
+			
 		}
 		
 		return null;
 	}
 	
-	protected void processFolder(IScriptFolder folder) throws IOException, InterruptedException, CoreException {
+	protected void processFolder(IScriptFolder folder, IProgressMonitor monitor) throws IOException, InterruptedException, CoreException {
 		
 		try {
 			for (IModelElement child : folder.getChildren()) {
 				if (child instanceof IScriptFolder) {
-					processFolder((IScriptFolder) child);
+					processFolder((IScriptFolder) child, monitor);
 				} else if (child instanceof ISourceModule) {
-					runFixer((ISourceModule) child);
+					runFixer((ISourceModule) child, monitor);
 				}
 			}
 		} catch (ModelException e) {
@@ -144,12 +162,14 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 		}
 	}
 
-	private void runFixer(ISourceModule source) throws IOException, InterruptedException, CoreException {
+	private void runFixer(ISourceModule source, IProgressMonitor monitor) throws IOException, InterruptedException, CoreException {
 		
 		IResource resource = source.getUnderlyingResource();
 		String fileToFix =  resource.getLocation().toOSString();
 		fixerArgs.set(1, fileToFix);
 		Logger.debug("Running cs-fixer: " + fixerPath + " => " + fixerArgs.get(1));
+		
+		monitor.setTaskName("Fixing " + fixerArgs.get(1));
 		
 		try {
 			launcher.launch(fixerPath, fixerArgs.toArray(new String[fixerArgs.size()]), new ILaunchResponseHandler() {
@@ -180,13 +200,36 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 	
 	protected String getDefaultPhar() throws Exception
 	{
-		final URL resolve=FileLocator.resolve(CS_FIXER);
+        IPath location = PEXAnalysisPlugin.getDefault().getStateLocation();
+        IPath pharPath = location.append("phpcsfixer1.phar");
+        File pharFile = pharPath.toFile();
+        
+        if (pharFile.exists()) {
+        	return pharFile.getAbsolutePath();
+        }
+        
+		final URL resolve = FileLocator.resolve(CS_FIXER);
 
 		if (resolve == null) {
 			throw new Exception("Unable to load php-cs-fixer.phar");
 		}
 
 		IPath path = new Path(resolve.getFile());
-		return path.toOSString();
+		File file = path.toFile();
+		FileInputStream inStream = new FileInputStream(file);
+		FileOutputStream outStream = new FileOutputStream(pharFile);
+
+	    byte[] buffer = new byte[1024];
+
+	    int length;
+	    //copy the file content in bytes 
+	    while ((length = inStream.read(buffer)) > 0){
+	    	outStream.write(buffer, 0, length);
+	    }
+
+	    inStream.close();
+	    outStream.close();
+	    
+	    return pharFile.getAbsolutePath();
 	}	
 }
