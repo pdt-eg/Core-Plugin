@@ -13,56 +13,141 @@ package org.pdtextensions.core.ui.codemanipulation;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IParameter;
+import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.php.core.compiler.PHPFlags;
+import org.eclipse.php.ui.CodeGeneration;
 import org.pdtextensions.core.util.PDTModelUtils;
-
 
 public class MethodStub {
 
-	private String lineDelim = "\n";
+	private String lineDelimiter = "\n";
 
 	private String code = "";
-	private boolean generateComments;
-	private IMethod method;
+	private IScriptProject scriptProject = null;
 
-	public MethodStub(IMethod method, boolean generateComments) {
+	private IMethod method;
+	private boolean generateComments;
+
+	public MethodStub(IScriptProject scriptProject, IMethod method, boolean generateComments) {
+		this.scriptProject = scriptProject;
 		this.method = method;
 		this.generateComments = generateComments;
 	}
 
-	private void generateCode() throws ModelException {
+	private void generateCode() throws CoreException {
 
-		String access = null;
-		if (PHPFlags.isPublic(method.getFlags())) {
-			access = "public ";
-		} else if (PHPFlags.isProtected(method.getFlags())) {
-			access = "protected ";
+		StringBuilder buffer = new StringBuilder();
+		buffer.append(lineDelimiter);
+		buffer.append(generateComments());
+		buffer.append(lineDelimiter);
+		buffer.append(generateAccess());
+		buffer.append(" function " + method.getElementName());
+		buffer.append("(" + generateParamsWithTypes() + ")");
+		buffer.append(generateBody());
+
+		code = buffer.toString();
+	}
+
+	private String generateParamsWithoutTypes() {
+		return generateParams(false);
+	}
+	
+	private String generateParamsWithTypes() {
+		return generateParams(true);
+	}
+	
+	private String generateParams(boolean withTypes) {
+		String code = "";
+		try {
+			for (IParameter parameter : method.getParameters()) {
+				if (withTypes == true && parameter.getType() != null) {
+					code += parameter.getType();
+				}
+				code += " ";
+				code += parameter.getName();
+				if (parameter.getDefaultValue() != null) {
+					code += "=" + parameter.getDefaultValue();
+				}
+				code += ",";
+			}
+			// Remove last ",", but only when we have some parameters.
+			if (code.length() > 0) {
+				code = code.substring(0, code.length() - 1);
+			}
+		} catch (ModelException e) {
+			e.printStackTrace();
 		}
-		
-		code = lineDelim + lineDelim + access + "function " + method.getElementName() + "() { " + lineDelim
-				+ "// TODO Auto-generated method stub " + lineDelim + "}" + lineDelim + lineDelim;
+		return code;
+	}
+
+	private String generateBody() {
+
+		String body = "";
+		body = "{ " + lineDelimiter + "// TODO Auto-generated method stub " + lineDelimiter;
+
+		try {
+			if (method.isConstructor()) {
+				body += "parent::__construct(" + generateParamsWithoutTypes() + ");" + lineDelimiter;
+			}
+		} catch (ModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		body += "}" + lineDelimiter;
+		return body;
+	}
+
+
+	private String generateAccess() {
+		String access = new String();
+		try {
+			if (PHPFlags.isPublic(method.getFlags())) {
+				access = "public";
+			} else if (PHPFlags.isProtected(method.getFlags())) {
+				access = "protected";
+			}
+		} catch (ModelException e) {
+			e.printStackTrace();
+		}
+
+		return access;
+	}
+
+	private String generateComments() {
+		String comment = "";
+		if (generateComments == true) {
+			try {
+				comment = CodeGeneration.getMethodComment(scriptProject,
+					null,
+					method.getElementName(),
+					null,
+					null,
+					null,
+					method,
+					lineDelimiter,
+					null);
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+		}
+		return comment;
 	}
 
 	public String toString() {
 		try {
 			generateCode();
 		} catch (ModelException e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CoreException e) {
 			e.printStackTrace();
 		}
 		return code;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
-
 	/**
-	 * 
 	 * Retrieve the code stub for a given {@link IMethod}
-	 * 
 	 */
 	public static String getMethodStub(String parent, IMethod method, String indent, String lineDelim, boolean comments)
 			throws ModelException {
