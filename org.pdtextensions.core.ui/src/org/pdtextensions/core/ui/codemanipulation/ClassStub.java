@@ -10,14 +10,18 @@
  ******************************************************************************/
 package org.pdtextensions.core.ui.codemanipulation;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.internal.core.SourceType;
 import org.eclipse.php.core.compiler.PHPFlags;
+import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.eclipse.php.ui.CodeGeneration;
 
 /**
@@ -168,10 +172,9 @@ public class ClassStub {
 		String code = "";
 		if (generateInheritedMethods == true) {
 			try {
-				for (IMethod method : ((SourceType) superclass).getMethods()) {
-					if (PHPFlags.isAbstract(method.getFlags())) {
-						code += new MethodStub(method, generateComments).toString();
-					}
+				IMethod[] methods = PHPModelUtils.getUnimplementedMethods(superclass, new NullProgressMonitor());
+				for (IMethod method : methods) {
+					code += new MethodStub(scriptProject, method, generateComments).toString();
 				}
 			} catch (ModelException e) {
 				e.printStackTrace();
@@ -182,6 +185,7 @@ public class ClassStub {
 	}
 
 	public String toString() {
+
 		if (code == null) {
 			try {
 				generateCode();
