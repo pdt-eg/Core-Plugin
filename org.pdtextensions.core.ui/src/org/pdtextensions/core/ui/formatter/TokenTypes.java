@@ -1,4 +1,4 @@
-package org.pdtextensions.core.ui;
+package org.pdtextensions.core.ui.formatter;
 
 import org.eclipse.php.internal.core.documentModel.parser.regions.PHPRegionTypes;
 

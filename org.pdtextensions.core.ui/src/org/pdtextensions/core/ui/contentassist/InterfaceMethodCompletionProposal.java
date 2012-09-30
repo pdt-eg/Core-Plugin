@@ -24,12 +24,13 @@ import org.eclipse.php.internal.ui.editor.contentassist.PHPCompletionProposal;
 import org.eclipse.php.internal.ui.editor.contentassist.UseStatementInjector;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.pdtextensions.core.compiler.MissingMethodImplementation;
+import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.ui.PDTPluginImages;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.ast.Formatter;
 import org.pdtextensions.core.ui.codemanipulation.MethodStub;
-import org.pdtextensions.core.visitor.PDTVisitor;
+import org.pdtextensions.core.validation.MissingMethodImplementation;
+import org.pdtextensions.core.validation.validator.ImplementationValidator;
 
 
 /**
@@ -81,15 +82,14 @@ public class InterfaceMethodCompletionProposal extends PHPCompletionProposal {
 					}
 
 					ModuleDeclaration module = SourceParserUtil.getModuleDeclaration(sourceModule);
-					PDTVisitor visitor = new PDTVisitor(sourceModule);
-					module.traverse(visitor);
-					
+					ImplementationValidator validator = new ImplementationValidator(sourceModule);
+					module.traverse(validator);
 					String code = "";
 										
 					char indentChar = FormatPreferencesSupport.getInstance().getIndentationChar(document);
 					String indent = String.valueOf(indentChar);
 					
-					for (MissingMethodImplementation miss : visitor.getUnimplementedMethods()) {
+					for (MissingMethodImplementation miss : validator.getMissing()) {
 						
 						for (IMethod method : miss.getMisses()) {
 							code += MethodStub.getMethodStub(method.getParent().getElementName(), method, indent, TextUtilities.getDefaultLineDelimiter(document), false);
@@ -106,7 +106,7 @@ public class InterfaceMethodCompletionProposal extends PHPCompletionProposal {
 					}					
 					
 				} catch (Exception e) {
-					e.printStackTrace();
+					Logger.logException(e);
 				}
 			}
 		}

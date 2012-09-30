@@ -1,4 +1,4 @@
-package org.pdtextensions.core.ui;
+package org.pdtextensions.core.ui.formatter;
 
 import org.eclipse.wst.sse.core.internal.provisional.text.ITextRegion;
 

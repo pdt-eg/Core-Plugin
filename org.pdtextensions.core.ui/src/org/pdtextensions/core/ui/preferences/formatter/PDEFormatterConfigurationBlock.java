@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-package org.pdtextensions.core.ui.preferences;
+package org.pdtextensions.core.ui.preferences.formatter;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.php.internal.ui.preferences.IStatusChangeListener;

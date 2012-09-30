@@ -7,12 +7,12 @@
  ******************************************************************************/
 package org.pdtextensions.core.launch;
 
-import java.io.IOException;
+import org.pdtextensions.core.exception.ExecutableNotFoundException;
 
 
 public interface IPHPLauncher {
 
-	void launch(String scriptPath, String[] arguments, ILaunchResponseHandler handler) throws IOException, InterruptedException;
+	void launch(String scriptPath, String[] arguments, ILaunchResponseHandler handler) throws ExecutableNotFoundException;
 	
-	void launchAsync(String scriptPath, String[] arguments, ILaunchResponseHandler handler) throws IOException, InterruptedException;
+	void launchAsync(String scriptPath, String[] arguments, ILaunchResponseHandler handler) throws ExecutableNotFoundException;
 }

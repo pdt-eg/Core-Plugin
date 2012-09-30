@@ -1,4 +1,4 @@
-package org.pdtextensions.core.visitor;
+package org.pdtextensions.core.validation;
 
 import org.eclipse.dltk.compiler.problem.IProblemIdentifier;
 import org.pdtextensions.core.PEXCorePlugin;

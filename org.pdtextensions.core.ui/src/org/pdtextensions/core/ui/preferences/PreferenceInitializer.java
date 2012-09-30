@@ -4,8 +4,12 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
+import org.pdtextensions.core.CorePreferenceConstants;
+import org.pdtextensions.core.PEXCorePlugin;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.formatter.CodeFormatterConstants;
 
@@ -34,10 +38,14 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.DRAW_LEFT_END, true); //$NON-NLS-1$
 		store.setDefault(PreferenceConstants.DRAW_BLANK_LINE, false); //$NON-NLS-1$
 		store.setDefault(PreferenceConstants.SKIP_COMMENT_BLOCK, false); //$NON-NLS-1$
-		
+
+		/**
+		 * PHP cs fixer
+		 * TODO: check how we can move this to the semanticanalysis plugin.
+		 * when creating a separate initializer in the other plugin, it gets not called for some reason
+		 */
 		store.setDefault(PreferenceConstants.PREF_PHPCS_USE_DEFAULT_FIXERS, "yes");
 		store.setDefault(PreferenceConstants.PREF_PHPCS_CONFIG, "phpcs_config_default");
-		
 		store.setDefault(PreferenceConstants.PREF_PHPCS_OPTION_INDENTATION, "phpcs_option_indentation::indentation::Code must use 4 spaces for indenting, not tabs.::true");
 		store.setDefault(PreferenceConstants.PREF_PHPCS_OPTION_LINEFEED, "phpcs_option_linefeed::linefeed::All PHP files must use the Unix LF (linefeed) line ending.::true");
 		store.setDefault(PreferenceConstants.PREF_PHPCS_OPTION_TRAILING_SPACES, "phpcs_option_trailing_spaces::trailing_spaces::Remove trailing whitespace at the end of lines.::true");
@@ -55,6 +63,18 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.PREF_PHPCS_OPTION_CONTROLS_SPACE, "phpcs_option_controls_space::controls_spaces::A single space should be between: the closing brace and the control, the control and the opening parenthese, the closing parenthese and the opening brace.::true");
 		store.setDefault(PreferenceConstants.PREF_PHPCS_OPTION_ELSEIF, "phpcs_option_elseif::elseif::The keyword elseif should be used instead of else if so that all control keywords looks like single words.::true");
 		
+		
+		/**
+		 * Initialize core preferences
+		 */
+		ScopedPreferenceStore coreStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, PEXCorePlugin.PLUGIN_ID); 
+			
+		/**
+		 * Semantic analysis page
+		 */
+		coreStore.setDefault(CorePreferenceConstants.PREF_SA_ENABLE, true);
+		coreStore.setDefault(CorePreferenceConstants.PREF_SA_MISSING_METHOD_SEVERITY, CorePreferenceConstants.PREF_WARN);
+		coreStore.setDefault(CorePreferenceConstants.PREF_SA_MISSING_USE_STMT_SEVERITY, CorePreferenceConstants.PREF_WARN);
 		
 	}
 }

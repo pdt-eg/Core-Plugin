@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.pdtextensions</groupId>
   <artifactId>parent</artifactId>
-  <version>0.0.12-SNAPSHOT</version>
+  <version>0.0.13-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
     <module>org.pdtextensions.core</module>
@@ -12,6 +12,7 @@
     <module>org.pdtextensions.repos.ui</module>
     <module>org.pdtextensions.server</module>
     <module>org.pdtextensions.server.ui</module>
+    <module>org.pdtextensions.semanticanalysis</module>
     <module>org.pdtextensions.feature</module>
     <module>org.pdtextensions.updatesite</module>
   </modules>

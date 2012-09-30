@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.dltk.ui.viewsupport.ImageDescriptorRegistry;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
@@ -34,6 +35,7 @@ import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.php.internal.core.ast.nodes.ASTNode;
 import org.eclipse.php.internal.ui.corext.template.php.CodeTemplateContextType;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
@@ -43,6 +45,7 @@ import org.eclipse.ui.themes.ColorUtil;
 import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.osgi.framework.BundleContext;
+import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.ui.formatter.CodeFormatterOptions;
 import org.pdtextensions.core.ui.preferences.PDTTemplateStore;
 import org.pdtextensions.core.ui.preferences.PreferenceConstants;
@@ -241,7 +244,7 @@ public class PEXUIPlugin extends AbstractUIPlugin {
 			try {
 				fCodeTemplateStore.load();
 			} catch (IOException e) {
-//				Logger.logException(e);
+				Logger.logException(e);
 			}
 		}
 
@@ -251,10 +254,7 @@ public class PEXUIPlugin extends AbstractUIPlugin {
 	public ContextTypeRegistry getCodeTemplateContextRegistry() {
 		if (codeTypeRegistry == null) {
 			ContributionContextTypeRegistry registry = new ContributionContextTypeRegistry();
-
-			
 			CodeTemplateContextType.registerContextTypes(registry);
-
 			codeTypeRegistry = registry;
 		}
 
@@ -270,6 +270,20 @@ public class PEXUIPlugin extends AbstractUIPlugin {
 			fImageDescriptorRegistry = new ImageDescriptorRegistry();
 		}
 		return fImageDescriptorRegistry;
+	}
+
+	public void showMissingExecutableDialog() {
+
+		Display.getDefault().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				//TODO: check how to link to the php executable preference page in the dialog
+				String title = "Missing PHP executable";
+				String message = "There is no default PHP executable defined.";
+				MessageDialog.openWarning(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, message);
+			}
+		});
 	}	
-	
 }

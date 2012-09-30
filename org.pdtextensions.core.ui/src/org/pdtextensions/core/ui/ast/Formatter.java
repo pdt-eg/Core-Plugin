@@ -28,9 +28,9 @@ import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.text.IStructuredPartitioning;
 import org.eclipse.wst.sse.ui.internal.format.StructuredFormattingStrategy;
 import org.pdtextensions.core.ui.PEXUIPlugin;
-import org.pdtextensions.core.ui.StructuredTextMultiPassContentFormatter;
-import org.pdtextensions.core.ui.TokenHolder;
 import org.pdtextensions.core.ui.formatter.CodeFormatterOptions;
+import org.pdtextensions.core.ui.formatter.StructuredTextMultiPassContentFormatter;
+import org.pdtextensions.core.ui.formatter.TokenHolder;
 
 @SuppressWarnings({"restriction", "rawtypes"})
 public class Formatter implements IContentFormatter {

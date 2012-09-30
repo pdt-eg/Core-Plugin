@@ -26,10 +26,12 @@ import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IScriptFolder;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ModelException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.pdtextensions.core.exception.ExecutableNotFoundException;
 import org.pdtextensions.core.launch.DefaultExecutableLauncher;
 import org.pdtextensions.core.launch.ILaunchResponseHandler;
 import org.pdtextensions.core.launch.IPHPLauncher;
@@ -147,18 +149,21 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 		IResource resource = source.getUnderlyingResource();
 		String fileToFix =  resource.getLocation().toOSString();
 		fixerArgs.set(1, fileToFix);
-		
 		Logger.debug("Running cs-fixer: " + fixerPath + " => " + fixerArgs.get(1));
-		launcher.launch(fixerPath, fixerArgs.toArray(new String[fixerArgs.size()]), new ILaunchResponseHandler() {
-			
-			@Override
-			public void handle(String response) {
-				Logger.debug(response);
-			}
-		} );
+		
+		try {
+			launcher.launch(fixerPath, fixerArgs.toArray(new String[fixerArgs.size()]), new ILaunchResponseHandler() {
+				@Override
+				public void handle(String response) {
+					Logger.debug(response);
+				}
+			} );
+		} catch (ExecutableNotFoundException e) {
+			PEXUIPlugin.getDefault().showMissingExecutableDialog();
+			return;
+		}
 		
 		source.getUnderlyingResource().refreshLocal(IResource.DEPTH_ZERO, null);
-		
 	}
 	
 	

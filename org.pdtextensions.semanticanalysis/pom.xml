@@ -8,7 +8,7 @@
     <version>0.0.13-SNAPSHOT</version>	
   </parent>
 
-  <artifactId>org.pdtextensions.server</artifactId>
+  <artifactId>org.pdtextensions.semanticanalysis</artifactId>
   <packaging>eclipse-plugin</packaging>
 
 </project>
