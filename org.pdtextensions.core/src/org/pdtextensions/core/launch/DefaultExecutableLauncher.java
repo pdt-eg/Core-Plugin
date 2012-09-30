@@ -21,32 +21,25 @@ import org.pdtextensions.core.util.LaunchUtil;
 public class DefaultExecutableLauncher implements IPHPLauncher {
 
 	@Override
-	public void launch(String scriptPath, String[] arguments, ILaunchResponseHandler handler) throws IOException, InterruptedException {
+	public void launch(String scriptPath, String[] arguments, ILaunchResponseHandler handler) throws ExecutableNotFoundException {
 
 		doLaunch(scriptPath, arguments, handler, false);
 		
 	}
 
 	@Override
-	public void launchAsync(String scriptPath, String[] arguments, ILaunchResponseHandler handler)
-			throws IOException, InterruptedException {
+	public void launchAsync(String scriptPath, String[] arguments, ILaunchResponseHandler handler) throws ExecutableNotFoundException {
 
 		doLaunch(scriptPath, arguments, handler, true);
 		
 	}
 	
-	protected void doLaunch(String scriptPath, String[] arguments, ILaunchResponseHandler handler, boolean async) throws IOException, InterruptedException {
+	protected void doLaunch(String scriptPath, String[] arguments, ILaunchResponseHandler handler, boolean async) throws ExecutableNotFoundException {
 		
 		String phpExe = null;
 		
-		try {
-			Logger.debug("Getting default executable");
-			phpExe = LaunchUtil.getPHPExecutable();
-		} catch (ExecutableNotFoundException e) {
-			Logger.debug("Error retrieving executable");
-			Logger.logException(e);
-			return;
-		}
+		Logger.debug("Getting default executable");
+		phpExe = LaunchUtil.getPHPExecutable();
 		
 		String[] args = new String[arguments.length + 2];
 		args[0] = phpExe;
@@ -58,25 +51,33 @@ public class DefaultExecutableLauncher implements IPHPLauncher {
 		
 		Runtime runtime = Runtime.getRuntime();
 		Path path = new Path(scriptPath);
-		Process p = runtime.exec(args, new String[]{}, new File(path.removeLastSegments(1).toOSString()));
 		
-		if (async == false) {
-			p.waitFor();
-		}
-
-		BufferedReader output=new BufferedReader(new InputStreamReader(p
-				.getInputStream()));
-		String result="";
-		String temp=output.readLine();
-		while (temp != null) {
-			if (temp.trim().length() > 0) {
-				result=result + "\n" + temp;
+		try {
+			
+			Process p = runtime.exec(args, new String[]{}, new File(path.removeLastSegments(1).toOSString()));
+			
+			if (async == false) {
+				p.waitFor();
 			}
-			temp=output.readLine();
-		}
-		
-		if (handler != null) {
-			handler.handle(result.trim());
+
+			BufferedReader output=new BufferedReader(new InputStreamReader(p
+					.getInputStream()));
+			String result="";
+			String temp=output.readLine();
+			while (temp != null) {
+				if (temp.trim().length() > 0) {
+					result=result + "\n" + temp;
+				}
+				temp=output.readLine();
+			}
+			
+			if (handler != null) {
+				handler.handle(result.trim());
+			}
+		} catch (IOException e) {
+			Logger.logException(e);
+		} catch (InterruptedException e) {
+			Logger.logException(e);
 		}
 	}
 }
