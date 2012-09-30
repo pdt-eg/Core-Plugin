@@ -8,10 +8,9 @@
 package org.pdtextensions.semanticanalysis.handlers;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +36,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.osgi.framework.Bundle;
 import org.pdtextensions.core.exception.ExecutableNotFoundException;
 import org.pdtextensions.core.launch.DefaultExecutableLauncher;
 import org.pdtextensions.core.launch.ILaunchResponseHandler;
@@ -55,8 +55,6 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 	private IPHPLauncher launcher = new DefaultExecutableLauncher();
 	private String fixerPath;
 	
-	final public static URL CS_FIXER = Platform.getBundle(PEXAnalysisPlugin.PLUGIN_ID).getEntry("Resources/phpcsfixer/phpcsfixer.phar");
-	
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -70,6 +68,7 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 			try {
 				fixerPath = getDefaultPhar();
 			} catch (Exception e) {
+				Logger.logException(e);
 				Logger.debug("Unable to get default phar");
 				return null;
 			}
@@ -79,7 +78,6 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 		String config = store.getString(PreferenceConstants.PREF_PHPCS_CONFIG);
 		
 		fixerArgs = new ArrayList<String>();
-		
 		fixerArgs.add("fix");
 		fixerArgs.add("file");
 		
@@ -203,31 +201,33 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
         IPath location = PEXAnalysisPlugin.getDefault().getStateLocation();
         IPath pharPath = location.append("phpcsfixer1.phar");
         File pharFile = pharPath.toFile();
+        Logger.debug("checking if phar is already unpacked " + pharPath.toOSString());
         
         if (pharFile.exists()) {
+        	Logger.debug("Phar unpacked, returning path");
         	return pharFile.getAbsolutePath();
         }
         
-		final URL resolve = FileLocator.resolve(CS_FIXER);
-
-		if (resolve == null) {
-			throw new Exception("Unable to load php-cs-fixer.phar");
+        Logger.debug("Phar not unpacked yet, resolving internal URL");
+		Bundle bundle = Platform.getBundle( PEXAnalysisPlugin.PLUGIN_ID );
+		InputStream stream = FileLocator.openStream( bundle, new Path("Resources/phpcsfixer/phpcsfixer.phar"), false );
+		
+		if (stream == null) {
+			Logger.log(Logger.ERROR, "Unable to open inputStream to built-in phar");
+			return null;
 		}
-
-		IPath path = new Path(resolve.getFile());
-		File file = path.toFile();
-		FileInputStream inStream = new FileInputStream(file);
+		
 		FileOutputStream outStream = new FileOutputStream(pharFile);
-
+		Logger.debug("Unpacking built-in phar to " + pharFile.getAbsolutePath());
 	    byte[] buffer = new byte[1024];
 
 	    int length;
 	    //copy the file content in bytes 
-	    while ((length = inStream.read(buffer)) > 0){
+	    while ((length = stream.read(buffer)) > 0){
 	    	outStream.write(buffer, 0, length);
 	    }
 
-	    inStream.close();
+	    stream.close();
 	    outStream.close();
 	    
 	    return pharFile.getAbsolutePath();
