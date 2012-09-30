@@ -43,7 +43,7 @@ public class InterfaceMethodQuickFixProcessor implements IQuickFixProcessor {
 		if (problemId == IPDTProblem.InterfaceRelated) {
 			return true;
 		}
-		
+	
 		return false;
 	}
 

@@ -3,15 +3,6 @@
 <plugin>
 
    <extension
-         point="org.eclipse.dltk.core.buildParticipant">
-      <buildParticipant
-            class="org.pdtextensions.core.builder.PDTBuildParticipantFactory"
-            id="org.pdtextensions.core.buildParticipant"
-            name="PDT Builder"
-            nature="org.eclipse.php.core.PHPNature">
-      </buildParticipant>
-   </extension>
-   <extension
          point="org.eclipse.php.core.completionContextResolvers">
       <resolver
             class="org.pdtextensions.core.codeassist.CompletionContextResolver">
@@ -23,5 +14,40 @@
             class="org.pdtextensions.core.codeassist.CompletionStrategyFactory">
       </factory>
    </extension>
-
+   
+    <extension
+        id="org.pdtextensions.core.validation.MissingMethodMarker"
+        name="Missing PHP Method"
+        point="org.eclipse.core.resources.markers">
+        <persistent value="true"/>
+        <attribute name="lineNumber"/>
+        <attribute name="charStart"/>
+        <attribute name="charEnd"/>
+        <attribute name="message"/>
+        <attribute name="priority"/>
+        <attribute name="severity"/>
+        <super type="org.eclipse.core.resources.problemmarker"/>
+    </extension> 
+   
+   <extension
+         id="org.pdtextensions.core.validation.PEXValidator"
+         name="PHP Semantic Analysis Validator"
+         point="org.eclipse.wst.validation.validatorV2">
+      <validator
+            build="true"
+            class="org.pdtextensions.core.validation.PEXValidator"
+            manual="true"
+            markerId="org.pdtextensions.core.validation.MissingMethodMarker"
+            sourceid="org.eclipse.php.core.phpsource"
+            version="1">
+            <include>
+                <rules>
+                    <contentType
+                        id="org.eclipse.php.core.phpsource"></contentType>
+                </rules>
+            </include>
+            <group
+                id="org.eclipse.wst.sse.core.structuredModelGroup" />
+      </validator>
+   </extension>
 </plugin>

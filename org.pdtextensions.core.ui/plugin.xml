@@ -164,7 +164,15 @@
          point="org.eclipse.php.ui.quickFixProcessors">
       <quickFixProcessor
             class="org.pdtextensions.core.ui.quickfix.InterfaceMethodQuickFixProcessor"
-            id="org.pdtextensions.core.ui.quickFixProcessor">
+            id="org.pdtextensions.core.ui.quickFixProcessor"
+            name="Implement missing Methods">
+            <!--
+         <handledMarkerTypes>
+            <markerType
+                  id="org.pdtextensions.core.validation.MissingMethodMarker">
+            </markerType>
+         </handledMarkerTypes>
+         -->
       </quickFixProcessor>
       <quickFixProcessor
             class="org.pdtextensions.core.ui.quickfix.ReferenceQuickFixProcessor"

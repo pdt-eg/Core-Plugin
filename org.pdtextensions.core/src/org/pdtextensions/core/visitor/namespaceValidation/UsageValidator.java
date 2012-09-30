@@ -7,8 +7,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dltk.compiler.problem.DefaultProblem;
 import org.eclipse.dltk.compiler.problem.IProblem;
 import org.eclipse.dltk.compiler.problem.ProblemSeverity;
+import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
-import org.eclipse.dltk.core.builder.IBuildContext;
 import org.eclipse.dltk.core.index2.search.ISearchEngine.MatchRule;
 import org.eclipse.dltk.core.search.IDLTKSearchScope;
 import org.eclipse.dltk.core.search.SearchEngine;
@@ -35,17 +35,15 @@ import org.pdtextensions.core.compiler.IPDTProblem;
 public class UsageValidator extends PHPASTVisitor {
 
 	protected List<UseStatement> statements;
-	private IBuildContext buildContext;
+	private ISourceModule source;
+	
+	List<IProblem> problems;
 
-	public UsageValidator() {
+	public UsageValidator(ISourceModule source) {
 
+		this.source = source;
 		statements = new ArrayList<UseStatement>();
-	}
-
-	public UsageValidator(IBuildContext buildContext) {
-		this.buildContext = buildContext;
-		statements = new ArrayList<UseStatement>();
-
+		problems = new ArrayList<IProblem>();
 	}
 
 	/**
@@ -79,13 +77,18 @@ public class UsageValidator extends PHPASTVisitor {
 			return false;
 		}
 		
+		if ("array".equals(s.getParameterType().getName())) {
+			return false;
+		}
+
+		
 		if (s.getParameterType() instanceof FullyQualifiedReference) {
 			
 			if (isReferenced((FullyQualifiedReference)s.getParameterType())) {
 				return false;
 			}
 			
-			IType namespace = PHPModelUtils.getCurrentNamespace(buildContext.getSourceModule(), s.sourceStart());
+			IType namespace = PHPModelUtils.getCurrentNamespace(source, s.sourceStart());
 			
 			if (namespace != null) {
 				String name = namespace.getFullyQualifiedName() + "\\" + s.getParameterType().getName();
@@ -121,11 +124,23 @@ public class UsageValidator extends PHPASTVisitor {
 			
 			FullyQualifiedReference fqr = (FullyQualifiedReference) s.getClassName();
 			
-			if (isReferenced(fqr)) {
+			// don't handle the global namespace
+			if (fqr.getFullyQualifiedName().startsWith("\\")) {
 				return false;
 			}
 			
-			IType namespace = PHPModelUtils.getCurrentNamespace(buildContext.getSourceModule(), s.sourceStart());
+			// class is already referenced via a use statement
+			if (isReferenced(fqr)) {
+				return false;
+			}
+
+			// class can be resolved in the project
+			if (isResolved(fqr)) {
+				return false;
+			}
+			
+			// last check: try to resolve the type via the current namespace
+			IType namespace = PHPModelUtils.getCurrentNamespace(source, s.sourceStart());
 			
 			if (namespace != null) {
 				String name = namespace.getFullyQualifiedName() + "\\" + fqr.getName();
@@ -134,6 +149,7 @@ public class UsageValidator extends PHPASTVisitor {
 				}
 			}
 			
+			// not revoled, provide an "inject use statement" quickfix
 			String message = "The type " + fqr.getFullyQualifiedName()
 					+ " cannot be resolved.";
 
@@ -150,7 +166,7 @@ public class UsageValidator extends PHPASTVisitor {
 		if (s.getDispatcher() instanceof FullyQualifiedReference) {
 			
 			FullyQualifiedReference fqr = (FullyQualifiedReference) s.getDispatcher();
-			if (!isReferenced(fqr) && !isResolved(fqr)) {
+			if (!isReferenced(fqr) && !isResolved(fqr) && !"self".equals(fqr.getName()) && !"static".equals(fqr.getName())) {
 				reportProblem("Unable to resolve " + fqr.getFullyQualifiedName(), IPDTProblem.UsageRelated, fqr.sourceStart(), fqr.sourceEnd());
 			}
 		}
@@ -165,7 +181,7 @@ public class UsageValidator extends PHPASTVisitor {
 		if (s.getDispatcher() instanceof FullyQualifiedReference) {
 			
 			FullyQualifiedReference fqr = (FullyQualifiedReference) s.getDispatcher();
-			if (!isReferenced(fqr) && !isResolved(fqr)) {
+			if (!isReferenced(fqr) && !isResolved(fqr) && !"self".equals(fqr.getName()) && !"static".equals(fqr.getName())) {
 				reportProblem("Unable to resolve " + fqr.getFullyQualifiedName(), IPDTProblem.UsageRelated, fqr.sourceStart(), fqr.sourceEnd());
 			}
 		}
@@ -179,7 +195,7 @@ public class UsageValidator extends PHPASTVisitor {
 		if (s.getReceiver() instanceof FullyQualifiedReference) {
 			
 			FullyQualifiedReference fqr = (FullyQualifiedReference) s.getReceiver();
-			if (!isReferenced(fqr) && !isResolved(fqr)) {
+			if (!isReferenced(fqr) && !isResolved(fqr) && !"self".equals(fqr.getName()) && !"static".equals(fqr.getName())) {
 				reportProblem("Unable to resolve " + fqr.getFullyQualifiedName(), IPDTProblem.UsageRelated, fqr.sourceStart(), fqr.sourceEnd());
 			}
 		}
@@ -266,6 +282,10 @@ public class UsageValidator extends PHPASTVisitor {
 	}
 	
 	private boolean isReferenced(FullyQualifiedReference fqr) {
+
+		if (fqr.getName().startsWith("\\")) {
+			return true;
+		}
 		
 		for (UseStatement statement : statements) {
 			if (isReferenced(fqr, statement)) {
@@ -294,11 +314,7 @@ public class UsageValidator extends PHPASTVisitor {
 	
 	private boolean isResolved(String fullyQualifiedReference) {
 		
-		if (buildContext == null) {
-			return true;
-		}
-		
-		IDLTKSearchScope searchScope = SearchEngine.createSearchScope(buildContext.getSourceModule().getScriptProject());
+		IDLTKSearchScope searchScope = SearchEngine.createSearchScope(source.getScriptProject());
 		IType[] types = PhpModelAccess.getDefault().findTypes(fullyQualifiedReference, MatchRule.EXACT, 0, 0, searchScope, new NullProgressMonitor());
 
 		for (IType type : types) {
@@ -310,34 +326,12 @@ public class UsageValidator extends PHPASTVisitor {
 		return false;
 	}
 	
-	/**
-	 * Report a reference problem.
-	 * 
-	 * @param message
-	 * @param type
-	 * @param start
-	 * @param end
-	 */
 	@SuppressWarnings("deprecation")
 	protected void reportProblem(String message, int type, int start, int end) {
-
-		ProblemSeverity severity = ProblemSeverity.WARNING;
-
-		int lineNo = buildContext.getLineTracker()
-				.getLineInformationOfOffset(start)
-				.getOffset();
-		
-		// TODO: how can we check against ints to use the proper constructor
-		// here
-		// in InterfaceMethodQuickFixProcessor.hasCorrections
-		// IProblem problem = new DefaultProblem(message,
-		// PEXProblem.INTERFACE_IMPLEMENTATION,
-		// new String[0], severity, miss.getStart(), miss.getEnd(),lineNo);
-
-		IProblem problem = new DefaultProblem(message,
-				IPDTProblem.UsageRelated, new String[0], severity, start, end, lineNo);
-
-		buildContext.getProblemReporter().reportProblem(problem);
+		problems.add(new DefaultProblem(message, type, new String[0],  ProblemSeverity.WARNING, start, end, 0));
 	}
 	
+	public List<IProblem> getProblems() {
+		return problems;
+	}
 }

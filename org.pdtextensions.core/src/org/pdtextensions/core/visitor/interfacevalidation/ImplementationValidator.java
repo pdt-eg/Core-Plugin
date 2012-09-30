@@ -8,73 +8,75 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.references.TypeReference;
-import org.eclipse.dltk.compiler.problem.DefaultProblem;
-import org.eclipse.dltk.compiler.problem.IProblem;
-import org.eclipse.dltk.compiler.problem.ProblemSeverity;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
-import org.eclipse.dltk.core.builder.IBuildContext;
 import org.eclipse.dltk.core.index2.search.ISearchEngine.MatchRule;
 import org.eclipse.dltk.core.search.IDLTKSearchScope;
 import org.eclipse.dltk.core.search.SearchEngine;
 import org.eclipse.dltk.ti.types.IEvaluatedType;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ClassDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.FullyQualifiedReference;
+import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.php.internal.core.model.PhpModelAccess;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.eclipse.php.internal.core.typeinference.PHPTypeInferenceUtils;
-import org.pdtextensions.core.compiler.IPDTProblem;
 import org.pdtextensions.core.compiler.MissingMethodImplementation;
 import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.util.PDTModelUtils;
 
+/**
+ * 
+ * Checks ClassDeclarations for missing method implementations.
+ * 
+ * TODO: Currently assumes one class per file. Refactor to handle multiple classes per file.
+ * 
+ * @author Robert Gruendler <r.gruendler@gmail.com>
+ *
+ */
 @SuppressWarnings("restriction")
-public class ImplementationValidator {
+public class ImplementationValidator extends PHPASTVisitor {
 
 	private ISourceModule context;
 	private ClassDeclaration classDeclaration;
 	private List<MissingMethodImplementation> missingMethods;
-	private IBuildContext buildContext;
 
-	public ImplementationValidator(IBuildContext buildContext, ISourceModule context, ClassDeclaration s) {
-		
-		this.buildContext = buildContext;
+	public ImplementationValidator(ISourceModule context) {
 		this.context = context;
-		this.classDeclaration = s;
-		
 		missingMethods = new ArrayList<MissingMethodImplementation>();
-		init();
 	}
 	
-	protected void init() {
+	@Override
+	public boolean visit(ClassDeclaration s) throws Exception {
 		
-		if (classDeclaration.isAbstract()) {
-			return;
+		this.classDeclaration = s;
+		
+		if (getClassDeclaration().isAbstract()) {
+			return false;
 		}
 		
-		Collection<TypeReference> interfaces = classDeclaration.getInterfaceList();
+		Collection<TypeReference> interfaces = getClassDeclaration().getInterfaceList();
 		IScriptProject project = context.getScriptProject();
 		List<IMethod> unimplemented = new ArrayList<IMethod>();		
 		IDLTKSearchScope scope = SearchEngine.createSearchScope(project);		
 		PhpModelAccess model = PhpModelAccess.getDefault();		
 		IType classType = null;
-		IType nss = PHPModelUtils.getCurrentNamespace(context, classDeclaration.getNameStart());
+		IType nss = PHPModelUtils.getCurrentNamespace(context, getClassDeclaration().getNameStart());
 				
 		// namespaced class
 		if (nss != null) {			
-			IType[] ts = model.findTypes(nss.getElementName(), classDeclaration.getName(), MatchRule.EXACT, 0, 0, scope, null);
+			IType[] ts = model.findTypes(nss.getElementName(), getClassDeclaration().getName(), MatchRule.EXACT, 0, 0, scope, null);
 			if (ts.length != 1) {
-				return;
+				return false;
 			}			
 			classType = ts[0];
 			
 		} else {
-			IType[] ts = model.findTypes(classDeclaration.getName(), MatchRule.EXACT, 0, 0, scope, null);
+			IType[] ts = model.findTypes(getClassDeclaration().getName(), MatchRule.EXACT, 0, 0, scope, null);
 			if (ts.length != 1) {
-				return;
+				return false;
 			}			
 			classType = ts[0];			
 		}
@@ -126,7 +128,7 @@ public class ImplementationValidator {
 							implemented = true;
 						}
 						
-						for (MethodDeclaration typeMethod : classDeclaration.getMethods()) {					
+						for (MethodDeclaration typeMethod : getClassDeclaration().getMethods()) {					
 						
 							String signature = PDTModelUtils.getMethodSignature(typeMethod, project);						
 							if (methodSignature.equals(signature)) {
@@ -149,11 +151,13 @@ public class ImplementationValidator {
 		}
 		
 		if (unimplemented.size() > 0) {			
-			MissingMethodImplementation missing = new MissingMethodImplementation(classDeclaration, unimplemented);
+			MissingMethodImplementation missing = new MissingMethodImplementation(getClassDeclaration(), unimplemented);
 			getMissing().add(missing);
-		}
+		}		
+		
+		return true;
 	}
-
+	
 	public boolean hasMissing() {
 		return missingMethods != null && missingMethods.size() > 0;
 	}
@@ -166,37 +170,8 @@ public class ImplementationValidator {
 			List<MissingMethodImplementation> missingInterfaceImplemetations) {
 		this.missingMethods = missingInterfaceImplemetations;
 	}
-	
-	@SuppressWarnings("deprecation")
-	public void reportUnimplementedMethods()
-	{
 
-		if (buildContext == null) {
-			Logger.debug("Unable to report unimplemented methods without buildContext");
-			return;
-		}
-		
-		ProblemSeverity severity = ProblemSeverity.WARNING;
-
-		for (MissingMethodImplementation miss : missingMethods) {
-
-			int lineNo = buildContext.getLineTracker().getLineInformationOfOffset(miss.getStart()).getOffset();
-			String message = "The type " + miss.getTypeName() + " must implement the inherited method ";
-
-			for (IMethod m : miss.getMisses()) {							
-				message += m.getElementName() + ", ";							
-			}
-
-			//TODO: how can we check against ints to use the proper constructor here
-			// in InterfaceMethodQuickFixProcessor.hasCorrections
-//			IProblem problem = new DefaultProblem(message, PEXProblem.INTERFACE_IMPLEMENTATION,
-//					new String[0], severity, miss.getStart(), miss.getEnd(),lineNo);
-
-			IProblem problem = new DefaultProblem(message, IPDTProblem.InterfaceRelated,
-					new String[0], severity, miss.getStart(), miss.getEnd(),lineNo);
-
-			buildContext.getProblemReporter().reportProblem(problem);
-
-		}
+	public ClassDeclaration getClassDeclaration() {
+		return classDeclaration;
 	}
 }

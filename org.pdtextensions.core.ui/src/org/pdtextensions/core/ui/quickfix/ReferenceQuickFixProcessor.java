@@ -20,6 +20,7 @@ public class ReferenceQuickFixProcessor implements IQuickFixProcessor {
 
 	@Override
 	public boolean hasCorrections(ISourceModule unit, int problemId) {
+		
 		return problemId == IPDTProblem.UsageRelated;
 	}
 
