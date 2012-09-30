@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-package org.pdtextensions.core.compiler;
+package org.pdtextensions.core.validation;
 
 import java.util.List;
 

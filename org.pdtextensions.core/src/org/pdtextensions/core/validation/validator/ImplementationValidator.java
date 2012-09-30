@@ -1,4 +1,4 @@
-package org.pdtextensions.core.visitor.interfacevalidation;
+package org.pdtextensions.core.validation.validator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,9 +23,9 @@ import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.php.internal.core.model.PhpModelAccess;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.eclipse.php.internal.core.typeinference.PHPTypeInferenceUtils;
-import org.pdtextensions.core.compiler.MissingMethodImplementation;
 import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.util.PDTModelUtils;
+import org.pdtextensions.core.validation.MissingMethodImplementation;
 
 /**
  * 

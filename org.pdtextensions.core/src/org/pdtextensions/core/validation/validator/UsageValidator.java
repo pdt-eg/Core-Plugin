@@ -1,4 +1,4 @@
-package org.pdtextensions.core.visitor.namespaceValidation;
+package org.pdtextensions.core.validation.validator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.UseStatement;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.php.internal.core.model.PhpModelAccess;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
-import org.pdtextensions.core.compiler.IPDTProblem;
+import org.pdtextensions.core.validation.IPDTProblem;
 
 /**
  * Checks a PHP sourcemodule for unresolved type references.

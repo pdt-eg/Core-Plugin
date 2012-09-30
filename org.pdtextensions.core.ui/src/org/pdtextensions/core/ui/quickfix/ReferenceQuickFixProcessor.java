@@ -9,8 +9,8 @@ import org.eclipse.dltk.ui.text.completion.IScriptCompletionProposal;
 import org.eclipse.php.internal.ui.text.correction.IInvocationContext;
 import org.eclipse.php.internal.ui.text.correction.IProblemLocation;
 import org.eclipse.php.internal.ui.text.correction.IQuickFixProcessor;
-import org.pdtextensions.core.compiler.IPDTProblem;
 import org.pdtextensions.core.ui.contentassist.InjectUseStatementCompletionProposal;
+import org.pdtextensions.core.validation.IPDTProblem;
 
 @SuppressWarnings("restriction")
 public class ReferenceQuickFixProcessor implements IQuickFixProcessor {

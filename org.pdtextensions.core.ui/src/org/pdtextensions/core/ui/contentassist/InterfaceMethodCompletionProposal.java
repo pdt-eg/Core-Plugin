@@ -24,13 +24,13 @@ import org.eclipse.php.internal.ui.editor.contentassist.PHPCompletionProposal;
 import org.eclipse.php.internal.ui.editor.contentassist.UseStatementInjector;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.pdtextensions.core.compiler.MissingMethodImplementation;
 import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.ui.PDTPluginImages;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.ast.Formatter;
 import org.pdtextensions.core.ui.codemanipulation.MethodStub;
-import org.pdtextensions.core.visitor.interfacevalidation.ImplementationValidator;
+import org.pdtextensions.core.validation.MissingMethodImplementation;
+import org.pdtextensions.core.validation.validator.ImplementationValidator;
 
 
 /**

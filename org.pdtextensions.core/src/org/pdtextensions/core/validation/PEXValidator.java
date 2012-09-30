@@ -27,11 +27,22 @@ import org.eclipse.wst.validation.AbstractValidator;
 import org.eclipse.wst.validation.ValidationResult;
 import org.eclipse.wst.validation.ValidationState;
 import org.eclipse.wst.validation.internal.provisional.core.IReporter;
-import org.pdtextensions.core.compiler.IPDTProblem;
 import org.pdtextensions.core.log.Logger;
-import org.pdtextensions.core.visitor.interfacevalidation.ImplementationValidator;
-import org.pdtextensions.core.visitor.namespaceValidation.UsageValidator;
+import org.pdtextensions.core.validation.validator.ImplementationValidator;
+import org.pdtextensions.core.validation.validator.UsageValidator;
 
+/**
+ * Main WST validator. Currently checks for:
+ * 
+ * - Missing methods for interface implementors
+ * - Missing use statements for type references
+ * 
+ * @see ImplementationValidator
+ * @see UsageValidator
+ * 
+ * @since 0.0.12
+ * @author Robert Gruendler <r.gruendler@gmail.com>
+ */
 @SuppressWarnings("restriction")
 public class PEXValidator extends AbstractValidator {
 
