@@ -56,6 +56,7 @@ public class UsageValidator extends PHPASTVisitor {
 		
 		statements.add(s);
 
+		/*
 		for (UsePart part : s.getParts()) {
 			// report unresolved use statements
 			if (part.getAlias() == null && !isResolved(part.getNamespace())) {
@@ -64,6 +65,7 @@ public class UsageValidator extends PHPASTVisitor {
 				
 			}
 		}
+		*/
 		
 		return false;
 	}
@@ -128,7 +130,7 @@ public class UsageValidator extends PHPASTVisitor {
 			FullyQualifiedReference fqr = (FullyQualifiedReference) s.getClassName();
 			
 			// don't handle the global namespace
-			if (fqr.getFullyQualifiedName().startsWith("\\")) {
+			if (fqr.getFullyQualifiedName().startsWith("\\") || "self".equals(fqr.getFullyQualifiedName())) {
 				return false;
 			}
 			
@@ -169,6 +171,11 @@ public class UsageValidator extends PHPASTVisitor {
 		if (s.getDispatcher() instanceof FullyQualifiedReference) {
 			
 			FullyQualifiedReference fqr = (FullyQualifiedReference) s.getDispatcher();
+			
+			if (fqr.getFullyQualifiedName().startsWith("\\")) {
+				return false;
+			}
+			
 			IType namespace = PHPModelUtils.getCurrentNamespace(source, s.sourceStart());
 			
 			// static constant access in the current namespace, e.g MyClass::foobar() and the current namespace is Acme\Demo
@@ -194,6 +201,11 @@ public class UsageValidator extends PHPASTVisitor {
 		if (s.getDispatcher() instanceof FullyQualifiedReference) {
 			
 			FullyQualifiedReference fqr = (FullyQualifiedReference) s.getDispatcher();
+			
+			if (fqr.getFullyQualifiedName().startsWith("\\")) {
+				return false;
+			}
+			
 			if (!isReferenced(fqr) && !isResolved(fqr) && !"self".equals(fqr.getName()) && !"static".equals(fqr.getName())) {
 				reportProblem("Unable to resolve " + fqr.getFullyQualifiedName(), IPDTProblem.UsageRelated, fqr.sourceStart(), fqr.sourceEnd());
 			}
@@ -210,7 +222,7 @@ public class UsageValidator extends PHPASTVisitor {
 			FullyQualifiedReference fqr = (FullyQualifiedReference) s.getReceiver();
 			String fqn = fqr.getFullyQualifiedName();
 			
-			if ("parent".equals(fqn) || "self".equals(fqn) || "static".equals(fqn)) {
+			if ("parent".equals(fqn) || "self".equals(fqn) || "static".equals(fqn) || fqn.startsWith("\\")) {
 				return false;
 			}
 			
