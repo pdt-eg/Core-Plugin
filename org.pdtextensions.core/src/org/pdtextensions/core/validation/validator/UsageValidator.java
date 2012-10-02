@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.dltk.ast.references.TypeReference;
 import org.eclipse.dltk.compiler.problem.DefaultProblem;
 import org.eclipse.dltk.compiler.problem.IProblem;
 import org.eclipse.dltk.compiler.problem.ProblemSeverity;
@@ -77,14 +78,16 @@ public class UsageValidator extends PHPASTVisitor {
 			return false;
 		}
 		
-		if ("array".equals(s.getParameterType().getName())) {
+		if (s.getParameterType() instanceof TypeReference && !(s.getParameterType() instanceof FullyQualifiedReference)) {
 			return false;
 		}
 
 		
 		if (s.getParameterType() instanceof FullyQualifiedReference) {
 			
-			if (isReferenced((FullyQualifiedReference)s.getParameterType())) {
+			FullyQualifiedReference fqr = (FullyQualifiedReference) s.getParameterType();
+			
+			if (fqr.getFullyQualifiedName().startsWith("\\") || isReferenced(fqr)) {
 				return false;
 			}
 			
@@ -166,6 +169,16 @@ public class UsageValidator extends PHPASTVisitor {
 		if (s.getDispatcher() instanceof FullyQualifiedReference) {
 			
 			FullyQualifiedReference fqr = (FullyQualifiedReference) s.getDispatcher();
+			IType namespace = PHPModelUtils.getCurrentNamespace(source, s.sourceStart());
+			
+			// static constant access in the current namespace, e.g MyClass::foobar() and the current namespace is Acme\Demo
+			if (namespace != null) {
+				String name = namespace.getFullyQualifiedName() + "\\" + fqr.getName();
+				if (isResolved(name)) {
+					return false;
+				}
+			}
+			
 			if (!isReferenced(fqr) && !isResolved(fqr) && !"self".equals(fqr.getName()) && !"static".equals(fqr.getName())) {
 				reportProblem("Unable to resolve " + fqr.getFullyQualifiedName(), IPDTProblem.UsageRelated, fqr.sourceStart(), fqr.sourceEnd());
 			}
@@ -195,6 +208,12 @@ public class UsageValidator extends PHPASTVisitor {
 		if (s.getReceiver() instanceof FullyQualifiedReference) {
 			
 			FullyQualifiedReference fqr = (FullyQualifiedReference) s.getReceiver();
+			String fqn = fqr.getFullyQualifiedName();
+			
+			if ("parent".equals(fqn) || "self".equals(fqn) || "static".equals(fqn)) {
+				return false;
+			}
+			
 			if (!isReferenced(fqr) && !isResolved(fqr) && !"self".equals(fqr.getName()) && !"static".equals(fqr.getName())) {
 				reportProblem("Unable to resolve " + fqr.getFullyQualifiedName(), IPDTProblem.UsageRelated, fqr.sourceStart(), fqr.sourceEnd());
 			}
@@ -202,6 +221,7 @@ public class UsageValidator extends PHPASTVisitor {
 		
 		return false;
 	}
+	
 	
 	
 
@@ -306,6 +326,14 @@ public class UsageValidator extends PHPASTVisitor {
 	private boolean isResolved(FullyQualifiedReference fqr) {
 
 		if (fqr != null) {
+
+			IType namespace = PHPModelUtils.getCurrentNamespace(source, fqr.sourceStart());
+			
+			// static constant access in the current namespace, e.g MyClass::foobar() and the current namespace is Acme\Demo
+			if (namespace != null) {
+				return isResolved(namespace.getFullyQualifiedName() + "\\" + fqr.getName());
+			}
+			
 			return isResolved(fqr.getFullyQualifiedName());
 		}
 		
