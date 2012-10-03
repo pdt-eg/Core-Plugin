@@ -16,14 +16,14 @@
 		<wizard
         	category="org.eclipse.php.project.ui"
         	class="org.pdtextensions.core.ui.wizards.NewClassWizard"
-        	icon="ico/full/obj16/phpclassdata.gif"
+        	icon="ico/full/obj16/newclass_wiz.gif"
         	id="org.pdtextensions.core.ui.wizards.classes.ClassCreationWizard"
         	name="New Class"
         	project="false">
         </wizard>
   <wizard
         category="org.eclipse.php.project.ui"
-        class="org.pdtextensions.core.ui.wizards.CreateInterfaceWizard"
+        class="org.pdtextensions.core.ui.wizards.NewInterfaceWizard"
         icon="ico/full/obj16/newint_wiz.gif"
         id="org.pdtextensions.core.ui.wizards.interface"
         name="New Interface">

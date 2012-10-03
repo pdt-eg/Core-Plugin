@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.pdtextensions.core.ui.codemanipulation;
 
-import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dltk.core.IMethod;
@@ -19,6 +18,7 @@ import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.eclipse.php.ui.CodeGeneration;
+import org.pdtextensions.core.log.Logger;
 
 /**
  * Utilities for class generation.
@@ -26,22 +26,11 @@ import org.eclipse.php.ui.CodeGeneration;
  * @author Robert Gruendler <r.gruendler@gmail.com>
  * @author Marek Maksimczyk <marek.maksimczyk@mandos.net.pl>
  */
-public class ClassStub {
+public class ClassStub extends ElementStub {
 
-	private String code = null;
-	private IScriptProject scriptProject = null;
-
-	private String lineDelim = "\n";
-
-	private String name;
-	private String namespace;
-	private IType superclass;
-	private boolean isFinal;
-	private boolean isAbstract;
-	private List<IType> interfaces;
-	private boolean generateComments;
-	private boolean generateConstructor;
-	private boolean generateInheritedMethods;
+	protected boolean generateConstructor;
+	protected boolean generateInheritedMethods;
+	protected boolean isAbstract;
 
 	public ClassStub(IScriptProject scriptProject, ClassStubParameter parameters) {
 		this.scriptProject = scriptProject;
@@ -62,40 +51,44 @@ public class ClassStub {
 	 * 
 	 * @throws CoreException
 	 */
-	private void generateCode() throws CoreException {
+	protected void generateCode() {
 
-		StringBuilder buffer = new StringBuilder("<?php");
-		buffer.append(lineDelim);
+		try {
+			StringBuilder buffer = new StringBuilder("<?php");
+			buffer.append(lineDelim);
 
-		buffer.append(generateNamespacePart());
+			buffer.append(generateNamespacePart());
 
-		if (generateComments == true)
-			buffer.append(CodeGeneration.getTypeComment(scriptProject, name, lineDelim) + lineDelim);
+			if (generateComments == true)
+				buffer.append(CodeGeneration.getTypeComment(scriptProject, name, lineDelim) + lineDelim);
 
-		if (isFinal == true) {
-			buffer.append("final ");
+			if (isFinal == true) {
+				buffer.append("final ");
+			}
+
+			if (isAbstract == true) {
+				buffer.append("abstract ");
+			}
+
+			buffer.append("class " + name);
+
+			buffer.append(generateAncestorsPart());
+
+			buffer.append(generateInterfacesCode());
+
+			buffer.append("{" + lineDelim);
+
+			if (generateConstructor) {
+				buffer.append(generateConstructor());
+			}
+
+			buffer.append(generateMethods());
+
+			buffer.append(lineDelim + "}");
+			code = buffer.toString();
+		} catch (CoreException e) {
+			Logger.logException(e);
 		}
-
-		if (isAbstract == true) {
-			buffer.append("abstract ");
-		}
-
-		buffer.append("class " + name);
-
-		buffer.append(generateSuperclassPart());
-
-		buffer.append(generateInterfacesCode());
-
-		buffer.append("{" + lineDelim);
-
-		if (generateConstructor) {
-			buffer.append(generateConstructor());
-		}
-
-		buffer.append(generateMethods());
-
-		buffer.append(lineDelim + "}");
-		code = buffer.toString();
 	}
 
 	private String generateConstructor() {
@@ -118,73 +111,6 @@ public class ClassStub {
 			e.printStackTrace();
 		}
 		return constructor;
-	}
-
-	private String generateSuperclassPart() {
-		if (superclass != null && superclass.getElementName() != null) {
-
-			return " extends " + superclass.getElementName();
-		}
-
-		return "";
-	}
-
-	private String generateInterfacesCode() {
-
-		String code = new String();
-		if (!interfaces.isEmpty()) {
-			code = " implements";
-
-			int size = interfaces.size();
-			int i = 1;
-			for (IType interfaceObject : interfaces) {
-				if (i < size) {
-					code += " " + interfaceObject.getElementName() + ",";
-				} else {
-					code += " " + interfaceObject.getElementName();
-				}
-				i = i + 1;
-			}
-		}
-
-		return code;
-	}
-
-	private String generateNamespacePart() {
-		// TODO: Create list of namespaces to avoid duplication;
-		String code = new String();
-		if (namespace != null && namespace.length() > 0) {
-			code = "namespace " + namespace + ";\n\n";
-		}
-
-		if (superclass != null && superclass.getParent() != null && getNamespace(superclass) != null
-				&& !getNamespace(superclass).equals(namespace)) {
-			code += "use " + superclass.getFullyQualifiedName().replace("$", "\\") + ";" + lineDelim;
-		}
-
-		// TODO: Check why this don't work.
-		if (interfaces != null) {
-			for (IType interfaceObject : interfaces) {
-				if (interfaceObject.getParent() != null && getNamespace(interfaceObject) != null
-						&& getNamespace(interfaceObject).equals(namespace)) {
-					code += "use " + getNamespace(interfaceObject) + ";\n";
-				}
-			}
-		}
-
-		code += "\n";
-
-		return code;
-	}
-
-	private String getNamespace(IType type) {
-		// I'm not sure it is good way to check namespaces for class/interface
-		if (type.getParent() != null && type.getParent().getElementType() == IType.TYPE) {
-
-			return type.getParent().getElementName();
-		}
-
-		return null;
 	}
 
 	private String generateMethods() {
@@ -211,19 +137,6 @@ public class ClassStub {
 		} catch (ModelException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-
-		return code;
-	}
-
-	public String toString() {
-
-		if (code == null) {
-			try {
-				generateCode();
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}
 		}
 
 		return code;
