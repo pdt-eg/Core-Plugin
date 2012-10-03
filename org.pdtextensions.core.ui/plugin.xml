@@ -8,6 +8,9 @@
 	<extension point="org.eclipse.ui.perspectiveExtensions">
 		<perspectiveExtension targetID="org.eclipse.php.perspective">			
 			<newWizardShortcut id="org.pdtextensions.core.ui.wizards.classes.ClassCreationWizard" />
+   <newWizardShortcut
+         id="org.pdtextensions.core.ui.wizards.interface">
+   </newWizardShortcut>
 		</perspectiveExtension>		
 	</extension>	
 	
@@ -26,7 +29,8 @@
         class="org.pdtextensions.core.ui.wizards.NewInterfaceWizard"
         icon="ico/full/obj16/newint_wiz.gif"
         id="org.pdtextensions.core.ui.wizards.interface"
-        name="New Interface">
+        name="New Interface"
+        project="false">
   </wizard>
    </extension>
 	
