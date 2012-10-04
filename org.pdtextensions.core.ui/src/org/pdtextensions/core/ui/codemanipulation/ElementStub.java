@@ -32,8 +32,8 @@ public abstract class ElementStub {
 			int i = 1;
 			String prefix;
 			for (IType interfaceObject : interfaces) {
-				// If there are namespace we will add it in use section if not, we need add "\" before name;
-				// we add \ before name
+				// If there are namespace we will add it in use section if not,
+				// we need add "\" before name;
 				prefix = (getUseNamespaceString(interfaceObject) == null ? "\\" : "");
 				if (i < size) {
 					code += " " + prefix + interfaceObject.getElementName() + ",";
@@ -81,12 +81,12 @@ public abstract class ElementStub {
 	protected String getUseNamespaceString(IType type) {
 		String namespaceString = extractNamespaceName(type);
 		if (namespaceString != null) {
-			return "use " + namespaceString + "\\" + type.getElementName();
+			return "use " + namespaceString + "\\" + type.getElementName() + ";";
 		}
 		return null;
 	}
 
-	private String extractNamespaceName(IType type) {
+	protected String extractNamespaceName(IType type) {
 		return PHPModelUtils.extractNameSapceName(type.getFullyQualifiedName().replace("$", "\\"));
 	}
 

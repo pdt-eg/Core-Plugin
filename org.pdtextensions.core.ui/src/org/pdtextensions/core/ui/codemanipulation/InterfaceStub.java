@@ -62,11 +62,15 @@ public class InterfaceStub extends ElementStub {
 
 			int size = interfaces.size();
 			int i = 1;
+			String prefix;
 			for (IType interfaceObject : interfaces) {
+				// If there are namespace we will add it in use section if not,
+				// we need add "\" before name;
+				prefix = (getUseNamespaceString(interfaceObject) == null ? "\\" : "");
 				if (i < size) {
-					code += " " + interfaceObject.getElementName() + ",";
+					code += " " + prefix + interfaceObject.getElementName() + ",";
 				} else {
-					code += " " + interfaceObject.getElementName();
+					code += " " + prefix + interfaceObject.getElementName();
 				}
 				i = i + 1;
 			}
