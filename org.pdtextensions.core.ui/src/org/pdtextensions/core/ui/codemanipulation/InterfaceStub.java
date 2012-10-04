@@ -17,7 +17,8 @@ import org.pdtextensions.core.log.Logger;
 
 public class InterfaceStub extends ElementStub {
 
-	public InterfaceStub(IScriptProject scriptProject, String name, String namespace, List<IType> ancestors, boolean generateComments) {
+	public InterfaceStub(IScriptProject scriptProject, String name, String namespace, List<IType> ancestors,
+			boolean generateComments) {
 		this.scriptProject = scriptProject;
 		interfaces = ancestors;
 		this.generateComments = generateComments;
@@ -54,9 +55,24 @@ public class InterfaceStub extends ElementStub {
 		}
 	}
 
-	public String generateAncestorsPart() {
+	private String generateAncestorsPart() {
+		String code = new String();
+		if (!interfaces.isEmpty()) {
+			code = " extends";
 
-		return "";
+			int size = interfaces.size();
+			int i = 1;
+			for (IType interfaceObject : interfaces) {
+				if (i < size) {
+					code += " " + interfaceObject.getElementName() + ",";
+				} else {
+					code += " " + interfaceObject.getElementName();
+				}
+				i = i + 1;
+			}
+		}
+
+		return code;
 	}
 
 }

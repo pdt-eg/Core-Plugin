@@ -123,26 +123,10 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 		}
 
 	}
+	
+	abstract protected void createControls();
 
-	protected void createControls() {
-		createNameControls();
-
-		createClassModifierControls();
-
-		createFileNameControls();
-
-		createNamespaceControls();
-
-		createSuperClassControls();
-
-		createInterfaceControls();
-
-		createMethodStubControls();
-
-		createCommentsControls();
-	}
-
-	private void createMethodStubControls() {
+	protected void createMethodStubControls() {
 
 		GridData gd;
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
@@ -153,10 +137,10 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 
 		setMethodStubButtons(new SelectionButtonDialogFieldGroup(SWT.CHECK, new String[] { "Su&perclass constructor",
 				"In&herited abstract methods" }, 1));
-		getMethodStubButtons().doFillIntoGrid(container, nColumns - 1);
+		methodStubButtons.doFillIntoGrid(container, nColumns - 1);
 		DialogField.createEmptySpace(container);
 
-		getMethodStubButtons().setSelection(1, true);
+		methodStubButtons.setSelection(1, true);
 
 		// methodStubButtons.setEnabled(false);
 	}
@@ -171,11 +155,11 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 
 		DialogField.createEmptySpace(container);
 		setCommentsButton(new SelectionButtonDialogField(SWT.CHECK));
-		getCommentsButton().setLabelText("&Generate element comments");
-		getCommentsButton().doFillIntoGrid(container, nColumns - 1);
+		commentsButton.setLabelText("&Generate element comments");
+		commentsButton.doFillIntoGrid(container, nColumns - 1);
 	}
 
-	protected void createInterfaceControls() {
+	protected void createInterfaceControls(String label) {
 
 		String[] buttons = { "&Add...", "&Remove" };
 		interfaceDialog = new TreeListDialogField(new ITreeListAdapter() {
@@ -260,12 +244,12 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 		});
 
 		interfaceDialog.setRemoveButtonIndex(1);
-		interfaceDialog.setLabelText("Interfa&ces:");
+		interfaceDialog.setLabelText(label);
 
 		interfaceDialog.doFillIntoGrid(container, nColumns);
 	}
 
-	private void createClassModifierControls() {
+	protected void createClassModifierControls() {
 		String[] buttonsName = { "abs&tract", "fina&l" };
 		classModifierField = new SelectionButtonDialogFieldGroup(SWT.CHECK, buttonsName, nColumns);
 		classModifierField.setLabelText("Modifiers:");
@@ -384,7 +368,7 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 	 * TODO: Create autocomplete on field. TODO: Add image decorator (small icon
 	 * next to label pointing that autocomplete is avaiable)
 	 */
-	private void createSuperClassControls() {
+	protected void createSuperClassControls() {
 
 		superClassField = new StringButtonDialogField(new IStringButtonAdapter() {
 
@@ -539,7 +523,7 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 		classNameField.setFocus();
 	}
 
-	public String getClassname() {
+	public String getElementname() {
 		return classNameField.getText();
 	}
 
@@ -571,16 +555,20 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 		this.superclass = superclass;
 	}
 
-	public SelectionButtonDialogFieldGroup getMethodStubButtons() {
-		return methodStubButtons;
+	protected boolean isGenerateConstructorStubs() {
+		return methodStubButtons.isSelected(0);
+	}
+	
+	public boolean isGenerateMethodStubs() {
+		return methodStubButtons.isSelected(1);
 	}
 
 	public void setMethodStubButtons(SelectionButtonDialogFieldGroup methodStubButtons) {
 		this.methodStubButtons = methodStubButtons;
 	}
 
-	public SelectionButtonDialogField getCommentsButton() {
-		return commentsButton;
+	public boolean isGenerateComments() {
+		return commentsButton.isSelected();
 	}
 
 	public void setCommentsButton(SelectionButtonDialogField commentsButton) {

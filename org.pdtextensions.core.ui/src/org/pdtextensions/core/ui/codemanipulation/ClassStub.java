@@ -25,6 +25,7 @@ import org.pdtextensions.core.log.Logger;
  * 
  * @author Robert Gruendler <r.gruendler@gmail.com>
  * @author Marek Maksimczyk <marek.maksimczyk@mandos.net.pl>
+ * 
  */
 public class ClassStub extends ElementStub {
 
@@ -128,17 +129,28 @@ public class ClassStub extends ElementStub {
 
 	private String getUnimplementedMethods(IType type) {
 		String code = "";
-		IMethod[] methods;
 		try {
+			IMethod[] methods;
 			methods = PHPModelUtils.getUnimplementedMethods(type, new NullProgressMonitor());
 			for (IMethod method : methods) {
 				code += new MethodStub(scriptProject, method, generateComments).toString();
 			}
 		} catch (ModelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.logException(e);
 		}
 
 		return code;
+	}
+
+	private String generateAncestorsPart() {
+		if (superclass != null && superclass.getElementName() != null) {
+			// If there are namespace we will add it in use section if not we
+			// add \ before name
+			String prefix = getUseNamespaceString(superclass) == null ? "\\" : "";
+
+			return " extends " + prefix + superclass.getElementName();
+		}
+
+		return "";
 	}
 }

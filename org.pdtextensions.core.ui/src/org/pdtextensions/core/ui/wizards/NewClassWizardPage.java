@@ -50,18 +50,37 @@ public class NewClassWizardPage extends NewElementWizardPage {
 	protected String generateFileContent() {
 		ClassStubParameter classStubParameter = new ClassStubParameter();
 
-		classStubParameter.setName(getClassname());
+		classStubParameter.setName(getElementname());
 		classStubParameter.setAbstractClass(isAbstract());
 		classStubParameter.setFinalClass(isFinal());
 		classStubParameter.setNamespace(getNamespace());
 		classStubParameter.setInterfaces(getInterfaces());
 		classStubParameter.setSuperclass(getSuperclass());
-		classStubParameter.setInheritedMethods(getMethodStubButtons().isSelected(1));
-		classStubParameter.setConstructor(getMethodStubButtons().isSelected(0));
-		classStubParameter.setComments(getCommentsButton().isSelected());
+		classStubParameter.setInheritedMethods(isGenerateMethodStubs());
+		classStubParameter.setConstructor(isGenerateConstructorStubs());
+		classStubParameter.setComments(isGenerateComments());
 
 		ElementStub classStub = new ClassStub(getScriptFolder().getScriptProject(), classStubParameter);
 		return classStub.toString();
 	}
+
+	protected void createControls() {
+		createNameControls();
+	
+		createClassModifierControls();
+	
+		createFileNameControls();
+	
+		createNamespaceControls();
+	
+		createSuperClassControls();
+	
+		createInterfaceControls("Interfa&ces:");
+	
+		createMethodStubControls();
+	
+		createCommentsControls();
+	}
+
 
 }

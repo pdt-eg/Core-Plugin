@@ -38,7 +38,7 @@ public class NewInterfaceWizardPage extends NewElementWizardPage {
 		super.createNameControls();
 		super.createFileNameControls();
 		super.createNamespaceControls();
-		super.createInterfaceControls();
+		super.createInterfaceControls("Extended interfa&ces:");
 		super.createCommentsControls();
 	}
 
@@ -56,6 +56,8 @@ public class NewInterfaceWizardPage extends NewElementWizardPage {
 
 	@Override
 	protected String generateFileContent() {
-		return new InterfaceStub(getScriptFolder().getScriptProject(), getName(), getNamespace(), null, getCommentsButton().isSelected()).toString();
+		return new InterfaceStub(getScriptFolder().getScriptProject(), getElementname(), getNamespace(),
+				getInterfaces(), isGenerateComments()).toString();
 	}
+
 }

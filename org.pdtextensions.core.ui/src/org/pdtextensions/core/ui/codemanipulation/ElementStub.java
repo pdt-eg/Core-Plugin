@@ -1,9 +1,14 @@
 package org.pdtextensions.core.ui.codemanipulation;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.dltk.core.INamespace;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.IType;
+import org.eclipse.dltk.core.ModelException;
+import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
+import org.pdtextensions.core.log.Logger;
 
 public abstract class ElementStub {
 
@@ -17,19 +22,6 @@ public abstract class ElementStub {
 	protected List<IType> interfaces;
 	protected boolean generateComments;
 
-	public ElementStub() {
-		super();
-	}
-
-	protected String generateAncestorsPart() {
-		if (superclass != null && superclass.getElementName() != null) {
-
-			return " extends " + superclass.getElementName();
-		}
-
-		return "";
-	}
-
 	protected String generateInterfacesCode() {
 
 		String code = new String();
@@ -38,11 +30,15 @@ public abstract class ElementStub {
 
 			int size = interfaces.size();
 			int i = 1;
+			String prefix;
 			for (IType interfaceObject : interfaces) {
+				// If there are namespace we will add it in use section if not, we need add "\" before name;
+				// we add \ before name
+				prefix = (getUseNamespaceString(interfaceObject) == null ? "\\" : "");
 				if (i < size) {
-					code += " " + interfaceObject.getElementName() + ",";
+					code += " " + prefix + interfaceObject.getElementName() + ",";
 				} else {
-					code += " " + interfaceObject.getElementName();
+					code += " " + prefix + interfaceObject.getElementName();
 				}
 				i = i + 1;
 			}
@@ -52,40 +48,53 @@ public abstract class ElementStub {
 	}
 
 	protected String generateNamespacePart() {
-		// TODO: Create list of namespaces to avoid duplication;
 		String code = new String();
-		if (namespace != null && namespace.length() > 0) {
-			code = "namespace " + namespace + ";\n\n";
+		if (this.namespace != null && this.namespace.length() > 0) {
+			code = "namespace " + this.namespace + ";" + lineDelim + lineDelim;
 		}
 
-		if (superclass != null && superclass.getParent() != null && getNamespace(superclass) != null
-				&& !getNamespace(superclass).equals(namespace)) {
-			code += "use " + superclass.getFullyQualifiedName().replace("$", "\\") + ";" + lineDelim;
+		for (String useNamespace : getUseNamespacesList()) {
+			code += useNamespace + lineDelim;
 		}
-
-		// TODO: Check why this don't work.
-		if (interfaces != null) {
-			for (IType interfaceObject : interfaces) {
-				if (interfaceObject.getParent() != null && getNamespace(interfaceObject) != null
-						&& getNamespace(interfaceObject).equals(namespace)) {
-					code += "use " + getNamespace(interfaceObject) + ";\n";
-				}
-			}
-		}
-
-		code += "\n";
+		code += lineDelim;
 
 		return code;
 	}
 
-	private String getNamespace(IType type) {
-		// I'm not sure it is good way to check namespaces for class/interface
-		if (type.getParent() != null && type.getParent().getElementType() == IType.TYPE) {
-
-			return type.getParent().getElementName();
+	private ArrayList<String> getUseNamespacesList() {
+		// TODO: Create list of namespaces to avoid duplication;
+		ArrayList<String> namespaces = new ArrayList<String>();
+		if (superclass != null && getUseNamespaceString(superclass) != null) {
+			namespaces.add(getUseNamespaceString(superclass));
 		}
+		if (interfaces != null) {
+			for (IType interfaceType : interfaces) {
+				String useString = getUseNamespaceString(interfaceType);
+				if (useString != null)
+					namespaces.add(useString);
+			}
+		}
+		return namespaces;
 
+	}
+
+	protected String getUseNamespaceString(IType type) {
+		String namespaceString = extractNamespaceName(type);
+		if (namespaceString != null) {
+			return "use " + namespaceString + "\\" + type.getElementName();
+		}
 		return null;
+	}
+
+	private String extractNamespaceName(IType type) {
+		return PHPModelUtils.extractNameSapceName(type.getFullyQualifiedName().replace("$", "\\"));
+	}
+
+	/**
+	 * @return If created element is in namespace.
+	 */
+	private boolean isInNamespace() {
+		return (namespace == null ? false : true);
 	}
 
 	protected abstract void generateCode();
