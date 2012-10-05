@@ -38,10 +38,6 @@ public class InterfaceStub extends ElementStub {
 			if (generateComments == true)
 				buffer.append(CodeGeneration.getTypeComment(scriptProject, name, lineDelim) + lineDelim);
 
-			if (isFinal == true) {
-				buffer.append("final ");
-			}
-
 			buffer.append("interface " + name);
 
 			buffer.append(generateAncestorsPart());

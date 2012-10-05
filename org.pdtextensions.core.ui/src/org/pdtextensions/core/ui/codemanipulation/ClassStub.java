@@ -10,15 +10,24 @@
  ******************************************************************************/
 package org.pdtextensions.core.ui.codemanipulation;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+
+import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
-import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.eclipse.php.ui.CodeGeneration;
 import org.pdtextensions.core.log.Logger;
+
+import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 
 /**
  * Utilities for class generation.
@@ -29,9 +38,12 @@ import org.pdtextensions.core.log.Logger;
  */
 public class ClassStub extends ElementStub {
 
+	protected boolean isAbstract;
+	protected IType superclass;
 	protected boolean generateConstructor;
 	protected boolean generateInheritedMethods;
-	protected boolean isAbstract;
+	protected boolean isFinal;
+	private ArrayList<IMethod> unimplementedMethods;
 
 	public ClassStub(IScriptProject scriptProject, ClassStubParameter parameters) {
 		this.scriptProject = scriptProject;
@@ -116,30 +128,37 @@ public class ClassStub extends ElementStub {
 
 	private String generateMethods() {
 		String code = "";
-		if (generateInheritedMethods == true && superclass instanceof IType) {
-			code += getUnimplementedMethods(superclass);
-
-			for (IType interfaceObject : interfaces.toArray(new IType[interfaces.size()])) {
-				code += getUnimplementedMethods(interfaceObject);
+		if (getUnimplementedMethods() != null) {
+			for (IMethod method : unimplementedMethods) {
+				code += new MethodStub(scriptProject, method, generateComments).toString();
 			}
 		}
 
 		return code;
 	}
 
-	private String getUnimplementedMethods(IType type) {
-		String code = "";
-		try {
-			IMethod[] methods;
-			methods = PHPModelUtils.getUnimplementedMethods(type, new NullProgressMonitor());
-			for (IMethod method : methods) {
-				code += new MethodStub(scriptProject, method, generateComments).toString();
+	private ArrayList<IMethod> getUnimplementedMethods() {
+		if (generateInheritedMethods == true && superclass instanceof IType && unimplementedMethods == null) {
+			unimplementedMethods = new ArrayList<IMethod>();
+			Collections.addAll(unimplementedMethods, getUnimplementedMethods(superclass));
+
+			for (IType interfaceObject : interfaces.toArray(new IType[interfaces.size()])) {
+				Collections.addAll(unimplementedMethods, getUnimplementedMethods(interfaceObject));
 			}
+		}
+
+		return unimplementedMethods;
+	}
+
+	private IMethod[] getUnimplementedMethods(IType type) {
+		try {
+
+			return PHPModelUtils.getUnimplementedMethods(type, new NullProgressMonitor());
 		} catch (ModelException e) {
 			Logger.logException(e);
 		}
 
-		return code;
+		return null;
 	}
 
 	private String generateAncestorsPart() {
@@ -152,5 +171,18 @@ public class ClassStub extends ElementStub {
 		}
 
 		return "";
+	}
+
+	@Override
+	protected HashSet<String> getUseNamespacesList() {
+		// "use" statement for interfaces
+		HashSet<String> namespaces = super.getUseNamespacesList();
+		// "use" statement for superclass
+		if (superclass != null && getUseNamespaceString(superclass) != null) {
+			namespaces.add(getUseNamespaceString(superclass));
+		}
+		// TODO: Add "use" section for parameters object
+		
+		return namespaces;
 	}
 }

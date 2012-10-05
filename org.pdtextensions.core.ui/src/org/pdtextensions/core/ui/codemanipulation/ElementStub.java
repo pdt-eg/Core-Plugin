@@ -1,14 +1,12 @@
 package org.pdtextensions.core.ui.codemanipulation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
-import org.eclipse.dltk.core.INamespace;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.IType;
-import org.eclipse.dltk.core.ModelException;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
-import org.pdtextensions.core.log.Logger;
 
 public abstract class ElementStub {
 
@@ -17,8 +15,6 @@ public abstract class ElementStub {
 	protected String lineDelim = "\n";
 	protected String name;
 	protected String namespace;
-	protected IType superclass;
-	protected boolean isFinal;
 	protected List<IType> interfaces;
 	protected boolean generateComments;
 
@@ -61,12 +57,9 @@ public abstract class ElementStub {
 		return code;
 	}
 
-	private ArrayList<String> getUseNamespacesList() {
+	protected HashSet<String> getUseNamespacesList() {
 		// TODO: Create list of namespaces to avoid duplication;
-		ArrayList<String> namespaces = new ArrayList<String>();
-		if (superclass != null && getUseNamespaceString(superclass) != null) {
-			namespaces.add(getUseNamespaceString(superclass));
-		}
+		HashSet<String> namespaces = new HashSet<String>();
 		if (interfaces != null) {
 			for (IType interfaceType : interfaces) {
 				String useString = getUseNamespaceString(interfaceType);
@@ -88,13 +81,6 @@ public abstract class ElementStub {
 
 	protected String extractNamespaceName(IType type) {
 		return PHPModelUtils.extractNameSapceName(type.getFullyQualifiedName().replace("$", "\\"));
-	}
-
-	/**
-	 * @return If created element is in namespace.
-	 */
-	private boolean isInNamespace() {
-		return (namespace == null ? false : true);
 	}
 
 	protected abstract void generateCode();
