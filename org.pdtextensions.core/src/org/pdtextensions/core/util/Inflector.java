@@ -142,8 +142,10 @@ public class Inflector
         String parts[] = name.split("_"); 
         String string = ""; 
         for (String part : parts) { 
-            string += part.substring(0, 1).toUpperCase(); 
-            string += part.substring(1).toLowerCase(); 
+        	if (!part.equals("")) {
+	            string += part.substring(0, 1).toUpperCase(); 
+	            string += part.substring(1).toLowerCase(); 
+        	}
         }
         
         return string; 
