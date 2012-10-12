@@ -1,7 +1,5 @@
 package org.pdtextensions.core.validation;
 
-import java.util.List;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -16,7 +14,6 @@ import org.eclipse.dltk.compiler.problem.DefaultProblemIdentifier;
 import org.eclipse.dltk.compiler.problem.IProblem;
 import org.eclipse.dltk.compiler.problem.ProblemSeverity;
 import org.eclipse.dltk.core.DLTKCore;
-import org.eclipse.dltk.core.IBuildpathEntry;
 import org.eclipse.dltk.core.IScriptModelMarker;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
@@ -24,7 +21,6 @@ import org.eclipse.dltk.core.SourceParserUtil;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.php.internal.core.PHPCoreConstants;
 import org.eclipse.php.internal.core.PHPToolkitUtil;
 import org.eclipse.php.internal.core.buildpath.BuildPathUtils;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
@@ -37,6 +33,7 @@ import org.eclipse.wst.validation.ValidationResult;
 import org.eclipse.wst.validation.ValidationState;
 import org.eclipse.wst.validation.internal.provisional.core.IReporter;
 import org.pdtextensions.core.CorePreferenceConstants;
+import org.pdtextensions.core.PEXCoreConstants;
 import org.pdtextensions.core.PEXCorePlugin;
 import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.validation.validator.ImplementationValidator;
@@ -105,12 +102,11 @@ public class PEXValidator extends AbstractValidator {
 	public void validateFile(IReporter reporter, IFile file, int kind) {
 		
 		try {
-			file.deleteMarkers(PHPCoreConstants.PHP_MARKER_TYPE, false,
+			file.deleteMarkers(PEXCoreConstants.MISSING_METHOD_MARKER, false,
 					IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
 		}
 		
-
 		if (!getPreferenceStore().getBoolean(CorePreferenceConstants.PREF_SA_ENABLE)) {
 			return;
 		}

@@ -18,15 +18,16 @@ public class NewClassWizard extends NewSourceModuleWizard {
 	private String className = null;
 	private String namespace = null;
 	private IScriptFolder scriptFolder;
+	private NewClassWizardPage page = null;
 
 	@Override
 	protected NewSourceModulePage createNewSourceModulePage()
 	{
 		if (className != null) {
-			return new NewClassWizardPage(getSelection(), className + ".php", namespace, className, scriptFolder); 
+			return page = new NewClassWizardPage(getSelection(), className + ".php", namespace, className, scriptFolder); 
 		}
 		
-		return new NewClassWizardPage(getSelection(), "");
+		return page = new NewClassWizardPage(getSelection(), "");
 	}
 
 	public String getNamespace()
@@ -53,5 +54,8 @@ public class NewClassWizard extends NewSourceModuleWizard {
 		
 		this.scriptFolder = folder;
 		
+		if (page != null) {
+			page.setScriptFolder(folder, false);
+		}
 	}	
 }

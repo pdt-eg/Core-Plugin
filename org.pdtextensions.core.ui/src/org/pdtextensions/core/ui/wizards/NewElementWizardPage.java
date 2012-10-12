@@ -2,6 +2,7 @@ package org.pdtextensions.core.ui.wizards;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.dltk.core.IScriptFolder;
 import org.eclipse.dltk.core.ISourceModule;
@@ -281,6 +282,10 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 		fileNameField.doFillIntoGrid(container, nColumns - 1);
 		DialogField.createEmptySpace(container);
 
+		if (initialFilename != null) {
+			fileNameField.setText(initialFilename);
+		}
+		
 		fileNameField.setDialogFieldListener(new IDialogFieldListener() {
 
 			@Override
@@ -289,6 +294,7 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 				handleFieldChanged(FILENAME);
 			}
 		});
+		
 	}
 
 	private StatusInfo filenameChanged() {
@@ -350,6 +356,12 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 			}
 		});
 
+		
+		if (initialNamespace != null && initialNamespace.length() > 0) {
+			namespaceField.setText(initialNamespace);
+			return;
+		}
+		
 		List<INamespaceResolver> resolvers = ExtensionManager.getDefault().getNamespaceResolvers();
 
 		IScriptFolder folder = getScriptFolder();
@@ -452,6 +464,10 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 		classNameField.doFillIntoGrid(container, nColumns - 1);
 		DialogField.createEmptySpace(container);
 
+		if (initialClassName != null && initialClassName.length() > 0) {
+			classNameField.setText(initialClassName);
+		}
+		
 		classNameField.setDialogFieldListener(new IDialogFieldListener() {
 
 			@Override
@@ -461,6 +477,7 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 				handleFieldChanged(NAME);
 			}
 		});
+		
 	}
 
 	protected StatusInfo nameChanged() {
@@ -587,5 +604,19 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 	}
 
 	abstract protected String generateFileContent();
+	
+	@Override
+	public IScriptFolder getScriptFolder() {
+
+		IScriptFolder folder = super.getScriptFolder();
+		
+		if (folder == null && initialFolder != null) {
+			setScriptFolder(initialFolder, true);
+			folder = initialFolder;
+		}
+		
+		
+		return folder;
+	}
 
 }

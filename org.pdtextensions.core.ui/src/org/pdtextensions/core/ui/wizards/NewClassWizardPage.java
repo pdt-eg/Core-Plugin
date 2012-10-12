@@ -8,7 +8,6 @@
 package org.pdtextensions.core.ui.wizards;
 
 import org.eclipse.dltk.core.IScriptFolder;
-import org.eclipse.dltk.internal.ui.wizards.dialogfields.SelectionButtonDialogFieldGroup;
 import org.eclipse.dltk.ui.dialogs.StatusInfo;
 import org.eclipse.jface.viewers.ISelection;
 import org.pdtextensions.core.ui.PDTPluginImages;
@@ -34,6 +33,7 @@ public class NewClassWizardPage extends NewElementWizardPage {
 		this.initialNamespace = namespace;
 		this.initialClassName = className;
 		this.initialFolder = scriptFolder;
+		setScriptFolder(scriptFolder, true);
 	}
 
 	@Override
