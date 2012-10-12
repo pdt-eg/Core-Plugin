@@ -24,6 +24,7 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.UseStatement;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.php.internal.core.model.PhpModelAccess;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
+import org.pdtextensions.core.util.PDTModelUtils;
 import org.pdtextensions.core.validation.IPDTProblem;
 
 /**
@@ -100,6 +101,10 @@ public class UsageValidator extends PHPASTVisitor {
 				if (isResolved(name)) {
 					return false;
 				}
+			} else {
+				if (isResolved(fqr.getFullyQualifiedName())) {
+					return true;
+				}
 			}
 		}
 		
@@ -127,10 +132,11 @@ public class UsageValidator extends PHPASTVisitor {
 		
 		if (s.getClassName() instanceof FullyQualifiedReference) {
 			
+			
 			FullyQualifiedReference fqr = (FullyQualifiedReference) s.getClassName();
 			
 			// don't handle the global namespace
-			if (fqr.getFullyQualifiedName().startsWith("\\") || "self".equals(fqr.getFullyQualifiedName())) {
+			if (fqr.getFullyQualifiedName().startsWith("\\") || PDTModelUtils.isBuiltinType(fqr.getFullyQualifiedName())) {
 				return false;
 			}
 			

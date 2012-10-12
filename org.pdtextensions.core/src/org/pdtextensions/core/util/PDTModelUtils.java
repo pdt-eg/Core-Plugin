@@ -58,7 +58,7 @@ public class PDTModelUtils {
 			.compile("array\\[.*\\]");	
 
 	private static LRUCache typeCache = new LRUCache();
-	private static List<String> builtinTypes = new ArrayList<String>(Arrays.asList("array"));
+	private static List<String> builtinTypes = new ArrayList<String>(Arrays.asList("array", "static", "self", "parent"));
 	
 	public static List<IEvaluatedType> collectUseStatements(List<IType> types, boolean includeAbstract) {
 		
@@ -343,6 +343,11 @@ public class PDTModelUtils {
 		
 		
 	}	
+	
+	public static boolean isBuiltinType(String type) {
+		
+		return builtinTypes.contains(type);
+	}
 
 	public static boolean isValidType(String type, IScriptProject project) {
 		

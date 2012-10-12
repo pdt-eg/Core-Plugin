@@ -14,6 +14,7 @@
     <module>org.pdtextensions.server.ui</module>
     <module>org.pdtextensions.semanticanalysis</module>
     <module>org.pdtextensions.feature</module>
+    <module>org.pdtextensions.core.tests</module>
   </modules>
 
   <properties>
@@ -21,6 +22,13 @@
   </properties>
 
   <repositories>
+
+<repository>
+                        <id>dltk-tests</id>
+                        <layout>p2</layout>
+                        <url>https://hudson.eclipse.org/hudson/job/dltk-nightly/lastSuccessfulBuild/artifact/org.eclipse.dltk.releng/build/update.site/target/site/</url>
+                </repository>
+
    <repository>
      <id>juno</id>
      <layout>p2</layout>
