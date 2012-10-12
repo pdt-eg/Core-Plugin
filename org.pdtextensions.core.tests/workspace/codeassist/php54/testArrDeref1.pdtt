@@ -1,0 +1,21 @@
+--TEST--
+Test method override
+--PREFERENCES--
+org.eclipse.php.core/contentAssistShowStrictOptions=true
+--FILE--
+<?
+class Johnny {
+
+    public function isMyLifeWorthlessIfIWriteTestsForAPHPIDE() {
+
+    }
+}
+
+class Jackson extends Johnny {
+    
+  i|   
+
+}
+?>
+--EXPECT--
+method(isMyLifeWorthlessIfIWriteTestsForAPHPIDE)

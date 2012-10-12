@@ -98,12 +98,16 @@ public class Inflector
         return instance;
     }
 
-    public String underscore(String camelCasedWord) {
+    public static String underscore(String camelCasedWord) {
 
         // Regexes in Java are fucking stupid...
         String underscoredWord = UNDERSCORE_PATTERN_1.matcher(camelCasedWord).replaceAll("$1_$2");
         underscoredWord = UNDERSCORE_PATTERN_2.matcher(underscoredWord).replaceAll("$1_$2");
         underscoredWord = underscoredWord.replace('-', '_').toLowerCase();
+
+        if (Character.isUpperCase(camelCasedWord.charAt(0))) {
+        	return "_" + underscoredWord;
+        }
 
         return underscoredWord;
     }
@@ -141,10 +145,15 @@ public class Inflector
         
         String parts[] = name.split("_"); 
         String string = ""; 
+        int i = 0;
         for (String part : parts) { 
         	if (!part.equals("")) {
-	            string += part.substring(0, 1).toUpperCase(); 
-	            string += part.substring(1).toLowerCase(); 
+        		if (!name.startsWith("_") && i++ == 0) {
+        			string +=  part;
+        		} else {
+        			string += part.substring(0, 1).toUpperCase(); 
+        			string += part.substring(1).toLowerCase(); 
+        		}
         	}
         }
         
