@@ -1,39 +1,7 @@
 package org.pdtextensions.core.tests.codeassist;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
-import junit.extensions.TestSetup;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.dltk.core.CompletionProposal;
-import org.eclipse.dltk.core.CompletionRequestor;
-import org.eclipse.dltk.core.DLTKCore;
-import org.eclipse.dltk.core.IModelElement;
-import org.eclipse.dltk.core.ISourceModule;
-import org.eclipse.dltk.core.ModelException;
-import org.eclipse.php.core.tests.AbstractPDTTTest;
-import org.eclipse.php.core.tests.PHPCoreTests;
-import org.eclipse.php.core.tests.codeassist.CodeAssistPdttFile;
-import org.eclipse.php.core.tests.codeassist.CodeAssistPdttFile.ExpectedProposal;
-import org.eclipse.php.internal.core.PHPVersion;
-import org.eclipse.php.internal.core.codeassist.AliasType;
-import org.eclipse.php.internal.core.project.PHPNature;
-import org.eclipse.php.internal.core.typeinference.FakeConstructor;
-import org.pdtextensions.core.tests.PEXCoreTestPlugin;
-
-@SuppressWarnings("restriction")
-public class CodeAssistTest extends AbstractPDTTTest {
+public class CodeAssistTest /*extends AbstractPDTTTest*/ { /*
 	
 	protected static final List<String> TESTS = new ArrayList<>();
 	private static IProject project;
@@ -282,5 +250,5 @@ public class CodeAssistTest extends AbstractPDTTTest {
 		return AbstractPDTTTest.getPDTTFiles(testsDirectory, PEXCoreTestPlugin.getDefault()
 				.getBundle());
 	}
-	
+*/	
 }
