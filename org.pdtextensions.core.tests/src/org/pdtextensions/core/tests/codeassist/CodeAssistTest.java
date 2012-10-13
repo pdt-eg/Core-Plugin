@@ -1,8 +1,19 @@
 package org.pdtextensions.core.tests.codeassist;
 
+import junit.framework.TestCase;
 
-public class CodeAssistTest /*extends AbstractPDTTTest*/ { /*
+import org.junit.Test;
+
+
+public class CodeAssistTest extends TestCase /*extends AbstractPDTTTest*/ { 
 	
+		@Test
+	public void testDummy()
+	{
+		assertTrue(true);
+	}
+		
+		/*
 	protected static final List<String> TESTS = new ArrayList<>();
 	private static IProject project;
 	protected static IFile testFile;
