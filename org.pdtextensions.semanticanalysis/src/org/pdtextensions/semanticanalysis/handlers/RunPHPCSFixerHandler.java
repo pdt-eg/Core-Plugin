@@ -35,6 +35,7 @@ import org.eclipse.dltk.core.ModelException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.php.internal.core.documentModel.dom.ElementImplForPhp;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.osgi.framework.Bundle;
 import org.pdtextensions.core.exception.ExecutableNotFoundException;
@@ -49,6 +50,7 @@ import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 import org.pdtextensions.semanticanalysis.preferences.PEXPreferenceNames;
 
 
+@SuppressWarnings("restriction")
 public class RunPHPCSFixerHandler extends AbstractHandler {
 
 	private List<String> fixerArgs;
@@ -119,15 +121,24 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					
+					System.err.println(strucSelection.size());
 					for (Iterator<Object> iterator = strucSelection.iterator(); iterator.hasNext();) {
 						
+						System.err.println("iterate");
 						try {
 							Object element = iterator.next();
+							System.err.println(element.getClass());
 							if (element instanceof IScriptFolder) {
 								IScriptFolder folder = (IScriptFolder) element;
 								processFolder(folder, monitor);
 							} else if (element instanceof ISourceModule) {
 								runFixer((ISourceModule) element, monitor);
+							} else if (element instanceof ElementImplForPhp) {
+								
+								ElementImplForPhp impl = (ElementImplForPhp) element;
+								if (impl.getModelElement().getPrimaryElement() instanceof ISourceModule) {
+									runFixer((ISourceModule)impl.getModelElement().getPrimaryElement(), monitor);
+								}
 							}
 						} catch (Exception e) {
 							Logger.logException(e);
