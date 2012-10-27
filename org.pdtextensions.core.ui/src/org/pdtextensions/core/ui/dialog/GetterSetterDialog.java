@@ -9,6 +9,7 @@
 package org.pdtextensions.core.ui.dialog;
 
 import org.eclipse.dltk.ast.Modifiers;
+
 import org.eclipse.dltk.core.IField;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IModelElement;
@@ -19,7 +20,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.php.core.compiler.PHPFlags;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -35,15 +35,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
 import org.pdtextensions.core.ui.actions.GenerateGettersHandler.GetterSetterEntry;
 
-
 /**
- * 
  * 
  * Dialog for generating getter and setters.
  * 
- * 
  * @author Robert Gruendler <r.gruendler@gmail.com>
- *
  */
 public class GetterSetterDialog extends CheckedTreeSelectionDialog {
 	
@@ -197,6 +193,7 @@ public class GetterSetterDialog extends CheckedTreeSelectionDialog {
          });
          
          fluentInterface.setSelection(true);
+         fluent = true;
          
          
 		return control;		
