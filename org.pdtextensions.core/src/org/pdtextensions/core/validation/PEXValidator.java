@@ -75,7 +75,9 @@ public class PEXValidator extends AbstractValidator {
 		IPath fullPath = resource.getFullPath().removeLastSegments(1);
 		
 		// not on buildpath
-		if (!BuildPathUtils.isInBuildpath(fullPath, scriptProject)) {
+		
+		if (!BuildPathUtils.isContainedInBuildpath(fullPath, scriptProject)) {
+			Logger.debug("Not on buildpath, no validation happening: " + fullPath);
 			return null;
 		}
 		
