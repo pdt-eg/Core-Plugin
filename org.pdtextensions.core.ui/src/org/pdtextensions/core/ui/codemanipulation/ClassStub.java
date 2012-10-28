@@ -10,24 +10,19 @@
  ******************************************************************************/
 package org.pdtextensions.core.ui.codemanipulation;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
-import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
+import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.eclipse.php.ui.CodeGeneration;
 import org.pdtextensions.core.log.Logger;
-
-import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 
 /**
  * Utilities for class generation.
@@ -36,6 +31,7 @@ import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
  * @author Marek Maksimczyk <marek.maksimczyk@mandos.net.pl>
  * 
  */
+@SuppressWarnings("restriction")
 public class ClassStub extends ElementStub {
 
 	protected boolean isAbstract;
@@ -136,13 +132,23 @@ public class ClassStub extends ElementStub {
 
 		return code;
 	}
+	
+	private boolean hasPossibleMethodsToImplement()
+	{
+		return superclass instanceof IType || (interfaces != null && interfaces.size() > 0);
+	}
 
 	private ArrayList<IMethod> getUnimplementedMethods() {
-		if (generateInheritedMethods == true && superclass instanceof IType && unimplementedMethods == null) {
+		
+		if (generateInheritedMethods == true && hasPossibleMethodsToImplement() && unimplementedMethods == null) {
 			unimplementedMethods = new ArrayList<IMethod>();
-			Collections.addAll(unimplementedMethods, getUnimplementedMethods(superclass));
+			
+			if (superclass != null) {
+				Collections.addAll(unimplementedMethods, getUnimplementedMethods(superclass));
+			}
 
-			for (IType interfaceObject : interfaces.toArray(new IType[interfaces.size()])) {
+			for (IType interfaceObject : interfaces) {
+				System.err.println(interfaceObject);
 				Collections.addAll(unimplementedMethods, getUnimplementedMethods(interfaceObject));
 			}
 		}
