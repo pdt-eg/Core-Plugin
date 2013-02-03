@@ -1,5 +1,6 @@
 package org.pdtextensions.core.validation;
 
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -22,7 +23,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.php.internal.core.PHPToolkitUtil;
-import org.eclipse.php.internal.core.buildpath.BuildPathUtils;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
@@ -70,31 +70,21 @@ public class PEXValidator extends AbstractValidator {
 				|| !(PHPToolkitUtil.isPhpFile((IFile) resource))) {
 			return null;
 		}
-		
 		scriptProject = DLTKCore.create(resource.getProject());
-		IPath fullPath = resource.getFullPath().removeLastSegments(1);
 		
-		// not on buildpath
+		IPath fullPath = resource.getFullPath();//.removeLastSegments(1);
 		
-		if (!BuildPathUtils.isContainedInBuildpath(fullPath, scriptProject)) {
-			Logger.debug("Not on buildpath, no validation happening: " + fullPath);
-			return null;
-		}
-		
-		/*
-		List<IBuildpathEntry> buildpathes = BuildPathUtils.getContainedBuildpathes(resource.getFullPath(), scriptProject);
-		// don't validate libraries
-		for (IBuildpathEntry entry : buildpathes) {
-			if (entry.getEntryKind() == IBuildpathEntry.BPE_LIBRARY) {
-				return null;
-			}
-		}
-		*/
-			
-
 		this.resource = resource;
 		ValidationResult result = new ValidationResult();
 		IReporter reporter = result.getReporter(monitor);
+		
+		// not on buildpath
+		if (!scriptProject.isOnBuildpath(resource)) {
+			Logger.debug("Not on buildpath, no validation happening: " + fullPath);
+			
+			return result;
+		}
+		
 		validateFile(reporter, (IFile) resource, kind);
 		
 		return result;
@@ -125,7 +115,6 @@ public class PEXValidator extends AbstractValidator {
 			
 			validateInterfaceImplementations();
 			validateResolvableReferences();
-			
 		} catch (Exception e) {
 			Logger.logException(e);
 		}
