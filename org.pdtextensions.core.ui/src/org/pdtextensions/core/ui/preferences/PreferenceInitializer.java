@@ -75,6 +75,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		coreStore.setDefault(CorePreferenceConstants.PREF_SA_ENABLE, true);
 		coreStore.setDefault(CorePreferenceConstants.PREF_SA_MISSING_METHOD_SEVERITY, CorePreferenceConstants.PREF_WARN);
 		coreStore.setDefault(CorePreferenceConstants.PREF_SA_MISSING_USE_STMT_SEVERITY, CorePreferenceConstants.PREF_WARN);
+		coreStore.setDefault(CorePreferenceConstants.PREF_SA_DUPLICATE_USE_SEVERITY, CorePreferenceConstants.PREF_ERROR);
 		
 	}
 }

@@ -120,6 +120,10 @@ public class PEXValidator extends AbstractValidator {
 		}
 	}
 	
+	/**
+	 * @TODO Read other problems
+	 * @throws Exception
+	 */
 	private void validateResolvableReferences() throws Exception {
 		
 		UsageValidator validator = new UsageValidator(source);
@@ -227,12 +231,14 @@ public class PEXValidator extends AbstractValidator {
 	protected int getSeverity(int type) {
 		
 		switch (type) {
-		
-		case IPDTProblem.UsageRelated:
-			return translateSeverity(getPreferenceStore().getString(CorePreferenceConstants.PREF_SA_MISSING_USE_STMT_SEVERITY));
-			
-		case IPDTProblem.InterfaceRelated:
-			return translateSeverity(getPreferenceStore().getString(CorePreferenceConstants.PREF_SA_MISSING_METHOD_SEVERITY));
+			case IPDTProblem.UsageRelated:
+				return translateSeverity(getPreferenceStore().getString(CorePreferenceConstants.PREF_SA_MISSING_USE_STMT_SEVERITY));
+				
+			case IPDTProblem.InterfaceRelated:
+				return translateSeverity(getPreferenceStore().getString(CorePreferenceConstants.PREF_SA_MISSING_METHOD_SEVERITY));
+				
+			case IPDTProblem.Duplicate:
+				return translateSeverity(getPreferenceStore().getString(CorePreferenceConstants.PREF_SA_DUPLICATE_USE_SEVERITY));
 		}
 		
 		// ignore

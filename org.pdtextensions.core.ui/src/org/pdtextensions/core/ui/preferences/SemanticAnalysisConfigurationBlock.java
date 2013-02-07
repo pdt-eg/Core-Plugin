@@ -30,6 +30,7 @@ public class SemanticAnalysisConfigurationBlock extends
 
 	private static final Key PREF_SA_MISSING_METHOD_SEVERITY = getCoreKey(CorePreferenceConstants.PREF_SA_MISSING_METHOD_SEVERITY);
 	private static final Key PREF_SA_MISSING_USE_STMT_SEVERITY = getCoreKey(CorePreferenceConstants.PREF_SA_MISSING_USE_STMT_SEVERITY);
+	private static final Key PREF_SA_DUPLICATE_USE_SEVERITY = getCoreKey(CorePreferenceConstants.PREF_SA_DUPLICATE_USE_SEVERITY);
 	
 	private Composite fieldEditorParent;
 	private List<FieldEditor> fields;
@@ -45,7 +46,7 @@ public class SemanticAnalysisConfigurationBlock extends
 	}
 
 	private static Key[] getKeys() {
-		return new Key[] { PREF_SA_MISSING_METHOD_SEVERITY, PREF_SA_MISSING_USE_STMT_SEVERITY };
+		return new Key[] { PREF_SA_MISSING_METHOD_SEVERITY, PREF_SA_MISSING_USE_STMT_SEVERITY, PREF_SA_DUPLICATE_USE_SEVERITY };
 	}
 
 	@Override
@@ -105,6 +106,7 @@ public class SemanticAnalysisConfigurationBlock extends
         
 		addField(CorePreferenceConstants.PREF_SA_MISSING_METHOD_SEVERITY, "Missing method implementations");
 		addField(CorePreferenceConstants.PREF_SA_MISSING_USE_STMT_SEVERITY, "Missing use statements");
+		addField(CorePreferenceConstants.PREF_SA_DUPLICATE_USE_SEVERITY, "Duplicated use statements");
 
 		return fieldEditorParent;
 	}

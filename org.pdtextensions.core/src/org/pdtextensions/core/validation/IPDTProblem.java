@@ -13,5 +13,6 @@ public interface IPDTProblem {
 	int InterfaceRelated = 0x01100000;
 	int UsageRelated = 0x01200000;
 	int Unresolvable = 0x01300000;
+	int Duplicate =    0x01400000;
 	
 }
