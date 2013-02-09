@@ -14,6 +14,7 @@ import org.eclipse.dltk.compiler.problem.IProblem;
 import org.eclipse.dltk.compiler.problem.ProblemSeverity;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
+import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.index2.search.ISearchEngine.MatchRule;
 import org.eclipse.dltk.core.search.IDLTKSearchScope;
 import org.eclipse.dltk.core.search.SearchEngine;
@@ -39,10 +40,10 @@ import org.pdtextensions.core.validation.IPDTProblem;
  */
 @SuppressWarnings("restriction")
 public class UsageValidator extends PHPASTVisitor {
-	final private static String MESSAGE_CANNOT_RESOLVE_TYPE = "The type %s cannot be resolved.";
+	final private static String MESSAGE_CANNOT_RESOLVE_TYPE = "The type %s cannot be resolved";
 	//final private static String MESSAGE_CANNOT_RESOLVE_CALL = "The call %s cannot be resolved.";
-	final private static String MESSAGE_CANNOT_RESOLVE_USE  = "The type %s cannot be resolved or namespace is empty.";
-	final private static String MESSAGE_DUPLATE_USE 		= "%s is a duplicate.";
+	final private static String MESSAGE_CANNOT_RESOLVE_USE  = "The type %s cannot be resolved or namespace is empty";
+	final private static String MESSAGE_DUPLATE_USE 		= "%s is a duplicate";
 	
 	//protected Map<UseStatement, UseParts> statements;
 	protected Map<UsePart, Boolean> parts;
@@ -51,7 +52,7 @@ public class UsageValidator extends PHPASTVisitor {
 	List<IProblem> problems;
 
 	public UsageValidator(ISourceModule source) {
-
+		super();
 		this.source = source;
 		problems = new ArrayList<IProblem>();
 		parts = new HashMap<UsePart, Boolean>();

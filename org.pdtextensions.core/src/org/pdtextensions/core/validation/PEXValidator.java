@@ -64,12 +64,14 @@ public class PEXValidator extends AbstractValidator {
 	
 	public ValidationResult validate(IResource resource, int kind,
 			ValidationState state, IProgressMonitor monitor) {
-		
+
 		// process only PHP files
 		if (resource.getType() != IResource.FILE
 				|| !(PHPToolkitUtil.isPhpFile((IFile) resource))) {
+			
 			return null;
 		}
+		
 		scriptProject = DLTKCore.create(resource.getProject());
 		
 		IPath fullPath = resource.getFullPath();//.removeLastSegments(1);
@@ -85,6 +87,10 @@ public class PEXValidator extends AbstractValidator {
 			return result;
 		}
 		
+		if (getPreferenceStore().contains(CorePreferenceConstants.PREF_SA_ENABLE) && !getPreferenceStore().getBoolean(CorePreferenceConstants.PREF_SA_ENABLE)) {
+			return result;
+		}
+		
 		validateFile(reporter, (IFile) resource, kind);
 		
 		return result;
@@ -92,15 +98,12 @@ public class PEXValidator extends AbstractValidator {
 	}
 	
 	public void validateFile(IReporter reporter, IFile file, int kind) {
-		
+
 		try {
 			file.deleteMarkers(PEXCoreConstants.MISSING_METHOD_MARKER, false,
 					IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
-		}
-		
-		if (!getPreferenceStore().getBoolean(CorePreferenceConstants.PREF_SA_ENABLE)) {
-			return;
+			Logger.logException(e);
 		}
 		
 		this.file = file;
@@ -112,7 +115,6 @@ public class PEXValidator extends AbstractValidator {
 		document = model.getStructuredDocument();
 		
 		try {
-			
 			validateInterfaceImplementations();
 			validateResolvableReferences();
 		} catch (Exception e) {
@@ -127,6 +129,7 @@ public class PEXValidator extends AbstractValidator {
 	private void validateResolvableReferences() throws Exception {
 		
 		UsageValidator validator = new UsageValidator(source);
+		System.out.println("File: " + file.getName());
 		moduleDeclaration.traverse(validator);
 		
 		for (IProblem problem : validator.getProblems()) {
