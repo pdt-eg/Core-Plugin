@@ -18,3 +18,9 @@ org.pdtextensions.semanticanalysis/target/*
 org.pdtextensions.core.tests/bin/*
 org.pdtextensions.core.tests/target/*
 target/
+*.swp
+copy.sh
+.project
+.settings
+*.m2e.core.prefs
+bin
