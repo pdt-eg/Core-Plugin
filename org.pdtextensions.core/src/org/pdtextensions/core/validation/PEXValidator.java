@@ -100,8 +100,7 @@ public class PEXValidator extends AbstractValidator {
 	public void validateFile(IReporter reporter, IFile file, int kind) {
 
 		try {
-			file.deleteMarkers(PEXCoreConstants.MISSING_METHOD_MARKER, false,
-					IResource.DEPTH_INFINITE);
+			file.deleteMarkers(PEXCoreConstants.MISSING_METHOD_MARKER, false, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
 			Logger.logException(e);
 		}
@@ -129,7 +128,6 @@ public class PEXValidator extends AbstractValidator {
 	private void validateResolvableReferences() throws Exception {
 		
 		UsageValidator validator = new UsageValidator(source);
-		System.out.println("File: " + file.getName());
 		moduleDeclaration.traverse(validator);
 		
 		for (IProblem problem : validator.getProblems()) {
@@ -198,15 +196,13 @@ public class PEXValidator extends AbstractValidator {
 		createMarker(type, file, taskStr, lineNumber, priority, offset, charEnd, message);
 	}
 
-	@SuppressWarnings("deprecation")
+	//@SuppressWarnings("deprecation")
 	private void createMarker(int type, IFile file, String taskStr, int lineNumber,
 			int priority, int offset, int charEnd, String message) throws CoreException {
 		
 		DefaultProblemFactory factory = new DefaultProblemFactory();
-
 		//TODO: make severity configurable
-		IProblem problem = new DefaultProblem(message,
-				type, new String[0], ProblemSeverity.ERROR, offset, charEnd, lineNumber + 1);
+		IProblem problem = new DefaultProblem(message, DefaultProblemIdentifier.decode(type), new String[0], ProblemSeverity.ERROR, offset, charEnd, lineNumber + 1);
 		
 		int severity = getSeverity(type);
 		
@@ -231,7 +227,17 @@ public class PEXValidator extends AbstractValidator {
 		
 	}
 	
+	/**
+	 * Translate PEX SA Type into severity
+	 * 
+	 * @TODO Because default preferenced store is created on UIThread this always was ignored :/ Try create default preferenceif not exists on normal thread
+	 * @param type
+	 * @return
+	 */
 	protected int getSeverity(int type) {
+		if (!getPreferenceStore().contains(CorePreferenceConstants.PREF_SA_ENABLE)) {
+			return 1;
+		}
 		
 		switch (type) {
 			case IPDTProblem.UsageRelated:
