@@ -1,12 +1,12 @@
 package org.pdtextensions.core.tests;
 
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.php.core.tests.PHPCoreTests;
 import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
  */
-public class PEXCoreTestPlugin extends AbstractUIPlugin {
+public class PEXCoreTestPlugin extends PHPCoreTests {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.pdtextensions.core.tests"; //$NON-NLS-1$
@@ -44,6 +44,7 @@ public class PEXCoreTestPlugin extends AbstractUIPlugin {
 	 * @return the shared instance
 	 */
 	public static PEXCoreTestPlugin getDefault() {
+		System.out.println("Test kurwa");
 		return plugin;
 	}
 

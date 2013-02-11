@@ -1,68 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.pdtextensions</groupId>
-  <artifactId>parent</artifactId>
-  <version>0.0.13-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <modules>
-    <module>org.pdtextensions.core</module>
-    <module>org.pdtextensions.core.ui</module>
-    <module>org.pdtextensions.repos</module>
-    <module>org.pdtextensions.repos.ui</module>
-    <module>org.pdtextensions.server</module>
-    <module>org.pdtextensions.server.ui</module>
-    <module>org.pdtextensions.semanticanalysis</module>
-    <module>org.pdtextensions.feature</module>
-    <module>org.pdtextensions.core.tests</module>
-  </modules>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.pdtextensions</groupId>
+    <artifactId>parent</artifactId>
+    <version>0.0.13-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>org.pdtextensions.core</module>
+        <module>org.pdtextensions.core.ui</module>
+        <module>org.pdtextensions.repos</module>
+        <module>org.pdtextensions.repos.ui</module>
+        <module>org.pdtextensions.server</module>
+        <module>org.pdtextensions.server.ui</module>
+        <module>org.pdtextensions.semanticanalysis</module>
+        <module>org.pdtextensions.core.tests</module>
+        <module>org.pdtextensions.feature</module>
+    </modules>
 
-  <properties>
-    <tycho-version>0.15.0</tycho-version>
-  </properties>
+    <properties>
+        <tycho-version>0.16.0</tycho-version>
+    </properties>
+    <repositories>
+        <repository>
+            <id>dltk-tests</id>
+            <layout>p2</layout>
+            <url>https://hudson.eclipse.org/hudson/job/dltk-nightly/lastSuccessfulBuild/artifact/org.eclipse.dltk.releng/build/update.site/target/site/</url>
+        </repository>
 
-  <repositories>
+        <repository>
+            <id>pdt-nightly</id>
+            <layout>p2</layout>
+            <url>http://download.eclipse.org/tools/pdt/updates/nightly/</url>
+        </repository>
 
-    <repository>
-      <id>dltk-tests</id>
-      <layout>p2</layout>
-      <url>https://hudson.eclipse.org/hudson/job/dltk-nightly/lastSuccessfulBuild/artifact/org.eclipse.dltk.releng/build/update.site/target/site/</url>
-    </repository>
-
-    <repository>
-      <id>juno</id>
-      <layout>p2</layout>
-      <url>http://download.eclipse.org/releases/juno</url>
-    </repository>	
-
-
-                <repository>
-                        <id>eclipse-tests</id>
-                        <layout>p2</layout>
-                        <url>http://download.eclipse.org/eclipse/updates/4.2/R-4.2-201206081400</url>
-                </repository>
+        <repository>
+            <id>juno</id>
+            <layout>p2</layout>
+            <url>http://download.eclipse.org/releases/juno</url>
+        </repository>
 
 
-  </repositories>
+        <repository>
+            <id>eclipse-tests</id>
+            <layout>p2</layout>
+            <url>http://download.eclipse.org/eclipse/updates/4.2/R-4.2-201206081400</url>
+        </repository>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-maven-plugin</artifactId>
-        <version>${tycho-version}</version>
-        <extensions>true</extensions>
-      </plugin>
-      <plugin>
-	    <groupId>org.eclipse.tycho</groupId>
-	    <artifactId>tycho-compiler-plugin</artifactId>
-	    <version>${tycho-version}</version>
-	    <configuration>
-		  <source>1.6</source>
-		  <target>1.6</target>
-	    </configuration>
-      </plugin>	  
-    </plugins>
-  </build>  
-  
+
+    </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-maven-plugin</artifactId>
+                <version>${tycho-version}</version>
+                <extensions>true</extensions>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-compiler-plugin</artifactId>
+                <version>${tycho-version}</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

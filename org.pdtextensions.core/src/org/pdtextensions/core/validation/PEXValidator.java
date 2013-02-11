@@ -64,12 +64,14 @@ public class PEXValidator extends AbstractValidator {
 	
 	public ValidationResult validate(IResource resource, int kind,
 			ValidationState state, IProgressMonitor monitor) {
-		
+
 		// process only PHP files
 		if (resource.getType() != IResource.FILE
 				|| !(PHPToolkitUtil.isPhpFile((IFile) resource))) {
+			
 			return null;
 		}
+		
 		scriptProject = DLTKCore.create(resource.getProject());
 		
 		IPath fullPath = resource.getFullPath();//.removeLastSegments(1);
@@ -85,6 +87,10 @@ public class PEXValidator extends AbstractValidator {
 			return result;
 		}
 		
+		if (getPreferenceStore().contains(CorePreferenceConstants.PREF_SA_ENABLE) && !getPreferenceStore().getBoolean(CorePreferenceConstants.PREF_SA_ENABLE)) {
+			return result;
+		}
+		
 		validateFile(reporter, (IFile) resource, kind);
 		
 		return result;
@@ -92,15 +98,11 @@ public class PEXValidator extends AbstractValidator {
 	}
 	
 	public void validateFile(IReporter reporter, IFile file, int kind) {
-		
+
 		try {
-			file.deleteMarkers(PEXCoreConstants.MISSING_METHOD_MARKER, false,
-					IResource.DEPTH_INFINITE);
+			file.deleteMarkers(PEXCoreConstants.MISSING_METHOD_MARKER, false, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
-		}
-		
-		if (!getPreferenceStore().getBoolean(CorePreferenceConstants.PREF_SA_ENABLE)) {
-			return;
+			Logger.logException(e);
 		}
 		
 		this.file = file;
@@ -112,7 +114,6 @@ public class PEXValidator extends AbstractValidator {
 		document = model.getStructuredDocument();
 		
 		try {
-			
 			validateInterfaceImplementations();
 			validateResolvableReferences();
 		} catch (Exception e) {
@@ -120,6 +121,10 @@ public class PEXValidator extends AbstractValidator {
 		}
 	}
 	
+	/**
+	 * @TODO Read other problems
+	 * @throws Exception
+	 */
 	private void validateResolvableReferences() throws Exception {
 		
 		UsageValidator validator = new UsageValidator(source);
@@ -191,15 +196,13 @@ public class PEXValidator extends AbstractValidator {
 		createMarker(type, file, taskStr, lineNumber, priority, offset, charEnd, message);
 	}
 
-	@SuppressWarnings("deprecation")
+	//@SuppressWarnings("deprecation")
 	private void createMarker(int type, IFile file, String taskStr, int lineNumber,
 			int priority, int offset, int charEnd, String message) throws CoreException {
 		
 		DefaultProblemFactory factory = new DefaultProblemFactory();
-
 		//TODO: make severity configurable
-		IProblem problem = new DefaultProblem(message,
-				type, new String[0], ProblemSeverity.ERROR, offset, charEnd, lineNumber + 1);
+		IProblem problem = new DefaultProblem(message, DefaultProblemIdentifier.decode(type), new String[0], ProblemSeverity.ERROR, offset, charEnd, lineNumber + 1);
 		
 		int severity = getSeverity(type);
 		
@@ -224,15 +227,27 @@ public class PEXValidator extends AbstractValidator {
 		
 	}
 	
+	/**
+	 * Translate PEX SA Type into severity
+	 * 
+	 * @TODO Because default preferenced store is created on UIThread this always was ignored :/ Try create default preferenceif not exists on normal thread
+	 * @param type
+	 * @return
+	 */
 	protected int getSeverity(int type) {
+		if (!getPreferenceStore().contains(CorePreferenceConstants.PREF_SA_ENABLE)) {
+			return 1;
+		}
 		
 		switch (type) {
-		
-		case IPDTProblem.UsageRelated:
-			return translateSeverity(getPreferenceStore().getString(CorePreferenceConstants.PREF_SA_MISSING_USE_STMT_SEVERITY));
-			
-		case IPDTProblem.InterfaceRelated:
-			return translateSeverity(getPreferenceStore().getString(CorePreferenceConstants.PREF_SA_MISSING_METHOD_SEVERITY));
+			case IPDTProblem.UsageRelated:
+				return translateSeverity(getPreferenceStore().getString(CorePreferenceConstants.PREF_SA_MISSING_USE_STMT_SEVERITY));
+				
+			case IPDTProblem.InterfaceRelated:
+				return translateSeverity(getPreferenceStore().getString(CorePreferenceConstants.PREF_SA_MISSING_METHOD_SEVERITY));
+				
+			case IPDTProblem.Duplicate:
+				return translateSeverity(getPreferenceStore().getString(CorePreferenceConstants.PREF_SA_DUPLICATE_USE_SEVERITY));
 		}
 		
 		// ignore

@@ -1,0 +1,10 @@
+--TEST--
+Test unresolved type error reporting
+--FILE--
+<?php
+use com\name\B;
+
+class A extends B {}
+?>
+--EXPECT--
+[line=2, start=10, end=20] The type com\name\B cannot be resolved or namespace is empty
