@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
-import org.eclipse.dltk.ast.declarations.TypeDeclaration;
 import org.eclipse.dltk.ast.references.TypeReference;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IScriptProject;
@@ -20,6 +19,7 @@ import org.eclipse.dltk.core.index2.search.ISearchEngine.MatchRule;
 import org.eclipse.dltk.core.search.IDLTKSearchScope;
 import org.eclipse.dltk.core.search.SearchEngine;
 import org.eclipse.dltk.ti.types.IEvaluatedType;
+import org.eclipse.php.core.compiler.PHPFlags;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ClassDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.FullyQualifiedReference;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
@@ -48,13 +48,12 @@ public class ImplementationValidator extends PHPASTVisitor {
 
 	public ImplementationValidator(ISourceModule context) {
 		this.context = context;
-		missingMethods = new ArrayList<MissingMethodImplementation>();
 	}
 	
 	@Override
 	public boolean visit(ClassDeclaration s) throws Exception {
-		
 		this.classDeclaration = s;
+		missingMethods = new ArrayList<MissingMethodImplementation>();
 		
 		if (getClassDeclaration().isAbstract()) {
 			return false;
@@ -94,7 +93,6 @@ public class ImplementationValidator extends PHPASTVisitor {
 				
 				FullyQualifiedReference fqr = (FullyQualifiedReference) interf;				
 				String name = null;
-				
 				// we have a namespace
 				if (fqr.getNamespace() != null) {
 					name = fqr.getNamespace().getName() + "\\" + fqr.getName();					
@@ -129,12 +127,14 @@ public class ImplementationValidator extends PHPASTVisitor {
 							if (me.getParent().getElementName().equals(fqr.getName())) {
 								continue;
 							}
-							implemented = true;
+							if (!PHPFlags.isAbstract(me.getFlags())) {
+								implemented = true;
+							}
 						}
 						
 						for (MethodDeclaration typeMethod : getClassDeclaration().getMethods()) {					
 							String signature = PDTModelUtils.getMethodSignature(typeMethod, project);						
-							if (methodSignature.equals(signature)) {
+							if (methodSignature.equals(signature) && !typeMethod.isAbstract()) {
 								implemented = true;
 								break;
 							}
@@ -147,8 +147,9 @@ public class ImplementationValidator extends PHPASTVisitor {
 							 * TODO Check real method signature (withoutName)
 							 */
 							for (Entry<String, IMethod> entry : listImported.entrySet()) {
-								if (entry.getKey().toLowerCase().equals(method.getElementName().toLowerCase())) {
+								if (entry.getKey().toLowerCase().equals(method.getElementName().toLowerCase()) && !PHPFlags.isAbstract(entry.getValue().getFlags())) {
 									implemented = true;
+									break;
 								}
 							}
 						}
