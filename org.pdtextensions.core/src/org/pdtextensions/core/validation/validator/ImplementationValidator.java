@@ -168,9 +168,6 @@ public class ImplementationValidator extends PHPASTVisitor {
 		}
 		
 		if (unimplemented.size() > 0) {		
-			for (TypeDeclaration r : getClassDeclaration().getTypes()) {
-				Logger.log(Logger.INFO, r.getName() + " | " + r.getClass().getName());
-			}
 			MissingMethodImplementation missing = new MissingMethodImplementation(getClassDeclaration(), unimplemented);
 			getMissing().add(missing);
 		}		
