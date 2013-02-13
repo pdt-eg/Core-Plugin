@@ -3,10 +3,13 @@ package org.pdtextensions.core.validation.validator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
+import org.eclipse.dltk.ast.declarations.TypeDeclaration;
 import org.eclipse.dltk.ast.references.TypeReference;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IScriptProject;
@@ -58,11 +61,13 @@ public class ImplementationValidator extends PHPASTVisitor {
 		}
 		
 		Collection<TypeReference> interfaces = getClassDeclaration().getInterfaceList();
+		
 		IScriptProject project = context.getScriptProject();
 		List<IMethod> unimplemented = new ArrayList<IMethod>();		
 		IDLTKSearchScope scope = SearchEngine.createSearchScope(project);		
 		PhpModelAccess model = PhpModelAccess.getDefault();		
 		IType classType = null;
+		
 		IType nss = PHPModelUtils.getCurrentNamespace(context, getClassDeclaration().getNameStart());
 				
 		// namespaced class
@@ -80,7 +85,7 @@ public class ImplementationValidator extends PHPASTVisitor {
 			}			
 			classType = ts[0];			
 		}
-		
+		Map<String, IMethod> listImported = PDTModelUtils.getImportedMethods(classType);
 		// iterate over all interfaces and check if the current class
 		// or any of the superclasses implements the method
 		for (TypeReference interf : interfaces) {
@@ -120,7 +125,6 @@ public class ImplementationValidator extends PHPASTVisitor {
 						String methodSignature = PDTModelUtils.getMethodSignature(method);					
 						IMethod[] ms = PHPModelUtils.getSuperTypeHierarchyMethod(classType, method.getElementName(), true, null);
 						
-						
 						for (IMethod me : ms) {						
 							if (me.getParent().getElementName().equals(fqr.getName())) {
 								continue;
@@ -129,14 +133,27 @@ public class ImplementationValidator extends PHPASTVisitor {
 						}
 						
 						for (MethodDeclaration typeMethod : getClassDeclaration().getMethods()) {					
-						
 							String signature = PDTModelUtils.getMethodSignature(typeMethod, project);						
 							if (methodSignature.equals(signature)) {
 								implemented = true;
 								break;
 							}
 						}
-											
+						
+						if (!implemented) {
+							/*
+							 * Trait searching, currently the best method that I found in PDT code //@zulus 
+							 * 
+							 * TODO Check real method signature (withoutName)
+							 */
+							for (Entry<String, IMethod> entry : listImported.entrySet()) {
+								if (entry.getKey().toLowerCase().equals(method.getElementName().toLowerCase())) {
+									implemented = true;
+								}
+							}
+						}
+						
+						
 						if (implemented == false) {
 							unimplemented.add(method);
 						}
@@ -150,7 +167,10 @@ public class ImplementationValidator extends PHPASTVisitor {
 			}				
 		}
 		
-		if (unimplemented.size() > 0) {			
+		if (unimplemented.size() > 0) {		
+			for (TypeDeclaration r : getClassDeclaration().getTypes()) {
+				Logger.log(Logger.INFO, r.getName() + " | " + r.getClass().getName());
+			}
 			MissingMethodImplementation missing = new MissingMethodImplementation(getClassDeclaration(), unimplemented);
 			getMissing().add(missing);
 		}		
