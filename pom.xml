@@ -31,13 +31,13 @@
         <repository>
             <id>pdt-nightly</id>
             <layout>p2</layout>
-            <url>http://download.eclipse.org/tools/pdt/updates/nightly/</url>
+            <url>http://download.eclipse.org/tools/pdt/updates/3.2-nightly/</url>
         </repository>
 
         <repository>
-            <id>juno</id>
+            <id>kepler</id>
             <layout>p2</layout>
-            <url>http://download.eclipse.org/releases/juno</url>
+            <url>http://download.eclipse.org/releases/kepler</url>
         </repository>
 
 
