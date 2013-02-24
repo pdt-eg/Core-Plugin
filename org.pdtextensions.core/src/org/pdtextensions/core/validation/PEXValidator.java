@@ -80,8 +80,8 @@ public class PEXValidator extends AbstractValidator {
 		ValidationResult result = new ValidationResult();
 		IReporter reporter = result.getReporter(monitor);
 		
-		// not on buildpath
-		if (!scriptProject.isOnBuildpath(resource)) {
+		// not on buildpath or marked as derived
+		if (!scriptProject.isOnBuildpath(resource) || resource.isDerived(IResource.CHECK_ANCESTORS)) {
 			Logger.debug("Not on buildpath, no validation happening: " + fullPath);
 			
 			return result;
