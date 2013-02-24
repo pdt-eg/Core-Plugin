@@ -10,9 +10,13 @@ package org.pdtextensions.core.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,6 +37,7 @@ import org.eclipse.dltk.evaluation.types.MultiTypeType;
 import org.eclipse.dltk.internal.core.util.LRUCache;
 import org.eclipse.dltk.ti.types.IEvaluatedType;
 import org.eclipse.php.core.compiler.PHPFlags;
+import org.eclipse.php.internal.core.Logger;
 import org.eclipse.php.internal.core.compiler.ast.nodes.NamespaceReference;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPDocBlock;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPDocTag;
@@ -43,6 +48,10 @@ import org.eclipse.php.internal.core.model.PhpModelAccess;
 import org.eclipse.php.internal.core.typeinference.PHPClassType;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.eclipse.php.internal.core.typeinference.PHPSimpleTypes;
+import org.eclipse.php.internal.core.typeinference.TraitAliasObject;
+import org.eclipse.php.internal.core.typeinference.TraitPrecedenceObject;
+import org.eclipse.php.internal.core.typeinference.TraitUtils;
+import org.eclipse.php.internal.core.typeinference.UseTrait;
 
 /**
  * 
@@ -369,5 +378,96 @@ public class PDTModelUtils {
 		
 		return (Boolean) typeCache.put(key, new Boolean(types.length > 0));
 		
+	}
+	
+	
+	/**
+	 * Get full list of imported trait methods
+	 * 
+	 * Entry<ImportedName, IMethod_from_trait>
+	 * 
+	 * @param type
+	 * @return
+	 */
+	public static Map<String, IMethod> getImportedMethods(IType type) {
+		Map<String, IMethod> ret = new HashMap<String, IMethod>();
+		
+		UseTrait parsed = TraitUtils.parse(type);
+		IDLTKSearchScope scope = TraitUtils.createSearchScope(type);
+		
+		Map<String, IType> traits = new HashMap<String, IType>();
+		Set<String> usedMethods = new HashSet<String>();
+		for (String traitName : parsed.getTraits()) {
+			IType[] traitTypes = PhpModelAccess.getDefault().findTraits(traitName, MatchRule.EXACT, 0, 0, scope, new NullProgressMonitor());
+			if (traitTypes.length != 1) {
+				continue; //more than one ignore it
+			}
+			
+			traits.put(traitName, traitTypes[0]);
+		}
+		
+		if (traits.size() == 0) {
+			return ret;
+		}
+		
+		//load aliases
+		for (TraitAliasObject alias : parsed.getTraitAliases()) {
+			IType trait = traits.get(alias.traitName);
+			if (trait == null) {
+				continue;
+			}
+			IMethod[] methods;
+			try {
+				methods = PHPModelUtils.getTypeMethod(trait, alias.traitMethodName, true);
+				if (methods.length != 1) {
+					continue;
+				}
+				usedMethods.add(alias.traitName + "::" + alias.traitMethodName);
+				ret.put(alias.newMethodName, methods[0]);
+			} catch (ModelException e) {
+				Logger.logException(e);
+			}
+		}
+		
+		//load precedences
+		for (Entry<String, TraitPrecedenceObject> entry : parsed.getPrecedenceMap().entrySet()) {
+			IType trait = traits.get(entry.getValue().traitName);
+			if (trait == null) {
+				continue;
+			}
+			
+			IMethod[] methods;
+			try {
+				methods = PHPModelUtils.getTypeMethod(trait, entry.getValue().traitMethodName, true);
+				if (methods.length != 1) {
+					continue;
+				}
+				
+				usedMethods.add(entry.getValue().traitName + "::" + entry.getValue().traitMethodName);
+				ret.put(entry.getValue().traitMethodName, methods[0]);
+			} catch (ModelException e) {
+				Logger.logException(e);
+			}
+		
+		}
+		
+		
+		// load other methods
+		for (Entry<String, IType> entry : traits.entrySet()) {
+			try {
+				IMethod[] methods = PHPModelUtils.getTypeMethod(entry.getValue(), "", false);
+				for (IMethod method : methods) {
+					if (!ret.containsKey(method.getElementName()) && !usedMethods.contains(entry.getKey() + "::" + method.getElementName())) {
+						usedMethods.add(entry.getKey() + "::" + method.getElementName());
+						ret.put(method.getElementName(), method);
+						continue;
+					}
+				}
+			} catch (ModelException e) {
+				Logger.logException(e);
+			}
+		}
+		
+		return ret;
 	}
 }

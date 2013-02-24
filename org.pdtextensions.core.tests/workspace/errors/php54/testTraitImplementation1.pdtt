@@ -1,0 +1,19 @@
+--TEST--
+Test trait interface implementation
+--FILE--
+<?php
+namespace space\traitImplementation1;
+
+interface IA {
+    public function firstMethod();
+}
+
+trait TA {
+    public function firstMethod() {}
+}
+
+class A implements IA {
+    use TA;
+}
+?>
+--EXPECT--

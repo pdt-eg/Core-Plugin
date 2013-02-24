@@ -1,0 +1,22 @@
+--TEST--
+Test trait interface implementation
+--FILE--
+<?php
+namespace space\traitImplementation2;
+
+interface IA {
+    public function firstMethod();
+}
+
+trait TA {
+    public function firstMethod() {}
+}
+
+class A implements IA {
+    use TA {
+        TA::firstMethod as secondMethod;
+    }
+} 
+?>
+--EXPECT--
+[line=12, start=155, end=156] The class A must implement the inherited abstract method firstMethod
