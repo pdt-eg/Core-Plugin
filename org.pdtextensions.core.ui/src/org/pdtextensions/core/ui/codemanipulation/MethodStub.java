@@ -14,11 +14,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IParameter;
 import org.eclipse.dltk.core.IScriptProject;
+import org.eclipse.dltk.core.IType;
+import org.eclipse.dltk.core.ITypeHierarchy;
 import org.eclipse.dltk.core.ModelException;
+import org.eclipse.dltk.internal.core.util.MethodOverrideTester;
 import org.eclipse.php.core.compiler.PHPFlags;
+import org.eclipse.php.internal.ui.corext.util.SuperTypeHierarchyCache;
 import org.eclipse.php.ui.CodeGeneration;
 import org.pdtextensions.core.util.PDTModelUtils;
 
+@SuppressWarnings("restriction")
 public class MethodStub {
 
 	private String lineDelimiter = "\n";
@@ -149,14 +154,14 @@ public class MethodStub {
 	/**
 	 * Retrieve the code stub for a given {@link IMethod}
 	 */
-	public static String getMethodStub(String parent, IMethod method, String indent, String lineDelim, boolean comments)
+	public static String getMethodStub(String parent, IMethod method, IMethod overridden, String indent, String lineDelim, boolean comments)
 			throws ModelException {
 
 		StringBuilder buffer = new StringBuilder();
 		String comment = null;
 		if (comments) {
 			try {
-				comment = org.eclipse.php.ui.CodeGeneration.getMethodComment(method, null, lineDelim);
+				comment = org.eclipse.php.ui.CodeGeneration.getMethodComment(method, overridden, lineDelim);
 				comment = indentPattern(lineDelim + comment, indent, lineDelim);
 			} catch (CoreException e) {
 				e.printStackTrace();

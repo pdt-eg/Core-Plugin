@@ -92,7 +92,7 @@ public class InterfaceMethodCompletionProposal extends PHPCompletionProposal {
 					for (MissingMethodImplementation miss : validator.getMissing()) {
 						
 						for (IMethod method : miss.getMisses()) {
-							code += MethodStub.getMethodStub(method.getParent().getElementName(), method, indent, TextUtilities.getDefaultLineDelimiter(document), false);
+							code += MethodStub.getMethodStub(method.getParent().getElementName(), method, method, indent, TextUtilities.getDefaultLineDelimiter(document), true);
 						}
 											
 						document.replace(miss.getInjectionOffset(), 0, code);
