@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PDT Extensions Server UI Plugin
 Bundle-SymbolicName: org.pdtextensions.server.ui;singleton:=true
-Bundle-Version: 0.0.14
+Bundle-Version: 0.0.15
 Bundle-Activator: org.pdtextensions.server.ui.PEXServerUiPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
