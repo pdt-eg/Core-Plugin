@@ -1,0 +1,25 @@
+--TEST--
+Test trait implementation in super class with abstract method
+--FILE--
+<?php
+namespace space\traitImplementation5;
+
+interface IA {
+    public function firstMethod();
+}
+
+trait TA {
+    abstract public function firstMethod();
+}
+
+class A {
+    use TA;
+}
+
+class B extends A implements IA {
+    public function secondMethod() {}
+}
+
+?>
+--EXPECT--
+[line=16, start=187, end=188] The class B must implement the inherited abstract method firstMethod
