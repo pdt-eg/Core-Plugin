@@ -17,19 +17,23 @@
    <extension
          point="org.eclipse.ui.newWizards">         
 		<wizard
-        	category="org.eclipse.php.project.ui"
-        	class="org.pdtextensions.core.ui.wizards.NewClassWizard"
-        	icon="ico/full/obj16/newclass_wiz.gif"
-        	id="org.pdtextensions.core.ui.wizards.classes.ClassCreationWizard"
-        	name="New Class"
-        	project="false">
+        canFinishEarly="false"
+        category="org.eclipse.php.project.ui"
+        class="org.pdtextensions.core.ui.wizards.NewClassWizard"
+        hasPages="true"
+        icon="ico/full/obj16/newclass_wiz.gif"
+        id="org.pdtextensions.core.ui.wizards.classes.ClassCreationWizard"
+        name="Class"
+        project="false">
         </wizard>
   <wizard
+        canFinishEarly="false"
         category="org.eclipse.php.project.ui"
         class="org.pdtextensions.core.ui.wizards.NewInterfaceWizard"
+        hasPages="true"
         icon="ico/full/obj16/newint_wiz.gif"
         id="org.pdtextensions.core.ui.wizards.interface"
-        name="New Interface"
+        name="Interface"
         project="false">
   </wizard>
    </extension>
@@ -65,6 +69,17 @@
             class="org.pdtextensions.core.ui.preferences.SemanticAnalysisPreferencePage"
             id="org.pdtextensions.core.ui.propertyPages.semanticAnalysis"
             name="Semantic Analysis">
+ 			<enabledWhen>
+	            <adapt type="org.eclipse.core.resources.IProject">
+	               <instanceof
+	                     value="org.eclipse.core.resources.IProject">
+	               </instanceof>
+	               <test
+	                     property="org.eclipse.core.resources.projectNature"
+	                     value="org.eclipse.php.core.PHPNature">
+	               </test>
+	            </adapt>
+			</enabledWhen>
       </page>
    </extension>
    

@@ -45,6 +45,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
+import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.ui.ExtensionManager;
 import org.pdtextensions.core.ui.ast.Formatter;
 import org.pdtextensions.core.ui.extension.INamespaceResolver;
@@ -368,10 +369,15 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 
 		// try to find a namespaceresolver and inject the resolved namespace
 		for (INamespaceResolver resolver : resolvers) {
-			String ns = resolver.resolve(folder);
-			if (ns != null && ns.length() > 0) {
-				namespaceField.setText(ns);
-				break;
+			try {
+				String ns = resolver.resolve(folder);
+				if (ns != null && ns.length() > 0) {
+					namespaceField.setText(ns);
+					break;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				Logger.logException(e);
 			}
 		}
 	}
