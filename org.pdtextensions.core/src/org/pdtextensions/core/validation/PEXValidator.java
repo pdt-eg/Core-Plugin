@@ -110,10 +110,9 @@ public class PEXValidator extends AbstractValidator {
 		moduleDeclaration = SourceParserUtil
 				.getModuleDeclaration(source);
 		
-		IStructuredModel model = StructuredModelManager.getModelManager().getExistingModelForRead(file);
-		document = model.getStructuredDocument();
-		
 		try {
+			IStructuredModel model = StructuredModelManager.getModelManager().getExistingModelForRead(file);
+			document = model.getStructuredDocument();
 			validateInterfaceImplementations();
 			validateResolvableReferences();
 		} catch (Exception e) {
