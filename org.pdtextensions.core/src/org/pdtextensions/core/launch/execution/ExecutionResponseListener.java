@@ -5,10 +5,18 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.core.launch;
+package org.pdtextensions.core.launch.execution;
 
-public interface ILaunchResponseHandler {
+public interface ExecutionResponseListener {
 	
-	void handle(String response);
+	// when finished
+	public void executionFinished(String response, int exitValue);
+	public void executionFailed(String response, Exception exception);
 
+	// instant notification
+	public void executionError(String message);
+	public void executionMessage(String message);
+	
+	public void executionAboutToStart();
+	public void executionStarted();
 }

@@ -27,6 +27,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.dltk.ui.viewsupport.ImageDescriptorRegistry;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
@@ -85,6 +87,8 @@ public class PEXUIPlugin extends AbstractUIPlugin {
 	
 	// Indent Line color resource
 	private Color color;
+
+	private IEclipseContext eclipseContext;
 	
 	
 	/*
@@ -94,6 +98,7 @@ public class PEXUIPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		eclipseContext = EclipseContextFactory.getServiceContext(context);
 	}
 
 	/*
@@ -285,5 +290,9 @@ public class PEXUIPlugin extends AbstractUIPlugin {
 				MessageDialog.openWarning(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, message);
 			}
 		});
-	}	
+	}
+
+	public IEclipseContext getEclipseContext() {
+		return eclipseContext;
+	}
 }

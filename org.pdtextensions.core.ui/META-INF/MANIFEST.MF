@@ -19,7 +19,12 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.wst.sse.ui,
  org.eclipse.wst.html.ui,
  org.eclipse.wst.xml.core,
- org.eclipse.wst.jsdt.core
+ org.eclipse.wst.jsdt.core,
+ org.eclipse.php.debug.core,
+ org.eclipse.php.debug.ui,
+ org.eclipse.e4.core.contexts,
+ org.eclipse.e4.core.di,
+ javax.inject
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.pdtextensions.core.ui,
@@ -33,6 +38,7 @@ Export-Package: org.pdtextensions.core.ui,
  org.pdtextensions.core.ui.formatter.align,
  org.pdtextensions.core.ui.preferences,
  org.pdtextensions.core.ui.preferences.formatter,
+ org.pdtextensions.core.ui.preferences.launcher,
  org.pdtextensions.core.ui.quickfix,
  org.pdtextensions.core.ui.template,
  org.pdtextensions.core.ui.util,

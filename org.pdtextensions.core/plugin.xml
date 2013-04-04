@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="executableLauncher" name="PHP executable launcher" schema="schema/executableLauncher.exsd"/>
 
    <extension
          point="org.eclipse.php.core.completionContextResolvers">

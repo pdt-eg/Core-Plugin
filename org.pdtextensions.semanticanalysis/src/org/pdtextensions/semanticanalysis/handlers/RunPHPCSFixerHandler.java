@@ -38,10 +38,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.php.internal.core.documentModel.dom.ElementImplForPhp;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.osgi.framework.Bundle;
-import org.pdtextensions.core.exception.ExecutableNotFoundException;
-import org.pdtextensions.core.launch.DefaultExecutableLauncher;
-import org.pdtextensions.core.launch.ILaunchResponseHandler;
-import org.pdtextensions.core.launch.IPHPLauncher;
 import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.preferences.PreferenceConstants;
@@ -54,7 +50,6 @@ import org.pdtextensions.semanticanalysis.preferences.PEXPreferenceNames;
 public class RunPHPCSFixerHandler extends AbstractHandler {
 
 	private List<String> fixerArgs;
-	private IPHPLauncher launcher = new DefaultExecutableLauncher();
 	private String fixerPath;
 	
 
@@ -180,7 +175,9 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 		
 		monitor.setTaskName("Fixing " + fixerArgs.get(1));
 		
+		/*
 		try {
+			
 			launcher.launch(fixerPath, fixerArgs.toArray(new String[fixerArgs.size()]), new ILaunchResponseHandler() {
 				@Override
 				public void handle(String response) {
@@ -191,6 +188,7 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 			PEXUIPlugin.getDefault().showMissingExecutableDialog();
 			return;
 		}
+		*/
 		
 		source.getUnderlyingResource().refreshLocal(IResource.DEPTH_ZERO, null);
 	}

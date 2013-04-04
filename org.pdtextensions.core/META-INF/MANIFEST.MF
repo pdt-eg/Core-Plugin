@@ -13,7 +13,10 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jface.text,
  org.eclipse.wst.validation,
  org.eclipse.wst.sse.core,
- org.eclipse.ui
+ org.eclipse.ui,
+ org.apache.commons.exec,
+ org.eclipse.e4.core.di,
+ javax.inject
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.pdtextensions.core,
@@ -22,6 +25,8 @@ Export-Package: org.pdtextensions.core,
  org.pdtextensions.core.codeassist.strategy,
  org.pdtextensions.core.exception,
  org.pdtextensions.core.launch,
+ org.pdtextensions.core.launch.environment,
+ org.pdtextensions.core.launch.execution,
  org.pdtextensions.core.log,
  org.pdtextensions.core.util,
  org.pdtextensions.core.validation,
