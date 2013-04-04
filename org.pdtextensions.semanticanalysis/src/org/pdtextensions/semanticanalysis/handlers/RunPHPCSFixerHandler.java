@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -32,19 +34,23 @@ import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IScriptFolder;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ModelException;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.php.internal.core.documentModel.dom.ElementImplForPhp;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.osgi.framework.Bundle;
+import org.pdtextensions.core.launch.ScriptLauncher;
+import org.pdtextensions.core.launch.ScriptLauncherManager;
+import org.pdtextensions.core.launch.execution.ExecutionResponseAdapter;
 import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.preferences.PreferenceConstants;
 import org.pdtextensions.core.util.ArrayUtil;
 import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
+import org.pdtextensions.semanticanalysis.launch.FixerEnvironmentFactory;
 import org.pdtextensions.semanticanalysis.preferences.PEXPreferenceNames;
-
 
 @SuppressWarnings("restriction")
 public class RunPHPCSFixerHandler extends AbstractHandler {
@@ -52,12 +58,19 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 	private List<String> fixerArgs;
 	private String fixerPath;
 	
+	@Inject
+	protected ScriptLauncherManager launcherManager;
+	
+	public RunPHPCSFixerHandler() {
+		super();
+		ContextInjectionFactory.inject(this, PEXUIPlugin.getDefault().getEclipseContext());
+	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		IPreferenceStore store = PEXUIPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = PEXAnalysisPlugin.getDefault().getPreferenceStore();
 		
 		fixerPath = store.getString(PreferenceConstants.PREF_PHPCS_PHAR_LOCATION);
 		
@@ -116,10 +129,8 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
 					
-					System.err.println(strucSelection.size());
 					for (Iterator<Object> iterator = strucSelection.iterator(); iterator.hasNext();) {
 						
-						System.err.println("iterate");
 						try {
 							Object element = iterator.next();
 							System.err.println(element.getClass());
@@ -172,23 +183,20 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 		String fileToFix =  resource.getLocation().toOSString();
 		fixerArgs.set(1, fileToFix);
 		Logger.debug("Running cs-fixer: " + fixerPath + " => " + fixerArgs.get(1));
-		
 		monitor.setTaskName("Fixing " + fixerArgs.get(1));
 		
-		/*
 		try {
-			
-			launcher.launch(fixerPath, fixerArgs.toArray(new String[fixerArgs.size()]), new ILaunchResponseHandler() {
+			ScriptLauncher launcher = launcherManager.getLauncher(FixerEnvironmentFactory.LAUNCHER_KEY, source.getScriptProject().getProject());
+			launcher.addResponseListener(new ExecutionResponseAdapter() {
 				@Override
-				public void handle(String response) {
-					Logger.debug(response);
+				public void executionMessage(String message) {
+					System.err.println(message);
 				}
-			} );
-		} catch (ExecutableNotFoundException e) {
-			PEXUIPlugin.getDefault().showMissingExecutableDialog();
-			return;
+			});
+			launcher.launch(fixerPath, fixerArgs.toArray(new String[fixerArgs.size()]));
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		*/
 		
 		source.getUnderlyingResource().refreshLocal(IResource.DEPTH_ZERO, null);
 	}

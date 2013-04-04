@@ -7,6 +7,7 @@
  ******************************************************************************/
 package org.pdtextensions.semanticanalysis.preferences.csfixer;
 
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,14 +47,16 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-import org.pdtextensions.core.ui.preferences.AbstractOptionsConfigurationBlock;
 import org.pdtextensions.core.ui.preferences.PreferenceConstants;
+import org.pdtextensions.core.ui.preferences.launcher.LauncherConfigurationBlock;
+import org.pdtextensions.core.ui.preferences.launcher.LauncherKeyBag;
+import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 import org.pdtextensions.semanticanalysis.preferences.PEXPreferenceNames;
 
 
 @SuppressWarnings("restriction")
 public class PHPCSFixerConfigurationBlock extends
-		AbstractOptionsConfigurationBlock {
+		LauncherConfigurationBlock {
 
 	private static final Key PREF_PHPCS_PHAR_LOCATION = getPEXKey(PreferenceConstants.PREF_PHPCS_PHAR_LOCATION);
 	private static final Key PREF_PHPCS_PHAR_NAME = getPEXKey(PreferenceConstants.PREF_PHPCS_PHAR_NAME);
@@ -76,17 +79,12 @@ public class PHPCSFixerConfigurationBlock extends
 	private List<FixerOption> fixerOptions = new ArrayList<FixerOption>();
 
 	public PHPCSFixerConfigurationBlock(IStatusChangeListener context,
-			IProject project, IWorkbenchPreferenceContainer container) {
-
-		super(context, project, getKeys(), container);
-
-		initPharList();
-		initFixerOptions();
-	}
-
-	private void initFixerOptions() {
-
+			IProject project, IWorkbenchPreferenceContainer container,
+			LauncherKeyBag keyBag) {
+		super(context, project, container, keyBag);
+		
 		unpackFixerOptions();
+		initPharList();
 	}
 
 	protected void initPharList() {
@@ -111,14 +109,8 @@ public class PHPCSFixerConfigurationBlock extends
 		unpackPhars();
 	}
 
-	private static Key[] getKeys() {
-		return new Key[] { PREF_PHPCS_PHAR_LOCATION, PREF_PHPCS_PHAR_NAME,
-				PREF_PHPCS_CUSTOM_PHAR_LOCATIONS, PREF_PHPCS_CUSTOM_PHAR_NAMES,
-				PREF_PHPCS_USE_DEFAULT_FIXERS };
-	}
-
 	@Override
-	public Control createBlockContents(Composite parent) {
+	public void createExtraContent(Composite parent) {
 
 		Composite content = new Composite(parent, SWT.NONE);
 		FillLayout layout = new FillLayout(SWT.VERTICAL);
@@ -127,7 +119,7 @@ public class PHPCSFixerConfigurationBlock extends
 		createFixerOptions(content);
 		createPharOptions(content);
 
-		return content;
+//		return content;
 	}
 
 	protected void createPharOptions(Composite parent) {
@@ -530,5 +522,62 @@ public class PHPCSFixerConfigurationBlock extends
 		public String toString() {
 			return option;
 		}
+	}
+
+	@Override
+	protected String getPluginId() {
+		return PEXAnalysisPlugin.PLUGIN_ID;
+	}
+
+	@Override
+	protected void afterSave() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void beforeSave() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected String getHeaderLabel() {
+		return "Select the PHP executable to be used for running cs-fixer binaries.";
+	}
+
+	@Override
+	protected String getProjectChoiceLabel() {
+		return "Download cs-fixer.phar per project";
+	}
+
+	@Override
+	protected String getGlobalChoiceLabel() {
+		return "Use global cs-fixer";
+	}
+
+	@Override
+	protected String getScriptLabel() {
+		return "CS-fixer binary";
+	}
+
+	@Override
+	protected String getButtonGroupLabel() {
+		return "CS-fixer selection";
+	}
+
+	@Override
+	protected String getScriptFieldLabel() {
+		return "Custom cs-fixer binary";
+	}
+
+	@Override
+	protected boolean validateScript(String text) {
+		File file = new File(text);
+		return file.exists() /*&& file.canExecute()*/;
+	}
+	
+	protected final static Key getPEXKey(String key) {
+		return getKey(PEXAnalysisPlugin.PLUGIN_ID, key);
 	}
 }

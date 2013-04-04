@@ -34,17 +34,17 @@ public class ScriptLauncher {
 		listeners.remove(listener);
 	}
 	
-	public void launch(String composerCommand) throws ExecuteException, IOException, InterruptedException {
-		launch(composerCommand, new String[]{});
+	public void launch(String argument) throws ExecuteException, IOException, InterruptedException {
+		launch(argument, new String[]{});
 	}
 	
-	public void launch(String composerCommand, String param) throws ExecuteException, IOException, InterruptedException {
-		launch(composerCommand, new String[]{param});
+	public void launch(String argument, String param) throws ExecuteException, IOException, InterruptedException {
+		launch(argument, new String[]{param});
 	}
 	
-	public void launch(String composerCommand, String[] params) throws ExecuteException, IOException, InterruptedException {
+	public void launch(String argument, String[] params) throws ExecuteException, IOException, InterruptedException {
 		CommandLine cmd = environment.getCommand();
-		cmd.addArgument(composerCommand);
+		cmd.addArgument(argument);
 		cmd.addArguments(params);
 		
 		executor = new ScriptExecutor();

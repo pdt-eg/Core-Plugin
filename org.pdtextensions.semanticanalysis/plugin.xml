@@ -93,5 +93,12 @@
             sequence="M1+Shift+N">
       </key>
    </extension>
+   <extension
+         point="org.pdtextensions.core.executableLauncher">
+      <environmentFactory
+            class="org.pdtextensions.semanticanalysis.launch.FixerEnvironmentFactory"
+            id="org.pdtextensions.semanticanalysis.fixerLauncherFactory">
+      </environmentFactory>
+   </extension>
 
 </plugin>
