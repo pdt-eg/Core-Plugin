@@ -12,7 +12,14 @@ import org.pdtextensions.core.launch.execution.ExecutionResponseListener;
 import org.pdtextensions.core.launch.execution.ScriptExecutor;
 import org.pdtextensions.core.log.Logger;
 
-
+/**
+ * 
+ * Uses a {@link ScriptExecutor} to launch a PHP script with a specific {@link Environment}.
+ * 
+ * You can use an {@link ExecutionResponseListener} to get retrieve the output
+ * of the executed script.
+ *
+ */
 public class ScriptLauncher {
 
 	private Environment environment;

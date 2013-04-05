@@ -12,8 +12,14 @@ import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.LogOutputStream;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.pdtextensions.core.launch.environment.Environment;
 import org.pdtextensions.core.log.Logger;
 
+/**
+ * Executes a PHP script using a specific {@link Environment}.
+ * 
+ * 
+ */
 public class ScriptExecutor {
 
 	private DefaultExecutor executor;

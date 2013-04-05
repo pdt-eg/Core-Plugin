@@ -24,7 +24,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.php.debug.ui,
  org.eclipse.e4.core.contexts,
  org.eclipse.e4.core.di,
- javax.inject
+ javax.inject,
+ org.eclipse.core.expressions
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.pdtextensions.core.ui,

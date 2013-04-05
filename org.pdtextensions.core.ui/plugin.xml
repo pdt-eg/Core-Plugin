@@ -284,5 +284,15 @@
             sequence="M1+Shift+9">
       </key>
    </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.pdtextensions.core.ui.expressions.NaturePropertyTester"
+            id="org.pdtextensions.ui.expressions.deepNaturePropertyTester"
+            namespace="org.pdtextensions"
+            properties="parentProjectNature"
+            type="java.lang.Object">
+      </propertyTester>
+   </extension>
    
 </plugin>

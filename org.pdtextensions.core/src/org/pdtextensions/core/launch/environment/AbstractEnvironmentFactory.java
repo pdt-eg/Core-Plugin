@@ -11,8 +11,6 @@ public abstract class AbstractEnvironmentFactory implements EnvironmentFactory {
 	public Environment getEnvironment(IProject project) {
 
 		IPreferenceStore store = getPreferenceStore();
-		System.err.println("plugin id " + getPluginId());
-		System.err.println("exec key " + getExecutableKey());
 		PreferencesSupport prefSupport = new PreferencesSupport(getPluginId(), store);
 		String executable = prefSupport.getPreferencesValue(getExecutableKey(), null, project);
 		String useProjectPhar = prefSupport.getPreferencesValue(getUseProjectKey(), null, project);
@@ -28,12 +26,43 @@ public abstract class AbstractEnvironmentFactory implements EnvironmentFactory {
 		
 		return null;		
 	}
-	
+
+	/**
+	 * Get the preference store of the plugin using the launcher.
+	 * @return
+	 */
 	protected abstract IPreferenceStore getPreferenceStore();
+	
+	/**
+	 * Get the Plugin ID of the plugin using the launcher.
+	 * @return
+	 */
 	protected abstract String getPluginId();
+	
+	/**
+	 * 
+	 * Get the {@link Environment} which uses a script inside the project for execution.
+	 * @param executable
+	 * @return
+	 */
 	protected abstract PrjPharEnvironment getProjectEnvironment(String executable);
+	
+	/**
+	 * Get the key for the php executable.
+	 * @return
+	 */
 	protected abstract String getExecutableKey();
+	
+	/**
+	 * Get the key for the preference setting if the launcher should use a script per project or a global script for launching.
+	 * @return
+	 */
 	protected abstract String getUseProjectKey();
+	
+	/**
+	 * Get the key for the preference setting for the location of the php script to execute (if the user selected a global script for every launcher) 
+	 * @return
+	 */
 	protected abstract String getScriptKey();
 
 }

@@ -4,6 +4,14 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.pdtextensions.core.launch.ScriptNotFoundException;
 
+/**
+ * 
+ * An abstract environment for a user selected PHP executable but a project specific
+ * script to be launched. 
+ * 
+ * Implement getScript to pass your script to the launcher.
+ * 
+ */
 public abstract class PrjPharEnvironment implements Environment {
 
 	protected String phar;

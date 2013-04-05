@@ -14,6 +14,14 @@ import org.pdtextensions.core.launch.environment.Environment;
 import org.pdtextensions.core.launch.environment.EnvironmentFactory;
 import org.pdtextensions.core.log.Logger;
 
+/**
+ * 
+ * @Inject the {@link ScriptLauncherManager} into your service to retrieve a {@link ScriptLauncherInterface}
+ * for executing PHP scripts.
+ * 
+ * See FixerEnvironmentFactory in the semanticanalysis plugin for an example implementation.
+ *
+ */
 @Creatable
 public class ScriptLauncherManager implements ScriptLauncherInterface {
 	
