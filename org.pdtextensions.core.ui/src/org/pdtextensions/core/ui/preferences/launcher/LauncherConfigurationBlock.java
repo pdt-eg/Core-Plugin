@@ -91,8 +91,6 @@ public abstract class LauncherConfigurationBlock extends OptionsConfigurationBlo
 		Composite markersComposite = createInnerContent(parent);
 		validateSettings(null, null, null);
 		
-		System.err.println(manager);
-
 		return markersComposite;
 	}
 

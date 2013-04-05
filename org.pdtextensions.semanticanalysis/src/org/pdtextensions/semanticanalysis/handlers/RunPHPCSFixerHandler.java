@@ -56,7 +56,6 @@ import org.pdtextensions.semanticanalysis.preferences.PEXPreferenceNames;
 public class RunPHPCSFixerHandler extends AbstractHandler {
 
 	private List<String> fixerArgs;
-	private String fixerPath;
 	
 	@Inject
 	protected ScriptLauncherManager launcherManager;
@@ -72,23 +71,10 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 
 		IPreferenceStore store = PEXAnalysisPlugin.getDefault().getPreferenceStore();
 		
-		fixerPath = store.getString(PreferenceConstants.PREF_PHPCS_PHAR_LOCATION);
-		
-		if (fixerPath == null || fixerPath.length() == 0) {
-			try {
-				fixerPath = getDefaultPhar();
-			} catch (Exception e) {
-				Logger.logException(e);
-				Logger.debug("Unable to get default phar");
-				return null;
-			}
-		}
-		
 		String defaultFixers = store.getString(PreferenceConstants.PREF_PHPCS_USE_DEFAULT_FIXERS);
 		String config = store.getString(PreferenceConstants.PREF_PHPCS_CONFIG);
 		
 		fixerArgs = new ArrayList<String>();
-		fixerArgs.add("fix");
 		fixerArgs.add("file");
 		
 		if (!PreferenceConstants.PREF_PHPCS_CONFIG_DEFAULT.equals(config)) {
@@ -115,9 +101,6 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 			fixerArgs.add(" --fixers=" + ArrayUtil.implode(",", (String[]) fixers.toArray(new String[fixers.size()])));
 		}
 		
-		List<String> arguments = new ArrayList<String>();
-		arguments.add("fix");
-		
 		ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
 		
 		if (selection != null && selection instanceof IStructuredSelection) {
@@ -133,7 +116,6 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 						
 						try {
 							Object element = iterator.next();
-							System.err.println(element.getClass());
 							if (element instanceof IScriptFolder) {
 								IScriptFolder folder = (IScriptFolder) element;
 								processFolder(folder, monitor);
@@ -181,8 +163,8 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 		
 		IResource resource = source.getUnderlyingResource();
 		String fileToFix =  resource.getLocation().toOSString();
-		fixerArgs.set(1, fileToFix);
-		Logger.debug("Running cs-fixer: " + fixerPath + " => " + fixerArgs.get(1));
+		fixerArgs.set(0, fileToFix);
+		Logger.debug("Running cs-fixer: " + fixerArgs.get(1));
 		monitor.setTaskName("Fixing " + fixerArgs.get(1));
 		
 		try {
@@ -193,7 +175,7 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 					System.err.println(message);
 				}
 			});
-			launcher.launch(fixerPath, fixerArgs.toArray(new String[fixerArgs.size()]));
+			launcher.launch("fix", fixerArgs.toArray(new String[fixerArgs.size()]));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -201,11 +183,8 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 		source.getUnderlyingResource().refreshLocal(IResource.DEPTH_ZERO, null);
 	}
 	
-	
 	protected String getOption(String packed) {
-		
 		String[] unpacked = packed.split("::");
-		
 		if (unpacked != null && unpacked.length == 4 && "true".equals(unpacked[3])) {
 			return unpacked[1];
 		}
