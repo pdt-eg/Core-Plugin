@@ -2,6 +2,8 @@ package org.pdtextensions.core.ui.expressions;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.php.internal.core.documentModel.dom.ElementImplForPhp;
@@ -45,6 +47,13 @@ public class NaturePropertyTester extends PropertyTester {
 			} else if (receiver instanceof ISourceModule) {
 				ISourceModule source = (ISourceModule) receiver;
 				project = source.getScriptProject().getProject();
+			} else if (receiver instanceof IProject) {
+				project = (IProject) receiver;
+			} else if (receiver instanceof IAdaptable) {
+				IAdaptable adaptable = (IAdaptable) receiver;
+				project = ((IResource)adaptable.getAdapter(IResource.class)).getProject();
+			} else if (receiver instanceof IResource) {
+				project = ((IResource) receiver).getProject();
 			}
 			
 			if (project != null && project.hasNature(expectedValue.toString())) {
