@@ -63,7 +63,7 @@ public class ScriptLauncherManager implements ScriptLauncherInterface {
 	public ScriptLauncher getLauncher(String factoryId, IProject project) throws ScriptNotFoundException, ExecutableNotFoundException {
 		Environment env = getEnvironment(factoryId, project);
 		if (env == null) {
-			throw new ScriptNotFoundException("Can't find any executable");
+			throw new ExecutableNotFoundException("Can't find any executable");
 		}
 		
 		return new ScriptLauncher(env, project);
