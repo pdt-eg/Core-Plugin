@@ -323,7 +323,7 @@ public abstract class LauncherConfigurationBlock extends OptionsConfigurationBlo
 					};
 
 					//TODO: refactor
-					//new Thread(new ExecutableTester(phPexeItem, adapter)).run();
+					new Thread(new ExecutableTester(phPexeItem, adapter)).run();
 
 				} catch (Exception ex) {
 					Logger.logException(ex);
