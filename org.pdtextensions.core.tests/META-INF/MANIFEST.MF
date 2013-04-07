@@ -21,3 +21,8 @@ Require-Bundle: org.junit,
  org.eclipse.php.core.tests
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: org.pdtextensions.core.tests,
+ org.pdtextensions.core.tests.codeassist,
+ org.pdtextensions.core.tests.codegeneration,
+ org.pdtextensions.core.tests.validation
+Bundle-ClassPath: .
