@@ -17,7 +17,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.apache.commons.exec,
  org.eclipse.e4.core.di,
- javax.inject
+ javax.inject,
+ org.eclipse.ltk.core.refactoring,
+ org.eclipse.dltk.core.manipulation
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.pdtextensions.core,

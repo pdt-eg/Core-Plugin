@@ -294,5 +294,12 @@
             type="java.lang.Object">
       </propertyTester>
    </extension>
-   
+   <extension
+         point="org.eclipse.php.ui.phpActionDelegator">
+      <action
+            actionId="org.eclipse.php.ui.actions.RenameElement"
+            class="org.pdtextensions.core.ui.actions.refactoring.RenamePHPElementActionDelegate"
+            priority="9">
+      </action>
+   </extension>
 </plugin>

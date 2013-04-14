@@ -51,4 +51,11 @@
                 id="org.eclipse.wst.sse.core.structuredModelGroup" />
       </validator>
    </extension>
+   <extension
+         point="org.eclipse.dltk.core.manipulation.refactoringEngine">
+      <refactoringEngine
+            class="org.pdtextensions.core.manipulation.RefactoringEngine"
+            natureID="org.eclipse.php.core.PHPNature">
+      </refactoringEngine>
+   </extension>
 </plugin>
