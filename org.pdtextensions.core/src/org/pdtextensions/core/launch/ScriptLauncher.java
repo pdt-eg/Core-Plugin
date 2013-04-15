@@ -26,6 +26,7 @@ public class ScriptLauncher {
 	private IProject project;
 	private ScriptExecutor executor;
 	private Set<ExecutionResponseListener> listeners = new HashSet<ExecutionResponseListener>();
+	private Integer timeout = null;
 	
 	public ScriptLauncher(Environment environment, IProject project) throws ScriptNotFoundException {
 		this.environment = environment;
@@ -56,6 +57,10 @@ public class ScriptLauncher {
 		
 		executor = new ScriptExecutor();
 		
+		if (timeout != null) {
+			executor.setTimeout(timeout);
+		}
+		
 		Logger.debug("Setting executor working directory to " + project.getLocation().toOSString());
 		executor.setWorkingDirectory(project.getLocation().toFile());
 		
@@ -68,5 +73,9 @@ public class ScriptLauncher {
 	
 	public void abort() {
 		executor.abort();
+	}
+	
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
 	}
 }

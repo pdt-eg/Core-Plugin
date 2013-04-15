@@ -33,7 +33,7 @@ public class ScriptExecutor {
 	private StringBuilder outBuilder;
 	private StringBuilder errBuilder;
 
-	private static final int TIMEOUT = 60000;
+	private int timeout = 60000;
 
 	private Set<ExecutionResponseListener> listeners = new HashSet<ExecutionResponseListener>();
 	
@@ -97,8 +97,6 @@ public class ScriptExecutor {
 		executor = new DefaultExecutor();
 		executor.setStreamHandler(streamHandler);
 
-		watchdog = new ExecuteWatchdog(TIMEOUT);
-		executor.setWatchdog(watchdog);
 	}
 
 	public void addResponseListener(ExecutionResponseListener listener) {
@@ -158,5 +156,17 @@ public class ScriptExecutor {
 	
 	public File getWorkingDirectory() {
 		return executor.getWorkingDirectory();
+	}
+	
+	public void setTimeout(int timeout) {
+		
+		if (timeout < 0) {
+			throw new IllegalArgumentException("Timeout cannot be negative");
+		}
+		
+		this.timeout = timeout;
+		
+		watchdog = new ExecuteWatchdog(timeout);
+		executor.setWatchdog(watchdog);
 	}
 }
