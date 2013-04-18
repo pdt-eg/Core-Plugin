@@ -79,7 +79,9 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 	private static IModelElement getModelElement(IStructuredSelection selection) throws ModelException {
 		if (selection.size() == 1) {
 			Object element = selection.getFirstElement();
-			if (element instanceof IImplForPhp) {
+			if (element instanceof IModelElement) {
+				return (IModelElement) element;
+			} else if (element instanceof IImplForPhp) {
 				IModelElement modelElement = ((IImplForPhp) element).getModelElement();
 				if (modelElement instanceof ISourceModule && selection instanceof ITextSelection) {
 					return ((ISourceModule) modelElement).getElementAt(((ITextSelection) selection).getOffset());
