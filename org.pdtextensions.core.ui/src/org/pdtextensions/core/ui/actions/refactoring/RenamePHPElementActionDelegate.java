@@ -45,8 +45,13 @@ public class RenamePHPElementActionDelegate implements IPHPActionDelegator {
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		if (renameAction != null) {
-			IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (renameAction == null) {
+			init(activeWindow);
+			if (renameAction != null) {
+				renameAction.update(selection);
+			}
+		} else {
 			if (activeWindow != null) {
 				IWorkbenchPage activePage = activeWindow.getActivePage();
 				if (activePage != null) {
