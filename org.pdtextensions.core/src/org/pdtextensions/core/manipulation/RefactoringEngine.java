@@ -14,6 +14,7 @@ import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.manipulation.IRefactoringEngine;
 import org.eclipse.dltk.internal.corext.refactoring.rename.ScriptRenameProcessor;
+import org.eclipse.php.core.compiler.PHPFlags;
 import org.pdtextensions.internal.corext.refactoring.Checks;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameFieldProcessor;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameMethodProcessor;
@@ -34,7 +35,16 @@ public class RefactoringEngine implements IRefactoringEngine {
 		case IModelElement.METHOD:
 			return new RenameMethodProcessor((IMethod) element);
 		case IModelElement.TYPE:
-			return new RenameTypeProcessor((IType) element);
+			try {
+				// TODO Add namespace support like JDT
+				if (PHPFlags.isClass(((IType) element).getFlags())
+					|| PHPFlags.isInterface(((IType) element).getFlags())
+					|| PHPFlags.isTrait(((IType) element).getFlags())
+					) {
+					return new RenameTypeProcessor((IType) element);
+				}
+			} catch (ModelException e) {
+			}
 		default:
 			return null;
 		}

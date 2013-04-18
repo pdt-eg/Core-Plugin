@@ -185,6 +185,7 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 		case IModelElement.PROJECT_FRAGMENT:
 			return RefactoringAvailabilityTester.isRenameAvailable((IProjectFragment) element);
 		case IModelElement.SCRIPT_FOLDER:
+			// TODO Add namespace support like JDT
 			return RefactoringAvailabilityTester.isRenameAvailable((IScriptFolder) element);
 		case IModelElement.SOURCE_MODULE			:
 			return RefactoringAvailabilityTester.isRenameAvailable((ISourceModule) element);
