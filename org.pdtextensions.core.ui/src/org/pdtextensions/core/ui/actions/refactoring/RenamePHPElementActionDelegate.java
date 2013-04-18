@@ -43,7 +43,7 @@ public class RenamePHPElementActionDelegate implements IPHPActionDelegator {
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (renameAction != null) {
-		    renameAction.selectionChanged(selection);
+		    renameAction.update(selection);
 		}
 	}
 
