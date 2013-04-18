@@ -12,8 +12,11 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.php.internal.ui.actions.IPHPActionDelegator;
 import org.eclipse.php.internal.ui.editor.PHPStructuredEditor;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * @since 0.17.0
@@ -29,7 +32,7 @@ public class RenamePHPElementActionDelegate implements IPHPActionDelegator {
 	public void init(IWorkbenchWindow window) {
 		IWorkbenchPart activePart = window.getPartService().getActivePart();
 		if (activePart != null) {
-			renameAction = new RenameAction(activePart.getSite());
+			renameAction = createRenameAction(activePart);
 		}
 	}
 
@@ -49,8 +52,16 @@ public class RenamePHPElementActionDelegate implements IPHPActionDelegator {
 
 	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-		if (renameAction == null && targetEditor != null && (targetEditor instanceof PHPStructuredEditor)) {
-			renameAction = new RenameAction((PHPStructuredEditor) targetEditor);
+		if (renameAction == null && targetEditor != null) {
+			renameAction = createRenameAction(targetEditor);
+		}
+	}
+
+	private RenameAction createRenameAction(IWorkbenchPart part) {
+		if (part instanceof PHPStructuredEditor) {
+			return new RenameAction((PHPStructuredEditor) part);
+		} else {
+			return new RenameAction(part.getSite());
 		}
 	}
 }
