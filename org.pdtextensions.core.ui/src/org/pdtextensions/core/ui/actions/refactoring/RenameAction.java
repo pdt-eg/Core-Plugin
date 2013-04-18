@@ -45,9 +45,7 @@ public class RenameAction extends SelectionDispatchAction {
 	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		renamePHPElementAction.selectionChanged(event);
-		if (renameResourceAction != null) {
-			renameResourceAction.selectionChanged(event);
-		}
+		renameResourceAction.selectionChanged(event);
 
 		setEnabled(computeEnabledState());		
 	}
@@ -55,19 +53,13 @@ public class RenameAction extends SelectionDispatchAction {
 	@Override
 	public void update(ISelection selection) {
 		renamePHPElementAction.update(selection);
-		if (renameResourceAction != null) {
-			renameResourceAction.update(selection);
-		}
+		renameResourceAction.update(selection);
 
 		setEnabled(computeEnabledState());		
 	}
 
 	private boolean computeEnabledState(){
-		if (renameResourceAction == null) {
-			return renamePHPElementAction.isEnabled();
-		} else {
-			return renamePHPElementAction.isEnabled() || renameResourceAction.isEnabled();
-		}
+		return renamePHPElementAction.isEnabled() || renameResourceAction.isEnabled();
 	}
 
 	@Override
@@ -76,7 +68,7 @@ public class RenameAction extends SelectionDispatchAction {
 			renamePHPElementAction.run(selection);
 		}
 
-		if (renameResourceAction != null && renameResourceAction.isEnabled()) {
+		if (renameResourceAction.isEnabled()) {
 			renameResourceAction.run(selection);
 		}
 	}
