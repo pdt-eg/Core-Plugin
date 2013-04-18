@@ -30,9 +30,17 @@ public class RenamePHPElementActionDelegate implements IPHPActionDelegator {
 
 	@Override
 	public void init(IWorkbenchWindow window) {
-		IWorkbenchPart activePart = window.getPartService().getActivePart();
-		if (activePart != null) {
-			renameAction = createRenameAction(activePart);
+		renameAction = null;
+
+		if (window != null) {
+			IWorkbenchPart activePart = window.getPartService().getActivePart();
+			if (activePart != null) {
+				if (activePart instanceof PHPStructuredEditor) {
+					renameAction = new RenameAction((PHPStructuredEditor) activePart);
+				} else {
+					renameAction = new RenameAction(activePart.getSite());
+				}
+			}
 		}
 	}
 
@@ -60,10 +68,12 @@ public class RenamePHPElementActionDelegate implements IPHPActionDelegator {
 						IWorkbenchPartSite activeSite = activePart.getSite();
 						if (activeSite != null) {
 							if (renameAction.getSite() != activeSite) {
-								renameAction = createRenameAction(activePart);
+								init(activeWindow);
 							}
 
-							renameAction.update(selection);
+							if (renameAction != null) {
+								renameAction.update(selection);
+							}
 						}
 					}
 				};
