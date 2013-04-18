@@ -44,6 +44,10 @@ public class RenamePHPElementActionDelegate implements IPHPActionDelegator {
 		}
 	}
 
+	private void init(PHPStructuredEditor editor) {
+		renameAction = new RenameAction(editor);
+	}
+
 	@Override
 	public void run(IAction action) {
 		if (renameAction != null) {
@@ -83,16 +87,8 @@ public class RenamePHPElementActionDelegate implements IPHPActionDelegator {
 
 	@Override
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-		if (renameAction == null && targetEditor != null) {
-			renameAction = createRenameAction(targetEditor);
-		}
-	}
-
-	private RenameAction createRenameAction(IWorkbenchPart part) {
-		if (part instanceof PHPStructuredEditor) {
-			return new RenameAction((PHPStructuredEditor) part);
-		} else {
-			return new RenameAction(part.getSite());
+		if (renameAction == null && targetEditor != null && targetEditor instanceof PHPStructuredEditor) {
+			init((PHPStructuredEditor) targetEditor);
 		}
 	}
 }
