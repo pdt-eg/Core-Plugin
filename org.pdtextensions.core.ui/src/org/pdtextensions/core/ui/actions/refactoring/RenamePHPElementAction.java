@@ -36,6 +36,7 @@ import org.pdtextensions.core.ui.PEXUIPlugin;
 /**
  * @since 0.17.0
  */
+@SuppressWarnings("restriction")
 public class RenamePHPElementAction extends SelectionDispatchAction {
 	private PHPStructuredEditor editor;
 

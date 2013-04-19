@@ -14,13 +14,13 @@ import org.eclipse.dltk.ui.actions.SelectionDispatchAction;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.php.internal.ui.editor.PHPStructuredEditor;
 import org.eclipse.ui.IWorkbenchSite;
 
 /**
  * @since 0.17.0
  */
+@SuppressWarnings("restriction")
 public class RenameAction extends SelectionDispatchAction {
 	private RenamePHPElementAction renamePHPElementAction;
 	private RenameResourceAction renameResourceAction;

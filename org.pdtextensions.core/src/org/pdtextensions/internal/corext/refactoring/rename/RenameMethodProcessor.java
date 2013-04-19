@@ -18,6 +18,7 @@ import org.pdtextensions.internal.corext.refactoring.Checks;
 /**
  * @since 0.17.0
  */
+@SuppressWarnings("restriction")
 public class RenameMethodProcessor extends RenameModelElementProcessor {
 	public static final String IDENTIFIER = "org.pdtextensions.internal.corext.refactoring.rename.renameMethodProcessor"; //$NON-NLS-1$
 

@@ -19,6 +19,7 @@ import org.pdtextensions.internal.core.util.Messages;
 /**
  * @since 0.17.0
  */
+@SuppressWarnings("restriction")
 public final class PHPConventions {
 	private static final PHPTokenizer SCANNER = new PHPTokenizer();
 

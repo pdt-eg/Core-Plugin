@@ -21,6 +21,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * @since 0.17.0
  */
+@SuppressWarnings("restriction")
 public class RenamePHPElementActionDelegate implements IPHPActionDelegator {
 	private RenameAction renameAction;
 

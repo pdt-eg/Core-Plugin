@@ -299,6 +299,7 @@
       <action
             actionId="org.eclipse.php.ui.actions.RenameElement"
             class="org.pdtextensions.core.ui.actions.refactoring.RenamePHPElementActionDelegate"
+            id="org.pdtextensions.core.ui.actions.refactoring.RenamePHPElementActionDelegate"
             priority="9">
       </action>
    </extension>
