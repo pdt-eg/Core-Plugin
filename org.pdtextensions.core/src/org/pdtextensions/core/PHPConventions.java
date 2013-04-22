@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dltk.core.IModelStatus;
 import org.eclipse.php.internal.core.documentModel.parser.PHPTokenizer;
 import org.eclipse.wst.sse.core.internal.provisional.text.ITextRegion;
-import org.pdtextensions.internal.core.util.Messages;
 
 /**
  * @since 0.17.0

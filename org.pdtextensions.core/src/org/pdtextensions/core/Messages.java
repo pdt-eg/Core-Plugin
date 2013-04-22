@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.internal.core.util;
+package org.pdtextensions.core;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -13,7 +13,7 @@ import org.eclipse.osgi.util.NLS;
  * @since 0.17.0
  */
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.pdtextensions.internal.core.util";//$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.pdtextensions.core"; //$NON-NLS-1$
 
 	public static String convention_illegalIdentifier;
 
