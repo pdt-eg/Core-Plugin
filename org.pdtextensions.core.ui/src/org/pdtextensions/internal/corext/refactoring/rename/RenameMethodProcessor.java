@@ -9,17 +9,19 @@ package org.pdtextensions.internal.corext.refactoring.rename;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.dltk.core.IMethod;
+import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
 import org.eclipse.dltk.internal.corext.refactoring.RefactoringCoreMessages;
-import org.eclipse.dltk.internal.corext.refactoring.rename.RenameModelElementProcessor;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.pdtextensions.internal.corext.refactoring.Checks;
+import org.pdtextensions.internal.corext.refactoring.RenamePHPElementDescriptor;
 
 /**
  * @since 0.17.0
  */
 @SuppressWarnings("restriction")
-public class RenameMethodProcessor extends RenameModelElementProcessor {
+public class RenameMethodProcessor extends PHPRenameProcessor {
 	public static final String IDENTIFIER = "org.pdtextensions.internal.corext.refactoring.rename.renameMethodProcessor"; //$NON-NLS-1$
 
 	public RenameMethodProcessor(IMethod method) {
@@ -49,5 +51,10 @@ public class RenameMethodProcessor extends RenameModelElementProcessor {
 	@Override
 	public boolean needsSavedEditors() {
 		return true;
+	}
+
+	@Override
+	protected RefactoringDescriptor createRefactoringDescriptor() {
+		return new RenamePHPElementDescriptor(IScriptRefactorings.RENAME_METHOD);
 	}
 }

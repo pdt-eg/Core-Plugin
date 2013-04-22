@@ -17,20 +17,22 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dltk.core.DLTKContentTypeManager;
 import org.eclipse.dltk.core.IType;
+import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
 import org.eclipse.dltk.internal.corext.refactoring.RefactoringCoreMessages;
 import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
-import org.eclipse.dltk.internal.corext.refactoring.rename.RenameModelElementProcessor;
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.resource.RenameResourceChange;
 import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.pdtextensions.internal.corext.refactoring.Checks;
+import org.pdtextensions.internal.corext.refactoring.RenamePHPElementDescriptor;
 
 /**
  * @since 0.17.0
  */
 @SuppressWarnings("restriction")
-public class RenameTypeProcessor extends RenameModelElementProcessor {
+public class RenameTypeProcessor extends PHPRenameProcessor {
 	public static final String IDENTIFIER = "org.pdtextensions.internal.corext.refactoring.rename.renameTypeProcessor"; //$NON-NLS-1$
 
 	public RenameTypeProcessor(IType type) {
@@ -91,6 +93,11 @@ public class RenameTypeProcessor extends RenameModelElementProcessor {
 		}
 
 		return result.toArray(new IFile[result.size()]);
+	}
+
+	@Override
+	protected RefactoringDescriptor createRefactoringDescriptor() {
+		return new RenamePHPElementDescriptor(IScriptRefactorings.RENAME_TYPE);
 	}
 
 	private boolean willRenameCU(IResource resource) {
