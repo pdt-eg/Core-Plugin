@@ -23,12 +23,18 @@ import org.eclipse.dltk.internal.corext.refactoring.tagging.INameUpdating;
 import org.eclipse.dltk.internal.corext.refactoring.tagging.IReferenceUpdating;
 import org.eclipse.dltk.internal.corext.refactoring.tagging.ITextUpdating;
 import org.eclipse.dltk.internal.ui.DLTKUIMessages;
-import org.eclipse.dltk.internal.ui.refactoring.reorg.RenameUserInterfaceManager;
+import org.eclipse.dltk.internal.ui.refactoring.reorg.RenameLocalVariableWizard;
+import org.eclipse.dltk.internal.ui.refactoring.reorg.RenameScriptFolderWizard;
+import org.eclipse.dltk.internal.ui.refactoring.reorg.RenameScriptProjectWizard;
+import org.eclipse.dltk.internal.ui.refactoring.reorg.RenameSourceFolderWizard;
+import org.eclipse.dltk.internal.ui.refactoring.reorg.RenameSourceModuleWizard;
+import org.eclipse.dltk.internal.ui.refactoring.reorg.RenameUserInterfaceStarter;
 import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
+import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 import org.eclipse.swt.widgets.Shell;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameFieldProcessor;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameMethodProcessor;
@@ -44,6 +50,7 @@ import org.pdtextensions.internal.corext.refactoring.rename.RenameTypeProcessor;
 public class RenameSupport {
 	private RenameRefactoring refactoring;
 	private RefactoringStatus preCheckStatus;
+	private RenameUserInterfaceStarter starter = new RenameUserInterfaceStarter();
 
 	/** Flag indication that no additional update is to be performed. */
 	public static final int NONE = 0;
@@ -55,30 +62,44 @@ public class RenameSupport {
 
 	public RenameSupport(RenameScriptProjectProcessor processor, String newName, int flags) throws CoreException {
 		this((ScriptRenameProcessor) processor, newName, flags);
+
+		initializeStarter(new RenameScriptProjectWizard(refactoring));
 	}
 
 	public RenameSupport(RenameSourceFolderProcessor processor, String newName) throws CoreException {
 		this((ScriptRenameProcessor) processor, newName, 0);
+
+		initializeStarter(new RenameSourceFolderWizard(refactoring));
 	}
 
 	public RenameSupport(RenameScriptFolderProcessor processor, String newName, int flags) throws CoreException {
 		this((ScriptRenameProcessor) processor, newName, flags);
+
+		initializeStarter(new RenameScriptFolderWizard(refactoring));
 	}
 
 	public RenameSupport(RenameSourceModuleProcessor processor, String newName, int flags) throws CoreException {
 		this((ScriptRenameProcessor) processor, newName, flags);
+
+		initializeStarter(new RenameSourceModuleWizard(refactoring));
 	}
 
 	public RenameSupport(RenameTypeProcessor processor, String newName, int flags) throws CoreException {
 		this((ScriptRenameProcessor) processor, newName, flags);
+
+		initializeStarter(new RenameLocalVariableWizard(refactoring));
 	}
 
 	public RenameSupport(RenameMethodProcessor processor, String newName, int flags) throws CoreException {
 		this((ScriptRenameProcessor) processor, newName, flags);
+
+		initializeStarter(new RenameLocalVariableWizard(refactoring));
 	}
 
 	public RenameSupport(RenameFieldProcessor processor, String newName, int flags) throws CoreException {
 		this((ScriptRenameProcessor) processor, newName, flags);
+
+		initializeStarter(new RenameLocalVariableWizard(refactoring));
 	}
 
 	private RenameSupport(ScriptRenameProcessor processor, String newName, int flags) throws CoreException {
@@ -94,7 +115,7 @@ public class RenameSupport {
 			return; 
 		}
 
-		RenameUserInterfaceManager.getDefault().getStarter(refactoring).activate(refactoring, parent, ((ScriptRenameProcessor) refactoring.getProcessor()).needsSavedEditors());
+		starter.activate(refactoring, parent, ((ScriptRenameProcessor) refactoring.getProcessor()).needsSavedEditors());
 	}
 
 	/**
@@ -150,5 +171,9 @@ public class RenameSupport {
 		if (text != null) {
 			text.setUpdateTextualMatches((flags & UPDATE_TEXTUAL_MATCHES) != 0);
 		}
+	}
+
+	private void initializeStarter(RefactoringWizard wizard) {
+		starter.initialize(wizard);
 	}
 }
