@@ -8,17 +8,17 @@
 package org.pdtextensions.core.ui.actions.refactoring;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.dltk.core.IField;
+import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IProjectFragment;
 import org.eclipse.dltk.core.IScriptFolder;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
+import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.ScriptModelUtil;
-import org.eclipse.dltk.core.manipulation.IRefactoringEngine;
-import org.eclipse.dltk.core.manipulation.RefactoringEngineManager;
 import org.eclipse.dltk.internal.corext.refactoring.RefactoringAvailabilityTester;
-import org.eclipse.dltk.internal.corext.refactoring.RefactoringExecutionStarter;
 import org.eclipse.dltk.internal.ui.actions.ActionUtil;
 import org.eclipse.dltk.internal.ui.editor.ModelTextSelection;
 import org.eclipse.dltk.internal.ui.refactoring.RefactoringMessages;
@@ -27,11 +27,13 @@ import org.eclipse.dltk.ui.util.ExceptionHandler;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.php.core.compiler.PHPFlags;
 import org.eclipse.php.internal.core.documentModel.dom.IImplForPhp;
 import org.eclipse.php.internal.ui.actions.SelectionConverter;
 import org.eclipse.php.internal.ui.editor.PHPStructuredEditor;
 import org.eclipse.ui.IWorkbenchSite;
 import org.pdtextensions.core.ui.PEXUIPlugin;
+import org.pdtextensions.core.ui.refactoring.RenameSupport;
 
 /**
  * @since 0.17.0
@@ -176,7 +178,10 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 		//XXX workaround bug 31998
 		if (ActionUtil.mustDisableScriptModelAction(getShell(), element)) return;
 
-		RefactoringExecutionStarter.startRenameRefactoring(element, getShell());
+		final RenameSupport support = createRenameSupport(element, null, RenameSupport.UPDATE_REFERENCES);
+		if (support != null && support.preCheck().isOK()) {
+			support.openDialog(getShell());
+		}
 	}
 
 	private static boolean isRenameAvailable(IModelElement element) throws CoreException {
@@ -188,15 +193,47 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 		case IModelElement.SCRIPT_FOLDER:
 			// TODO Add namespace support like JDT
 			return RefactoringAvailabilityTester.isRenameAvailable((IScriptFolder) element);
-		case IModelElement.SOURCE_MODULE			:
+		case IModelElement.SOURCE_MODULE:
 			return RefactoringAvailabilityTester.isRenameAvailable((ISourceModule) element);
-		}
-
-		IRefactoringEngine engine = RefactoringEngineManager.getInstance().findRefactoringEngine(element);
-		if (engine != null) {
-			return engine.isRenameAvailable(element);
+		case IModelElement.TYPE:
+			return RefactoringAvailabilityTester.isRenameAvailable((IType) element);
+		case IModelElement.METHOD:
+			return RefactoringAvailabilityTester.isRenameAvailable((IMethod) element);
+		case IModelElement.FIELD:
+			return RefactoringAvailabilityTester.isRenameFieldAvailable((IField) element);
 		}
 
 		return false;
+	}
+
+	private static RenameSupport createRenameSupport(IModelElement element, String newName, int flags) throws CoreException {
+		switch (element.getElementType()) {
+		case IModelElement.SCRIPT_PROJECT:
+			return RenameSupport.create((IScriptProject) element, newName, flags);
+		case IModelElement.PROJECT_FRAGMENT:
+			return RenameSupport.create((IProjectFragment) element, newName);
+		case IModelElement.SCRIPT_FOLDER:
+			// TODO Add namespace support like JDT
+			return RenameSupport.create((IScriptFolder) element, newName, flags);
+		case IModelElement.SOURCE_MODULE:
+			return RenameSupport.create((ISourceModule) element, newName, flags);
+		case IModelElement.TYPE:
+			try {
+				if (PHPFlags.isClass(((IType) element).getFlags())
+					|| PHPFlags.isInterface(((IType) element).getFlags())
+					|| PHPFlags.isTrait(((IType) element).getFlags())
+					) {
+					return RenameSupport.create((IType) element, newName, flags);
+				}
+			} catch (ModelException e) {
+			}
+			break;
+		case IModelElement.METHOD:
+			return RenameSupport.create((IMethod) element, newName, flags);
+		case IModelElement.FIELD:
+			return RenameSupport.create((IField) element, newName, flags);
+		}
+
+		return null;
 	}
 }
