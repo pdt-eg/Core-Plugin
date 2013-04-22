@@ -104,7 +104,20 @@ public class RenameSupport {
 
 	private RenameSupport(ScriptRenameProcessor processor, String newName, int flags) throws CoreException {
 		refactoring = new ScriptRenameRefactoring(processor);
-		initialize(refactoring, newName, flags);
+
+		if (newName != null) {
+			((INameUpdating) refactoring.getAdapter(INameUpdating.class)).setNewElementName(newName);
+		}
+
+		IReferenceUpdating reference = (IReferenceUpdating) refactoring.getAdapter(IReferenceUpdating.class);
+		if (reference != null) {
+			reference.setUpdateReferences((flags & UPDATE_REFERENCES) != 0);
+		}
+
+		ITextUpdating text = (ITextUpdating) refactoring.getAdapter(ITextUpdating.class);
+		if (text != null) {
+			text.setUpdateTextualMatches((flags & UPDATE_TEXTUAL_MATCHES) != 0);
+		}
 	}
 
 	public void openDialog(Shell parent) throws CoreException {
@@ -152,24 +165,6 @@ public class RenameSupport {
 			} else {
 				preCheckStatus = RefactoringStatus.createFatalErrorStatus(DLTKUIMessages.RenameSupport_not_available); 
 			}
-		}
-	}
-
-	private static void initialize(RenameRefactoring refactoring, String newName, int flags) {
-		if (refactoring.getProcessor() == null) return;
-
-		if (newName != null) {
-			((INameUpdating) refactoring.getAdapter(INameUpdating.class)).setNewElementName(newName);
-		}
-
-		IReferenceUpdating reference = (IReferenceUpdating) refactoring.getAdapter(IReferenceUpdating.class);
-		if (reference != null) {
-			reference.setUpdateReferences((flags & UPDATE_REFERENCES) != 0);
-		}
-
-		ITextUpdating text = (ITextUpdating) refactoring.getAdapter(ITextUpdating.class);
-		if (text != null) {
-			text.setUpdateTextualMatches((flags & UPDATE_TEXTUAL_MATCHES) != 0);
 		}
 	}
 
