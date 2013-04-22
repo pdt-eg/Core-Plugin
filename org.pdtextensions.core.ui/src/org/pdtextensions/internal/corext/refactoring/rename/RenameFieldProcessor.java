@@ -11,10 +11,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dltk.core.IField;
 import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
+import org.eclipse.dltk.core.search.SearchMatch;
 import org.eclipse.dltk.internal.corext.refactoring.RefactoringCoreMessages;
 import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.text.edits.ReplaceEdit;
 import org.pdtextensions.internal.corext.refactoring.Checks;
 
 /**
@@ -69,5 +71,10 @@ public class RenameFieldProcessor extends PHPRenameProcessor {
 	@Override
 	protected String getRefactoringId() {
 		return IScriptRefactorings.RENAME_FIELD;
+	}
+
+	@Override
+	protected ReplaceEdit createReplaceEdit(SearchMatch match) {
+		return new ReplaceEdit(match.getOffset(), currentName.length(), getNewElementName());
 	}
 }

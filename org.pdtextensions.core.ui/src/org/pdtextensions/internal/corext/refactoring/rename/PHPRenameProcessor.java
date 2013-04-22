@@ -215,7 +215,7 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 						if (match.getElement() instanceof IModelElement) {
 							ISourceModule cu = (ISourceModule) ((IModelElement) match.getElement()).getAncestor(IModelElement.SOURCE_MODULE);
 							if (cu != null) {
-								addTextEdit(changeManager.get(cu), getProcessorName(), new ReplaceEdit(match.getOffset(), currentName.length(), getNewElementName()));
+								addTextEdit(changeManager.get(cu), getProcessorName(), createReplaceEdit(match));
 							}
 						}
 					}
@@ -285,4 +285,6 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 	}
 
 	protected abstract String getRefactoringId();
+
+	protected abstract ReplaceEdit createReplaceEdit(SearchMatch match);
 }
