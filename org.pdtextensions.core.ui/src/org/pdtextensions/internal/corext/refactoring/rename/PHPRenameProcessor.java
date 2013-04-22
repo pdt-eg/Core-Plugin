@@ -215,7 +215,10 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 						if (match.getElement() instanceof IModelElement) {
 							ISourceModule cu = (ISourceModule) ((IModelElement) match.getElement()).getAncestor(IModelElement.SOURCE_MODULE);
 							if (cu != null) {
-								addTextEdit(changeManager.get(cu), getProcessorName(), createReplaceEdit(match));
+								ReplaceEdit edit = createReplaceEdit(match);
+								if (edit != null) {
+									addTextEdit(changeManager.get(cu), getProcessorName(), edit);
+								}
 							}
 						}
 					}

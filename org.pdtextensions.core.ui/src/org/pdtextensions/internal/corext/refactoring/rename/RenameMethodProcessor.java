@@ -9,8 +9,10 @@ package org.pdtextensions.internal.corext.refactoring.rename;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.dltk.ast.expressions.CallExpression;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
+import org.eclipse.dltk.core.search.MethodReferenceMatch;
 import org.eclipse.dltk.core.search.SearchMatch;
 import org.eclipse.dltk.internal.corext.refactoring.RefactoringCoreMessages;
 import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
@@ -75,6 +77,14 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 
 	@Override
 	protected ReplaceEdit createReplaceEdit(SearchMatch match) {
-		return new ReplaceEdit(match.getOffset(), currentName.length(), getNewElementName());
+		if (match instanceof MethodReferenceMatch) {
+			if (((MethodReferenceMatch) match).getNode() instanceof CallExpression) {
+				return new ReplaceEdit(((CallExpression) ((MethodReferenceMatch) match).getNode()).getCallName().sourceStart(), currentName.length(), getNewElementName());
+			} else {
+				return null;
+			}
+		} else {
+			return new ReplaceEdit(match.getOffset(), currentName.length(), getNewElementName());
+		}
 	}
 }
