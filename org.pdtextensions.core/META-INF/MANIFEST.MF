@@ -17,13 +17,16 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.apache.commons.exec,
  org.eclipse.e4.core.di,
- javax.inject
+ javax.inject,
+ org.eclipse.debug.core,
+ org.eclipse.php.server.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.pdtextensions.core,
  org.pdtextensions.core.codeassist,
  org.pdtextensions.core.codeassist.context,
  org.pdtextensions.core.codeassist.strategy,
+ org.pdtextensions.core.debug,
  org.pdtextensions.core.exception,
  org.pdtextensions.core.launch,
  org.pdtextensions.core.launch.environment,

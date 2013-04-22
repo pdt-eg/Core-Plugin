@@ -44,17 +44,19 @@ import org.pdtextensions.core.ui.PEXUIPlugin;
 @SuppressWarnings("restriction")
 public abstract class LauncherConfigurationBlock extends OptionsConfigurationBlock implements IDialogFieldListener {
 
-	private final Key phpExecutable;
-	private final Key scriptToExecute;
-	private final Key useScriptInsideProject;
-	private final String pluginID;
+	protected final Key phpExecutable;
+	protected final Key scriptToExecute;
+	protected final Key useScriptInsideProject;
+	protected final String pluginID;
+	
+	protected Group scriptGroup;
+	protected ComboDialogField exes;
+	protected Button testButton;
+	protected PHPexes phpExes;
 
-	private ComboDialogField exes;
-	private Button testButton;
-	private PHPexes phpExes;
-
-	private SelectionButtonDialogFieldGroup buttonGroup;
-	private StringButtonDialogField scriptField;
+	protected SelectionButtonDialogFieldGroup buttonGroup;
+	protected StringButtonDialogField scriptField;
+	protected IProject project;
 	
 	@Inject
 	public ScriptLauncherManager manager;
@@ -67,6 +69,7 @@ public abstract class LauncherConfigurationBlock extends OptionsConfigurationBlo
 		scriptToExecute = keyBag.getScriptKey();
 		useScriptInsideProject = keyBag.getUseProjectKey();
 		pluginID = getPluginId();
+		this.project = project;
 		
 		ContextInjectionFactory.inject(this, PEXUIPlugin.getDefault().getEclipseContext());
 	}
@@ -94,7 +97,7 @@ public abstract class LauncherConfigurationBlock extends OptionsConfigurationBlo
 		return markersComposite;
 	}
 
-	private Composite createInnerContent(Composite folder) {
+	protected Composite createInnerContent(Composite folder) {
 
 		Composite result = new Composite(folder, SWT.NONE);
 		
@@ -155,19 +158,36 @@ public abstract class LauncherConfigurationBlock extends OptionsConfigurationBlo
 
 		createTestButton(sourceFolderGroup);
 
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		loadExecutables();
+		
+		createScriptGroup(result);
+		loadPhar();
+
+		if (phpExes.getAllItems().length == 0) {
+			testButton.setEnabled(false);
+		}
+		
+		createExtraContent(result);
+
+		return result;
+	}
+	
+	protected void createScriptGroup(Composite result) {
+		
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.minimumHeight = 60;
 		gd.heightHint = 60;
-		Group pharGroup = new Group(result, SWT.NONE);
-		pharGroup.setLayout(new GridLayout(3, false));
-		pharGroup.setLayoutData(gd);
-		pharGroup.setText(getScriptLabel());
+		
+		scriptGroup = new Group(result, SWT.NONE);
+		scriptGroup.setLayout(new GridLayout(3, false));
+		scriptGroup.setLayoutData(gd);
+		scriptGroup.setText(getScriptLabel());
 
 		buttonGroup = new SelectionButtonDialogFieldGroup(SWT.RADIO,
 				new String[] { getProjectChoiceLabel(),
 						getGlobalChoiceLabel() }, 2);
 		buttonGroup.setLabelText(getButtonGroupLabel());
-		buttonGroup.doFillIntoGrid(pharGroup, 3);
+		buttonGroup.doFillIntoGrid(scriptGroup, 3);
 		buttonGroup
 				.setDialogFieldListener(new org.eclipse.dltk.internal.ui.wizards.dialogfields.IDialogFieldListener() {
 					@Override
@@ -203,18 +223,7 @@ public abstract class LauncherConfigurationBlock extends OptionsConfigurationBlo
 
 		scriptField.setDialogFieldListener(this);
 		scriptField.setLabelText(getScriptFieldLabel());
-		scriptField.doFillIntoGrid(pharGroup, 3);
-
-		loadExecutables();
-		loadPhar();
-
-		if (phpExes.getAllItems().length == 0) {
-			testButton.setEnabled(false);
-		}
-		
-		createExtraContent(result);
-
-		return result;
+		scriptField.doFillIntoGrid(scriptGroup, 3);		
 	}
 	
 	protected void createExtraContent(Composite result) {
@@ -343,7 +352,7 @@ public abstract class LauncherConfigurationBlock extends OptionsConfigurationBlo
 					"No PHP executable configured. Dependencies cannot be managed properly.");
 		}
 
-		if (buttonGroup.isSelected(1)) {
+		if (buttonGroup != null && buttonGroup.isSelected(1)) {
 			if (!validateScript(scriptField.getText())) {
 				status = new StatusInfo(StatusInfo.WARNING,
 						"The selected file is not a valid php script/archive.");
@@ -367,8 +376,11 @@ public abstract class LauncherConfigurationBlock extends OptionsConfigurationBlo
 
 		scriptField.setText("");
 		scriptField.setEnabled(false);
-		buttonGroup.setSelection(0, true);
-		buttonGroup.setSelection(1, false);
+		
+		if (buttonGroup != null) {
+			buttonGroup.setSelection(0, true);
+			buttonGroup.setSelection(1, false);
+		}
 		setValue(useScriptInsideProject, true);
 		setValue(scriptToExecute, "");
 		setValue(phpExecutable, "");
@@ -402,9 +414,13 @@ public abstract class LauncherConfigurationBlock extends OptionsConfigurationBlo
 
 		setValue(phpExecutable, executable);
 		setValue(scriptToExecute, scriptField.getText());
-		setValue(useScriptInsideProject, buttonGroup.isSelected(0));
+		setValue(useScriptInsideProject, doUseScriptInsideProject());
 
 		afterSave();
+	}
+	
+	protected boolean doUseScriptInsideProject() {
+		return buttonGroup.isSelected(0);
 	}
 
 	@Override

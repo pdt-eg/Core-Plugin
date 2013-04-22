@@ -49,7 +49,7 @@ public class ScriptLauncherManager implements ScriptLauncherInterface {
 	
 	private Environment getEnvironment(String factoryId, IProject project) throws ExecutableNotFoundException {
 		
-		if (!factoryId.contains(factoryId)) {
+		if (!factories.containsKey(factoryId)) {
 			return null;
 		}
 		
