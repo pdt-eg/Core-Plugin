@@ -21,12 +21,10 @@ import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
 import org.eclipse.dltk.internal.corext.refactoring.RefactoringCoreMessages;
 import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
 import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.resource.RenameResourceChange;
 import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.pdtextensions.internal.corext.refactoring.Checks;
-import org.pdtextensions.internal.corext.refactoring.RenamePHPElementDescriptor;
 
 /**
  * @since 0.17.0
@@ -66,20 +64,25 @@ public class RenameTypeProcessor extends PHPRenameProcessor {
 
 	@Override
 	public Change createChange(IProgressMonitor monitor) throws CoreException {
-		Change result = super.createChange(monitor);
-		if (result instanceof DynamicValidationRefactoringChange) {
+		monitor.beginTask(RefactoringCoreMessages.RenameTypeRefactoring_checking, 1);
+
+		try {
+			DynamicValidationRefactoringChange result = new DynamicValidationRefactoringChange(createRefactoringDescriptor(), getProcessorName(), changeManager.getAllChanges());
 			IResource resource = modelElement.getResource();
 			if (resource != null && resource instanceof IFile && willRenameCU(resource)) {
-				((DynamicValidationRefactoringChange) result).add(
+				result.add(
 					new RenameResourceChange(
 						resource.getFullPath(),
 						resource.getFileExtension().isEmpty() ? getNewElementName() : getNewElementName() + "." + resource.getFileExtension() //$NON-NLS-1$
 					)
 				);
 			}
-		}
+			monitor.worked(1);
 
-		return result;
+			return result;
+		} finally {
+			changeManager.clear();
+		}
 	}
 
 	@Override
@@ -96,8 +99,8 @@ public class RenameTypeProcessor extends PHPRenameProcessor {
 	}
 
 	@Override
-	protected RefactoringDescriptor createRefactoringDescriptor() {
-		return new RenamePHPElementDescriptor(IScriptRefactorings.RENAME_TYPE);
+	protected String getRefactoringId() {
+		return IScriptRefactorings.RENAME_TYPE;
 	}
 
 	private boolean willRenameCU(IResource resource) {

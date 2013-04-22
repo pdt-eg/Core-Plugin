@@ -39,7 +39,6 @@ import org.eclipse.dltk.core.search.SearchRequestor;
 import org.eclipse.dltk.internal.corext.refactoring.RefactoringCoreMessages;
 import org.eclipse.dltk.internal.corext.refactoring.ScriptRefactoringArguments;
 import org.eclipse.dltk.internal.corext.refactoring.ScriptRefactoringDescriptor;
-import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
 import org.eclipse.dltk.internal.corext.refactoring.code.ScriptableRefactoring;
 import org.eclipse.dltk.internal.corext.refactoring.participants.ScriptProcessors;
 import org.eclipse.dltk.internal.corext.refactoring.rename.RenameModifications;
@@ -48,7 +47,6 @@ import org.eclipse.dltk.internal.corext.refactoring.tagging.IReferenceUpdating;
 import org.eclipse.dltk.internal.corext.refactoring.util.ResourceUtil;
 import org.eclipse.dltk.internal.corext.refactoring.util.TextChangeManager;
 import org.eclipse.dltk.internal.corext.util.SearchUtils;
-import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextChange;
@@ -78,7 +76,7 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 	protected boolean updateReferences;
 	protected String currentName;
 
-	private TextChangeManager changeManager;
+	protected TextChangeManager changeManager;
 	private final IDLTKLanguageToolkit toolkit;
 
 	public PHPRenameProcessor(IModelElement localVariable, IDLTKLanguageToolkit toolkit) {
@@ -272,21 +270,13 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 		return new RefactoringStatus();
 	}
 
-	public Change createChange(IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(RefactoringCoreMessages.RenameFieldRefactoring_checking, 1);
-
-		try {
-			TextChange[] changes = changeManager.getAllChanges();
-			RefactoringDescriptor descriptor = createRefactoringDescriptor();
-			return new DynamicValidationRefactoringChange(descriptor, getProcessorName(), changes);
-		} finally {
-			monitor.done();
-		}
+	@Override
+	public boolean needsSavedEditors() {
+		return false;
 	}
 
-	protected abstract RefactoringDescriptor createRefactoringDescriptor();
-
-	protected void configureRefactoringDescriptor(RenamePHPElementDescriptor descriptor) {
+	protected RefactoringDescriptor createRefactoringDescriptor() {
+		RenamePHPElementDescriptor descriptor = new RenamePHPElementDescriptor(getRefactoringId());
 		if (cu.getScriptProject() != null) {
 			descriptor.setProject(cu.getScriptProject().getElementName());
 		}
@@ -295,10 +285,9 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 		descriptor.setModelElement(modelElement);
 		descriptor.setNewName(getNewElementName());
 		descriptor.setUpdateReferences(updateReferences);
+
+		return descriptor;
 	}
 
-	@Override
-	public boolean needsSavedEditors() {
-		return false;
-	}
+	protected abstract String getRefactoringId();
 }
