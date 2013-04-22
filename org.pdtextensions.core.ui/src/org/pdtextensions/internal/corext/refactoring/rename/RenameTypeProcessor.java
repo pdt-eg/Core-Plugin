@@ -56,7 +56,7 @@ public class RenameTypeProcessor extends PHPRenameProcessor {
 
 	@Override
 	public boolean isApplicable() throws CoreException {
-	    return Checks.isAvailable(fModelElement);
+	    return Checks.isAvailable(modelElement);
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class RenameTypeProcessor extends PHPRenameProcessor {
 	public Change createChange(IProgressMonitor monitor) throws CoreException {
 		Change result = super.createChange(monitor);
 		if (result instanceof DynamicValidationRefactoringChange) {
-			IResource resource = fModelElement.getResource();
+			IResource resource = modelElement.getResource();
 			if (resource != null && resource instanceof IFile && willRenameCU(resource)) {
 				((DynamicValidationRefactoringChange) result).add(
 					new RenameResourceChange(
@@ -87,7 +87,7 @@ public class RenameTypeProcessor extends PHPRenameProcessor {
 		List<IFile> result = new ArrayList<IFile>();
 		result.addAll(Arrays.asList(super.getChangedFiles()));
 
-		IResource resource = fModelElement.getResource();
+		IResource resource = modelElement.getResource();
 		if (resource != null && resource instanceof IFile && willRenameCU(resource)) {
 			result.add((IFile) resource);
 		}
@@ -102,7 +102,7 @@ public class RenameTypeProcessor extends PHPRenameProcessor {
 
 	private boolean willRenameCU(IResource resource) {
 		if (resource.isLinked()) return false;
-		if (!resource.getName().substring(0, resource.getName().indexOf(resource.getFileExtension()) - 1).equals(fModelElement.getElementName())) return false;
+		if (!resource.getName().substring(0, resource.getName().indexOf(resource.getFileExtension()) - 1).equals(modelElement.getElementName())) return false;
 		if (!DLTKContentTypeManager.isValidFileNameForContentType(PHPLanguageToolkit.getDefault(), getNewElementName() + "." + resource.getFileExtension())) return false; //$NON-NLS-1$
 
 		return true;

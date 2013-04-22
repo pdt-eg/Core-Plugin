@@ -45,7 +45,7 @@ public class RenameFieldProcessor extends PHPRenameProcessor {
 
 	@Override
 	public boolean isApplicable() throws CoreException {
-	    return Checks.isAvailable(fModelElement);
+	    return Checks.isAvailable(modelElement);
 	}
 
 	@Override

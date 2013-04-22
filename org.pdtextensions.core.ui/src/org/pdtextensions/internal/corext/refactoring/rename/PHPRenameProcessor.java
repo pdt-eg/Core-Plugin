@@ -71,21 +71,21 @@ import org.pdtextensions.internal.corext.refactoring.RenamePHPElementDescriptor;
  * @since 0.17.0
  */
 public abstract class PHPRenameProcessor extends ScriptRenameProcessor implements IReferenceUpdating {
-	protected IModelElement fModelElement;
-	protected ISourceModule fCu;
+	protected IModelElement modelElement;
+	protected ISourceModule cu;
 
 	//the following fields are set or modified after the construction
-	protected boolean fUpdateReferences;
-	protected String fCurrentName;
+	protected boolean updateReferences;
+	protected String currentName;
 
-	private TextChangeManager fChangeManager;
-	private final IDLTKLanguageToolkit fToolkit;
+	private TextChangeManager changeManager;
+	private final IDLTKLanguageToolkit toolkit;
 
 	public PHPRenameProcessor(IModelElement localVariable, IDLTKLanguageToolkit toolkit) {
-		fToolkit = toolkit;
-		fModelElement = localVariable;
-		fCu = (ISourceModule) fModelElement.getAncestor(IModelElement.SOURCE_MODULE);
-		fChangeManager = new TextChangeManager(true);
+		this.toolkit = toolkit;
+		modelElement = localVariable;
+		cu = (ISourceModule) modelElement.getAncestor(IModelElement.SOURCE_MODULE);
+		changeManager = new TextChangeManager(true);
 	}
 
 	public RefactoringStatus initialize(RefactoringArguments arguments) {
@@ -97,11 +97,11 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 			final IModelElement element = ScriptRefactoringDescriptor.handleToElement(extended.getProject(), handle, false);
 			if (element != null && element.exists()) {
 				if (element.getElementType() == IModelElement.SOURCE_MODULE) {
-					fCu = (ISourceModule) element;
+					cu = (ISourceModule) element;
 				} else if (element.getElementType() == IModelElement.LOCAL_VARIABLE) {
-					fModelElement = (ILocalVariable) element;
-					fCu = (ISourceModule) fModelElement.getAncestor(IModelElement.SOURCE_MODULE);
-					if (fCu == null)
+					modelElement = (ILocalVariable) element;
+					cu = (ISourceModule) modelElement.getAncestor(IModelElement.SOURCE_MODULE);
+					if (cu == null)
 						return ScriptableRefactoring.createInputFatalStatus(element, getProcessorName(), IScriptRefactorings.RENAME_LOCAL_VARIABLE);
 				} else
 					return ScriptableRefactoring.createInputFatalStatus(element, getProcessorName(), IScriptRefactorings.RENAME_LOCAL_VARIABLE);
@@ -115,7 +115,7 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 			setNewElementName(name);
 		else
 			return RefactoringStatus.createFatalErrorStatus(Messages.format(RefactoringCoreMessages.InitializableRefactoring_argument_not_exist, ScriptRefactoringDescriptor.ATTRIBUTE_NAME));
-		if (fCu != null && fModelElement == null) {
+		if (cu != null && modelElement == null) {
 			final String selection = extended.getAttribute(ScriptRefactoringDescriptor.ATTRIBUTE_SELECTION);
 			if (selection != null) {
 				int offset= -1;
@@ -127,15 +127,15 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 					length = Integer.valueOf(tokenizer.nextToken()).intValue();
 				if (offset >= 0 && length >= 0) {
 					try {
-						final IModelElement[] elements = fCu.codeSelect(offset, length);
+						final IModelElement[] elements = cu.codeSelect(offset, length);
 						if (elements != null) {
 							for (int index = 0; index < elements.length; index++) {
 								final IModelElement element = elements[index];
 								if (element instanceof ILocalVariable)
-									fModelElement = (ILocalVariable) element;
+									modelElement = (ILocalVariable) element;
 							}
 						}
-						if (fModelElement == null)
+						if (modelElement == null)
 							return ScriptableRefactoring.createInputFatalStatus(null, getProcessorName(), IScriptRefactorings.RENAME_LOCAL_VARIABLE);
 					} catch (ModelException exception) {
 						PEXUIPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, PEXUIPlugin.PLUGIN_ID, exception.getMessage(), exception));
@@ -149,14 +149,14 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 		}
 		final String references= extended.getAttribute(ScriptRefactoringDescriptor.ATTRIBUTE_REFERENCES);
 		if (references != null) {
-			fUpdateReferences= Boolean.valueOf(references).booleanValue();
+			updateReferences= Boolean.valueOf(references).booleanValue();
 		} else
 			return RefactoringStatus.createFatalErrorStatus(Messages.format(RefactoringCoreMessages.InitializableRefactoring_argument_not_exist, ScriptRefactoringDescriptor.ATTRIBUTE_REFERENCES));
 		return new RefactoringStatus();
 	}
 
 	public String getCurrentElementName() {
-		return fCurrentName;
+		return currentName;
 	}
 
 	public boolean canEnableUpdateReferences() {
@@ -164,22 +164,22 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 	}
 
 	public void setUpdateReferences(boolean update) {
-		fUpdateReferences = update;
+		updateReferences = update;
 	}
 
 	public boolean getUpdateReferences() {
-		return fUpdateReferences;
+		return updateReferences;
 	}
 
 	@Override
 	protected RenameModifications computeRenameModifications()
 			throws CoreException {
 		RenameModifications result = new RenameModifications();
-		if (fModelElement instanceof ILocalVariable) {
-			result.rename((ILocalVariable)fModelElement, new RenameArguments(getNewElementName(), getUpdateReferences()));
-		} else if (fModelElement instanceof IField) {
+		if (modelElement instanceof ILocalVariable) {
+			result.rename((ILocalVariable)modelElement, new RenameArguments(getNewElementName(), getUpdateReferences()));
+		} else if (modelElement instanceof IField) {
 			// TODO: add switching method in RenameModifications
-			result.rename((IField)fModelElement, new RenameArguments(getNewElementName(), getUpdateReferences()));
+			result.rename((IField)modelElement, new RenameArguments(getNewElementName(), getUpdateReferences()));
 		}
 
 		return result;
@@ -187,7 +187,7 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 
 	@Override
 	protected IFile[] getChangedFiles() throws CoreException {
-		return ResourceUtil.getFiles(fChangeManager.getAllSourceModules());
+		return ResourceUtil.getFiles(changeManager.getAllSourceModules());
 	}
 
 	@Override
@@ -209,11 +209,11 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 	}
 
 	private void createEdits(IProgressMonitor pm) throws CoreException {
-		fChangeManager.clear();
-		IDLTKSearchScope scope = SearchEngine.createWorkspaceScope(fToolkit);
+		changeManager.clear();
+		IDLTKSearchScope scope = SearchEngine.createWorkspaceScope(toolkit);
 		SearchEngine engine = new SearchEngine();
-		if (fUpdateReferences) {
-			SearchPattern pattern = SearchPattern.createPattern(fModelElement, IDLTKSearchConstants.REFERENCES, SearchUtils.GENERICS_AGNOSTIC_MATCH_RULE, fToolkit);
+		if (updateReferences) {
+			SearchPattern pattern = SearchPattern.createPattern(modelElement, IDLTKSearchConstants.REFERENCES, SearchUtils.GENERICS_AGNOSTIC_MATCH_RULE, toolkit);
 			IProgressMonitor monitor = new SubProgressMonitor(pm, 1000);
 			engine.search(pattern, new SearchParticipant[]{ SearchEngine.getDefaultSearchParticipant() }, scope, new SearchRequestor() {
 				@Override
@@ -222,21 +222,21 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 					IModelElement elem = (IModelElement)match.getElement();
 					ISourceModule cu = (ISourceModule)elem.getAncestor(IModelElement.SOURCE_MODULE);
 					if (cu != null) {
-						ReplaceEdit edit = new ReplaceEdit(match.getOffset(), fCurrentName.length(), getNewElementName());
-						addTextEdit(fChangeManager.get(cu), getProcessorName(), edit);
+						ReplaceEdit edit = new ReplaceEdit(match.getOffset(), currentName.length(), getNewElementName());
+						addTextEdit(changeManager.get(cu), getProcessorName(), edit);
 					}
 				}
 			}, monitor);
 		}
 		ISourceRange decl = null;
-		if (fModelElement instanceof ILocalVariable) {
-			decl = ((ILocalVariable)fModelElement).getNameRange();
-		} else if (fModelElement instanceof IMember) {
-			decl = ((IMember)fModelElement).getNameRange();
+		if (modelElement instanceof ILocalVariable) {
+			decl = ((ILocalVariable)modelElement).getNameRange();
+		} else if (modelElement instanceof IMember) {
+			decl = ((IMember)modelElement).getNameRange();
 		}
 		if (decl != null) {
-			ReplaceEdit edit = new ReplaceEdit(decl.getOffset(), fCurrentName.length(), getNewElementName());
-			addTextEdit(fChangeManager.get(fCu), getProcessorName(), edit);
+			ReplaceEdit edit = new ReplaceEdit(decl.getOffset(), currentName.length(), getNewElementName());
+			addTextEdit(changeManager.get(cu), getProcessorName(), edit);
 		}
 	}
 	
@@ -253,12 +253,12 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 
 	@Override
 	protected String[] getAffectedProjectNatures() throws CoreException {
-		return ScriptProcessors.computeAffectedNatures(fCu);
+		return ScriptProcessors.computeAffectedNatures(cu);
 	}
 
 	@Override
 	public Object[] getElements() {
-		return new Object[]{ fModelElement };
+		return new Object[]{ modelElement };
 	}
 	
 	public String getNewElement() {
@@ -267,7 +267,7 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 
 	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		fCurrentName = fModelElement.getElementName();
+		currentName = modelElement.getElementName();
 
 		return new RefactoringStatus();
 	}
@@ -276,7 +276,7 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 		monitor.beginTask(RefactoringCoreMessages.RenameFieldRefactoring_checking, 1);
 
 		try {
-			TextChange[] changes = fChangeManager.getAllChanges();
+			TextChange[] changes = changeManager.getAllChanges();
 			RefactoringDescriptor descriptor = createRefactoringDescriptor();
 			return new DynamicValidationRefactoringChange(descriptor, getProcessorName(), changes);
 		} finally {
@@ -287,14 +287,14 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 	protected abstract RefactoringDescriptor createRefactoringDescriptor();
 
 	protected void configureRefactoringDescriptor(RenamePHPElementDescriptor descriptor) {
-		if (fCu.getScriptProject() != null) {
-			descriptor.setProject(fCu.getScriptProject().getElementName());
+		if (cu.getScriptProject() != null) {
+			descriptor.setProject(cu.getScriptProject().getElementName());
 		}
 
 		descriptor.setFlags(RefactoringDescriptor.NONE);
-		descriptor.setModelElement(fModelElement);
+		descriptor.setModelElement(modelElement);
 		descriptor.setNewName(getNewElementName());
-		descriptor.setUpdateReferences(fUpdateReferences);
+		descriptor.setUpdateReferences(updateReferences);
 	}
 
 	@Override
