@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dltk.core.IField;
 import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
+import org.eclipse.dltk.core.search.FieldReferenceMatch;
 import org.eclipse.dltk.core.search.SearchMatch;
 import org.eclipse.dltk.internal.corext.refactoring.RefactoringCoreMessages;
 import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
@@ -75,6 +76,13 @@ public class RenameFieldProcessor extends PHPRenameProcessor {
 
 	@Override
 	protected ReplaceEdit createReplaceEdit(SearchMatch match) {
-		return new ReplaceEdit(match.getOffset(), currentName.length(), getNewElementName());
+		if (match instanceof FieldReferenceMatch) {
+			String newElementName = getNewElementName();
+			newElementName = newElementName.replace("$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+
+			return new ReplaceEdit(match.getOffset(), currentName.length() - 1, newElementName);
+		} else {
+			return new ReplaceEdit(match.getOffset(), currentName.length(), getNewElementName());
+		}
 	}
 }
