@@ -19,6 +19,10 @@ import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.ScriptModelUtil;
 import org.eclipse.dltk.internal.corext.refactoring.RefactoringAvailabilityTester;
+import org.eclipse.dltk.internal.corext.refactoring.rename.RenameScriptFolderProcessor;
+import org.eclipse.dltk.internal.corext.refactoring.rename.RenameScriptProjectProcessor;
+import org.eclipse.dltk.internal.corext.refactoring.rename.RenameSourceFolderProcessor;
+import org.eclipse.dltk.internal.corext.refactoring.rename.RenameSourceModuleProcessor;
 import org.eclipse.dltk.internal.ui.actions.ActionUtil;
 import org.eclipse.dltk.internal.ui.editor.ModelTextSelection;
 import org.eclipse.dltk.internal.ui.refactoring.RefactoringMessages;
@@ -34,6 +38,9 @@ import org.eclipse.php.internal.ui.editor.PHPStructuredEditor;
 import org.eclipse.ui.IWorkbenchSite;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.refactoring.RenameSupport;
+import org.pdtextensions.internal.corext.refactoring.rename.RenameFieldProcessor;
+import org.pdtextensions.internal.corext.refactoring.rename.RenameMethodProcessor;
+import org.pdtextensions.internal.corext.refactoring.rename.RenameTypeProcessor;
 
 /**
  * @since 0.17.0
@@ -209,29 +216,29 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 	private static RenameSupport createRenameSupport(IModelElement element, String newName, int flags) throws CoreException {
 		switch (element.getElementType()) {
 		case IModelElement.SCRIPT_PROJECT:
-			return RenameSupport.create((IScriptProject) element, newName, flags);
+			return new RenameSupport(new RenameScriptProjectProcessor((IScriptProject) element), newName, flags);
 		case IModelElement.PROJECT_FRAGMENT:
-			return RenameSupport.create((IProjectFragment) element, newName);
+			return new RenameSupport(new RenameSourceFolderProcessor((IProjectFragment) element), newName);
 		case IModelElement.SCRIPT_FOLDER:
 			// TODO Add namespace support like JDT
-			return RenameSupport.create((IScriptFolder) element, newName, flags);
+			return new RenameSupport(new RenameScriptFolderProcessor((IScriptFolder) element), newName, flags);
 		case IModelElement.SOURCE_MODULE:
-			return RenameSupport.create((ISourceModule) element, newName, flags);
+			return new RenameSupport(new RenameSourceModuleProcessor((ISourceModule) element), newName, flags);
 		case IModelElement.TYPE:
 			try {
 				if (PHPFlags.isClass(((IType) element).getFlags())
 					|| PHPFlags.isInterface(((IType) element).getFlags())
 					|| PHPFlags.isTrait(((IType) element).getFlags())
 					) {
-					return RenameSupport.create((IType) element, newName, flags);
+					return new RenameSupport(new RenameTypeProcessor((IType) element), newName, flags);
 				}
 			} catch (ModelException e) {
 			}
 			break;
 		case IModelElement.METHOD:
-			return RenameSupport.create((IMethod) element, newName, flags);
+			return new RenameSupport(new RenameMethodProcessor((IMethod) element), newName, flags);
 		case IModelElement.FIELD:
-			return RenameSupport.create((IField) element, newName, flags);
+			return new RenameSupport(new RenameFieldProcessor((IField) element), newName, flags);
 		}
 
 		return null;

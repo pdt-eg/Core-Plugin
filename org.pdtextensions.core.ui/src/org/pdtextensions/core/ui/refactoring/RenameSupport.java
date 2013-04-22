@@ -13,13 +13,6 @@ package org.pdtextensions.core.ui.refactoring;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.dltk.core.IField;
-import org.eclipse.dltk.core.IMethod;
-import org.eclipse.dltk.core.IProjectFragment;
-import org.eclipse.dltk.core.IScriptFolder;
-import org.eclipse.dltk.core.IScriptProject;
-import org.eclipse.dltk.core.ISourceModule;
-import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.internal.corext.refactoring.rename.RenameScriptFolderProcessor;
 import org.eclipse.dltk.internal.corext.refactoring.rename.RenameScriptProjectProcessor;
 import org.eclipse.dltk.internal.corext.refactoring.rename.RenameSourceFolderProcessor;
@@ -60,86 +53,38 @@ public class RenameSupport {
 
 	public static final int UPDATE_TEXTUAL_MATCHES = 1 << 6;
 
+	public RenameSupport(RenameScriptProjectProcessor processor, String newName, int flags) throws CoreException {
+		this((ScriptRenameProcessor) processor, newName, flags);
+	}
+
+	public RenameSupport(RenameSourceFolderProcessor processor, String newName) throws CoreException {
+		this((ScriptRenameProcessor) processor, newName, 0);
+	}
+
+	public RenameSupport(RenameScriptFolderProcessor processor, String newName, int flags) throws CoreException {
+		this((ScriptRenameProcessor) processor, newName, flags);
+	}
+
+	public RenameSupport(RenameSourceModuleProcessor processor, String newName, int flags) throws CoreException {
+		this((ScriptRenameProcessor) processor, newName, flags);
+	}
+
+	public RenameSupport(RenameTypeProcessor processor, String newName, int flags) throws CoreException {
+		this((ScriptRenameProcessor) processor, newName, flags);
+	}
+
+	public RenameSupport(RenameMethodProcessor processor, String newName, int flags) throws CoreException {
+		this((ScriptRenameProcessor) processor, newName, flags);
+	}
+
+	public RenameSupport(RenameFieldProcessor processor, String newName, int flags) throws CoreException {
+		this((ScriptRenameProcessor) processor, newName, flags);
+	}
+
 	private RenameSupport(ScriptRenameProcessor processor, String newName, int flags) throws CoreException {
 		refactoring = new ScriptRenameRefactoring(processor);
 		initialize(refactoring, newName, flags);
 	}
-	
-	/**
-	 * Creates a new rename support for the given {@link IScriptProject}.
-	 * 
-	 * @param project the {@link IScriptProject} to be renamed.
-	 * @param newName the project's new name. <code>null</code> is a valid
-	 * value indicating that no new name is provided.
-	 * @param flags flags controlling additional parameters. Valid flags are
-	 * <code>UPDATE_REFERENCES</code> or <code>NONE</code>.
-	 * @return the {@link RenameSupport}.
-	 * @throws CoreException if an unexpected error occurred while creating
-	 * the {@link RenameSupport}.
-	 */
-	public static RenameSupport create(IScriptProject project, String newName, int flags) throws CoreException {
-		return new RenameSupport(new RenameScriptProjectProcessor(project), newName, flags);
-	}
-	
-	/**
-	 * Creates a new rename support for the given {@link IProjectFragment}.
-	 * 
-	 * @param root the {@link IProjectFragment} to be renamed.
-	 * @param newName the package fragment root's new name. <code>null</code> is
-	 * a valid value indicating that no new name is provided.
-	 * @return the {@link RenameSupport}.
-	 * @throws CoreException if an unexpected error occurred while creating
-	 * the {@link RenameSupport}.
-	 */
-	public static RenameSupport create(IProjectFragment root, String newName) throws CoreException {
-		return new RenameSupport(new RenameSourceFolderProcessor(root), newName, 0);
-	}
-	
-	/**
-	 * Creates a new rename support for the given {@link IScriptFolder}.
-	 * 
-	 * @param fragment the {@link IScriptFolder} to be renamed.
-	 * @param newName the package fragment's new name. <code>null</code> is a
-	 * valid value indicating that no new name is provided.
-	 * @param flags flags controlling additional parameters. Valid flags are
-	 * <code>UPDATE_REFERENCES</code>, and <code>UPDATE_TEXTUAL_MATCHES</code>,
-	 * or their bitwise OR, or <code>NONE</code>.
-	 * @return the {@link RenameSupport}.
-	 * @throws CoreException if an unexpected error occurred while creating
-	 * the {@link RenameSupport}.
-	 */
-	public static RenameSupport create(IScriptFolder fragment, String newName, int flags) throws CoreException {
-		return new RenameSupport(new RenameScriptFolderProcessor(fragment), newName, flags);
-	}
-	
-	/**
-	 * Creates a new rename support for the given {@link ISourceModule}.
-	 * 
-	 * @param unit the {@link ISourceModule} to be renamed.
-	 * @param newName the compilation unit's new name. <code>null</code> is a
-	 * valid value indicating that no new name is provided.
-	 * @param flags flags controlling additional parameters. Valid flags are
-	 * <code>UPDATE_REFERENCES</code>, and <code>UPDATE_TEXTUAL_MATCHES</code>,
-	 * or their bitwise OR, or <code>NONE</code>.
-	 * @return the {@link RenameSupport}.
-	 * @throws CoreException if an unexpected error occurred while creating
-	 * the {@link RenameSupport}.
-	 */
-	public static RenameSupport create(ISourceModule unit, String newName, int flags) throws CoreException {
-		return new RenameSupport(new RenameSourceModuleProcessor(unit), newName, flags);
-	}	
-
-	public static RenameSupport create(IType type, String newName, int flags) throws CoreException {
-		return new RenameSupport(new RenameTypeProcessor(type), newName, flags);
-	}	
-
-	public static RenameSupport create(IMethod method, String newName, int flags) throws CoreException {
-		return new RenameSupport(new RenameMethodProcessor(method), newName, flags);
-	}	
-
-	public static RenameSupport create(IField field, String newName, int flags) throws CoreException {
-		return new RenameSupport(new RenameFieldProcessor(field), newName, flags);
-	}	
 
 	public void openDialog(Shell parent) throws CoreException {
 		ensureChecked();
