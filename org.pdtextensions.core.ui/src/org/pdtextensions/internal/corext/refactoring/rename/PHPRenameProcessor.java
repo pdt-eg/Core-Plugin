@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.dltk.core.IDLTKLanguageToolkit;
 import org.eclipse.dltk.core.IField;
 import org.eclipse.dltk.core.ILocalVariable;
 import org.eclipse.dltk.core.IMember;
@@ -30,7 +29,6 @@ import org.eclipse.dltk.core.ISourceRange;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
 import org.eclipse.dltk.core.search.IDLTKSearchConstants;
-import org.eclipse.dltk.core.search.IDLTKSearchScope;
 import org.eclipse.dltk.core.search.SearchEngine;
 import org.eclipse.dltk.core.search.SearchMatch;
 import org.eclipse.dltk.core.search.SearchParticipant;
@@ -53,6 +51,7 @@ import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
+import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -68,6 +67,7 @@ import org.pdtextensions.internal.corext.refactoring.RenamePHPElementDescriptor;
  *
  * @since 0.17.0
  */
+@SuppressWarnings("restriction")
 public abstract class PHPRenameProcessor extends ScriptRenameProcessor implements IReferenceUpdating {
 	protected IModelElement modelElement;
 	protected ISourceModule cu;
@@ -76,14 +76,11 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 	protected boolean updateReferences;
 	protected String currentName;
 
-	protected TextChangeManager changeManager;
-	private final IDLTKLanguageToolkit toolkit;
+	protected TextChangeManager changeManager = new TextChangeManager(true);
 
-	public PHPRenameProcessor(IModelElement localVariable, IDLTKLanguageToolkit toolkit) {
-		this.toolkit = toolkit;
-		modelElement = localVariable;
+	public PHPRenameProcessor(IModelElement modelElement) {
+		this.modelElement = modelElement;
 		cu = (ISourceModule) modelElement.getAncestor(IModelElement.SOURCE_MODULE);
-		changeManager = new TextChangeManager(true);
 	}
 
 	public RefactoringStatus initialize(RefactoringArguments arguments) {
@@ -207,34 +204,32 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 	}
 
 	private void createEdits(IProgressMonitor pm) throws CoreException {
-		changeManager.clear();
-		IDLTKSearchScope scope = SearchEngine.createWorkspaceScope(toolkit);
-		SearchEngine engine = new SearchEngine();
 		if (updateReferences) {
-			SearchPattern pattern = SearchPattern.createPattern(modelElement, IDLTKSearchConstants.REFERENCES, SearchUtils.GENERICS_AGNOSTIC_MATCH_RULE, toolkit);
-			IProgressMonitor monitor = new SubProgressMonitor(pm, 1000);
-			engine.search(pattern, new SearchParticipant[]{ SearchEngine.getDefaultSearchParticipant() }, scope, new SearchRequestor() {
-				@Override
-				public void acceptSearchMatch(SearchMatch match) throws CoreException {
-					if (!(match.getElement() instanceof IModelElement)) return;
-					IModelElement elem = (IModelElement)match.getElement();
-					ISourceModule cu = (ISourceModule)elem.getAncestor(IModelElement.SOURCE_MODULE);
-					if (cu != null) {
-						ReplaceEdit edit = new ReplaceEdit(match.getOffset(), currentName.length(), getNewElementName());
-						addTextEdit(changeManager.get(cu), getProcessorName(), edit);
+			new SearchEngine().search(
+				SearchPattern.createPattern(modelElement, IDLTKSearchConstants.REFERENCES, SearchUtils.GENERICS_AGNOSTIC_MATCH_RULE, PHPLanguageToolkit.getDefault()),
+				new SearchParticipant[]{ SearchEngine.getDefaultSearchParticipant() },
+				SearchEngine.createWorkspaceScope(PHPLanguageToolkit.getDefault()),
+				new SearchRequestor() {
+					@Override
+					public void acceptSearchMatch(SearchMatch match) throws CoreException {
+						if (match.getElement() instanceof IModelElement) {
+							ISourceModule cu = (ISourceModule) ((IModelElement) match.getElement()).getAncestor(IModelElement.SOURCE_MODULE);
+							if (cu != null) {
+								addTextEdit(changeManager.get(cu), getProcessorName(), new ReplaceEdit(match.getOffset(), currentName.length(), getNewElementName()));
+							}
+						}
 					}
-				}
-			}, monitor);
+				},
+				new SubProgressMonitor(pm, 1000)
+			);
 		}
-		ISourceRange decl = null;
-		if (modelElement instanceof ILocalVariable) {
-			decl = ((ILocalVariable)modelElement).getNameRange();
-		} else if (modelElement instanceof IMember) {
-			decl = ((IMember)modelElement).getNameRange();
+
+		ISourceRange sourceRange = null;
+		if (modelElement instanceof IMember) {
+			sourceRange = ((IMember) modelElement).getNameRange();
 		}
-		if (decl != null) {
-			ReplaceEdit edit = new ReplaceEdit(decl.getOffset(), currentName.length(), getNewElementName());
-			addTextEdit(changeManager.get(cu), getProcessorName(), edit);
+		if (sourceRange != null) {
+			addTextEdit(changeManager.get(cu), getProcessorName(), new ReplaceEdit(sourceRange.getOffset(), currentName.length(), getNewElementName()));
 		}
 	}
 	

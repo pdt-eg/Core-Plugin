@@ -15,18 +15,16 @@ import org.eclipse.dltk.internal.corext.refactoring.RefactoringCoreMessages;
 import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.pdtextensions.internal.corext.refactoring.Checks;
 
 /**
  * @since 0.17.0
  */
-@SuppressWarnings("restriction")
 public class RenameMethodProcessor extends PHPRenameProcessor {
 	public static final String IDENTIFIER = "org.pdtextensions.internal.corext.refactoring.rename.renameMethodProcessor"; //$NON-NLS-1$
 
-	public RenameMethodProcessor(IMethod method) {
-		super(method, PHPLanguageToolkit.getDefault());
+	public RenameMethodProcessor(IMethod modelElement) {
+		super(modelElement);
 	}
 
 	@Override

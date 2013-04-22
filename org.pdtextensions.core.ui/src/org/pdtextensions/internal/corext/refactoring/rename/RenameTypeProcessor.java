@@ -33,8 +33,8 @@ import org.pdtextensions.internal.corext.refactoring.Checks;
 public class RenameTypeProcessor extends PHPRenameProcessor {
 	public static final String IDENTIFIER = "org.pdtextensions.internal.corext.refactoring.rename.renameTypeProcessor"; //$NON-NLS-1$
 
-	public RenameTypeProcessor(IType type) {
-		super(type, PHPLanguageToolkit.getDefault());
+	public RenameTypeProcessor(IType modelElement) {
+		super(modelElement);
 	}
 
 	@Override
