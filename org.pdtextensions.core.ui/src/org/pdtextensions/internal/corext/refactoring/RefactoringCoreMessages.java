@@ -16,7 +16,6 @@ public final class RefactoringCoreMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.pdtextensions.internal.corext.refactoring";//$NON-NLS-1$
 
 	public static String Checks_Choose_name;
-	public static String Checks_illegal_identifier;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, RefactoringCoreMessages.class);
