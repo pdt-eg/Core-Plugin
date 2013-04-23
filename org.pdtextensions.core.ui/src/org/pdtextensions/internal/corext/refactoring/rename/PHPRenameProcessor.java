@@ -217,7 +217,11 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 							if (cu != null) {
 								ReplaceEdit edit = createReplaceEdit(match);
 								if (edit != null) {
-									addTextEdit(changeManager.get(cu), getProcessorName(), edit);
+									try {
+										addTextEdit(changeManager.get(cu), getProcessorName(), edit);
+									} catch (MalformedTreeException e) {
+										// conflicting update -> omit text match
+									}
 								}
 							}
 						}
