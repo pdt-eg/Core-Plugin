@@ -15,7 +15,7 @@ import org.eclipse.osgi.util.NLS;
  * @since 0.17.0
  */
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.pdtextensions.core.ui"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.pdtextensions.core.ui.messages"; //$NON-NLS-1$
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
