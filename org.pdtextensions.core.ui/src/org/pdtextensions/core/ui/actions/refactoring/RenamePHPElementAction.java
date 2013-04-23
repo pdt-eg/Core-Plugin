@@ -226,15 +226,13 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 		case IModelElement.SOURCE_MODULE:
 			return new RenameSupport(new RenameSourceModuleProcessor((ISourceModule) element), newName, flags);
 		case IModelElement.TYPE:
-			try {
-				if (PHPFlags.isClass(((IType) element).getFlags())
+			if (PHPFlags.isClass(((IType) element).getFlags())
 					|| PHPFlags.isInterface(((IType) element).getFlags())
 					|| PHPFlags.isTrait(((IType) element).getFlags())
 					) {
-					return new RenameSupport(new RenameTypeProcessor((IType) element), newName, flags);
-				}
-			} catch (ModelException e) {
+				return new RenameSupport(new RenameTypeProcessor((IType) element), newName, flags);
 			}
+
 			break;
 		case IModelElement.METHOD:
 			return new RenameSupport(new RenameMethodProcessor((IMethod) element), newName, flags);
