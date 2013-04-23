@@ -240,7 +240,7 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 		}
 	}
 	
-	private static void addTextEdit(TextChange change, String name, TextEdit edit) throws MalformedTreeException {
+	protected static void addTextEdit(TextChange change, String name, TextEdit edit) throws MalformedTreeException {
 		TextEdit root = change.getEdit();
 		if (root == null) {
 			root = new MultiTextEdit();

@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
 import org.eclipse.dltk.internal.corext.refactoring.ScriptRefactoringDescriptor;
+import org.eclipse.wst.jsdt.core.IPackageFragmentRoot;
 
 /**
  * This is the replacement of the org.eclipse.dltk.internal.core.refactoring.descriptors.RenameModelElementDescriptor
@@ -100,6 +101,8 @@ public class RenamePHPElementDescriptor extends ScriptRefactoringDescriptor {
 		} else if (id.equals(IScriptRefactorings.RENAME_METHOD)) {
 			return true;
 		} else if (id.equals(IScriptRefactorings.RENAME_FIELD)) {
+			return true;
+		} else if (id.equals(IScriptRefactorings.RENAME_LOCAL_VARIABLE)) {
 			return true;
 		} else {
 			return false;

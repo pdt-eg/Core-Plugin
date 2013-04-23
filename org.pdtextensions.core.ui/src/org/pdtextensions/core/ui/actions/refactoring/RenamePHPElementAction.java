@@ -39,6 +39,7 @@ import org.eclipse.ui.IWorkbenchSite;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.refactoring.RenameSupport;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameFieldProcessor;
+import org.pdtextensions.internal.corext.refactoring.rename.RenameLocalVariableProcessor;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameMethodProcessor;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameTypeProcessor;
 
@@ -238,9 +239,26 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 		case IModelElement.METHOD:
 			return new RenameSupport(new RenameMethodProcessor((IMethod) element), newName, flags);
 		case IModelElement.FIELD:
-			return new RenameSupport(new RenameFieldProcessor((IField) element), newName, flags);
+			IField field = (IField) element;
+			if (field.getDeclaringType() == null) {
+				if (field.getSource().startsWith("$this->")) {
+					// if the selection is on $this->someField we need to get the declaring field in the parent type
+					// otherwise we get text conflicts
+					if (field.getParent().getElementType() == IModelElement.METHOD) {
+						IMethod method = (IMethod) field.getParent();
+						if (method.getParent().getElementType() == IModelElement.TYPE) {
+							IType type = (IType) method.getParent();
+							IField enclosingField = type.getField(field.getElementName());
+							return new RenameSupport(new RenameFieldProcessor(enclosingField), newName, flags); 
+						}
+					}
+				} else if (field.getSource().startsWith(field.getElementName())) {
+					return new RenameSupport(new RenameLocalVariableProcessor(field), newName, flags);
+				}
+			} else {
+				return new RenameSupport(new RenameFieldProcessor(field), newName, flags);
+			}
 		}
-
 		return null;
 	}
 }
