@@ -18,7 +18,8 @@ Require-Bundle: org.junit,
  org.eclipse.wst.validation,
  org.pdtextensions.core.ui,
  org.pdtextensions.core,
- org.eclipse.php.core.tests
+ org.eclipse.php.core.tests,
+ org.apache.commons.io
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.pdtextensions.core.tests,

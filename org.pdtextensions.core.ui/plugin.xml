@@ -303,4 +303,9 @@
             priority="9">
       </action>
    </extension>
+   <extension
+         point="org.pdtextensions.core.ui.formatterProfileContributor">
+      <contributor
+            class="org.pdtextensions.core.ui.formatter.profile.CoreProfileContributor"></contributor>
+   </extension>
 </plugin>
