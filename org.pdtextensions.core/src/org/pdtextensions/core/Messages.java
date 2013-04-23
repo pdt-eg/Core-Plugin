@@ -15,7 +15,7 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.pdtextensions.core.messages"; //$NON-NLS-1$
 
-	public static String convention_illegalIdentifier;
+	public static String Convention_illegalIdentifier;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

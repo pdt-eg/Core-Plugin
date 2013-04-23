@@ -36,7 +36,7 @@ public final class PHPConventions {
 		if (pattern.matcher(id).matches()) {
 			return IModelStatus.VERIFIED_OK;
 		} else {
-			return new Status(IStatus.ERROR, PEXCorePlugin.PLUGIN_ID, -1, Messages.bind(Messages.convention_illegalIdentifier, id), null);
+			return new Status(IStatus.ERROR, PEXCorePlugin.PLUGIN_ID, -1, Messages.bind(Messages.Convention_illegalIdentifier, id), null);
 		}
 	}
 
