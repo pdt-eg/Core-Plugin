@@ -9,6 +9,7 @@ package org.pdtextensions.internal.corext.refactoring.rename;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.core.IField;
 import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
 import org.eclipse.dltk.core.search.FieldReferenceMatch;
@@ -77,10 +78,15 @@ public class RenameFieldProcessor extends PHPRenameProcessor {
 	@Override
 	protected ReplaceEdit createReplaceEdit(SearchMatch match) {
 		if (match instanceof FieldReferenceMatch) {
-			String newElementName = getNewElementName();
-			newElementName = newElementName.replace("$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			if (((FieldReferenceMatch) match).getNode() instanceof VariableReference) {
+				// ignore a local variable
+				return null;
+			} else {
+				String newElementName = getNewElementName();
+				newElementName = newElementName.replace("$", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
-			return new ReplaceEdit(match.getOffset(), currentName.length() - 1, newElementName);
+				return new ReplaceEdit(match.getOffset(), currentName.length() - 1, newElementName);
+			}
 		} else {
 			return new ReplaceEdit(match.getOffset(), currentName.length(), getNewElementName());
 		}
