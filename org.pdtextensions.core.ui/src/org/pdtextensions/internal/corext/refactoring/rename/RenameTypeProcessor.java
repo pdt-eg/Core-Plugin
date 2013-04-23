@@ -19,7 +19,6 @@ import org.eclipse.dltk.core.DLTKContentTypeManager;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
 import org.eclipse.dltk.core.search.SearchMatch;
-import org.eclipse.dltk.internal.corext.refactoring.RefactoringCoreMessages;
 import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -27,6 +26,7 @@ import org.eclipse.ltk.core.refactoring.resource.RenameResourceChange;
 import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.pdtextensions.internal.corext.refactoring.Checks;
+import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
 
 /**
  * @since 0.17.0

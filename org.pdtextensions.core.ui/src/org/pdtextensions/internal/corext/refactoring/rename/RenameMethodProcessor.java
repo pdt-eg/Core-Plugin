@@ -14,12 +14,12 @@ import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
 import org.eclipse.dltk.core.search.MethodReferenceMatch;
 import org.eclipse.dltk.core.search.SearchMatch;
-import org.eclipse.dltk.internal.corext.refactoring.RefactoringCoreMessages;
 import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.pdtextensions.internal.corext.refactoring.Checks;
+import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
 
 /**
  * @since 0.17.0
@@ -53,7 +53,7 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 
 	@Override
 	public Change createChange(IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(RefactoringCoreMessages.RenameTypeRefactoring_checking, 1);
+		monitor.beginTask(RefactoringCoreMessages.RenameMethodRefactoring_checking, 1);
 
 		try {
 			Change result = new DynamicValidationRefactoringChange(createRefactoringDescriptor(), getProcessorName(), changeManager.getAllChanges());

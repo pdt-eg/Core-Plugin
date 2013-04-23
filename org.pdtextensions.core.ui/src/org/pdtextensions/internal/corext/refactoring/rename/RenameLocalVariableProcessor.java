@@ -13,7 +13,6 @@ import org.eclipse.dltk.core.ISourceRange;
 import org.eclipse.dltk.core.SourceParserUtil;
 import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
 import org.eclipse.dltk.core.search.SearchMatch;
-import org.eclipse.dltk.internal.corext.refactoring.RefactoringCoreMessages;
 import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -22,6 +21,7 @@ import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.internal.corext.refactoring.Checks;
+import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
 
 @SuppressWarnings("restriction")
 public class RenameLocalVariableProcessor extends PHPRenameProcessor {
@@ -56,7 +56,7 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 
 	@Override
 	public String getProcessorName() {
-		return RefactoringCoreMessages.RenameFieldRefactoring_name;
+		return RefactoringCoreMessages.RenameLocalVariableRefactoring_name;
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 
 	@Override
 	public Change createChange(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
-		monitor.beginTask(RefactoringCoreMessages.RenameFieldRefactoring_checking, 1);
+		monitor.beginTask(RefactoringCoreMessages.RenameLocalVariableRefactoring_checking, 1);
 		try {
 			Change result = new DynamicValidationRefactoringChange(createRefactoringDescriptor(), getProcessorName(), changeManager.getAllChanges());
 			monitor.worked(1);
