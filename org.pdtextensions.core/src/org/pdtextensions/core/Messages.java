@@ -13,7 +13,7 @@ import org.eclipse.osgi.util.NLS;
  * @since 0.17.0
  */
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "org.pdtextensions.core"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.pdtextensions.core.messages"; //$NON-NLS-1$
 
 	public static String convention_illegalIdentifier;
 
