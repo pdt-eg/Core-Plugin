@@ -16,6 +16,7 @@ import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.model.binary.BinaryMember;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.pdtextensions.core.PHPConventions;
+import org.eclipse.dltk.internal.corext.refactoring.RefactoringCoreMessages;
 
 /**
  * @since 0.17.0
