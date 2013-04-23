@@ -294,5 +294,9 @@
             type="java.lang.Object">
       </propertyTester>
    </extension>
-   
+   <extension
+         point="org.pdtextensions.core.ui.formatterProfileContributor">
+      <contributor
+            class="org.pdtextensions.core.ui.formatter.profile.CoreProfileContributor"></contributor>
+   </extension>
 </plugin>
