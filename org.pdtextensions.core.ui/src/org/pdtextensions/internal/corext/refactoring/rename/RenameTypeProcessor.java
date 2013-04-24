@@ -25,6 +25,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.resource.RenameResourceChange;
 import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.eclipse.text.edits.ReplaceEdit;
+import org.pdtextensions.internal.corext.refactoring.CaseSensitivity;
 import org.pdtextensions.internal.corext.refactoring.Checks;
 import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
 
@@ -108,6 +109,11 @@ public class RenameTypeProcessor extends PHPRenameProcessor {
 	@Override
 	protected ReplaceEdit createReplaceEdit(SearchMatch match) {
 		return new ReplaceEdit(match.getOffset(), currentName.length(), getNewElementName());
+	}
+
+	@Override
+	protected CaseSensitivity getNameCaseSensitivity() {
+		return CaseSensitivity.CaseInsensitive;
 	}
 
 	private boolean willRenameCU(IResource resource) {

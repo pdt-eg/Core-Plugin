@@ -18,6 +18,7 @@ import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRef
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.text.edits.ReplaceEdit;
+import org.pdtextensions.internal.corext.refactoring.CaseSensitivity;
 import org.pdtextensions.internal.corext.refactoring.Checks;
 import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
 
@@ -86,5 +87,10 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 		} else {
 			return new ReplaceEdit(match.getOffset(), currentName.length(), getNewElementName());
 		}
+	}
+
+	@Override
+	protected CaseSensitivity getNameCaseSensitivity() {
+		return CaseSensitivity.CaseInsensitive;
 	}
 }

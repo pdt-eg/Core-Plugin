@@ -43,7 +43,6 @@ import org.eclipse.dltk.internal.corext.refactoring.rename.ScriptRenameProcessor
 import org.eclipse.dltk.internal.corext.refactoring.tagging.IReferenceUpdating;
 import org.eclipse.dltk.internal.corext.refactoring.util.ResourceUtil;
 import org.eclipse.dltk.internal.corext.refactoring.util.TextChangeManager;
-import org.eclipse.dltk.internal.corext.util.SearchUtils;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextChange;
@@ -58,6 +57,7 @@ import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.TextEditGroup;
 import org.pdtextensions.core.ui.Messages;
 import org.pdtextensions.core.ui.PEXUIPlugin;
+import org.pdtextensions.internal.corext.refactoring.CaseSensitivity;
 import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
 import org.pdtextensions.internal.corext.refactoring.RenamePHPElementDescriptor;
 
@@ -206,7 +206,13 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 	private void createEdits(IProgressMonitor pm) throws CoreException {
 		if (updateReferences) {
 			new SearchEngine().search(
-				SearchPattern.createPattern(modelElement, IDLTKSearchConstants.REFERENCES, SearchUtils.GENERICS_AGNOSTIC_MATCH_RULE, PHPLanguageToolkit.getDefault()),
+				SearchPattern.createPattern(
+					modelElement,
+					IDLTKSearchConstants.REFERENCES,
+					(SearchPattern.R_EXACT_MATCH | SearchPattern.R_ERASURE_MATCH)
+					| (getNameCaseSensitivity() == CaseSensitivity.CaseSensitive ? SearchPattern.R_CASE_SENSITIVE : 0),
+					PHPLanguageToolkit.getDefault()
+				),
 				new SearchParticipant[]{ SearchEngine.getDefaultSearchParticipant() },
 				SearchEngine.createWorkspaceScope(PHPLanguageToolkit.getDefault()),
 				new SearchRequestor() {
@@ -239,7 +245,7 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 			addTextEdit(changeManager.get(cu), getProcessorName(), new ReplaceEdit(sourceRange.getOffset(), currentName.length(), getNewElementName()));
 		}
 	}
-	
+
 	protected static void addTextEdit(TextChange change, String name, TextEdit edit) throws MalformedTreeException {
 		TextEdit root = change.getEdit();
 		if (root == null) {
@@ -294,4 +300,8 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 	protected abstract String getRefactoringId();
 
 	protected abstract ReplaceEdit createReplaceEdit(SearchMatch match);
+
+	protected CaseSensitivity getNameCaseSensitivity() {
+		return CaseSensitivity.CaseSensitive;
+	}
 }
