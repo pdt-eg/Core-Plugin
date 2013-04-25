@@ -7,23 +7,41 @@
  ******************************************************************************/
 package org.pdtextensions.internal.corext.refactoring.rename;
 
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.dltk.ast.ASTNode;
+import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.core.IField;
+import org.eclipse.dltk.core.IMember;
+import org.eclipse.dltk.core.IModelElement;
+import org.eclipse.dltk.core.ISourceModule;
+import org.eclipse.dltk.core.IType;
+import org.eclipse.dltk.core.SourceParserUtil;
 import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
 import org.eclipse.dltk.core.search.FieldReferenceMatch;
 import org.eclipse.dltk.core.search.SearchMatch;
 import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.php.internal.core.compiler.ast.nodes.FieldAccess;
+import org.eclipse.php.internal.core.compiler.ast.nodes.PHPCallExpression;
+import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.text.edits.ReplaceEdit;
+import org.pdtextensions.core.ui.PEXUIPlugin;
+import org.pdtextensions.core.util.PDTModelUtils;
+import org.pdtextensions.core.util.PDTTypeInferenceUtils;
 import org.pdtextensions.internal.corext.refactoring.Checks;
 import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
 
 /**
  * @since 0.17.0
  */
+@SuppressWarnings("restriction")
 public class RenameFieldProcessor extends PHPRenameProcessor {
 	public static final String IDENTIFIER = "org.pdtextensions.internal.corext.refactoring.rename.renameFieldProcessor"; //$NON-NLS-1$
 
@@ -76,19 +94,77 @@ public class RenameFieldProcessor extends PHPRenameProcessor {
 	}
 
 	@Override
-	protected ReplaceEdit createReplaceEdit(SearchMatch match) {
+	protected ReplaceEdit createReplaceEdit(final SearchMatch match) throws CoreException {
 		if (match instanceof FieldReferenceMatch) {
-			if (((FieldReferenceMatch) match).getNode() instanceof VariableReference) {
-				// ignore a local variable
-				return null;
-			} else {
-				String newElementName = getNewElementName();
-				newElementName = newElementName.replace("$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			if (!(((FieldReferenceMatch) match).getNode() instanceof VariableReference)) {
+				if (match.getElement() instanceof IMember) {
+					ISourceModule module = ((IMember) match.getElement()).getSourceModule();
+					if (module != null) {
+						ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(module);
+						if (moduleDeclaration != null) {
+							FieldReferenceFinder finder = new FieldReferenceFinder(((FieldReferenceMatch) match).getNode(), module);
 
-				return new ReplaceEdit(match.getOffset(), currentName.length() - 1, newElementName);
+							try {
+								moduleDeclaration.traverse(finder);
+							} catch (Exception e) {
+								throw new CoreException(new Status(IStatus.ERROR, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
+							}
+
+							return finder.getReplaceEdit();
+						}
+					}
+				}
 			}
-		} else {
-			return new ReplaceEdit(match.getOffset(), currentName.length(), getNewElementName());
+		}
+
+		return null;
+	}
+
+	private class FieldReferenceFinder extends PHPASTVisitor {
+		private ASTNode astNode;
+		private ISourceModule sourceModule;
+		private ReplaceEdit replaceEdit;
+
+		public FieldReferenceFinder(ASTNode astNode, ISourceModule sourceModule) {
+			this.astNode = astNode;
+			this.sourceModule = sourceModule;
+		}
+
+		@Override
+		public boolean visit(FieldAccess s) throws Exception {
+			if (s.sourceStart() < astNode.sourceStart() && s.sourceEnd() == astNode.sourceEnd()) {
+				List<ASTNode> children = s.getChilds();
+				for (int i = 0; i < children.size(); ++i) {
+					ASTNode fieldReference = children.get(i);
+					if (fieldReference.sourceStart() == astNode.sourceStart() && fieldReference.sourceEnd() == astNode.sourceEnd()) {
+						if (i > 0) {
+							ASTNode receiverReference = children.get(i - 1);
+							IType[] receiverTypes = null;
+							if (receiverReference instanceof VariableReference) {
+								receiverTypes = PDTTypeInferenceUtils.getTypes((VariableReference) receiverReference, sourceModule);
+							} else if (receiverReference instanceof PHPCallExpression) {
+								receiverTypes = PDTTypeInferenceUtils.getTypes((PHPCallExpression) receiverReference, sourceModule);
+							}
+							if (receiverTypes != null) {
+								for (IType receiverType: receiverTypes) {
+									IType ancestorType = (IType) modelElement.getAncestor(IModelElement.TYPE);
+									if (ancestorType != null && PDTModelUtils.isInstanceOf(receiverType, ancestorType)) {
+										replaceEdit = new ReplaceEdit(astNode.sourceStart(), currentName.length() - 1, getNewElementName().replace("$", "")); //$NON-NLS-1$ //$NON-NLS-2$
+
+										return false;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			return true;
+		}
+
+		public ReplaceEdit getReplaceEdit() {
+			return replaceEdit;
 		}
 	}
 }

@@ -299,7 +299,7 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 
 	protected abstract String getRefactoringId();
 
-	protected abstract ReplaceEdit createReplaceEdit(SearchMatch match);
+	protected abstract ReplaceEdit createReplaceEdit(SearchMatch match) throws CoreException;
 
 	protected CaseSensitivity getNameCaseSensitivity() {
 		return CaseSensitivity.CaseSensitive;

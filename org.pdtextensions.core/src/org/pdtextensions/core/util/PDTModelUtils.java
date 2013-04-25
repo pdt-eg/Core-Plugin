@@ -15,11 +15,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
@@ -28,6 +29,7 @@ import org.eclipse.dltk.ast.references.TypeReference;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.IType;
+import org.eclipse.dltk.core.ITypeHierarchy;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.SourceParserUtil;
 import org.eclipse.dltk.core.index2.search.ISearchEngine.MatchRule;
@@ -469,5 +471,45 @@ public class PDTModelUtils {
 		}
 		
 		return ret;
+	}
+
+	public static boolean isInstanceOf(IType type, IType targetType) throws ModelException {
+		Assert.isNotNull(type);
+		Assert.isNotNull(targetType);
+
+		return isInstanceOf(type, targetType.getFullyQualifiedName("\\")); //$NON-NLS-1$
+	}
+
+	public static boolean isInstanceOf(IType type, String targetTypeName) throws ModelException {
+		Assert.isNotNull(type);
+		Assert.isNotNull(targetTypeName);
+		Assert.isTrue(!targetTypeName.equals("")); //$NON-NLS-1$
+
+		if (isSameType(type, targetTypeName)) {
+			return true;
+		} else {
+			ITypeHierarchy hierarchy = type.newSupertypeHierarchy(new NullProgressMonitor());
+			if (hierarchy == null) return false;
+			IType[] superTypes = hierarchy.getAllSuperclasses(type);
+			if (superTypes == null) return false;
+
+			for (IType variableSuperType: superTypes) {
+				if (isSameType(variableSuperType, targetTypeName)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	public static boolean isSameType(IType type, String targetTypeName) {
+		PHPClassType classType = PHPClassType.fromIType(type);
+
+		if (classType.getNamespace() != null && !targetTypeName.startsWith("\\")) { //$NON-NLS-1$
+			targetTypeName = "\\" + targetTypeName; //$NON-NLS-1$
+		}
+
+		return classType.getTypeName().equals(targetTypeName);
 	}
 }
