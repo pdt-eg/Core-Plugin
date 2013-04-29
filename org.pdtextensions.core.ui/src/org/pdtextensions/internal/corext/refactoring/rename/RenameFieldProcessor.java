@@ -94,7 +94,7 @@ public class RenameFieldProcessor extends PHPRenameProcessor {
 	}
 
 	@Override
-	protected ReplaceEdit createReplaceEdit(final SearchMatch match) throws CoreException {
+	protected ReplaceEdit createReplaceEdit(SearchMatch match) throws CoreException {
 		if (match instanceof FieldReferenceMatch) {
 			if (!(((FieldReferenceMatch) match).getNode() instanceof VariableReference)) {
 				if (match.getElement() instanceof IMember) {
