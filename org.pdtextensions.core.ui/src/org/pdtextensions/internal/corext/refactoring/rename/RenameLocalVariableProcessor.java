@@ -130,11 +130,11 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 	}
 
 	@Override
-	public Change createChange(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
-		monitor.beginTask(RefactoringCoreMessages.RenameLocalVariableRefactoring_checking, 1);
+	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
+		pm.beginTask(RefactoringCoreMessages.RenameLocalVariableRefactoring_checking, 1);
 		try {
 			Change result = new DynamicValidationRefactoringChange(createRefactoringDescriptor(), getProcessorName(), changeManager.getAllChanges());
-			monitor.worked(1);
+			pm.worked(1);
 			return result;
 		} finally {
 			changeManager.clear();

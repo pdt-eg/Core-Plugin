@@ -66,8 +66,8 @@ public class RenameTypeProcessor extends PHPRenameProcessor {
 	}
 
 	@Override
-	public Change createChange(IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(RefactoringCoreMessages.RenameTypeRefactoring_checking, 1);
+	public Change createChange(IProgressMonitor pm) throws CoreException {
+		pm.beginTask(RefactoringCoreMessages.RenameTypeRefactoring_checking, 1);
 
 		try {
 			DynamicValidationRefactoringChange result = new DynamicValidationRefactoringChange(createRefactoringDescriptor(), getProcessorName(), changeManager.getAllChanges());
@@ -80,7 +80,7 @@ public class RenameTypeProcessor extends PHPRenameProcessor {
 					)
 				);
 			}
-			monitor.worked(1);
+			pm.worked(1);
 
 			return result;
 		} finally {

@@ -70,12 +70,12 @@ public class RenameFieldProcessor extends PHPRenameProcessor {
 	}
 
 	@Override
-	public Change createChange(IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(RefactoringCoreMessages.RenameFieldRefactoring_checking, 1);
+	public Change createChange(IProgressMonitor pm) throws CoreException {
+		pm.beginTask(RefactoringCoreMessages.RenameFieldRefactoring_checking, 1);
 
 		try {
 			Change result = new DynamicValidationRefactoringChange(createRefactoringDescriptor(), getProcessorName(), changeManager.getAllChanges());
-			monitor.worked(1);
+			pm.worked(1);
 
 			return result;
 		} finally {
