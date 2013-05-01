@@ -63,6 +63,7 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 			return result;
 		} finally {
 			changeManager.clear();
+			pm.done();
 		}
 	}
 

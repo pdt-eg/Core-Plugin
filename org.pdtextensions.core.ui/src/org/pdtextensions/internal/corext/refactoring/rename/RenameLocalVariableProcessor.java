@@ -138,6 +138,7 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 			return result;
 		} finally {
 			changeManager.clear();
+			pm.done();
 		}
 	}
 }

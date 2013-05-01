@@ -80,6 +80,7 @@ public class RenameFieldProcessor extends PHPRenameProcessor {
 			return result;
 		} finally {
 			changeManager.clear();
+			pm.done();
 		}
 	}
 
