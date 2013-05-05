@@ -31,7 +31,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.pdtextensions.core.ui,
  org.pdtextensions.core.ui.actions,
- org.pdtextensions.core.ui.actions.refactoring,
  org.pdtextensions.core.ui.ast,
  org.pdtextensions.core.ui.codemanipulation,
  org.pdtextensions.core.ui.contentassist,
@@ -45,7 +44,6 @@ Export-Package: org.pdtextensions.core.ui,
  org.pdtextensions.core.ui.preferences.formatter,
  org.pdtextensions.core.ui.preferences.launcher,
  org.pdtextensions.core.ui.quickfix,
- org.pdtextensions.core.ui.refactoring,
  org.pdtextensions.core.ui.template,
  org.pdtextensions.core.ui.util,
  org.pdtextensions.core.ui.wizards
