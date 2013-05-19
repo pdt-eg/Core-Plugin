@@ -1,8 +1,5 @@
 package org.pdtextensions.core.ui.preferences;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -11,7 +8,6 @@ import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.pdtextensions.core.CorePreferenceConstants;
 import org.pdtextensions.core.PEXCorePlugin;
 import org.pdtextensions.core.ui.PEXUIPlugin;
-import org.pdtextensions.core.ui.formatter.CodeFormatterConstants;
 
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
@@ -22,12 +18,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = PEXUIPlugin.getDefault()
 				.getPreferenceStore();
-		Map<?, ?> map = CodeFormatterConstants.getDefaultSettings();
-		Iterator<?> it = map.keySet().iterator();
-		while (it.hasNext()) {
-			String key = (String) it.next();
-			store.setDefault(key, (String) map.get(key));
-		}
 		
 		store.setDefault(PreferenceConstants.ENABLED, false);
 		store.setDefault(PreferenceConstants.LINE_ALPHA, 50);

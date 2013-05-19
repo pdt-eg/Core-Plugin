@@ -48,7 +48,6 @@ import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.osgi.framework.BundleContext;
 import org.pdtextensions.core.log.Logger;
-import org.pdtextensions.core.ui.formatter.CodeFormatterOptions;
 import org.pdtextensions.core.ui.preferences.PDTTemplateStore;
 import org.pdtextensions.core.ui.preferences.PreferenceConstants;
 
@@ -147,28 +146,6 @@ public class PEXUIPlugin extends AbstractUIPlugin {
 				+ "' @" + node.getClass().getSimpleName() + " [" + offset + "-"
 				+ end + "]"));
 	}
-	
-	public Map<String, String> getOptions(IProject project) {
-		CodeFormatterOptions options = new CodeFormatterOptions(null);
-		PreferencesService service = PreferencesService.getDefault();
-		IScopeContext[] contexts = (project != null) ? new IScopeContext[] {
-				new ProjectScope(project), new InstanceScope() }
-				: new IScopeContext[] { new InstanceScope() };
-		HashMap<String, String> settings = new HashMap<String, String>();
-		Iterator<String> it = options.getMap().keySet().iterator();
-		while (it.hasNext()) {
-			String key = it.next();
-			String value = service.getString(PLUGIN_ID, key, null, contexts);
-			if (value != null) {
-				settings.put(key, value);
-			}
-		}
-		if (!settings.isEmpty()) {
-			options.set(settings);
-		}
-		return options.getMap();
-	}
-	
 	
 	public void createMarker(IResource resource, int severity, String message,
 			boolean persist) {
