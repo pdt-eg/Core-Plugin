@@ -127,6 +127,15 @@
                   label="New class"
                   style="push"
                   tooltip="Create new PHP class">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeWorkbenchWindow.activePerspective">
+                     <equals
+                           value="org.eclipse.php.perspective">
+                     </equals>
+                  </with>
+               </visibleWhen>
             </command>
          </toolbar>
          <toolbar
@@ -136,6 +145,15 @@
                   icon="ico/full/obj16/int_obj.gif"
                   label="New interface"
                   style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeWorkbenchWindow.activePerspective">
+                     <equals
+                           value="org.eclipse.php.perspective">
+                     </equals>
+                  </with>
+               </visibleWhen>
             </command>
          </toolbar>
       </menuContribution>
@@ -162,12 +180,6 @@
       </initializer>
    </extension>   
 
-	<extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="org.pdtextensions.core.ui.Starter">
-      </startup>
-   </extension>
    
    <extension point="org.eclipse.ui.commands">
       <command
