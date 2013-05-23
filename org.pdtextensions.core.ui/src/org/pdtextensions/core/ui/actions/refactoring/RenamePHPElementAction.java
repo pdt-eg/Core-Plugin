@@ -107,6 +107,7 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 			}
 		} catch (CoreException e) {
 			ExceptionHandler.handle(e, RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_exception);
+			return;
 		}
 
 		MessageDialog.openInformation(getShell(), RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_not_available);
