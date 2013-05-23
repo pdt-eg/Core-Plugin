@@ -63,8 +63,11 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		try {
-			if (selection.size() == 1) {
-				setEnabled(canEnable(selection));
+			IModelElement element = getModelElement(selection);
+			if (element == null) {
+				setEnabled(false);
+			} else {
+				setEnabled(isRenameAvailable(element));
 			}
 		} catch (ModelException e) {
 			// http://bugs.eclipse.org/bugs/show_bug.cgi?id=19253
@@ -77,15 +80,6 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 			setEnabled(false);
 		}
 	}
-
-	private static boolean canEnable(IStructuredSelection selection) throws CoreException {
-		IModelElement element = getModelElement(selection);
-		if (element == null) {
-			return false;
-		} else {
-			return isRenameAvailable(element);
-		}
-	} 
 
 	private static IModelElement getModelElement(IStructuredSelection selection) throws ModelException {
 		if (selection.size() == 1) {
