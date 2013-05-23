@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.dltk.core.IField;
 import org.eclipse.dltk.core.ILocalVariable;
 import org.eclipse.dltk.core.IMember;
@@ -28,12 +27,6 @@ import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ISourceRange;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
-import org.eclipse.dltk.core.search.IDLTKSearchConstants;
-import org.eclipse.dltk.core.search.SearchEngine;
-import org.eclipse.dltk.core.search.SearchMatch;
-import org.eclipse.dltk.core.search.SearchParticipant;
-import org.eclipse.dltk.core.search.SearchPattern;
-import org.eclipse.dltk.core.search.SearchRequestor;
 import org.eclipse.dltk.internal.corext.refactoring.ScriptRefactoringArguments;
 import org.eclipse.dltk.internal.corext.refactoring.ScriptRefactoringDescriptor;
 import org.eclipse.dltk.internal.corext.refactoring.code.ScriptableRefactoring;
@@ -49,7 +42,6 @@ import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
 import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
-import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -57,7 +49,6 @@ import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.TextEditGroup;
 import org.pdtextensions.core.ui.Messages;
 import org.pdtextensions.core.ui.PEXUIPlugin;
-import org.pdtextensions.internal.corext.refactoring.CaseSensitivity;
 import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
 import org.pdtextensions.internal.corext.refactoring.RenamePHPElementDescriptor;
 
@@ -67,7 +58,6 @@ import org.pdtextensions.internal.corext.refactoring.RenamePHPElementDescriptor;
  *
  * @since 0.17.0
  */
-@SuppressWarnings("restriction")
 public abstract class PHPRenameProcessor extends ScriptRenameProcessor implements IReferenceUpdating {
 	protected IModelElement modelElement;
 	protected ISourceModule cu;
@@ -154,14 +144,17 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 		return currentName;
 	}
 
+	@Override
 	public boolean canEnableUpdateReferences() {
 		return true;
 	}
 
+	@Override
 	public void setUpdateReferences(boolean update) {
 		updateReferences = update;
 	}
 
+	@Override
 	public boolean getUpdateReferences() {
 		return updateReferences;
 	}
@@ -190,12 +183,18 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 		pm.beginTask("", 1); //$NON-NLS-1$
 
 		try {
-			RefactoringStatus result = checkNewElementName(getNewElementName());
-			if (result.hasFatalError()) {
-				return result;
-			}
+			RefactoringStatus result;
 
-			createEdits(pm);
+			result = checkNewElementName(getNewElementName());
+			if (result.hasFatalError()) return result;
+
+			result = renameDeclaration(pm);
+			if (result.hasFatalError()) return result;
+
+			if (updateReferences) {
+				result = updateReferences(pm);
+				if (result.hasFatalError()) return result;
+			}
 
 			return result;
 		} finally {
@@ -203,40 +202,7 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 		}
 	}
 
-	private void createEdits(IProgressMonitor pm) throws CoreException {
-		if (updateReferences) {
-			new SearchEngine().search(
-				SearchPattern.createPattern(
-					modelElement,
-					IDLTKSearchConstants.REFERENCES,
-					(SearchPattern.R_EXACT_MATCH | SearchPattern.R_ERASURE_MATCH)
-					| (getNameCaseSensitivity() == CaseSensitivity.CaseSensitive ? SearchPattern.R_CASE_SENSITIVE : 0),
-					PHPLanguageToolkit.getDefault()
-				),
-				new SearchParticipant[]{ SearchEngine.getDefaultSearchParticipant() },
-				SearchEngine.createWorkspaceScope(PHPLanguageToolkit.getDefault()),
-				new SearchRequestor() {
-					@Override
-					public void acceptSearchMatch(SearchMatch match) throws CoreException {
-						if (match.getElement() instanceof IModelElement) {
-							ISourceModule cu = (ISourceModule) ((IModelElement) match.getElement()).getAncestor(IModelElement.SOURCE_MODULE);
-							if (cu != null) {
-								ReplaceEdit edit = createReplaceEdit(match);
-								if (edit != null) {
-									try {
-										addTextEdit(changeManager.get(cu), getProcessorName(), edit);
-									} catch (MalformedTreeException e) {
-										// conflicting update -> omit text match
-									}
-								}
-							}
-						}
-					}
-				},
-				new SubProgressMonitor(pm, 1000)
-			);
-		}
-
+	protected RefactoringStatus renameDeclaration(IProgressMonitor pm) throws CoreException {
 		ISourceRange sourceRange = null;
 		if (modelElement instanceof IMember) {
 			sourceRange = ((IMember) modelElement).getNameRange();
@@ -244,7 +210,11 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 		if (sourceRange != null) {
 			addTextEdit(changeManager.get(cu), getProcessorName(), new ReplaceEdit(sourceRange.getOffset(), currentName.length(), getNewElementName()));
 		}
+
+		return new RefactoringStatus();
 	}
+
+	protected abstract RefactoringStatus updateReferences(IProgressMonitor pm) throws CoreException;
 
 	protected static void addTextEdit(TextChange change, String name, TextEdit edit) throws MalformedTreeException {
 		TextEdit root = change.getEdit();
@@ -278,11 +248,6 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 		return new RefactoringStatus();
 	}
 
-	@Override
-	public boolean needsSavedEditors() {
-		return false;
-	}
-
 	protected RefactoringDescriptor createRefactoringDescriptor() {
 		RenamePHPElementDescriptor descriptor = new RenamePHPElementDescriptor(getRefactoringId());
 		if (cu.getScriptProject() != null) {
@@ -298,10 +263,4 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 	}
 
 	protected abstract String getRefactoringId();
-
-	protected abstract ReplaceEdit createReplaceEdit(SearchMatch match) throws CoreException;
-
-	protected CaseSensitivity getNameCaseSensitivity() {
-		return CaseSensitivity.CaseSensitive;
-	}
 }

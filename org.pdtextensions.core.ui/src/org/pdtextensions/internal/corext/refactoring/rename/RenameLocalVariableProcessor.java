@@ -9,7 +9,9 @@ package org.pdtextensions.internal.corext.refactoring.rename;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.core.IField;
@@ -19,14 +21,12 @@ import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ISourceRange;
 import org.eclipse.dltk.core.SourceParserUtil;
 import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
-import org.eclipse.dltk.core.search.SearchMatch;
 import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.text.edits.ReplaceEdit;
-import org.pdtextensions.core.log.Logger;
+import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.internal.corext.refactoring.Checks;
 import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
 
@@ -35,13 +35,10 @@ import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
  */
 @SuppressWarnings("restriction")
 public class RenameLocalVariableProcessor extends PHPRenameProcessor {
-
 	public static final String IDENTIFIER = "org.pdtextensions.internal.corext.refactoring.rename.renameLocalVariableProcessor"; //$NON-NLS-1$
-	private IField field;
 
 	public RenameLocalVariableProcessor(IField field) {
 		super(field);
-		this.field = field;
 	}
 
 	@Override
@@ -50,13 +47,13 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 	}
 
 	@Override
-	protected String getRefactoringId() {
-		return IScriptRefactorings.RENAME_LOCAL_VARIABLE;
+	public boolean needsSavedEditors() {
+		return false;
 	}
 
 	@Override
-	protected ReplaceEdit createReplaceEdit(SearchMatch match) {
-		return new ReplaceEdit(match.getOffset(), currentName.length(), getNewElementName());
+	protected String getRefactoringId() {
+		return IScriptRefactorings.RENAME_LOCAL_VARIABLE;
 	}
 
 	@Override
@@ -74,30 +71,15 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 		return Checks.isAvailable(modelElement);
 	}
 
-	protected RefactoringStatus doCheckFinalConditions(IProgressMonitor pm, CheckConditionsContext context)
-			throws CoreException, OperationCanceledException {
-		pm.beginTask("", 1); //$NON-NLS-1$
-
-		try {
-			RefactoringStatus result = checkNewElementName(getNewElementName());
-			if (result.hasFatalError()) {
-				return result;
-			}
-			createLocalEdits(pm);
-			return result;
-		} catch (Exception e) {
-			Logger.logException(e);
-		} finally {
-			pm.done();
-		}
-
-		return null;
+	@Override
+	protected RefactoringStatus renameDeclaration(IProgressMonitor pm) throws CoreException {
+		return new RefactoringStatus();
 	}
 
-	private void createLocalEdits(IProgressMonitor pm) throws Exception {
-
+	@Override
+	protected RefactoringStatus updateReferences(IProgressMonitor pm) throws CoreException {
 		ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(cu);
-		IModelElement parent = field.getParent();
+		IModelElement parent = modelElement.getParent();
 		ISourceRange range = null;
 
 		if (parent.getElementType() == IModelElement.METHOD) {
@@ -108,33 +90,37 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 			range = module.getSourceRange();
 		}
 
-		if (range == null) {
-			return;
+		if (range != null) {
+			final int sourceStart = range.getOffset();
+			final int sourceEnd = range.getOffset() + range.getLength();
+
+			try {
+				moduleDeclaration.traverse(new PHPASTVisitor() {
+					@Override
+					public boolean visit(VariableReference s) throws Exception {
+						if (s.sourceStart() >= sourceStart && s.sourceEnd() <= sourceEnd && s.getName().equals(modelElement.getElementName())) {
+							addTextEdit(changeManager.get(cu), getProcessorName(), new ReplaceEdit(s.sourceStart(), currentName.length(), getNewElementName()));
+						}
+
+						return true;
+					}
+				});
+			} catch (Exception e) {
+				throw new CoreException(new Status(IStatus.ERROR, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
+			}
 		}
 
-		final int sourceStart = range.getOffset();
-		final int sourceEnd = range.getOffset() + range.getLength();
-
-		moduleDeclaration.traverse(new PHPASTVisitor() {
-			@Override
-			public boolean visit(VariableReference s) throws Exception {
-				if (s.getName().equals(modelElement.getElementName())) {
-					if (s.sourceStart() >= sourceStart && s.sourceEnd() <= sourceEnd) {
-						ReplaceEdit replaceEdit = new ReplaceEdit(s.sourceStart(), currentName.length(), getNewElementName());
-						addTextEdit(changeManager.get(cu), getProcessorName(), replaceEdit);
-					}
-				}
-				return true;
-			}
-		});
+		return new RefactoringStatus();
 	}
 
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		pm.beginTask(RefactoringCoreMessages.RenameLocalVariableRefactoring_checking, 1);
+
 		try {
 			Change result = new DynamicValidationRefactoringChange(createRefactoringDescriptor(), getProcessorName(), changeManager.getAllChanges());
 			pm.worked(1);
+
 			return result;
 		} finally {
 			changeManager.clear();

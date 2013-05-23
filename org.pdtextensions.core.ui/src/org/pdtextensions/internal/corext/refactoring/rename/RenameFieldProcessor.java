@@ -13,24 +13,32 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.references.VariableReference;
+import org.eclipse.dltk.core.IExternalSourceModule;
 import org.eclipse.dltk.core.IField;
-import org.eclipse.dltk.core.IMember;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.SourceParserUtil;
 import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
 import org.eclipse.dltk.core.search.FieldReferenceMatch;
+import org.eclipse.dltk.core.search.IDLTKSearchConstants;
+import org.eclipse.dltk.core.search.SearchEngine;
 import org.eclipse.dltk.core.search.SearchMatch;
+import org.eclipse.dltk.core.search.SearchParticipant;
+import org.eclipse.dltk.core.search.SearchPattern;
+import org.eclipse.dltk.core.search.SearchRequestor;
 import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.eclipse.php.internal.core.compiler.ast.nodes.FieldAccess;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPCallExpression;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
+import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.util.PDTModelUtils;
@@ -95,30 +103,53 @@ public class RenameFieldProcessor extends PHPRenameProcessor {
 	}
 
 	@Override
-	protected ReplaceEdit createReplaceEdit(SearchMatch match) throws CoreException {
-		if (match instanceof FieldReferenceMatch) {
-			if (!(((FieldReferenceMatch) match).getNode() instanceof VariableReference)) {
-				if (match.getElement() instanceof IMember) {
-					ISourceModule module = ((IMember) match.getElement()).getSourceModule();
-					if (module != null) {
-						ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(module);
-						if (moduleDeclaration != null) {
-							FieldReferenceFinder finder = new FieldReferenceFinder(((FieldReferenceMatch) match).getNode(), module);
+	protected RefactoringStatus updateReferences(IProgressMonitor pm) throws CoreException {
+		new SearchEngine().search(
+			SearchPattern.createPattern(
+				modelElement,
+				IDLTKSearchConstants.REFERENCES,
+				SearchPattern.R_EXACT_MATCH | SearchPattern.R_ERASURE_MATCH | SearchPattern.R_CASE_SENSITIVE,
+				PHPLanguageToolkit.getDefault()
+			),
+			new SearchParticipant[]{ SearchEngine.getDefaultSearchParticipant() },
+			SearchEngine.createWorkspaceScope(PHPLanguageToolkit.getDefault()),
+			new SearchRequestor() {
+				@Override
+				public void acceptSearchMatch(SearchMatch match) throws CoreException {
+					if (match instanceof FieldReferenceMatch) {
+						if (!(((FieldReferenceMatch) match).getNode() instanceof VariableReference)) {
+							if (match.getElement() instanceof IModelElement) {
+								ISourceModule module = (ISourceModule) ((IModelElement) match.getElement()).getAncestor(IModelElement.SOURCE_MODULE);
+								if (!(module instanceof IExternalSourceModule)) {
+									ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(module);
+									if (moduleDeclaration != null) {
+										FieldReferenceFinder finder = new FieldReferenceFinder(((FieldReferenceMatch) match).getNode(), module);
 
-							try {
-								moduleDeclaration.traverse(finder);
-							} catch (Exception e) {
-								throw new CoreException(new Status(IStatus.ERROR, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
+										try {
+											moduleDeclaration.traverse(finder);
+										} catch (Exception e) {
+											throw new CoreException(new Status(IStatus.ERROR, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
+										}
+
+										ReplaceEdit replaceEdit = finder.getReplaceEdit();
+										if (replaceEdit != null) {
+											try {
+												addTextEdit(changeManager.get(module), getProcessorName(), replaceEdit);
+											} catch (MalformedTreeException e) {
+												// conflicting update -> omit text match
+											}
+										}
+									}
+								}
 							}
-
-							return finder.getReplaceEdit();
 						}
 					}
 				}
-			}
-		}
+			},
+			new SubProgressMonitor(pm, 1000)
+		);
 
-		return null;
+		return new RefactoringStatus();
 	}
 
 	private class FieldReferenceFinder extends PHPASTVisitor {
