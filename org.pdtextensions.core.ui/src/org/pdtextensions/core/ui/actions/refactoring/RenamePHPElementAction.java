@@ -109,12 +109,13 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 			IModelElement element = getModelElement(selection);
 			if (element != null && ActionUtil.isEditable(getShell(), element)) {
 				run(element);
-			} else {
-			    return;
+				return;
 			}
 		} catch (CoreException e) {
 			ExceptionHandler.handle(e, RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_exception);
 		}
+
+		MessageDialog.openInformation(getShell(), RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_not_available);
 	}
 
 	@Override
