@@ -16,15 +16,12 @@ import org.eclipse.dltk.core.IScriptFolder;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
-import org.eclipse.dltk.core.ModelException;
-import org.eclipse.dltk.core.ScriptModelUtil;
 import org.eclipse.dltk.internal.corext.refactoring.RefactoringAvailabilityTester;
 import org.eclipse.dltk.internal.corext.refactoring.rename.RenameScriptFolderProcessor;
 import org.eclipse.dltk.internal.corext.refactoring.rename.RenameScriptProjectProcessor;
 import org.eclipse.dltk.internal.corext.refactoring.rename.RenameSourceFolderProcessor;
 import org.eclipse.dltk.internal.corext.refactoring.rename.RenameSourceModuleProcessor;
 import org.eclipse.dltk.internal.ui.actions.ActionUtil;
-import org.eclipse.dltk.internal.ui.editor.ModelTextSelection;
 import org.eclipse.dltk.internal.ui.refactoring.RefactoringMessages;
 import org.eclipse.dltk.ui.actions.SelectionDispatchAction;
 import org.eclipse.dltk.ui.util.ExceptionHandler;
@@ -36,8 +33,8 @@ import org.eclipse.php.internal.core.documentModel.dom.IImplForPhp;
 import org.eclipse.php.internal.ui.actions.SelectionConverter;
 import org.eclipse.php.internal.ui.editor.PHPStructuredEditor;
 import org.eclipse.ui.IWorkbenchSite;
-import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.refactoring.RenameSupport;
+import org.pdtextensions.core.util.PDTModelUtils;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameFieldProcessor;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameLocalVariableProcessor;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameMethodProcessor;
@@ -62,52 +59,47 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 
 	@Override
 	public void selectionChanged(IStructuredSelection selection) {
-		try {
-			IModelElement element = getModelElement(selection);
-			if (element == null) {
-				setEnabled(false);
-			} else {
-				setEnabled(isRenameAvailable(element));
-			}
-		} catch (ModelException e) {
-			// http://bugs.eclipse.org/bugs/show_bug.cgi?id=19253
-			if (ScriptModelUtil.isExceptionToBeLogged(e)){
-				PEXUIPlugin.log(e);
-			}
-			setEnabled(false);
-		} catch (CoreException e) {
-			PEXUIPlugin.log(e);
-			setEnabled(false);
-		}
-	}
-
-	private static IModelElement getModelElement(IStructuredSelection selection) throws ModelException {
 		if (selection.size() == 1) {
 			Object element = selection.getFirstElement();
 			if (element instanceof IModelElement) {
-				return (IModelElement) element;
+				setEnabled(ActionUtil.isEditable(getShell(), (IModelElement) element));
 			} else if (element instanceof IImplForPhp) {
-				IModelElement modelElement = ((IImplForPhp) element).getModelElement();
-				if (modelElement instanceof ISourceModule && selection instanceof ITextSelection) {
-					return ((ISourceModule) modelElement).getElementAt(((ITextSelection) selection).getOffset());
-				}
+				element = ((IImplForPhp) element).getModelElement();
+				setEnabled(element != null && ActionUtil.isEditable(getShell(), (IModelElement) element));
+			} else {
+				setEnabled(false);
 			}
+		} else {
+			setEnabled(false);
 		}
-
-		return null;
 	}
 
 	@Override
 	public void run(IStructuredSelection selection) {
-		try {
-			IModelElement element = getModelElement(selection);
-			if (element != null && ActionUtil.isEditable(getShell(), element)) {
-				run(element);
+		if (selection.size() == 1) {
+			Object element = selection.getFirstElement();
+			try {
+				if (element instanceof IModelElement) {
+					if (element != null && ActionUtil.isEditable(getShell(), (IModelElement) element) && isRenameAvailable((IModelElement) element)) {
+						run((IModelElement) element);
+						return;
+					}
+				} else if (element instanceof IImplForPhp) {
+					element = ((IImplForPhp) element).getModelElement();
+					if (element != null && ActionUtil.isEditable(getShell(), (IModelElement) element)) {
+						if (element instanceof ISourceModule && selection instanceof ITextSelection) {
+							IModelElement sourceElement = PDTModelUtils.getSourceElement((ISourceModule) element, ((ITextSelection) selection).getOffset(), ((ITextSelection) selection).getLength());
+							if (sourceElement != null && ActionUtil.isEditable(getShell(), sourceElement) && isRenameAvailable(sourceElement)) {
+								run(sourceElement);
+								return;
+							}
+						}
+					}
+				}
+			} catch (CoreException e) {
+				ExceptionHandler.handle(e, RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_exception);
 				return;
 			}
-		} catch (CoreException e) {
-			ExceptionHandler.handle(e, RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_exception);
-			return;
 		}
 
 		MessageDialog.openInformation(getShell(), RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_not_available);
@@ -115,48 +107,28 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 
 	@Override
 	public void selectionChanged(ITextSelection selection) {
-		if (selection instanceof ModelTextSelection) {
-			try {
-				IModelElement[] elements = ((ModelTextSelection)selection).resolveElementAtOffset();
-				if (elements.length == 1) {
-					setEnabled(isRenameAvailable(elements[0]));
-				} else {
-					setEnabled(false);
-				}
-			} catch (CoreException e) {
-				setEnabled(false);
-			}
-		} else {
-			setEnabled(true);
-		}
+		setEnabled(editor != null && ActionUtil.isEditable(editor));
 	}
 
 	@Override
 	public void run(ITextSelection selection) {
-		if (editor == null) {
-			return;
-		} else {
+		if (editor != null && ActionUtil.isEditable(editor)) {
 			try {
-				IModelElement element = getScriptElementFromEditor();
-				if (element != null && ActionUtil.isEditable(editor)) {
-					run(element);
-					return;
+				IModelElement[] elements = SelectionConverter.codeResolve(editor);
+				if (elements != null && elements.length == 1) {
+					IModelElement sourceElement = PDTModelUtils.getSourceElement(elements[0], selection.getOffset(), selection.getLength());
+					if (sourceElement != null && ActionUtil.isEditable(getShell(), sourceElement) && isRenameAvailable(sourceElement)) {
+						run(sourceElement);
+						return;
+					}
 				}
 			} catch (CoreException e) {
 				ExceptionHandler.handle(e, RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_exception);
+				return;
 			}
 		}
 
 		MessageDialog.openInformation(getShell(), RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_not_available);
-	}
-
-	private IModelElement getScriptElementFromEditor() throws ModelException {
-		IModelElement[] elements = SelectionConverter.codeResolve(editor);
-		if (elements != null && elements.length == 1) {
-			return elements[0];
-		} else {
-			return null;
-		}
 	}
 
 	private void run(IModelElement element) throws CoreException {
@@ -216,24 +188,10 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 		case IModelElement.METHOD:
 			return new RenameSupport(new RenameMethodProcessor((IMethod) element), newName, flags);
 		case IModelElement.FIELD:
-			IField field = (IField) element;
-			if (field.getDeclaringType() == null) {
-				if (field.getSource().startsWith("$this->")) {
-					// if the selection is on $this->someField we need to get the declaring field in the parent type
-					// otherwise we get text conflicts
-					if (field.getParent().getElementType() == IModelElement.METHOD) {
-						IMethod method = (IMethod) field.getParent();
-						if (method.getParent().getElementType() == IModelElement.TYPE) {
-							IType type = (IType) method.getParent();
-							IField enclosingField = type.getField(field.getElementName());
-							return new RenameSupport(new RenameFieldProcessor(enclosingField), newName, flags); 
-						}
-					}
-				} else if (field.getSource().startsWith(field.getElementName())) {
-					return new RenameSupport(new RenameLocalVariableProcessor(field), newName, flags);
-				}
+			if (((IField) element).getDeclaringType() == null) {
+				return new RenameSupport(new RenameLocalVariableProcessor((IField) element), newName, flags);
 			} else {
-				return new RenameSupport(new RenameFieldProcessor(field), newName, flags);
+				return new RenameSupport(new RenameFieldProcessor((IField) element), newName, flags);
 			}
 		}
 		return null;

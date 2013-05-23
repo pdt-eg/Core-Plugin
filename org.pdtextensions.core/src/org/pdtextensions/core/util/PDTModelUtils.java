@@ -21,13 +21,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.references.SimpleReference;
 import org.eclipse.dltk.ast.references.TypeReference;
 import org.eclipse.dltk.core.IMethod;
+import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IScriptProject;
+import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ITypeHierarchy;
 import org.eclipse.dltk.core.ModelException;
@@ -473,6 +476,9 @@ public class PDTModelUtils {
 		return ret;
 	}
 
+	/**
+	 * @since 0.17.0
+	 */
 	public static boolean isInstanceOf(IType type, IType targetType) throws ModelException {
 		Assert.isNotNull(type);
 		Assert.isNotNull(targetType);
@@ -480,6 +486,9 @@ public class PDTModelUtils {
 		return isInstanceOf(type, targetType.getFullyQualifiedName("\\")); //$NON-NLS-1$
 	}
 
+	/**
+	 * @since 0.17.0
+	 */
 	public static boolean isInstanceOf(IType type, String targetTypeName) throws ModelException {
 		Assert.isNotNull(type);
 		Assert.isNotNull(targetTypeName);
@@ -503,6 +512,9 @@ public class PDTModelUtils {
 		return false;
 	}
 
+	/**
+	 * @since 0.17.0
+	 */
 	public static boolean isSameType(IType type, String targetTypeName) {
 		PHPClassType classType = PHPClassType.fromIType(type);
 
@@ -511,5 +523,41 @@ public class PDTModelUtils {
 		}
 
 		return classType.getTypeName().equals(targetTypeName);
+	}
+
+	/**
+	 * @since 0.17.0
+	 */
+	public static ModuleDeclaration getModuleDeclaration(ISourceModule sourceModule) {
+		ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(sourceModule);
+		Assert.isNotNull(moduleDeclaration);
+
+		return moduleDeclaration;
+	}
+
+	/**
+	 * @since 0.17.0
+	 */
+	public static IModelElement getSourceElement(IModelElement element, int offset, int length) throws CoreException {
+		Assert.isNotNull(element);
+
+		ISourceModule sourceModule = (ISourceModule) element.getAncestor(IModelElement.SOURCE_MODULE);
+		if (sourceModule == null) return null;
+
+		return getSourceElement(sourceModule, offset, length);
+	}
+
+	/**
+	 * @since 0.17.0
+	 */
+	public static IModelElement getSourceElement(ISourceModule sourceModule, int offset, int length) throws CoreException {
+		Assert.isNotNull(sourceModule);
+
+		IModelElement[] sourceElements = sourceModule.codeSelect(offset, length);
+		if (sourceElements.length > 0) {
+			return sourceElements[0];
+		} else {
+			return null;
+		}
 	}
 }
