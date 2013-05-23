@@ -132,12 +132,12 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 
 	@Override
 	public void run(ITextSelection selection) {
-		if (ActionUtil.isEditable(editor)) return;
-
-		if (canRunInEditor()) {
+		if (editor == null) {
+			return;
+		} else {
 			try {
 				IModelElement element = getScriptElementFromEditor();
-				if (element != null) {
+				if (element != null && ActionUtil.isEditable(editor)) {
 					run(element);
 					return;
 				}
@@ -147,23 +147,6 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 		}
 
 		MessageDialog.openInformation(getShell(), RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_not_available);
-	}
-
-	private boolean canRunInEditor() {
-		try {
-			IModelElement element = getScriptElementFromEditor();
-			if (element != null) {
-				return isRenameAvailable(element);
-			}
-		} catch (ModelException e) {
-			if (ScriptModelUtil.isExceptionToBeLogged(e)) {
-				PEXUIPlugin.log(e);
-			}
-		} catch (CoreException e) {
-			PEXUIPlugin.log(e);
-		}
-
-		return false;
 	}
 
 	private IModelElement getScriptElementFromEditor() throws ModelException {
