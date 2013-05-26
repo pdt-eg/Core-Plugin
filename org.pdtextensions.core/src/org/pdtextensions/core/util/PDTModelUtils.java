@@ -22,7 +22,9 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.references.SimpleReference;
@@ -43,11 +45,13 @@ import org.eclipse.dltk.internal.core.util.LRUCache;
 import org.eclipse.dltk.ti.types.IEvaluatedType;
 import org.eclipse.php.core.compiler.PHPFlags;
 import org.eclipse.php.internal.core.Logger;
+import org.eclipse.php.internal.core.compiler.ast.nodes.FullyQualifiedReference;
 import org.eclipse.php.internal.core.compiler.ast.nodes.NamespaceReference;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPDocBlock;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPDocTag;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPDocTagKinds;
 import org.eclipse.php.internal.core.compiler.ast.nodes.UsePart;
+import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.php.internal.core.index.IPHPDocAwareElement;
 import org.eclipse.php.internal.core.model.PhpModelAccess;
 import org.eclipse.php.internal.core.typeinference.PHPClassType;
@@ -57,6 +61,7 @@ import org.eclipse.php.internal.core.typeinference.TraitAliasObject;
 import org.eclipse.php.internal.core.typeinference.TraitPrecedenceObject;
 import org.eclipse.php.internal.core.typeinference.TraitUtils;
 import org.eclipse.php.internal.core.typeinference.UseTrait;
+import org.pdtextensions.core.PEXCorePlugin;
 
 /**
  * 
@@ -555,9 +560,67 @@ public class PDTModelUtils {
 
 		IModelElement[] sourceElements = sourceModule.codeSelect(offset, length);
 		if (sourceElements.length > 0) {
+			if (sourceElements[0].getElementType() == IModelElement.METHOD && ((IMethod) sourceElements[0]).isConstructor()) {
+				IType sourceType = fixInvalidSourceElement((IMethod) sourceElements[0], offset, length);
+				if (sourceType != null) {
+					return sourceType;
+				}
+			}
+
 			return sourceElements[0];
 		} else {
 			return null;
+		}
+	}
+
+	/**
+	 * @since 0.17.0
+	 */
+	private static IType fixInvalidSourceElement(IMethod sourceElement, int offset, int length) throws CoreException {
+		try {
+			SourceTypeFinder sourceTypeFinder = new PDTModelUtils().new SourceTypeFinder(sourceElement.getSourceModule(), offset, length);
+			getModuleDeclaration(sourceElement.getSourceModule()).traverse(sourceTypeFinder);
+			if (sourceTypeFinder.getSourceType() != null) {
+				return sourceTypeFinder.getSourceType();
+			}
+		} catch (Exception e) {
+			throw new CoreException(new Status(IStatus.ERROR, PEXCorePlugin.PLUGIN_ID, e.getMessage(), e));
+		}
+
+		return null;
+	}
+
+	/**
+	 * @since 0.17.0
+	 */
+	private class SourceTypeFinder extends PHPASTVisitor {
+		private ISourceModule sourceModule;
+		private int offset;
+		private int length;
+		private IType sourceType;
+
+		public SourceTypeFinder(ISourceModule sourceModule, int offset, int length) {
+			this.sourceModule = sourceModule;
+			this.offset = offset;
+			this.length = length;
+		}
+
+		@Override
+		public boolean visit(FullyQualifiedReference s) throws Exception {
+			if (s.sourceStart() <= offset && s.sourceEnd() >= offset + length) {
+				IType[] sourceTypes = PDTTypeInferenceUtils.getTypes(s, sourceModule);
+				if (sourceTypes.length > 0) {
+					sourceType = sourceTypes[0];
+
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		public IType getSourceType() {
+			return sourceType;
 		}
 	}
 }
