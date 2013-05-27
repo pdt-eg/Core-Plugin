@@ -15,11 +15,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.dltk.ast.ASTNode;
+import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.core.IField;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
+import org.eclipse.dltk.core.SourceParserUtil;
 import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
 import org.eclipse.dltk.core.search.FieldReferenceMatch;
 import org.eclipse.dltk.core.search.IDLTKSearchConstants;
@@ -119,20 +121,23 @@ public class RenameFieldProcessor extends PHPRenameProcessor {
 							if (match.getElement() instanceof IModelElement) {
 								ISourceModule module = (ISourceModule) ((IModelElement) match.getElement()).getAncestor(IModelElement.SOURCE_MODULE);
 								if (module != null && RefactoringAvailabilityTester.isRenameAvailable(module)) {
-									FieldReferenceFinder finder = new FieldReferenceFinder(((FieldReferenceMatch) match).getNode(), module);
+									ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(module);
+									if (moduleDeclaration != null) {
+										FieldReferenceFinder finder = new FieldReferenceFinder(((FieldReferenceMatch) match).getNode(), module);
 
-									try {
-										PDTModelUtils.getModuleDeclaration(module).traverse(finder);
-									} catch (Exception e) {
-										throw new CoreException(new Status(IStatus.ERROR, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
-									}
-
-									ReplaceEdit replaceEdit = finder.getReplaceEdit();
-									if (replaceEdit != null) {
 										try {
-											addTextEdit(changeManager.get(module), getProcessorName(), replaceEdit);
-										} catch (MalformedTreeException e) {
-											// conflicting update -> omit text match
+											moduleDeclaration.traverse(finder);
+										} catch (Exception e) {
+											throw new CoreException(new Status(IStatus.ERROR, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
+										}
+
+										ReplaceEdit replaceEdit = finder.getReplaceEdit();
+										if (replaceEdit != null) {
+											try {
+												addTextEdit(changeManager.get(module), getProcessorName(), replaceEdit);
+											} catch (MalformedTreeException e) {
+												// conflicting update -> omit text match
+											}
 										}
 									}
 								}

@@ -533,16 +533,6 @@ public class PDTModelUtils {
 	/**
 	 * @since 0.17.0
 	 */
-	public static ModuleDeclaration getModuleDeclaration(ISourceModule sourceModule) {
-		ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(sourceModule);
-		Assert.isNotNull(moduleDeclaration);
-
-		return moduleDeclaration;
-	}
-
-	/**
-	 * @since 0.17.0
-	 */
 	public static IModelElement getSourceElement(IModelElement element, int offset, int length) throws CoreException {
 		Assert.isNotNull(element);
 
@@ -577,14 +567,19 @@ public class PDTModelUtils {
 	 * @since 0.17.0
 	 */
 	private static IType fixInvalidSourceElement(IMethod sourceElement, int offset, int length) throws CoreException {
-		try {
+		ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(sourceElement.getSourceModule());
+		if (moduleDeclaration != null) {
 			SourceTypeFinder sourceTypeFinder = new PDTModelUtils().new SourceTypeFinder(sourceElement.getSourceModule(), offset, length);
-			getModuleDeclaration(sourceElement.getSourceModule()).traverse(sourceTypeFinder);
+
+			try {
+				moduleDeclaration.traverse(sourceTypeFinder);
+			} catch (Exception e) {
+				throw new CoreException(new Status(IStatus.ERROR, PEXCorePlugin.PLUGIN_ID, e.getMessage(), e));
+			}
+
 			if (sourceTypeFinder.getSourceType() != null) {
 				return sourceTypeFinder.getSourceType();
 			}
-		} catch (Exception e) {
-			throw new CoreException(new Status(IStatus.ERROR, PEXCorePlugin.PLUGIN_ID, e.getMessage(), e));
 		}
 
 		return null;
