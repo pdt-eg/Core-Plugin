@@ -9,6 +9,7 @@ package org.pdtextensions.core.ui.actions.refactoring;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.dltk.core.IField;
+import org.eclipse.dltk.core.IMember;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.IProjectFragment;
@@ -155,14 +156,17 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 		case IModelElement.SOURCE_MODULE:
 			return RefactoringAvailabilityTester.isRenameAvailable((ISourceModule) element);
 		case IModelElement.TYPE:
-			return RefactoringAvailabilityTester.isRenameAvailable((IType) element);
+			return RefactoringAvailabilityTester.isRenameAvailable((IType) element)
+						&& RefactoringAvailabilityTester.isRenameAvailable(((IMember) element).getSourceModule());
 		case IModelElement.METHOD:
-			return RefactoringAvailabilityTester.isRenameAvailable((IMethod) element);
+			return RefactoringAvailabilityTester.isRenameAvailable((IMethod) element)
+						&& RefactoringAvailabilityTester.isRenameAvailable(((IMember) element).getSourceModule());
 		case IModelElement.FIELD:
-			return RefactoringAvailabilityTester.isRenameFieldAvailable((IField) element);
+			return RefactoringAvailabilityTester.isRenameFieldAvailable((IField) element)
+						&& RefactoringAvailabilityTester.isRenameAvailable(((IField) element).getSourceModule());
+		default:
+			return false;
 		}
-
-		return false;
 	}
 
 	private static RenameSupport createRenameSupport(IModelElement element, String newName, int flags) throws CoreException {
