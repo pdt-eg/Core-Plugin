@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
+import org.eclipse.dltk.ast.references.TypeReference;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.core.IField;
 import org.eclipse.dltk.core.IModelElement;
@@ -34,9 +35,11 @@ import org.eclipse.dltk.internal.corext.refactoring.RefactoringAvailabilityTeste
 import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.php.core.compiler.PHPFlags;
 import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.eclipse.php.internal.core.compiler.ast.nodes.FieldAccess;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPCallExpression;
+import org.eclipse.php.internal.core.compiler.ast.nodes.StaticFieldAccess;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -107,7 +110,7 @@ public class RenameFieldProcessor extends PHPRenameProcessor {
 		new SearchEngine().search(
 			SearchPattern.createPattern(
 				modelElement,
-				IDLTKSearchConstants.REFERENCES,
+				PHPFlags.isStatic(((IField) modelElement).getFlags()) ? IDLTKSearchConstants.ALL_OCCURRENCES : IDLTKSearchConstants.REFERENCES,
 				SearchPattern.R_EXACT_MATCH | SearchPattern.R_ERASURE_MATCH | SearchPattern.R_CASE_SENSITIVE,
 				PHPLanguageToolkit.getDefault()
 			),
@@ -116,29 +119,25 @@ public class RenameFieldProcessor extends PHPRenameProcessor {
 			new SearchRequestor() {
 				@Override
 				public void acceptSearchMatch(SearchMatch match) throws CoreException {
-					if (match instanceof FieldReferenceMatch) {
-						if (!(((FieldReferenceMatch) match).getNode() instanceof VariableReference)) {
-							if (match.getElement() instanceof IModelElement) {
-								ISourceModule module = (ISourceModule) ((IModelElement) match.getElement()).getAncestor(IModelElement.SOURCE_MODULE);
-								if (module != null && RefactoringAvailabilityTester.isRenameAvailable(module)) {
-									ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(module);
-									if (moduleDeclaration != null) {
-										FieldReferenceFinder finder = new FieldReferenceFinder(((FieldReferenceMatch) match).getNode(), module);
+					if (match instanceof FieldReferenceMatch && match.getElement() instanceof IModelElement) {
+						ISourceModule module = (ISourceModule) ((IModelElement) match.getElement()).getAncestor(IModelElement.SOURCE_MODULE);
+						if (module != null && RefactoringAvailabilityTester.isRenameAvailable(module)) {
+							ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(module);
+							if (moduleDeclaration != null) {
+								FieldReferenceFinder finder = new FieldReferenceFinder(((FieldReferenceMatch) match).getNode(), module);
 
-										try {
-											moduleDeclaration.traverse(finder);
-										} catch (Exception e) {
-											throw new CoreException(new Status(IStatus.ERROR, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
-										}
+								try {
+									moduleDeclaration.traverse(finder);
+								} catch (Exception e) {
+									throw new CoreException(new Status(IStatus.ERROR, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
+								}
 
-										ReplaceEdit replaceEdit = finder.getReplaceEdit();
-										if (replaceEdit != null) {
-											try {
-												addTextEdit(changeManager.get(module), getProcessorName(), replaceEdit);
-											} catch (MalformedTreeException e) {
-												// conflicting update -> omit text match
-											}
-										}
+								ReplaceEdit replaceEdit = finder.getReplaceEdit();
+								if (replaceEdit != null) {
+									try {
+										addTextEdit(changeManager.get(module), getProcessorName(), replaceEdit);
+									} catch (MalformedTreeException e) {
+										// conflicting update -> omit text match
 									}
 								}
 							}
@@ -182,6 +181,41 @@ public class RenameFieldProcessor extends PHPRenameProcessor {
 									IType ancestorType = (IType) modelElement.getAncestor(IModelElement.TYPE);
 									if (ancestorType != null && PDTModelUtils.isInstanceOf(receiverType, ancestorType)) {
 										replaceEdit = new ReplaceEdit(astNode.sourceStart(), currentName.length() - 1, getNewElementName().replace("$", "")); //$NON-NLS-1$ //$NON-NLS-2$
+
+										return false;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			return true;
+		}
+
+		@Override
+		public boolean visit(StaticFieldAccess s) throws Exception {
+			if (s.sourceStart() < astNode.sourceStart() && s.sourceEnd() == astNode.sourceEnd()) {
+				List<ASTNode> children = s.getChilds();
+				for (int i = 0; i < children.size(); ++i) {
+					ASTNode fieldReference = children.get(i);
+					if (fieldReference.sourceStart() == astNode.sourceStart() && fieldReference.sourceEnd() == astNode.sourceEnd()) {
+						if (i > 0) {
+							ASTNode receiverReference = children.get(i - 1);
+							IType[] receiverTypes = null;
+							if (receiverReference instanceof VariableReference) {
+								receiverTypes = PDTTypeInferenceUtils.getTypes((VariableReference) receiverReference, sourceModule);
+							} else if (receiverReference instanceof PHPCallExpression) {
+								receiverTypes = PDTTypeInferenceUtils.getTypes((PHPCallExpression) receiverReference, sourceModule);
+							} else if (receiverReference instanceof TypeReference) {
+								receiverTypes = PDTTypeInferenceUtils.getTypes((TypeReference) receiverReference, sourceModule);
+							}
+							if (receiverTypes != null) {
+								for (IType receiverType: receiverTypes) {
+									IType ancestorType = (IType) modelElement.getAncestor(IModelElement.TYPE);
+									if (ancestorType != null && PDTModelUtils.isInstanceOf(receiverType, ancestorType)) {
+										replaceEdit = new ReplaceEdit(astNode.sourceStart(), currentName.length(), getNewElementName()); //$NON-NLS-1$ //$NON-NLS-2$
 
 										return false;
 									}
