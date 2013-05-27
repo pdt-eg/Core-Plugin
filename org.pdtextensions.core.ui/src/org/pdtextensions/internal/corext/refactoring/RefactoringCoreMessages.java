@@ -24,6 +24,8 @@ public class RefactoringCoreMessages extends NLS {
 	public static String RenameFieldRefactoring_name;
 	public static String RenameLocalVariableRefactoring_checking;
 	public static String RenameLocalVariableRefactoring_name;
+	public static String RenameConstantRefactoring_checking;
+	public static String RenameConstantRefactoring_name;
 	public static String RenameMethodRefactoring_checking;
 	public static String RenameMethodRefactoring_name;
 	public static String RenameTypeRefactoring_checking;

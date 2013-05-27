@@ -45,6 +45,10 @@ public class Checks {
 		}
 	}
 
+	public static RefactoringStatus checkConstantName(String name) {
+		return checkName(name, PHPConventions.validateConstantName(name));
+	}
+
 	public static RefactoringStatus checkFieldName(String name) {
 		return checkName(name, PHPConventions.validateFieldName(name));
 	}

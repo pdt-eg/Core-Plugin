@@ -20,6 +20,10 @@ public final class PHPConventions {
     private static final Pattern PATTERN_FIELD_NAME = Pattern.compile("^\\$[a-zA-Z_\\x7f-\\xff\\u0100-\\uffff][a-zA-Z0-9_\\x7f-\\xff\\u0100-\\uffff]*$"); //$NON-NLS-1$
     private static final Pattern PATTERN_LABEL = Pattern.compile("^[a-zA-Z_\\x7f-\\xff\\u0100-\\uffff][a-zA-Z0-9_\\x7f-\\xff\\u0100-\\uffff]*$"); //$NON-NLS-1$
 
+	public static IStatus validateConstantName(String name) {
+		return validateIdentifier(name);
+	}
+
 	public static IStatus validateFieldName(String name) {
 		return validateIdentifier(name, PATTERN_FIELD_NAME);
 	}
