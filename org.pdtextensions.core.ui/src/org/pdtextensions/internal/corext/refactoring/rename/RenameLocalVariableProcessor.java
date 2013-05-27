@@ -72,41 +72,42 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 	}
 
 	@Override
-	protected RefactoringStatus renameDeclaration(IProgressMonitor pm) throws CoreException {
-		return new RefactoringStatus();
-	}
-
-	@Override
 	protected RefactoringStatus updateReferences(IProgressMonitor pm) throws CoreException {
 		ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(cu);
-		IModelElement parent = modelElement.getParent();
-		ISourceRange range = null;
+		if (moduleDeclaration != null) {
+			IModelElement parent = modelElement.getParent();
+			ISourceRange range = null;
 
-		if (parent.getElementType() == IModelElement.METHOD) {
-			IMethod method = (IMethod) parent;
-			range = method.getSourceRange();
-		} else if (parent.getElementType() == IModelElement.SOURCE_MODULE) {
-			ISourceModule module = (ISourceModule) parent;
-			range = module.getSourceRange();
-		}
+			if (parent.getElementType() == IModelElement.METHOD) {
+				range = ((IMethod) parent).getSourceRange();
+			} else if (parent.getElementType() == IModelElement.SOURCE_MODULE) {
+				range = ((ISourceModule) parent).getSourceRange();
+			}
 
-		if (range != null) {
-			final int sourceStart = range.getOffset();
-			final int sourceEnd = range.getOffset() + range.getLength();
+			if (range != null) {
+				final int sourceStart = range.getOffset();
+				final int sourceEnd = range.getOffset() + range.getLength();
 
-			try {
-				moduleDeclaration.traverse(new PHPASTVisitor() {
-					@Override
-					public boolean visit(VariableReference s) throws Exception {
-						if (s.sourceStart() >= sourceStart && s.sourceEnd() <= sourceEnd && s.getName().equals(modelElement.getElementName())) {
-							addTextEdit(changeManager.get(cu), getProcessorName(), new ReplaceEdit(s.sourceStart(), currentName.length(), getNewElementName()));
+				try {
+					moduleDeclaration.traverse(new PHPASTVisitor() {
+						private int occurrenceCount = 0;
+
+						@Override
+						public boolean visit(VariableReference s) throws Exception {
+							if (s.sourceStart() >= sourceStart && s.sourceEnd() <= sourceEnd && s.getName().equals(modelElement.getElementName())) {
+								if (occurrenceCount > 0) {
+									addTextEdit(changeManager.get(cu), getProcessorName(), new ReplaceEdit(s.sourceStart(), currentName.length(), getNewElementName()));
+								}
+
+								occurrenceCount += 1;
+							}
+
+							return true;
 						}
-
-						return true;
-					}
-				});
-			} catch (Exception e) {
-				throw new CoreException(new Status(IStatus.ERROR, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
+					});
+				} catch (Exception e) {
+					throw new CoreException(new Status(IStatus.ERROR, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
+				}
 			}
 		}
 
