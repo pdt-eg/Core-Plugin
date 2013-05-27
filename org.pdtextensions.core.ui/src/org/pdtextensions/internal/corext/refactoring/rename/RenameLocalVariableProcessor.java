@@ -24,6 +24,7 @@ import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
 import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.php.internal.core.compiler.ast.nodes.ArrayVariableReference;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.pdtextensions.core.ui.PEXUIPlugin;
@@ -91,6 +92,11 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 				try {
 					moduleDeclaration.traverse(new PHPASTVisitor() {
 						private int occurrenceCount = 0;
+
+						@Override
+						public boolean visit(ArrayVariableReference s) throws Exception {
+							return visit((VariableReference) s);
+						}
 
 						@Override
 						public boolean visit(VariableReference s) throws Exception {
