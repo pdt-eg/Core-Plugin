@@ -186,9 +186,9 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 					|| PHPFlags.isTrait(((IType) element).getFlags())
 					) {
 				return new RenameSupport(new RenameTypeProcessor((IType) element), newName, flags);
+			} else {
+				return null;
 			}
-
-			break;
 		case IModelElement.METHOD:
 			return new RenameSupport(new RenameMethodProcessor((IMethod) element), newName, flags);
 		case IModelElement.FIELD:
@@ -197,7 +197,8 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 			} else {
 				return new RenameSupport(new RenameFieldProcessor((IField) element), newName, flags);
 			}
+		default:
+			return null;
 		}
-		return null;
 	}
 }
