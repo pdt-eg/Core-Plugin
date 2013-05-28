@@ -36,6 +36,7 @@ import org.eclipse.php.internal.ui.editor.PHPStructuredEditor;
 import org.eclipse.ui.IWorkbenchSite;
 import org.pdtextensions.core.ui.refactoring.RenameSupport;
 import org.pdtextensions.core.util.PDTModelUtils;
+import org.pdtextensions.internal.corext.refactoring.rename.RenameConstantProcessor;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameFieldProcessor;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameLocalVariableProcessor;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameMethodProcessor;
@@ -195,7 +196,11 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 			if (((IField) element).getDeclaringType() == null) {
 				return new RenameSupport(new RenameLocalVariableProcessor((IField) element), newName, flags);
 			} else {
-				return new RenameSupport(new RenameFieldProcessor((IField) element), newName, flags);
+				if (PHPFlags.isConstant(((IField) element).getFlags())) {
+					return new RenameSupport(new RenameConstantProcessor((IField) element), newName, flags);
+				} else {
+					return new RenameSupport(new RenameFieldProcessor((IField) element), newName, flags);
+				}
 			}
 		default:
 			return null;
