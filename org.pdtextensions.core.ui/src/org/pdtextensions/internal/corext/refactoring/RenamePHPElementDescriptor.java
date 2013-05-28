@@ -15,7 +15,6 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.core.IModelElement;
-import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
 import org.eclipse.dltk.internal.corext.refactoring.ScriptRefactoringDescriptor;
 import org.eclipse.wst.jsdt.core.IPackageFragmentRoot;
 import org.pdtextensions.core.ui.refactoring.IPHPRefactorings;
@@ -45,7 +44,7 @@ public class RenamePHPElementDescriptor extends ScriptRefactoringDescriptor {
 	 *
 	 * @param id
 	 *            the unique id of the rename refactoring
-	 * @see IScriptRefactorings
+	 * @see IPHPRefactorings
 	 */
 	public RenamePHPElementDescriptor(final String id) {
 		super(id);
@@ -97,15 +96,15 @@ public class RenamePHPElementDescriptor extends ScriptRefactoringDescriptor {
 	private boolean checkId(final String id) {
 		Assert.isNotNull(id);
 
-		if (id.equals(IScriptRefactorings.RENAME_TYPE)) {
+		if (id.equals(IPHPRefactorings.RENAME_TYPE)) {
 			return true;
-		} else if (id.equals(IScriptRefactorings.RENAME_METHOD)) {
+		} else if (id.equals(IPHPRefactorings.RENAME_METHOD)) {
 			return true;
 		} else if (id.equals(IPHPRefactorings.RENAME_PROPERTY)) {
 			return true;
 		} else if (id.equals(IPHPRefactorings.RENAME_STATIC_PROPERTY)) {
 			return true;
-		} else if (id.equals(IScriptRefactorings.RENAME_LOCAL_VARIABLE)) {
+		} else if (id.equals(IPHPRefactorings.RENAME_LOCAL_VARIABLE)) {
 			return true;
 		} else if (id.equals(IPHPRefactorings.RENAME_CONSTANT)) {
 			return true;

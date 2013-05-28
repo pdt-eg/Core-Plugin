@@ -15,7 +15,6 @@ import org.eclipse.dltk.core.IExternalSourceModule;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ISourceModule;
-import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
 import org.eclipse.dltk.core.search.IDLTKSearchConstants;
 import org.eclipse.dltk.core.search.MethodReferenceMatch;
 import org.eclipse.dltk.core.search.SearchEngine;
@@ -29,6 +28,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.ReplaceEdit;
+import org.pdtextensions.core.ui.refactoring.IPHPRefactorings;
 import org.pdtextensions.core.ui.refactoring.IRefactoringProcessorIds;
 import org.pdtextensions.internal.corext.refactoring.Checks;
 import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
@@ -84,7 +84,7 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 
 	@Override
 	protected String getRefactoringId() {
-		return IScriptRefactorings.RENAME_METHOD;
+		return IPHPRefactorings.RENAME_METHOD;
 	}
 
 	@Override

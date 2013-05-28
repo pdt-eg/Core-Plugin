@@ -20,7 +20,6 @@ import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ISourceRange;
 import org.eclipse.dltk.core.SourceParserUtil;
-import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
 import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -28,6 +27,7 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.ArrayVariableReference;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.pdtextensions.core.ui.PEXUIPlugin;
+import org.pdtextensions.core.ui.refactoring.IPHPRefactorings;
 import org.pdtextensions.core.ui.refactoring.IRefactoringProcessorIds;
 import org.pdtextensions.internal.corext.refactoring.Checks;
 import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
@@ -53,7 +53,7 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 
 	@Override
 	protected String getRefactoringId() {
-		return IScriptRefactorings.RENAME_LOCAL_VARIABLE;
+		return IPHPRefactorings.RENAME_LOCAL_VARIABLE;
 	}
 
 	@Override

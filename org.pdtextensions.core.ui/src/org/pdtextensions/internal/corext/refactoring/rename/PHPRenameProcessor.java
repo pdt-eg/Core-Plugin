@@ -26,7 +26,6 @@ import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ISourceRange;
 import org.eclipse.dltk.core.ModelException;
-import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
 import org.eclipse.dltk.internal.corext.refactoring.ScriptRefactoringArguments;
 import org.eclipse.dltk.internal.corext.refactoring.ScriptRefactoringDescriptor;
 import org.eclipse.dltk.internal.corext.refactoring.code.ScriptableRefactoring;
@@ -49,6 +48,7 @@ import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.TextEditGroup;
 import org.pdtextensions.core.ui.Messages;
 import org.pdtextensions.core.ui.PEXUIPlugin;
+import org.pdtextensions.core.ui.refactoring.IPHPRefactorings;
 import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
 import org.pdtextensions.internal.corext.refactoring.RenamePHPElementDescriptor;
 
@@ -87,11 +87,11 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 					modelElement = (ILocalVariable) element;
 					cu = (ISourceModule) modelElement.getAncestor(IModelElement.SOURCE_MODULE);
 					if (cu == null)
-						return ScriptableRefactoring.createInputFatalStatus(element, getProcessorName(), IScriptRefactorings.RENAME_LOCAL_VARIABLE);
+						return ScriptableRefactoring.createInputFatalStatus(element, getProcessorName(), IPHPRefactorings.RENAME_LOCAL_VARIABLE);
 				} else
-					return ScriptableRefactoring.createInputFatalStatus(element, getProcessorName(), IScriptRefactorings.RENAME_LOCAL_VARIABLE);
+					return ScriptableRefactoring.createInputFatalStatus(element, getProcessorName(), IPHPRefactorings.RENAME_LOCAL_VARIABLE);
 			} else
-				return ScriptableRefactoring.createInputFatalStatus(element, getProcessorName(), IScriptRefactorings.RENAME_LOCAL_VARIABLE);
+				return ScriptableRefactoring.createInputFatalStatus(element, getProcessorName(), IPHPRefactorings.RENAME_LOCAL_VARIABLE);
 		} else {
 			return RefactoringStatus.createFatalErrorStatus(Messages.format(RefactoringCoreMessages.InitializableRefactoring_argument_not_exist, ScriptRefactoringDescriptor.ATTRIBUTE_INPUT));
 		}
@@ -121,7 +121,7 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 							}
 						}
 						if (modelElement == null)
-							return ScriptableRefactoring.createInputFatalStatus(null, getProcessorName(), IScriptRefactorings.RENAME_LOCAL_VARIABLE);
+							return ScriptableRefactoring.createInputFatalStatus(null, getProcessorName(), IPHPRefactorings.RENAME_LOCAL_VARIABLE);
 					} catch (ModelException exception) {
 						PEXUIPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, PEXUIPlugin.PLUGIN_ID, exception.getMessage(), exception));
 					}
