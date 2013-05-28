@@ -42,6 +42,7 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.refactoring.IPHPRefactorings;
+import org.pdtextensions.core.ui.refactoring.IRefactoringProcessorIds;
 import org.pdtextensions.core.util.PDTModelUtils;
 import org.pdtextensions.core.util.PDTTypeInferenceUtils;
 import org.pdtextensions.internal.corext.refactoring.Checks;
@@ -52,8 +53,6 @@ import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
  */
 @SuppressWarnings("restriction")
 public class RenameConstantProcessor extends PHPRenameProcessor {
-	public static final String IDENTIFIER = "org.pdtextensions.internal.corext.refactoring.rename.renameConstantProcessor"; //$NON-NLS-1$
-
 	public RenameConstantProcessor(IField modelElement) {
 		super(modelElement);
 	}
@@ -65,7 +64,7 @@ public class RenameConstantProcessor extends PHPRenameProcessor {
 
 	@Override
 	public String getIdentifier() {
-		return IDENTIFIER;
+		return IRefactoringProcessorIds.RENAME_CONSTANT_PROCESSOR;
 	}
 
 	@Override

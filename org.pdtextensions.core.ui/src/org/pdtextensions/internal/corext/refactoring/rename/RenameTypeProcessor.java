@@ -35,6 +35,7 @@ import org.eclipse.ltk.core.refactoring.resource.RenameResourceChange;
 import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.ReplaceEdit;
+import org.pdtextensions.core.ui.refactoring.IRefactoringProcessorIds;
 import org.pdtextensions.internal.corext.refactoring.Checks;
 import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
 
@@ -43,8 +44,6 @@ import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
  */
 @SuppressWarnings("restriction")
 public class RenameTypeProcessor extends PHPRenameProcessor {
-	public static final String IDENTIFIER = "org.pdtextensions.internal.corext.refactoring.rename.renameTypeProcessor"; //$NON-NLS-1$
-
 	public RenameTypeProcessor(IType modelElement) {
 		super(modelElement);
 	}
@@ -56,7 +55,7 @@ public class RenameTypeProcessor extends PHPRenameProcessor {
 
 	@Override
 	public String getIdentifier() {
-		return IDENTIFIER;
+		return IRefactoringProcessorIds.RENAME_TYPE_PROCESSOR;
 	}
 
 	@Override

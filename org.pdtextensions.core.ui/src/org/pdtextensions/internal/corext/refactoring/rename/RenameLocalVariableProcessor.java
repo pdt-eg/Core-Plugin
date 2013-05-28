@@ -28,6 +28,7 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.ArrayVariableReference;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.pdtextensions.core.ui.PEXUIPlugin;
+import org.pdtextensions.core.ui.refactoring.IRefactoringProcessorIds;
 import org.pdtextensions.internal.corext.refactoring.Checks;
 import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
 
@@ -36,8 +37,6 @@ import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
  */
 @SuppressWarnings("restriction")
 public class RenameLocalVariableProcessor extends PHPRenameProcessor {
-	public static final String IDENTIFIER = "org.pdtextensions.internal.corext.refactoring.rename.renameLocalVariableProcessor"; //$NON-NLS-1$
-
 	public RenameLocalVariableProcessor(IField field) {
 		super(field);
 	}
@@ -59,7 +58,7 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 
 	@Override
 	public String getIdentifier() {
-		return IDENTIFIER;
+		return IRefactoringProcessorIds.RENAME_LOCAL_VARIABLE_PROCESSOR;
 	}
 
 	@Override
