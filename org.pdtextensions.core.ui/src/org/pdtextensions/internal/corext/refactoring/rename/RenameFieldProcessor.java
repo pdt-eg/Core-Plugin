@@ -56,6 +56,16 @@ public abstract class RenameFieldProcessor extends PHPRenameProcessor {
 
 	@Override
 	protected RefactoringStatus updateReferences(IProgressMonitor pm) throws CoreException {
+		/* FIXME SearchEngine.search() does not work properly for static properties or class constants.
+		 *
+		 * No results were found when searching for static property or
+		 * class constant with DLTKSearchConstants.REFERENCES.
+		 * Also when searching for static property or class constant with
+		 * DLTKSearchConstants.ALL_OCCURRENCES, the declaration and
+		 * references in the source module where the element is defined
+		 * were matched. But other references in other source modules were
+		 * not matched.
+		 */
 		new SearchEngine().search(
 			createSearchPatternForReferences(),
 			new SearchParticipant[]{ SearchEngine.getDefaultSearchParticipant() },
