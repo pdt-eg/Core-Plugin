@@ -40,6 +40,7 @@ import org.pdtextensions.internal.corext.refactoring.rename.RenameConstantProces
 import org.pdtextensions.internal.corext.refactoring.rename.RenameFieldProcessor;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameLocalVariableProcessor;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameMethodProcessor;
+import org.pdtextensions.internal.corext.refactoring.rename.RenameStaticPropertyProcessor;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameTypeProcessor;
 
 /**
@@ -198,6 +199,8 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 			} else {
 				if (PHPFlags.isConstant(((IField) element).getFlags())) {
 					return new RenameSupport(new RenameConstantProcessor((IField) element), newName, flags);
+				} else if (PHPFlags.isStatic(((IField) element).getFlags())) {
+					return new RenameSupport(new RenameStaticPropertyProcessor((IField) element), newName, flags);
 				} else {
 					return new RenameSupport(new RenameFieldProcessor((IField) element), newName, flags);
 				}

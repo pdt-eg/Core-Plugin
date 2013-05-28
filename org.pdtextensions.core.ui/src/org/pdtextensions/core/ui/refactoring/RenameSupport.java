@@ -40,6 +40,7 @@ import org.pdtextensions.internal.corext.refactoring.rename.RenameConstantProces
 import org.pdtextensions.internal.corext.refactoring.rename.RenameFieldProcessor;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameLocalVariableProcessor;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameMethodProcessor;
+import org.pdtextensions.internal.corext.refactoring.rename.RenameStaticPropertyProcessor;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameTypeProcessor;
 
 /**
