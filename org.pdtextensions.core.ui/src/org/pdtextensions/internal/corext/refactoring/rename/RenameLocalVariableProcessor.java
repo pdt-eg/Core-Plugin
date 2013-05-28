@@ -34,8 +34,8 @@ import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
  */
 @SuppressWarnings("restriction")
 public class RenameLocalVariableProcessor extends PHPRenameProcessor {
-	public RenameLocalVariableProcessor(IField field) {
-		super(field);
+	public RenameLocalVariableProcessor(IField modelElement) {
+		super(modelElement);
 	}
 
 	@Override
