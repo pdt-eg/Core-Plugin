@@ -73,11 +73,6 @@ public class RenameStaticPropertyProcessor extends PHPRenameProcessor {
 	}
 
 	@Override
-	public boolean isApplicable() throws CoreException {
-	    return Checks.isAvailable(modelElement);
-	}
-
-	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException {
 		pm.beginTask(RefactoringCoreMessages.RenameStaticPropertyRefactoring_checking, 1);
 

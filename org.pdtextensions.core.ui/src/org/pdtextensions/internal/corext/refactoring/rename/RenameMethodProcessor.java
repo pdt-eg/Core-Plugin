@@ -58,11 +58,6 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 	}
 
 	@Override
-	public boolean isApplicable() throws CoreException {
-	    return Checks.isAvailable(modelElement);
-	}
-
-	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException {
 		pm.beginTask(RefactoringCoreMessages.RenameMethodRefactoring_checking, 1);
 

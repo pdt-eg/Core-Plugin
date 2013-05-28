@@ -64,11 +64,6 @@ public class RenameTypeProcessor extends PHPRenameProcessor {
 	}
 
 	@Override
-	public boolean isApplicable() throws CoreException {
-	    return Checks.isAvailable(modelElement);
-	}
-
-	@Override
 	public boolean needsSavedEditors() {
 		return true;
 	}

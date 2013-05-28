@@ -67,11 +67,6 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 	}
 
 	@Override
-	public boolean isApplicable() throws CoreException {
-		return Checks.isAvailable(modelElement);
-	}
-
-	@Override
 	protected RefactoringStatus updateReferences(IProgressMonitor pm) throws CoreException {
 		ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(cu);
 		if (moduleDeclaration != null) {

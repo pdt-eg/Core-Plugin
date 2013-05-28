@@ -49,6 +49,7 @@ import org.eclipse.text.edits.TextEditGroup;
 import org.pdtextensions.core.ui.Messages;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.refactoring.IPHPRefactorings;
+import org.pdtextensions.internal.corext.refactoring.Checks;
 import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
 import org.pdtextensions.internal.corext.refactoring.RenamePHPElementDescriptor;
 
@@ -157,6 +158,11 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 	@Override
 	public boolean getUpdateReferences() {
 		return updateReferences;
+	}
+
+	@Override
+	public boolean isApplicable() throws CoreException {
+	    return Checks.isAvailable(modelElement);
 	}
 
 	@Override
