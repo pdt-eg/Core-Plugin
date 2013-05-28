@@ -44,16 +44,6 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 	}
 
 	@Override
-	public boolean needsSavedEditors() {
-		return false;
-	}
-
-	@Override
-	protected String getRefactoringId() {
-		return IPHPRefactorings.RENAME_LOCAL_VARIABLE;
-	}
-
-	@Override
 	public String getIdentifier() {
 		return IRefactoringProcessorIds.RENAME_LOCAL_VARIABLE_PROCESSOR;
 	}
@@ -61,6 +51,16 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 	@Override
 	public String getProcessorName() {
 		return RefactoringCoreMessages.RenameLocalVariableRefactoring_name;
+	}
+
+	@Override
+	public boolean needsSavedEditors() {
+		return false;
+	}
+
+	@Override
+	protected String getRefactoringId() {
+		return IPHPRefactorings.RENAME_LOCAL_VARIABLE;
 	}
 
 	@Override
