@@ -28,6 +28,7 @@ import org.eclipse.dltk.core.ISourceRange;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.internal.corext.refactoring.ScriptRefactoringArguments;
 import org.eclipse.dltk.internal.corext.refactoring.ScriptRefactoringDescriptor;
+import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
 import org.eclipse.dltk.internal.corext.refactoring.code.ScriptableRefactoring;
 import org.eclipse.dltk.internal.corext.refactoring.participants.ScriptProcessors;
 import org.eclipse.dltk.internal.corext.refactoring.rename.RenameModifications;
@@ -35,6 +36,7 @@ import org.eclipse.dltk.internal.corext.refactoring.rename.ScriptRenameProcessor
 import org.eclipse.dltk.internal.corext.refactoring.tagging.IReferenceUpdating;
 import org.eclipse.dltk.internal.corext.refactoring.util.ResourceUtil;
 import org.eclipse.dltk.internal.corext.refactoring.util.TextChangeManager;
+import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextChange;
@@ -163,6 +165,21 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 	@Override
 	public boolean isApplicable() throws CoreException {
 	    return Checks.isAvailable(modelElement);
+	}
+
+	@Override
+	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
+		pm.beginTask(RefactoringCoreMessages.RenameRefactoring_checking, 1);
+
+		try {
+			Change result = new DynamicValidationRefactoringChange(createRefactoringDescriptor(), getProcessorName(), changeManager.getAllChanges());
+			pm.worked(1);
+
+			return result;
+		} finally {
+			changeManager.clear();
+			pm.done();
+		}
 	}
 
 	@Override

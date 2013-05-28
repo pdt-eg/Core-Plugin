@@ -20,17 +20,12 @@ public class RefactoringCoreMessages extends NLS {
 	public static String InitializableRefactoring_illegal_argument;
 	public static String InitializableRefactoring_inacceptable_arguments;
 
-	public static String RenamePropertyRefactoring_checking;
+	public static String RenameRefactoring_checking;
 	public static String RenamePropertyRefactoring_name;
-	public static String RenameStaticPropertyRefactoring_checking;
 	public static String RenameStaticPropertyRefactoring_name;
-	public static String RenameLocalVariableRefactoring_checking;
 	public static String RenameLocalVariableRefactoring_name;
-	public static String RenameConstantRefactoring_checking;
 	public static String RenameConstantRefactoring_name;
-	public static String RenameMethodRefactoring_checking;
 	public static String RenameMethodRefactoring_name;
-	public static String RenameTypeRefactoring_checking;
 	public static String RenameTypeRefactoring_name;
 
 	static {

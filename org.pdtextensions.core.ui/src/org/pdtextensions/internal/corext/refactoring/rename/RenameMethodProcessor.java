@@ -22,8 +22,6 @@ import org.eclipse.dltk.core.search.SearchMatch;
 import org.eclipse.dltk.core.search.SearchParticipant;
 import org.eclipse.dltk.core.search.SearchPattern;
 import org.eclipse.dltk.core.search.SearchRequestor;
-import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
-import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.eclipse.text.edits.MalformedTreeException;
@@ -55,21 +53,6 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 	@Override
 	public String getProcessorName() {
 		return RefactoringCoreMessages.RenameMethodRefactoring_name;
-	}
-
-	@Override
-	public Change createChange(IProgressMonitor pm) throws CoreException {
-		pm.beginTask(RefactoringCoreMessages.RenameMethodRefactoring_checking, 1);
-
-		try {
-			Change result = new DynamicValidationRefactoringChange(createRefactoringDescriptor(), getProcessorName(), changeManager.getAllChanges());
-			pm.worked(1);
-
-			return result;
-		} finally {
-			changeManager.clear();
-			pm.done();
-		}
 	}
 
 	@Override

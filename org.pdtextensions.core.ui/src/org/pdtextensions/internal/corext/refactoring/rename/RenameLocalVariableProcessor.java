@@ -10,7 +10,6 @@ package org.pdtextensions.internal.corext.refactoring.rename;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.references.VariableReference;
@@ -20,8 +19,6 @@ import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ISourceRange;
 import org.eclipse.dltk.core.SourceParserUtil;
-import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
-import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ArrayVariableReference;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
@@ -112,20 +109,5 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 		}
 
 		return new RefactoringStatus();
-	}
-
-	@Override
-	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		pm.beginTask(RefactoringCoreMessages.RenameLocalVariableRefactoring_checking, 1);
-
-		try {
-			Change result = new DynamicValidationRefactoringChange(createRefactoringDescriptor(), getProcessorName(), changeManager.getAllChanges());
-			pm.worked(1);
-
-			return result;
-		} finally {
-			changeManager.clear();
-			pm.done();
-		}
 	}
 }
