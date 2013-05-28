@@ -37,7 +37,7 @@ import org.eclipse.ui.IWorkbenchSite;
 import org.pdtextensions.core.ui.refactoring.RenameSupport;
 import org.pdtextensions.core.util.PDTModelUtils;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameConstantProcessor;
-import org.pdtextensions.internal.corext.refactoring.rename.RenameFieldProcessor;
+import org.pdtextensions.internal.corext.refactoring.rename.RenamePropertyProcessor;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameLocalVariableProcessor;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameMethodProcessor;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameStaticPropertyProcessor;
@@ -202,7 +202,7 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 				} else if (PHPFlags.isStatic(((IField) element).getFlags())) {
 					return new RenameSupport(new RenameStaticPropertyProcessor((IField) element), newName, flags);
 				} else {
-					return new RenameSupport(new RenameFieldProcessor((IField) element), newName, flags);
+					return new RenameSupport(new RenamePropertyProcessor((IField) element), newName, flags);
 				}
 			}
 		default:

@@ -101,7 +101,7 @@ public class RenamePHPElementDescriptor extends ScriptRefactoringDescriptor {
 			return true;
 		} else if (id.equals(IScriptRefactorings.RENAME_METHOD)) {
 			return true;
-		} else if (id.equals(IScriptRefactorings.RENAME_FIELD)) {
+		} else if (id.equals(IPHPRefactorings.RENAME_PROPERTY)) {
 			return true;
 		} else if (id.equals(IPHPRefactorings.RENAME_STATIC_PROPERTY)) {
 			return true;

@@ -11,6 +11,7 @@ package org.pdtextensions.core.ui.refactoring;
  * @since 0.17.0
  */
 public interface IPHPRefactorings {
+	public static final String RENAME_PROPERTY = "org.pdtextensions.core.ui.refactoring.renameProperty"; //$NON-NLS-1$
 	public static final String RENAME_STATIC_PROPERTY = "org.pdtextensions.core.ui.refactoring.renameStaticProperty"; //$NON-NLS-1$
 	public static final String RENAME_CONSTANT = "org.pdtextensions.core.ui.refactoring.renameConstant"; //$NON-NLS-1$
 }

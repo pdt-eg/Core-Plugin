@@ -16,14 +16,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
-import org.eclipse.dltk.ast.references.TypeReference;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.dltk.core.IField;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.SourceParserUtil;
-import org.eclipse.dltk.core.manipulation.IScriptRefactorings;
 import org.eclipse.dltk.core.search.FieldReferenceMatch;
 import org.eclipse.dltk.core.search.IDLTKSearchConstants;
 import org.eclipse.dltk.core.search.SearchEngine;
@@ -35,15 +33,14 @@ import org.eclipse.dltk.internal.corext.refactoring.RefactoringAvailabilityTeste
 import org.eclipse.dltk.internal.corext.refactoring.changes.DynamicValidationRefactoringChange;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.php.core.compiler.PHPFlags;
 import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.eclipse.php.internal.core.compiler.ast.nodes.FieldAccess;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPCallExpression;
-import org.eclipse.php.internal.core.compiler.ast.nodes.StaticFieldAccess;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.pdtextensions.core.ui.PEXUIPlugin;
+import org.pdtextensions.core.ui.refactoring.IPHPRefactorings;
 import org.pdtextensions.core.util.PDTModelUtils;
 import org.pdtextensions.core.util.PDTTypeInferenceUtils;
 import org.pdtextensions.internal.corext.refactoring.Checks;
@@ -53,10 +50,10 @@ import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
  * @since 0.17.0
  */
 @SuppressWarnings("restriction")
-public class RenameFieldProcessor extends PHPRenameProcessor {
-	public static final String IDENTIFIER = "org.pdtextensions.internal.corext.refactoring.rename.renameFieldProcessor"; //$NON-NLS-1$
+public class RenamePropertyProcessor extends PHPRenameProcessor {
+	public static final String IDENTIFIER = "org.pdtextensions.internal.corext.refactoring.rename.renamePropertyProcessor"; //$NON-NLS-1$
 
-	public RenameFieldProcessor(IField modelElement) {
+	public RenamePropertyProcessor(IField modelElement) {
 		super(modelElement);
 	}
 
@@ -72,7 +69,7 @@ public class RenameFieldProcessor extends PHPRenameProcessor {
 
 	@Override
 	public String getProcessorName() {
-		return RefactoringCoreMessages.RenameFieldRefactoring_name;
+		return RefactoringCoreMessages.RenamePropertyRefactoring_name;
 	}
 
 	@Override
@@ -82,7 +79,7 @@ public class RenameFieldProcessor extends PHPRenameProcessor {
 
 	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException {
-		pm.beginTask(RefactoringCoreMessages.RenameFieldRefactoring_checking, 1);
+		pm.beginTask(RefactoringCoreMessages.RenamePropertyRefactoring_checking, 1);
 
 		try {
 			Change result = new DynamicValidationRefactoringChange(createRefactoringDescriptor(), getProcessorName(), changeManager.getAllChanges());
@@ -102,7 +99,7 @@ public class RenameFieldProcessor extends PHPRenameProcessor {
 
 	@Override
 	protected String getRefactoringId() {
-		return IScriptRefactorings.RENAME_FIELD;
+		return IPHPRefactorings.RENAME_PROPERTY;
 	}
 
 	@Override
@@ -110,7 +107,7 @@ public class RenameFieldProcessor extends PHPRenameProcessor {
 		new SearchEngine().search(
 			SearchPattern.createPattern(
 				modelElement,
-				PHPFlags.isStatic(((IField) modelElement).getFlags()) ? IDLTKSearchConstants.ALL_OCCURRENCES : IDLTKSearchConstants.REFERENCES,
+				IDLTKSearchConstants.REFERENCES,
 				SearchPattern.R_EXACT_MATCH | SearchPattern.R_ERASURE_MATCH | SearchPattern.R_CASE_SENSITIVE,
 				PHPLanguageToolkit.getDefault()
 			),
@@ -181,41 +178,6 @@ public class RenameFieldProcessor extends PHPRenameProcessor {
 									IType ancestorType = (IType) modelElement.getAncestor(IModelElement.TYPE);
 									if (ancestorType != null && PDTModelUtils.isInstanceOf(receiverType, ancestorType)) {
 										replaceEdit = new ReplaceEdit(astNode.sourceStart(), currentName.length() - 1, getNewElementName().replace("$", "")); //$NON-NLS-1$ //$NON-NLS-2$
-
-										return false;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-
-			return true;
-		}
-
-		@Override
-		public boolean visit(StaticFieldAccess s) throws Exception {
-			if (s.sourceStart() < astNode.sourceStart() && s.sourceEnd() == astNode.sourceEnd()) {
-				List<ASTNode> children = s.getChilds();
-				for (int i = 0; i < children.size(); ++i) {
-					ASTNode fieldReference = children.get(i);
-					if (fieldReference.sourceStart() == astNode.sourceStart() && fieldReference.sourceEnd() == astNode.sourceEnd()) {
-						if (i > 0) {
-							ASTNode receiverReference = children.get(i - 1);
-							IType[] receiverTypes = null;
-							if (receiverReference instanceof VariableReference) {
-								receiverTypes = PDTTypeInferenceUtils.getTypes((VariableReference) receiverReference, sourceModule);
-							} else if (receiverReference instanceof PHPCallExpression) {
-								receiverTypes = PDTTypeInferenceUtils.getTypes((PHPCallExpression) receiverReference, sourceModule);
-							} else if (receiverReference instanceof TypeReference) {
-								receiverTypes = PDTTypeInferenceUtils.getTypes((TypeReference) receiverReference, sourceModule);
-							}
-							if (receiverTypes != null) {
-								for (IType receiverType: receiverTypes) {
-									IType ancestorType = (IType) modelElement.getAncestor(IModelElement.TYPE);
-									if (ancestorType != null && PDTModelUtils.isInstanceOf(receiverType, ancestorType)) {
-										replaceEdit = new ReplaceEdit(astNode.sourceStart(), currentName.length(), getNewElementName()); //$NON-NLS-1$ //$NON-NLS-2$
 
 										return false;
 									}
