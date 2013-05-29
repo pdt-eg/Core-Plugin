@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.dltk.ast.expressions.CallExpression;
-import org.eclipse.dltk.core.IExternalSourceModule;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ISourceModule;
@@ -22,6 +21,7 @@ import org.eclipse.dltk.core.search.SearchMatch;
 import org.eclipse.dltk.core.search.SearchParticipant;
 import org.eclipse.dltk.core.search.SearchPattern;
 import org.eclipse.dltk.core.search.SearchRequestor;
+import org.eclipse.dltk.internal.corext.refactoring.RefactoringAvailabilityTester;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.eclipse.text.edits.MalformedTreeException;
@@ -83,7 +83,7 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 						if (((MethodReferenceMatch) match).getNode() instanceof CallExpression) {
 							if (match.getElement() instanceof IModelElement) {
 								ISourceModule module = (ISourceModule) ((IModelElement) match.getElement()).getAncestor(IModelElement.SOURCE_MODULE);
-								if (!(module instanceof IExternalSourceModule)) {
+								if (module != null && RefactoringAvailabilityTester.isRenameAvailable(module)) {
 									try {
 										addTextEdit(
 											changeManager.get(module),
