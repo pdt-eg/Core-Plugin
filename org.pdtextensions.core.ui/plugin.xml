@@ -161,18 +161,6 @@
    </extension>
    
    
-   
-   <extension
-         id="jp.sourceforge.pdt_tools.formatter.problem"
-         name="%extension.name"
-         point="org.eclipse.core.resources.markers">
-      <super
-            type="org.eclipse.core.resources.problemmarker">
-      </super>
-      <persistent
-            value="true">
-      </persistent>
-   </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer

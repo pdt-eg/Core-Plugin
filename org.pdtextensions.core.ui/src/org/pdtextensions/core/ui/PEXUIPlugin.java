@@ -9,23 +9,16 @@ package org.pdtextensions.core.ui;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
 
-import org.eclipse.core.internal.preferences.PreferencesService;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.dltk.ui.viewsupport.ImageDescriptorRegistry;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -60,16 +53,6 @@ public class PEXUIPlugin extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.pdtextensions.core.ui"; //$NON-NLS-1$
 	
-	public static final String OPTION_ID = "jp.sourceforge.pdt_tools"; //$NON-NLS-1$
-
-	public static final String FORMATTER_PROFILE = PLUGIN_ID
-			+ ".formatter_profile"; //$NON-NLS-1$
-
-	public static final String HELP_ID = "org.pdtextensions.core.ui.formatter.help." //$NON-NLS-1$
-			+ Locale.getDefault().getLanguage();
-	public static final String HELP_ID_FORMATTER = HELP_ID + ".formatter"; //$NON-NLS-1$
-	public static final String HELP_ID_SETTINGS = HELP_ID + ".settings"; //$NON-NLS-1$
-
 	public static final String MARKER_ID = PLUGIN_ID + ".problem"; //$NON-NLS-1$
 	
 	private IPreferenceStore fCombinedPreferenceStore;

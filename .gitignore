@@ -21,6 +21,7 @@ target/
 *.swp
 copy.sh
 .project
-.settings
+.settings/
+.classpath
 *.m2e.core.prefs
 bin
