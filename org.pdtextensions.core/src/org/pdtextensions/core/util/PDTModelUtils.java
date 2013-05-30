@@ -520,7 +520,20 @@ public class PDTModelUtils {
 	/**
 	 * @since 0.17.0
 	 */
+	public static boolean isSameType(IType type, IType targetType) {
+		Assert.isNotNull(type);
+		Assert.isNotNull(targetType);
+
+		return isSameType(type, PHPClassType.fromIType(targetType).getTypeName());
+	}
+
+	/**
+	 * @since 0.17.0
+	 */
 	public static boolean isSameType(IType type, String targetTypeName) {
+		Assert.isNotNull(type);
+		Assert.isNotNull(targetTypeName);
+
 		PHPClassType classType = PHPClassType.fromIType(type);
 
 		if (classType.getNamespace() != null && !targetTypeName.startsWith("\\")) { //$NON-NLS-1$

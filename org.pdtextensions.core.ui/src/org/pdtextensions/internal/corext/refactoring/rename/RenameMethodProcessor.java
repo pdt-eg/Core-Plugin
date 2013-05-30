@@ -10,10 +10,10 @@ package org.pdtextensions.internal.corext.refactoring.rename;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.dltk.ast.expressions.CallExpression;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ISourceModule;
+import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.search.IDLTKSearchConstants;
 import org.eclipse.dltk.core.search.MethodReferenceMatch;
 import org.eclipse.dltk.core.search.SearchEngine;
@@ -24,10 +24,13 @@ import org.eclipse.dltk.core.search.SearchRequestor;
 import org.eclipse.dltk.internal.corext.refactoring.RefactoringAvailabilityTester;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.php.internal.core.PHPLanguageToolkit;
+import org.eclipse.php.internal.core.compiler.ast.nodes.FullyQualifiedReference;
+import org.eclipse.php.internal.core.compiler.ast.nodes.PHPCallExpression;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.pdtextensions.core.ui.refactoring.IPHPRefactorings;
 import org.pdtextensions.core.ui.refactoring.IRefactoringProcessorIds;
+import org.pdtextensions.core.util.PDTModelUtils;
 import org.pdtextensions.internal.corext.refactoring.Checks;
 import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
 
@@ -66,42 +69,71 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 	}
 
 	@Override
+	protected RefactoringStatus renameDeclaration(IProgressMonitor pm) throws CoreException {
+		return super.renameDeclaration(pm);
+	}
+
+	@Override
 	protected RefactoringStatus updateReferences(IProgressMonitor pm) throws CoreException {
 		new SearchEngine().search(
 			SearchPattern.createPattern(
 				modelElement,
 				IDLTKSearchConstants.REFERENCES,
-				SearchPattern.R_EXACT_MATCH | SearchPattern.R_ERASURE_MATCH,
+				SearchPattern.R_FULL_MATCH,
 				PHPLanguageToolkit.getDefault()
 			),
 			new SearchParticipant[]{ SearchEngine.getDefaultSearchParticipant() },
-			SearchEngine.createWorkspaceScope(PHPLanguageToolkit.getDefault()),
-			new SearchRequestor() {
-				@Override
-				public void acceptSearchMatch(SearchMatch match) throws CoreException {
-					if (match instanceof MethodReferenceMatch) {
-						if (((MethodReferenceMatch) match).getNode() instanceof CallExpression) {
-							if (match.getElement() instanceof IModelElement) {
-								ISourceModule module = (ISourceModule) ((IModelElement) match.getElement()).getAncestor(IModelElement.SOURCE_MODULE);
-								if (module != null && RefactoringAvailabilityTester.isRenameAvailable(module)) {
-									try {
-										addTextEdit(
-											changeManager.get(module),
-											getProcessorName(),
-											new ReplaceEdit(
-												((CallExpression) ((MethodReferenceMatch) match).getNode()).getCallName().sourceStart(),
-												currentName.length(),
-												getNewElementName()
-											)
-										);
-									} catch (MalformedTreeException e) {
-										// conflicting update -> omit text match
+				SearchEngine.createWorkspaceScope(PHPLanguageToolkit.getDefault()),
+				new SearchRequestor() {
+					@Override
+					public void acceptSearchMatch(final SearchMatch match) throws CoreException {
+						if (match instanceof MethodReferenceMatch && ((MethodReferenceMatch) match).getNode() instanceof PHPCallExpression && match.getElement() instanceof IModelElement) {
+							final ISourceModule module = (ISourceModule) ((IModelElement) match.getElement()).getAncestor(IModelElement.SOURCE_MODULE);
+							if (module != null && RefactoringAvailabilityTester.isRenameAvailable(module)) {
+								PHPCallExpression expression = (PHPCallExpression) ((MethodReferenceMatch) match).getNode();
+								if (expression.getReceiver() == null) {
+									if (expression.getCallName() instanceof FullyQualifiedReference) {
+										int offset;
+										if (((FullyQualifiedReference) expression.getCallName()).getNamespace() == null) {
+											offset = expression.getCallName().sourceStart();
+										} else {
+											if ("\\".equals(((FullyQualifiedReference) expression.getCallName()).getNamespace().getName())) {
+												offset = ((FullyQualifiedReference) expression.getCallName()).getNamespace().sourceEnd();
+											} else {
+												offset = ((FullyQualifiedReference) expression.getCallName()).getNamespace().sourceEnd() + 1;
+											}
+										}
+
+										try {
+											addTextEdit(
+												changeManager.get(module),
+												getProcessorName(),
+												new ReplaceEdit(offset, currentName.length(), getNewElementName())
+											);
+										} catch (MalformedTreeException e) {
+											// conflicting update -> omit text match
+										}
+									}
+								} else {
+									IModelElement sourceElement = PDTModelUtils.getSourceElement(module, expression.getCallName().sourceStart(), expression.getCallName().matchLength());
+									if (sourceElement.getElementType() == IModelElement.METHOD) {
+										IType declaringType = ((IMethod) sourceElement).getDeclaringType();
+										if (declaringType != null && PDTModelUtils.isSameType(declaringType, ((IMethod) modelElement).getDeclaringType())) {
+											try {
+												addTextEdit(
+													changeManager.get(module),
+													getProcessorName(),
+													new ReplaceEdit(expression.getCallName().sourceStart(), currentName.length(), getNewElementName())
+												);
+											} catch (MalformedTreeException e) {
+												// conflicting update -> omit text match
+											}
+										}
 									}
 								}
 							}
 						}
 					}
-				}
 			},
 			new SubProgressMonitor(pm, 1000)
 		);
