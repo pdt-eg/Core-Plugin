@@ -84,11 +84,7 @@ public class PDTTypeInferenceUtils {
 	}
 
 	public static IType[] getTypes(PHPCallExpression expression, ISourceModule sourceModule) {
-		return getTypes(expression, sourceModule, expression.getReceiver());
-	}
-
-	public static IType[] getTypes(PHPCallExpression expression, ISourceModule sourceModule, ASTNode receiver) {
-		IType[] receiverTypes = getTypes(receiver, sourceModule);
+		IType[] receiverTypes = getTypes(expression.getReceiver(), sourceModule);
 		if (receiverTypes != null && receiverTypes.length > 0) {
 			IContext context = ASTUtils.findContext(sourceModule, SourceParserUtil.getModuleDeclaration(sourceModule), expression.sourceStart());
 			if (expression.getArgs() instanceof PHPCallArgumentsList && ((PHPCallArgumentsList) expression.getArgs()).getArrayDereferenceList() != null) {
