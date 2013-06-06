@@ -76,6 +76,7 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 		cu = (ISourceModule) modelElement.getAncestor(IModelElement.SOURCE_MODULE);
 	}
 
+	@Override
 	public RefactoringStatus initialize(RefactoringArguments arguments) {
 		if (!(arguments instanceof ScriptRefactoringArguments))
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.InitializableRefactoring_inacceptable_arguments);
@@ -143,6 +144,7 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 		return new RefactoringStatus();
 	}
 
+	@Override
 	public String getCurrentElementName() {
 		return currentName;
 	}
@@ -260,6 +262,7 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 		return new Object[]{ modelElement };
 	}
 	
+	@Override
 	public String getNewElement() {
 		return getNewElementName();
 	}
