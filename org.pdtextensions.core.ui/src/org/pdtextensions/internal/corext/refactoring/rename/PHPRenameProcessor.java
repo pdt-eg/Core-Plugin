@@ -227,15 +227,7 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 	}
 
 	protected RefactoringStatus renameDeclaration(IProgressMonitor pm) throws CoreException {
-		ISourceRange sourceRange = null;
-		if (modelElement instanceof IMember) {
-			sourceRange = ((IMember) modelElement).getNameRange();
-		}
-		if (sourceRange != null) {
-			addTextEdit(changeManager.get(cu), getProcessorName(), new ReplaceEdit(sourceRange.getOffset(), getCurrentElementName().length(), getNewElementName()));
-		}
-
-		return new RefactoringStatus();
+		return renameDeclaration(pm, modelElement, cu);
 	}
 
 	protected RefactoringStatus renameDeclaration(IProgressMonitor pm, IModelElement modelElement, ISourceModule sourceModule) throws CoreException {
