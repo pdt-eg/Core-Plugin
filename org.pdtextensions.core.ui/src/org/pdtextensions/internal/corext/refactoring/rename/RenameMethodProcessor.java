@@ -142,7 +142,7 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 									}
 								} else {
 									IModelElement sourceElement = PDTModelUtils.getSourceElement(module, expression.getCallName().sourceStart(), expression.getCallName().matchLength());
-									if (sourceElement.getElementType() == IModelElement.METHOD) {
+									if (sourceElement != null && sourceElement.getElementType() == IModelElement.METHOD) {
 										IType declaringType = ((IMethod) sourceElement).getDeclaringType();
 										if (declaringType != null && PDTModelUtils.isInstanceOf(declaringType, method.getDeclaringType())) {
 											try {
