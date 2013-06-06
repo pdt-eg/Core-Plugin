@@ -149,7 +149,7 @@ public class RenameTypeProcessor extends PHPRenameProcessor {
 														getProcessorName(),
 														new ReplaceEdit(
 															s.getNamespace() == null ? match.getOffset() : s.getNamespace().sourceEnd() + 1,
-															currentName.length(),
+															getCurrentElementName().length(),
 															getNewElementName()
 														)
 													);

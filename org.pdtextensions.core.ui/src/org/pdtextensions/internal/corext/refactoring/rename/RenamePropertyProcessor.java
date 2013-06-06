@@ -76,7 +76,7 @@ public class RenamePropertyProcessor extends RenameFieldProcessor {
 
 			@Override
 			protected ReplaceEdit createReplaceEdit(ASTNode astNode) {
-				return new ReplaceEdit(astNode.sourceStart(), currentName.length() - 1, getNewElementName().replace("$", "")); //$NON-NLS-1$ //$NON-NLS-2$
+				return new ReplaceEdit(astNode.sourceStart(), getCurrentElementName().length() - 1, getNewElementName().replace("$", "")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		};
 	}

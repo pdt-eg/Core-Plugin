@@ -67,7 +67,6 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 
 	//the following fields are set or modified after the construction
 	protected boolean updateReferences;
-	protected String currentName;
 
 	protected TextChangeManager changeManager = new TextChangeManager(true);
 
@@ -146,7 +145,7 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 
 	@Override
 	public String getCurrentElementName() {
-		return currentName;
+		return modelElement.getElementName();
 	}
 
 	@Override
@@ -233,7 +232,7 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 			sourceRange = ((IMember) modelElement).getNameRange();
 		}
 		if (sourceRange != null) {
-			addTextEdit(changeManager.get(cu), getProcessorName(), new ReplaceEdit(sourceRange.getOffset(), currentName.length(), getNewElementName()));
+			addTextEdit(changeManager.get(cu), getProcessorName(), new ReplaceEdit(sourceRange.getOffset(), getCurrentElementName().length(), getNewElementName()));
 		}
 
 		return new RefactoringStatus();
@@ -269,8 +268,6 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 
 	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		currentName = modelElement.getElementName();
-
 		return new RefactoringStatus();
 	}
 

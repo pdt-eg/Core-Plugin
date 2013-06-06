@@ -76,7 +76,7 @@ public class RenameConstantProcessor extends RenameFieldProcessor {
 
 			@Override
 			protected ReplaceEdit createReplaceEdit(ASTNode astNode) {
-				return new ReplaceEdit(astNode.sourceStart(), currentName.length(), getNewElementName());
+				return new ReplaceEdit(astNode.sourceStart(), getCurrentElementName().length(), getNewElementName());
 			}
 		};
 	}

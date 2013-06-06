@@ -108,7 +108,7 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 											addTextEdit(
 												changeManager.get(module),
 												getProcessorName(),
-												new ReplaceEdit(offset, currentName.length(), getNewElementName())
+												new ReplaceEdit(offset, getCurrentElementName().length(), getNewElementName())
 											);
 										} catch (MalformedTreeException e) {
 											// conflicting update -> omit text match
@@ -123,7 +123,7 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 												addTextEdit(
 													changeManager.get(module),
 													getProcessorName(),
-													new ReplaceEdit(expression.getCallName().sourceStart(), currentName.length(), getNewElementName())
+													new ReplaceEdit(expression.getCallName().sourceStart(), getCurrentElementName().length(), getNewElementName())
 												);
 											} catch (MalformedTreeException e) {
 												// conflicting update -> omit text match

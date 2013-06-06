@@ -93,7 +93,7 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 						public boolean visit(VariableReference s) throws Exception {
 							if (s.sourceStart() >= sourceStart && s.sourceEnd() <= sourceEnd && s.getName().equals(modelElement.getElementName())) {
 								if (occurrenceCount > 0) {
-									addTextEdit(changeManager.get(cu), getProcessorName(), new ReplaceEdit(s.sourceStart(), currentName.length(), getNewElementName()));
+									addTextEdit(changeManager.get(cu), getProcessorName(), new ReplaceEdit(s.sourceStart(), getCurrentElementName().length(), getNewElementName()));
 								}
 
 								occurrenceCount += 1;
