@@ -238,6 +238,18 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 		return new RefactoringStatus();
 	}
 
+	protected RefactoringStatus renameDeclaration(IProgressMonitor pm, IModelElement modelElement, ISourceModule sourceModule) throws CoreException {
+		ISourceRange sourceRange = null;
+		if (modelElement instanceof IMember) {
+			sourceRange = ((IMember) modelElement).getNameRange();
+		}
+		if (sourceRange != null) {
+			addTextEdit(changeManager.get(sourceModule), getProcessorName(), new ReplaceEdit(sourceRange.getOffset(), modelElement.getElementName().length(), getNewElementName()));
+		}
+
+		return new RefactoringStatus();
+	}
+
 	protected abstract RefactoringStatus updateReferences(IProgressMonitor pm) throws CoreException;
 
 	protected static void addTextEdit(TextChange change, String name, TextEdit edit) throws MalformedTreeException {

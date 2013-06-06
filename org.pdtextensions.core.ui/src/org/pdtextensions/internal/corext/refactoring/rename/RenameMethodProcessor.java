@@ -7,6 +7,9 @@
  ******************************************************************************/
 package org.pdtextensions.internal.corext.refactoring.rename;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -14,6 +17,7 @@ import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
+import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.search.IDLTKSearchConstants;
 import org.eclipse.dltk.core.search.MethodReferenceMatch;
 import org.eclipse.dltk.core.search.SearchEngine;
@@ -39,6 +43,8 @@ import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
  */
 @SuppressWarnings("restriction")
 public class RenameMethodProcessor extends PHPRenameProcessor {
+	private List<IMethod> overriddenMethods;
+
 	public RenameMethodProcessor(IMethod modelElement) {
 		super(modelElement);
 	}
@@ -70,14 +76,34 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 
 	@Override
 	protected RefactoringStatus renameDeclaration(IProgressMonitor pm) throws CoreException {
-		return super.renameDeclaration(pm);
+		RefactoringStatus result = super.renameDeclaration(pm);
+		if (result.hasFatalError()) return result;
+
+		for (IMethod overriddenMethod: getOverriddenMethods(pm)) {
+			result = renameDeclaration(pm, overriddenMethod, overriddenMethod.getSourceModule());
+			if (result.hasFatalError()) return result;
+		}
+
+		return result;
 	}
 
 	@Override
 	protected RefactoringStatus updateReferences(IProgressMonitor pm) throws CoreException {
+		RefactoringStatus result = updateReferences(pm, (IMethod) modelElement);
+		if (result.hasFatalError()) return result;
+
+		for (IMethod overriddenMethod: getOverriddenMethods(pm)) {
+			result = updateReferences(pm, overriddenMethod);
+			if (result.hasFatalError()) return result;
+		}
+
+		return result;
+	}
+
+	private RefactoringStatus updateReferences(IProgressMonitor pm, final IMethod method) throws CoreException {
 		new SearchEngine().search(
 			SearchPattern.createPattern(
-				modelElement,
+				method,
 				IDLTKSearchConstants.REFERENCES,
 				SearchPattern.R_FULL_MATCH,
 				PHPLanguageToolkit.getDefault()
@@ -108,7 +134,7 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 											addTextEdit(
 												changeManager.get(module),
 												getProcessorName(),
-												new ReplaceEdit(offset, getCurrentElementName().length(), getNewElementName())
+												new ReplaceEdit(offset, method.getElementName().length(), getNewElementName())
 											);
 										} catch (MalformedTreeException e) {
 											// conflicting update -> omit text match
@@ -118,12 +144,12 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 									IModelElement sourceElement = PDTModelUtils.getSourceElement(module, expression.getCallName().sourceStart(), expression.getCallName().matchLength());
 									if (sourceElement.getElementType() == IModelElement.METHOD) {
 										IType declaringType = ((IMethod) sourceElement).getDeclaringType();
-										if (declaringType != null && PDTModelUtils.isSameType(declaringType, ((IMethod) modelElement).getDeclaringType())) {
+										if (declaringType != null && PDTModelUtils.isInstanceOf(declaringType, method.getDeclaringType())) {
 											try {
 												addTextEdit(
 													changeManager.get(module),
 													getProcessorName(),
-													new ReplaceEdit(expression.getCallName().sourceStart(), getCurrentElementName().length(), getNewElementName())
+													new ReplaceEdit(expression.getCallName().sourceStart(), method.getElementName().length(), getNewElementName())
 												);
 											} catch (MalformedTreeException e) {
 												// conflicting update -> omit text match
@@ -139,5 +165,24 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 		);
 
 		return new RefactoringStatus();
+	}
+
+	private List<IMethod> getOverriddenMethods(IProgressMonitor pm) throws ModelException {
+		if (overriddenMethods == null) {
+			overriddenMethods = new ArrayList<IMethod>();
+			IType declaringType = ((IMethod) modelElement).getDeclaringType();
+			if (declaringType != null) {
+				IType[] subTypes = declaringType.newTypeHierarchy(pm).getAllSubtypes(declaringType);
+				for (IType subType: subTypes) {
+					for (IMethod methodBySubType: subType.getMethods()) {
+						if (methodBySubType.getElementName().equals(getCurrentElementName())) {
+							overriddenMethods.add(methodBySubType);
+						}
+					}
+				}
+			}
+		}
+
+		return overriddenMethods;
 	}
 }
