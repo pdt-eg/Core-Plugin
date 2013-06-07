@@ -92,6 +92,12 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 					if (element != null && ActionUtil.isEditable(getShell(), (IModelElement) element)) {
 						if (element instanceof ISourceModule && selection instanceof ITextSelection) {
 							IModelElement sourceElement = PDTModelUtils.getSourceElement((ISourceModule) element, ((ITextSelection) selection).getOffset(), ((ITextSelection) selection).getLength());
+							if (sourceElement instanceof IMethod) {
+								IMethod farthestOverriddenMethod = getFarthestOverriddenMethod((IMethod) sourceElement);
+								if (!sourceElement.equals(farthestOverriddenMethod)) {
+									sourceElement = farthestOverriddenMethod;
+								}
+							}
 							if (sourceElement != null && ActionUtil.isEditable(getShell(), sourceElement) && isRenameAvailable(sourceElement)) {
 								run(sourceElement);
 								return;
@@ -120,6 +126,12 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 				IModelElement[] elements = SelectionConverter.codeResolve(editor);
 				if (elements != null && elements.length == 1) {
 					IModelElement sourceElement = PDTModelUtils.getSourceElement(elements[0], selection.getOffset(), selection.getLength());
+					if (sourceElement instanceof IMethod) {
+						IMethod farthestOverriddenMethod = getFarthestOverriddenMethod((IMethod) sourceElement);
+						if (!sourceElement.equals(farthestOverriddenMethod)) {
+							sourceElement = farthestOverriddenMethod;
+						}
+					}
 					if (sourceElement != null && ActionUtil.isEditable(getShell(), sourceElement) && isRenameAvailable(sourceElement)) {
 						run(sourceElement);
 						return;
@@ -207,6 +219,15 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 			}
 		default:
 			return null;
+		}
+	}
+
+	private static IMethod getFarthestOverriddenMethod(IMethod method) throws CoreException {
+		IMethod overriddenMethod = PDTModelUtils.getOverriddenMethod(method);
+		if (overriddenMethod == null) {
+			return method;
+		} else {
+			return getFarthestOverriddenMethod(overriddenMethod);
 		}
 	}
 }

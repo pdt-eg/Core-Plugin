@@ -8,6 +8,7 @@
  */
 package org.pdtextensions.core.util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -45,6 +46,10 @@ import org.eclipse.dltk.internal.core.util.LRUCache;
 import org.eclipse.dltk.ti.types.IEvaluatedType;
 import org.eclipse.php.core.compiler.PHPFlags;
 import org.eclipse.php.internal.core.Logger;
+import org.eclipse.php.internal.core.ast.nodes.Bindings;
+import org.eclipse.php.internal.core.ast.nodes.IMethodBinding;
+import org.eclipse.php.internal.core.ast.nodes.Program;
+import org.eclipse.php.internal.core.ast.visitor.AbstractVisitor;
 import org.eclipse.php.internal.core.compiler.ast.nodes.FullyQualifiedReference;
 import org.eclipse.php.internal.core.compiler.ast.nodes.NamespaceReference;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPDocBlock;
@@ -61,6 +66,7 @@ import org.eclipse.php.internal.core.typeinference.TraitAliasObject;
 import org.eclipse.php.internal.core.typeinference.TraitPrecedenceObject;
 import org.eclipse.php.internal.core.typeinference.TraitUtils;
 import org.eclipse.php.internal.core.typeinference.UseTrait;
+import org.eclipse.php.ui.editor.SharedASTProvider;
 import org.pdtextensions.core.PEXCorePlugin;
 
 /**
@@ -579,6 +585,27 @@ public class PDTModelUtils {
 	/**
 	 * @since 0.17.0
 	 */
+	public static IMethod getOverriddenMethod(IMethod method) throws CoreException {
+		Assert.isNotNull(method);
+
+		try {
+			Program ast = SharedASTProvider.getAST(method.getSourceModule(), SharedASTProvider.WAIT_YES, new NullProgressMonitor());
+			if (ast != null) {
+				OverriddenMethodFinder overriddenMethodFinder = new PDTModelUtils().new OverriddenMethodFinder(method);
+				ast.accept(overriddenMethodFinder);
+
+				return overriddenMethodFinder.getOverriddenMethod();
+			}
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, PEXCorePlugin.PLUGIN_ID, e.getMessage(), e));
+		}
+
+		return null;
+	}
+
+	/**
+	 * @since 0.17.0
+	 */
 	private static IType fixInvalidSourceElement(IMethod sourceElement, int offset, int length) throws CoreException {
 		ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(sourceElement.getSourceModule());
 		if (moduleDeclaration != null) {
@@ -629,6 +656,39 @@ public class PDTModelUtils {
 
 		public IType getSourceType() {
 			return sourceType;
+		}
+	}
+
+	/**
+	 * @since 0.17.0
+	 */
+	private class OverriddenMethodFinder extends AbstractVisitor {
+		private IMethod method;
+		private IMethod overriddenMethod;
+
+		public OverriddenMethodFinder(IMethod method) {
+			this.method = method;
+		}
+
+		@Override
+		public boolean visit(org.eclipse.php.internal.core.ast.nodes.MethodDeclaration node) {
+			if (node.getFunction().getFunctionName().getName().equals(method.getElementName())) {
+				IMethodBinding methodBinding = node.resolveMethodBinding();
+				if (methodBinding != null) {
+					IMethodBinding overriddenMethodBinding = Bindings.findOverriddenMethod(methodBinding, true);
+					if (overriddenMethodBinding != null) {
+						overriddenMethod = (IMethod) overriddenMethodBinding.getPHPElement();
+					}
+				}
+
+				return false;
+			}
+
+			return true;
+		}
+
+		public IMethod getOverriddenMethod() {
+			return overriddenMethod;
 		}
 	}
 }
