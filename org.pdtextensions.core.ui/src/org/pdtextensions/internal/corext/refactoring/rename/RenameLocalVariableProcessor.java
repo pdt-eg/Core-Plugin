@@ -26,6 +26,7 @@ import org.eclipse.text.edits.ReplaceEdit;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.refactoring.IPHPRefactorings;
 import org.pdtextensions.core.ui.refactoring.IRefactoringProcessorIds;
+import org.pdtextensions.core.util.PDTModelUtils;
 import org.pdtextensions.internal.corext.refactoring.Checks;
 import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
 
@@ -79,11 +80,10 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 			if (range != null) {
 				final int sourceStart = range.getOffset();
 				final int sourceEnd = range.getOffset() + range.getLength();
+				final ISourceRange declarationSourceRange = ((IField) modelElement).getSourceRange();
 
 				try {
 					moduleDeclaration.traverse(new PHPASTVisitor() {
-						private int occurrenceCount = 0;
-
 						@Override
 						public boolean visit(ArrayVariableReference s) throws Exception {
 							return visit((VariableReference) s);
@@ -91,12 +91,13 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 
 						@Override
 						public boolean visit(VariableReference s) throws Exception {
-							if (s.sourceStart() >= sourceStart && s.sourceEnd() <= sourceEnd && s.getName().equals(modelElement.getElementName())) {
-								if (occurrenceCount > 0) {
+							if (s.sourceStart() >= sourceStart && s.sourceEnd() <= sourceEnd
+									&& s.getName().equals(modelElement.getElementName())
+									&& s.sourceStart() != declarationSourceRange.getOffset()) {
+								IModelElement sourceElement = PDTModelUtils.getSourceElement(cu, s.sourceStart(), s.matchLength());
+								if (sourceElement != null && sourceElement.equals(modelElement)) {
 									addTextEdit(changeManager.get(cu), getProcessorName(), new ReplaceEdit(s.sourceStart(), getCurrentElementName().length(), getNewElementName()));
 								}
-
-								occurrenceCount += 1;
 							}
 
 							return true;
