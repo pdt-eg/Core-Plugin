@@ -68,43 +68,45 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 	protected RefactoringStatus updateReferences(IProgressMonitor pm) throws CoreException {
 		ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(cu);
 		if (moduleDeclaration != null) {
-			IModelElement parent = modelElement.getParent();
-			ISourceRange range = null;
+			IModelElement enclosingElement = modelElement.getParent();
+			final ISourceRange declarationSourceRange = ((IField) modelElement).getSourceRange();
+			if (enclosingElement != null && declarationSourceRange != null) {
+				ISourceRange enclosingElementSourceRange = null;
 
-			if (parent.getElementType() == IModelElement.METHOD) {
-				range = ((IMethod) parent).getSourceRange();
-			} else if (parent.getElementType() == IModelElement.SOURCE_MODULE) {
-				range = ((ISourceModule) parent).getSourceRange();
-			}
+				if (enclosingElement.getElementType() == IModelElement.METHOD) {
+					enclosingElementSourceRange = ((IMethod) enclosingElement).getSourceRange();
+				} else if (enclosingElement.getElementType() == IModelElement.SOURCE_MODULE) {
+					enclosingElementSourceRange = ((ISourceModule) enclosingElement).getSourceRange();
+				}
 
-			if (range != null) {
-				final int sourceStart = range.getOffset();
-				final int sourceEnd = range.getOffset() + range.getLength();
-				final ISourceRange declarationSourceRange = ((IField) modelElement).getSourceRange();
+				if (enclosingElementSourceRange != null) {
+					final int enclosingElementSourceStart = enclosingElementSourceRange.getOffset();
+					final int enclosingElementSourceEnd = enclosingElementSourceRange.getOffset() + enclosingElementSourceRange.getLength();
 
-				try {
-					moduleDeclaration.traverse(new PHPASTVisitor() {
-						@Override
-						public boolean visit(ArrayVariableReference s) throws Exception {
-							return visit((VariableReference) s);
-						}
-
-						@Override
-						public boolean visit(VariableReference s) throws Exception {
-							if (s.sourceStart() >= sourceStart && s.sourceEnd() <= sourceEnd
-									&& s.getName().equals(modelElement.getElementName())
-									&& s.sourceStart() != declarationSourceRange.getOffset()) {
-								IModelElement sourceElement = PDTModelUtils.getSourceElement(cu, s.sourceStart(), s.matchLength());
-								if (sourceElement != null && sourceElement.equals(modelElement)) {
-									addTextEdit(changeManager.get(cu), getProcessorName(), new ReplaceEdit(s.sourceStart(), getCurrentElementName().length(), getNewElementName()));
-								}
+					try {
+						moduleDeclaration.traverse(new PHPASTVisitor() {
+							@Override
+							public boolean visit(ArrayVariableReference s) throws Exception {
+								return visit((VariableReference) s);
 							}
 
-							return true;
-						}
-					});
-				} catch (Exception e) {
-					throw new CoreException(new Status(IStatus.ERROR, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
+							@Override
+							public boolean visit(VariableReference s) throws Exception {
+								if (s.sourceStart() >= enclosingElementSourceStart && s.sourceEnd() <= enclosingElementSourceEnd
+										&& s.getName().equals(modelElement.getElementName())
+										&& s.sourceStart() != declarationSourceRange.getOffset()) {
+									IModelElement sourceElement = PDTModelUtils.getSourceElement(cu, s.sourceStart(), s.matchLength());
+									if (sourceElement != null && sourceElement.equals(modelElement)) {
+										addTextEdit(changeManager.get(cu), getProcessorName(), new ReplaceEdit(s.sourceStart(), getCurrentElementName().length(), getNewElementName()));
+									}
+								}
+
+								return true;
+							}
+						});
+					} catch (Exception e) {
+						throw new CoreException(new Status(IStatus.ERROR, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
+					}
 				}
 			}
 		}
