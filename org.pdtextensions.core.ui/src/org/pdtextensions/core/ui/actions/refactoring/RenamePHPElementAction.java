@@ -91,13 +91,7 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 					element = ((IImplForPhp) element).getModelElement();
 					if (element != null && ActionUtil.isEditable(getShell(), (IModelElement) element)) {
 						if (element instanceof ISourceModule && selection instanceof ITextSelection) {
-							IModelElement sourceElement = PDTModelUtils.getSourceElement((ISourceModule) element, ((ITextSelection) selection).getOffset(), ((ITextSelection) selection).getLength());
-							if (sourceElement instanceof IMethod) {
-								IMethod farthestOverriddenMethod = getFarthestOverriddenMethod((IMethod) sourceElement);
-								if (!sourceElement.equals(farthestOverriddenMethod)) {
-									sourceElement = farthestOverriddenMethod;
-								}
-							}
+							IModelElement sourceElement = getSourceElement((ISourceModule) element, ((ITextSelection) selection).getOffset(), ((ITextSelection) selection).getLength());
 							if (sourceElement != null && ActionUtil.isEditable(getShell(), sourceElement) && isRenameAvailable(sourceElement)) {
 								run(sourceElement);
 								return;
@@ -125,13 +119,7 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 			try {
 				IModelElement[] elements = SelectionConverter.codeResolve(editor);
 				if (elements != null && elements.length == 1) {
-					IModelElement sourceElement = PDTModelUtils.getSourceElement(elements[0], selection.getOffset(), selection.getLength());
-					if (sourceElement instanceof IMethod) {
-						IMethod farthestOverriddenMethod = getFarthestOverriddenMethod((IMethod) sourceElement);
-						if (!sourceElement.equals(farthestOverriddenMethod)) {
-							sourceElement = farthestOverriddenMethod;
-						}
-					}
+					IModelElement sourceElement = getSourceElement(elements[0], selection.getOffset(), selection.getLength());
 					if (sourceElement != null && ActionUtil.isEditable(getShell(), sourceElement) && isRenameAvailable(sourceElement)) {
 						run(sourceElement);
 						return;
@@ -228,6 +216,27 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 			return method;
 		} else {
 			return getFarthestOverriddenMethod(overriddenMethod);
+		}
+	}
+
+	private static IModelElement getSourceElement(IModelElement element, int offset, int length) throws CoreException {
+		ISourceModule sourceModule = (ISourceModule) element.getAncestor(IModelElement.SOURCE_MODULE);
+		if (sourceModule == null) return null;
+
+		return getSourceElement(sourceModule, offset, length);
+	}
+
+	private static IModelElement getSourceElement(ISourceModule sourceModule, int offset, int length) throws CoreException {
+		IModelElement sourceElement = PDTModelUtils.getSourceElement(sourceModule, offset, length);
+		if (sourceElement instanceof IMethod) {
+			IMethod farthestOverriddenMethod = getFarthestOverriddenMethod((IMethod) sourceElement);
+			if (sourceElement.equals(farthestOverriddenMethod)) {
+				return sourceElement;
+			} else {
+				return farthestOverriddenMethod;
+			}
+		} else {
+			return sourceElement;
 		}
 	}
 }
