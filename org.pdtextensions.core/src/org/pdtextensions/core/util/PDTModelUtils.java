@@ -617,9 +617,7 @@ public class PDTModelUtils {
 				throw new CoreException(new Status(IStatus.ERROR, PEXCorePlugin.PLUGIN_ID, e.getMessage(), e));
 			}
 
-			if (sourceTypeFinder.getSourceType() != null) {
-				return sourceTypeFinder.getSourceType();
-			}
+			return sourceTypeFinder.getSourceType();
 		}
 
 		return null;
