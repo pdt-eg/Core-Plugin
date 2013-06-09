@@ -43,7 +43,7 @@ import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
  */
 @SuppressWarnings("restriction")
 public class RenameMethodProcessor extends PHPRenameProcessor {
-	private List<IMethod> overriddenMethods;
+	private List<IMethod> overridingMethods;
 
 	public RenameMethodProcessor(IMethod modelElement) {
 		super(modelElement);
@@ -79,8 +79,8 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 		RefactoringStatus result = super.renameDeclaration(pm);
 		if (result.hasFatalError()) return result;
 
-		for (IMethod overriddenMethod: getOverriddenMethods(pm)) {
-			result = renameDeclaration(pm, overriddenMethod, overriddenMethod.getSourceModule());
+		for (IMethod overridingMethods: getOverridingMethods(pm)) {
+			result = renameDeclaration(pm, overridingMethods, overridingMethods.getSourceModule());
 			if (result.hasFatalError()) return result;
 		}
 
@@ -92,8 +92,8 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 		RefactoringStatus result = updateReferences(pm, (IMethod) modelElement);
 		if (result.hasFatalError()) return result;
 
-		for (IMethod overriddenMethod: getOverriddenMethods(pm)) {
-			result = updateReferences(pm, overriddenMethod);
+		for (IMethod overridingMethods: getOverridingMethods(pm)) {
+			result = updateReferences(pm, overridingMethods);
 			if (result.hasFatalError()) return result;
 		}
 
@@ -167,22 +167,22 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 		return new RefactoringStatus();
 	}
 
-	private List<IMethod> getOverriddenMethods(IProgressMonitor pm) throws ModelException {
-		if (overriddenMethods == null) {
-			overriddenMethods = new ArrayList<IMethod>();
+	private List<IMethod> getOverridingMethods(IProgressMonitor pm) throws ModelException {
+		if (overridingMethods == null) {
+			overridingMethods = new ArrayList<IMethod>();
 			IType declaringType = ((IMethod) modelElement).getDeclaringType();
 			if (declaringType != null) {
 				IType[] subTypes = declaringType.newTypeHierarchy(pm).getAllSubtypes(declaringType);
 				for (IType subType: subTypes) {
 					for (IMethod methodBySubType: subType.getMethods()) {
 						if (methodBySubType.getElementName().equals(getCurrentElementName())) {
-							overriddenMethods.add(methodBySubType);
+							overridingMethods.add(methodBySubType);
 						}
 					}
 				}
 			}
 		}
 
-		return overriddenMethods;
+		return overridingMethods;
 	}
 }
