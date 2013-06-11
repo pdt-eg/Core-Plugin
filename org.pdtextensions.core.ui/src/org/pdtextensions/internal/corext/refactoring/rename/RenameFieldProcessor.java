@@ -139,19 +139,19 @@ public abstract class RenameFieldProcessor extends PHPRenameProcessor {
 							} else if (receiverReference instanceof TypeReference) {
 								receiverTypes = PDTTypeInferenceUtils.getTypes((TypeReference) receiverReference, sourceModule);
 							}
-							if (receiverTypes != null) {
-								for (IType receiverType: receiverTypes) {
-									IType ancestorType = (IType) modelElement.getAncestor(IModelElement.TYPE);
-									if (ancestorType != null && PDTModelUtils.isInstanceOf(receiverType, ancestorType)) {
-										replaceEdit = createReplaceEdit(astNode);
-
-										return false;
-									}
+							if (receiverTypes != null && receiverTypes.length > 0) {
+								IType ancestorType = (IType) modelElement.getAncestor(IModelElement.TYPE);
+								if (ancestorType != null && PDTModelUtils.isInstanceOf(receiverTypes[0], ancestorType)) {
+									replaceEdit = createReplaceEdit(astNode);
 								}
 							}
 						}
+
+						break;
 					}
 				}
+
+				return false;
 			}
 
 			return true;
