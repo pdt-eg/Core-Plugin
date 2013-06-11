@@ -2,7 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
 
-   <extension-point id="formatterProfileContributor" name="Formatter Profile Contributor" schema="schema/formatterProfileContributor.exsd"/>
    <extension-point id="namespaceresolver" name="PDT Namespaceresolver" schema="schema/namespaceresolver.exsd"/>
 
 	<extension point="org.eclipse.ui.perspectiveExtensions">
@@ -39,23 +38,9 @@
    </extension>
 	
 
-   <extension
-         point="org.eclipse.php.ui.phpFormatterPrefBlock">
-      <block
-            class="org.pdtextensions.core.ui.preferences.formatter.PDTFormatterConfigurationBlockWrapper"
-            id="org.pdtextensions.core.ui.formatter.codeFormatterBlock"
-            name="PDT Extensions Code Formatter">
-      </block>
-   </extension>
 
    <extension
          point="org.eclipse.ui.preferencePages">
-      <page
-            category="org.eclipse.ui.preferencePages.GeneralTextEditor"
-            class="org.pdtextensions.core.ui.preferences.formatter.IndentGuidePreferencePage"
-            id="jp.sourceforge.pdt_tools.indentguide.preferences.PreferencePage"
-            name="%indentpage.name">
-      </page>
       <page
             category="org.eclipse.php.ui.preferences.PHPBasePreferencePage"
             class="org.pdtextensions.core.ui.preferences.SemanticAnalysisPreferencePage"
@@ -142,6 +127,15 @@
                   label="New class"
                   style="push"
                   tooltip="Create new PHP class">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeWorkbenchWindow.activePerspective">
+                     <equals
+                           value="org.eclipse.php.perspective">
+                     </equals>
+                  </with>
+               </visibleWhen>
             </command>
          </toolbar>
          <toolbar
@@ -151,6 +145,15 @@
                   icon="ico/full/obj16/int_obj.gif"
                   label="New interface"
                   style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <with
+                        variable="activeWorkbenchWindow.activePerspective">
+                     <equals
+                           value="org.eclipse.php.perspective">
+                     </equals>
+                  </with>
+               </visibleWhen>
             </command>
          </toolbar>
       </menuContribution>
@@ -159,36 +162,12 @@
    
    
    <extension
-         point="org.eclipse.php.ui.phpFormatterProcessor">
-         <processor class="org.pdtextensions.core.ui.ast.Formatter"
-            id="jp.sourceforge.pdt_tools.formatter.core.ast.Formatter"
-            name="pdt_tools.formatter"/>
-   </extension>
-   
-   <extension
-         id="jp.sourceforge.pdt_tools.formatter.problem"
-         name="%extension.name"
-         point="org.eclipse.core.resources.markers">
-      <super
-            type="org.eclipse.core.resources.problemmarker">
-      </super>
-      <persistent
-            value="true">
-      </persistent>
-   </extension>
-   <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
             class="org.pdtextensions.core.ui.preferences.PreferenceInitializer">
       </initializer>
    </extension>   
 
-	<extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="org.pdtextensions.core.ui.Starter">
-      </startup>
-   </extension>
    
    <extension point="org.eclipse.ui.commands">
       <command
@@ -302,10 +281,5 @@
             id="org.pdtextensions.core.ui.actions.refactoring.RenamePHPElementActionDelegate"
             priority="9">
       </action>
-   </extension>
-   <extension
-         point="org.pdtextensions.core.ui.formatterProfileContributor">
-      <contributor
-            class="org.pdtextensions.core.ui.formatter.profile.CoreProfileContributor"></contributor>
    </extension>
 </plugin>

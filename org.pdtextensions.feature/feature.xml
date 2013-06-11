@@ -2,14 +2,13 @@
 <feature
       id="org.pdtextensions.feature"
       label="PDT Extensions"
-      version="0.16.0.qualifier"
+      version="0.16.1.qualifier"
       provider-name="http://pdt-extensions.org">
 
    <description url="https://github.com/pdt-eg">
       The Core Plugin of the PDT Extensions Group. Currently it provides
 the following features:
 
-- Advanced PHP Code Formatter
 - &quot;New Class&quot; and &quot;New Interface&quot; wizard
 - Validation with quickfixes for missing Interface method implementations
 - Validation with quickfixes for missing use statements

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PEX UI Plugin
 Bundle-SymbolicName: org.pdtextensions.core.ui;singleton:=true
-Bundle-Version: 0.16.0.qualifier
+Bundle-Version: 0.16.1.qualifier
 Bundle-Activator: org.pdtextensions.core.ui.PEXUIPlugin
 Bundle-Vendor: https://github.com/pdt-eg
 Require-Bundle: org.eclipse.ui,
@@ -41,11 +41,7 @@ Export-Package: org.pdtextensions.core.ui,
  org.pdtextensions.core.ui.dialog,
  org.pdtextensions.core.ui.expressions,
  org.pdtextensions.core.ui.extension,
- org.pdtextensions.core.ui.formatter,
- org.pdtextensions.core.ui.formatter.align,
- org.pdtextensions.core.ui.formatter.profile,
  org.pdtextensions.core.ui.preferences,
- org.pdtextensions.core.ui.preferences.formatter,
  org.pdtextensions.core.ui.preferences.launcher,
  org.pdtextensions.core.ui.quickfix,
  org.pdtextensions.core.ui.refactoring,

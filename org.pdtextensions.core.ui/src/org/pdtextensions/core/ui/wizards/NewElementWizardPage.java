@@ -29,7 +29,6 @@ import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalListener;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -47,7 +46,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.ui.ExtensionManager;
-import org.pdtextensions.core.ui.ast.Formatter;
 import org.pdtextensions.core.ui.extension.INamespaceResolver;
 import org.pdtextensions.core.ui.util.PHPContentProposalAdapter;
 import org.pdtextensions.core.ui.util.PHPContentProposalProvider;
@@ -601,12 +599,17 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 	@Override
 	protected String getFileContent(ISourceModule module) {
 	
+		return generateFileContent();
+		
+		//TODO: format document using new PDT formatter
+		/*
 		IDocument doc = Formatter.createPHPDocument();
 		Formatter formatter = new Formatter();
 		doc.set(generateFileContent());
 		formatter.format(doc);
 	
 		return doc.get();
+		*/
 	}
 
 	abstract protected String generateFileContent();

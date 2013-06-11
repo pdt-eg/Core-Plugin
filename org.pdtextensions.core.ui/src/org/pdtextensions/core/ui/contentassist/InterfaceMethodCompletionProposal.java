@@ -27,7 +27,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.ui.PDTPluginImages;
 import org.pdtextensions.core.ui.PEXUIPlugin;
-import org.pdtextensions.core.ui.ast.Formatter;
 import org.pdtextensions.core.ui.codemanipulation.MethodStub;
 import org.pdtextensions.core.validation.MissingMethodImplementation;
 import org.pdtextensions.core.validation.validator.ImplementationValidator;
@@ -100,8 +99,11 @@ public class InterfaceMethodCompletionProposal extends PHPCompletionProposal {
 						UseStatementInjector injector = new UseStatementInjector(this);
 						injector.inject(document, getTextViewer(), offset);
 						
+						//TODO: format code using new PDT formatter
+						/*
 						Formatter formatter = new Formatter();
-						formatter.format(document);						
+						formatter.format(document);
+						*/
 						
 					}					
 					

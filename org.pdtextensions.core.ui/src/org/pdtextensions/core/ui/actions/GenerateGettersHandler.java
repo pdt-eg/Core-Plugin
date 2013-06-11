@@ -35,7 +35,6 @@ import org.eclipse.dltk.ui.DLTKPluginImages;
 import org.eclipse.dltk.ui.DLTKUIPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -58,7 +57,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.pdtextensions.core.ui.ast.Formatter;
 import org.pdtextensions.core.ui.dialog.GetterSetterDialog;
 import org.pdtextensions.core.ui.util.GetterSetterUtil;
 
@@ -350,9 +348,12 @@ public class GenerateGettersHandler extends SelectionHandler implements IHandler
 		
 		document.replace(end, 0, methods);
 		
+		//TODO: format code using new PDT formatter
+		/*
 		Formatter formatter = new Formatter();
 		Region region = new Region(end, methods.length()); 
-		formatter.format(document, region);		
+		formatter.format(document, region);
+		*/		
 		
 	}
 	

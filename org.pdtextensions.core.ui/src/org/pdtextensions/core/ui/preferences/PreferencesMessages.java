@@ -25,8 +25,6 @@ public final class PreferencesMessages extends NLS {
 		// Do not instantiate
 	}
 
-	public static String CodeFormatterPreferencePage_title;
-	public static String CodeFormatterPreferencePage_description;
 	public static String PropertyAndPreferencePage_useworkspacesettings_change;
 	public static String PropertyAndPreferencePage_showprojectspecificsettings_label;
 	public static String PropertyAndPreferencePage_useprojectsettings_label;
