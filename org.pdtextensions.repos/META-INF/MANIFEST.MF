@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PDT Extensions Repository Plugin
 Bundle-SymbolicName: org.pdtextensions.repos;singleton:=true
-Bundle-Version: 0.16.1.qualifier
+Bundle-Version: 0.17.0.qualifier
 Bundle-Activator: org.pdtextensions.repos.PEXReposPlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources
