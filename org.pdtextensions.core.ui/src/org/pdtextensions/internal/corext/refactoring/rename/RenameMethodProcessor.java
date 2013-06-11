@@ -172,11 +172,11 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 			overridingMethods = new ArrayList<IMethod>();
 			IType declaringType = ((IMethod) modelElement).getDeclaringType();
 			if (declaringType != null) {
-				IType[] subTypes = declaringType.newTypeHierarchy(pm).getAllSubtypes(declaringType);
-				for (IType subType: subTypes) {
+				for (IType subType: declaringType.newTypeHierarchy(pm).getAllSubtypes(declaringType)) {
 					for (IMethod methodBySubType: subType.getMethods()) {
 						if (methodBySubType.getElementName().equals(getCurrentElementName())) {
 							overridingMethods.add(methodBySubType);
+							break;
 						}
 					}
 				}
