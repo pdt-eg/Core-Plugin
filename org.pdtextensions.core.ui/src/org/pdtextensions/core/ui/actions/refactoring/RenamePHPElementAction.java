@@ -23,7 +23,6 @@ import org.eclipse.dltk.internal.corext.refactoring.rename.RenameScriptProjectPr
 import org.eclipse.dltk.internal.corext.refactoring.rename.RenameSourceFolderProcessor;
 import org.eclipse.dltk.internal.corext.refactoring.rename.RenameSourceModuleProcessor;
 import org.eclipse.dltk.internal.ui.actions.ActionUtil;
-import org.eclipse.dltk.internal.ui.refactoring.RefactoringMessages;
 import org.eclipse.dltk.ui.actions.SelectionDispatchAction;
 import org.eclipse.dltk.ui.util.ExceptionHandler;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -34,6 +33,7 @@ import org.eclipse.php.internal.core.documentModel.dom.IImplForPhp;
 import org.eclipse.php.internal.ui.actions.SelectionConverter;
 import org.eclipse.php.internal.ui.editor.PHPStructuredEditor;
 import org.eclipse.ui.IWorkbenchSite;
+import org.pdtextensions.core.ui.refactoring.RefactoringMessages;
 import org.pdtextensions.core.ui.refactoring.RenameSupport;
 import org.pdtextensions.core.util.PDTModelUtils;
 import org.pdtextensions.internal.corext.refactoring.rename.RenameConstantProcessor;
@@ -100,12 +100,12 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 					}
 				}
 			} catch (CoreException e) {
-				ExceptionHandler.handle(e, RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_exception);
+				ExceptionHandler.handle(e, RefactoringMessages.RenamePHPElementAction_name, RefactoringMessages.RenamePHPElementAction_exception);
 				return;
 			}
 		}
 
-		MessageDialog.openInformation(getShell(), RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_not_available);
+		MessageDialog.openInformation(getShell(), RefactoringMessages.RenamePHPElementAction_name, RefactoringMessages.RenamePHPElementAction_not_available);
 	}
 
 	@Override
@@ -126,12 +126,12 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 					}
 				}
 			} catch (CoreException e) {
-				ExceptionHandler.handle(e, RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_exception);
+				ExceptionHandler.handle(e, RefactoringMessages.RenamePHPElementAction_name, RefactoringMessages.RenamePHPElementAction_exception);
 				return;
 			}
 		}
 
-		MessageDialog.openInformation(getShell(), RefactoringMessages.RenameScriptElementAction_name, RefactoringMessages.RenameScriptElementAction_not_available);
+		MessageDialog.openInformation(getShell(), RefactoringMessages.RenamePHPElementAction_name, RefactoringMessages.RenamePHPElementAction_not_available);
 	}
 
 	private void run(IModelElement element) throws CoreException {

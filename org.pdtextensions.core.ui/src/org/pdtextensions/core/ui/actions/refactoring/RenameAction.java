@@ -8,7 +8,6 @@
 package org.pdtextensions.core.ui.actions.refactoring;
 
 import org.eclipse.dltk.internal.ui.actions.ActionUtil;
-import org.eclipse.dltk.internal.ui.refactoring.RefactoringMessages;
 import org.eclipse.dltk.internal.ui.refactoring.actions.RenameResourceAction;
 import org.eclipse.dltk.ui.actions.SelectionDispatchAction;
 import org.eclipse.jface.text.ITextSelection;
@@ -16,6 +15,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.php.internal.ui.editor.PHPStructuredEditor;
 import org.eclipse.ui.IWorkbenchSite;
+import org.pdtextensions.core.ui.refactoring.RefactoringMessages;
 
 /**
  * @since 0.17.0
