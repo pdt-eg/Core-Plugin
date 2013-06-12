@@ -35,7 +35,6 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.pdtextensions.core.ui,
  org.pdtextensions.core.ui.actions,
  org.pdtextensions.core.ui.actions.refactoring,
- org.pdtextensions.core.ui.ast,
  org.pdtextensions.core.ui.codemanipulation,
  org.pdtextensions.core.ui.contentassist,
  org.pdtextensions.core.ui.dialog,
