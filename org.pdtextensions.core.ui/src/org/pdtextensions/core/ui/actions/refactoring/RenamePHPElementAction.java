@@ -153,13 +153,20 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 		case IModelElement.PROJECT_FRAGMENT:
 			return RefactoringAvailabilityTester.isRenameAvailable((IProjectFragment) element);
 		case IModelElement.SCRIPT_FOLDER:
-			// TODO Add namespace support like JDT
 			return RefactoringAvailabilityTester.isRenameAvailable((IScriptFolder) element);
 		case IModelElement.SOURCE_MODULE:
 			return RefactoringAvailabilityTester.isRenameAvailable((ISourceModule) element);
 		case IModelElement.TYPE:
-			return RefactoringAvailabilityTester.isRenameAvailable((IType) element)
-						&& RefactoringAvailabilityTester.isRenameAvailable(((IMember) element).getSourceModule());
+			// TODO Add namespace support like JDT
+			if (PHPFlags.isClass(((IType) element).getFlags())
+					|| PHPFlags.isInterface(((IType) element).getFlags())
+					|| PHPFlags.isTrait(((IType) element).getFlags())
+					) {
+				return RefactoringAvailabilityTester.isRenameAvailable((IType) element)
+							&& RefactoringAvailabilityTester.isRenameAvailable(((IMember) element).getSourceModule());
+			} else {
+				return false;
+			}
 		case IModelElement.METHOD:
 			return RefactoringAvailabilityTester.isRenameAvailable((IMethod) element)
 						&& RefactoringAvailabilityTester.isRenameAvailable(((IMember) element).getSourceModule());
@@ -183,14 +190,7 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 		case IModelElement.SOURCE_MODULE:
 			return new RenameSupport(new RenameSourceModuleProcessor((ISourceModule) element), newName, flags);
 		case IModelElement.TYPE:
-			if (PHPFlags.isClass(((IType) element).getFlags())
-					|| PHPFlags.isInterface(((IType) element).getFlags())
-					|| PHPFlags.isTrait(((IType) element).getFlags())
-					) {
-				return new RenameSupport(new RenameTypeProcessor((IType) element), newName, flags);
-			} else {
-				return null;
-			}
+			return new RenameSupport(new RenameTypeProcessor((IType) element), newName, flags);
 		case IModelElement.METHOD:
 			return new RenameSupport(new RenameMethodProcessor((IMethod) element), newName, flags);
 		case IModelElement.FIELD:
