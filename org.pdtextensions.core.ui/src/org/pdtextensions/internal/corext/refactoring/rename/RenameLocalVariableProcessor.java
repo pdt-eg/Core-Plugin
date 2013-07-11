@@ -69,7 +69,7 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 		ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(cu);
 		if (moduleDeclaration != null) {
 			IModelElement enclosingElement = modelElement.getParent();
-			final ISourceRange declarationSourceRange = ((IField) modelElement).getSourceRange();
+			final ISourceRange declarationSourceRange = ((IField) modelElement).getNameRange();
 			if (enclosingElement != null && declarationSourceRange != null) {
 				ISourceRange enclosingElementSourceRange = null;
 
