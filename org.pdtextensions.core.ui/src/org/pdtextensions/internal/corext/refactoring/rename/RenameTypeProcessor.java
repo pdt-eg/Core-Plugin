@@ -45,6 +45,7 @@ import org.eclipse.text.edits.ReplaceEdit;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.refactoring.IPHPRefactorings;
 import org.pdtextensions.core.ui.refactoring.IRefactoringProcessorIds;
+import org.pdtextensions.core.util.PDTModelUtils;
 import org.pdtextensions.internal.corext.refactoring.Checks;
 import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
 
@@ -143,18 +144,28 @@ public class RenameTypeProcessor extends PHPRenameProcessor {
 										@Override
 										public boolean visit(FullyQualifiedReference s) throws Exception {
 											if (s.sourceStart() == match.getOffset() && s.sourceEnd() == match.getOffset() + match.getLength()) {
-												try {
-													addTextEdit(
-														changeManager.get(module),
-														getProcessorName(),
-														new ReplaceEdit(
-															s.getNamespace() == null ? match.getOffset() : s.getNamespace().sourceEnd() + 1,
-															getCurrentElementName().length(),
-															getNewElementName()
-														)
-													);
-												} catch (MalformedTreeException e) {
-													// conflicting update -> omit text match
+												IModelElement sourceElement = PDTModelUtils.getSourceElement(module, s.sourceStart(), s.matchLength());
+												if (sourceElement != null && sourceElement.getElementType() == IModelElement.TYPE && PDTModelUtils.isInstanceOf((IType) sourceElement, (IType) modelElement)) {
+													int offset;
+													if (s.getNamespace() == null) {
+														offset = s.sourceStart();
+													} else {
+														if ("\\".equals(s.getNamespace().getName())) {
+															offset = s.getNamespace().sourceEnd();
+														} else {
+															offset = s.getNamespace().sourceEnd() + 1;
+														}
+													}
+
+													try {
+														addTextEdit(
+															changeManager.get(module),
+															getProcessorName(),
+															new ReplaceEdit(offset, getCurrentElementName().length(), getNewElementName())
+														);
+													} catch (MalformedTreeException e) {
+														// conflicting update -> omit text match
+													}
 												}
 
 												return false;
