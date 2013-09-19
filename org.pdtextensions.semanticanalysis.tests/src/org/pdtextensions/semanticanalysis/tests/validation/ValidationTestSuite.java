@@ -1,4 +1,4 @@
-package org.pdtextensions.core.tests.validation;
+package org.pdtextensions.semanticanalysis.tests.validation;
 
 import org.eclipse.php.core.tests.errors.PHP53ErrorReportingTests;
 import org.eclipse.php.core.tests.errors.PHP54ErrorReportingTests;

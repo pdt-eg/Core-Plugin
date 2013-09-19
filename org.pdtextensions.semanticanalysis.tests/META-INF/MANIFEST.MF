@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: PEX Core Tests
-Bundle-SymbolicName: org.pdtextensions.core.tests;singleton:=true
+Bundle-Name: PEX Analysis Tests
+Bundle-SymbolicName: org.pdtextensions.semanticanalysis.tests;singleton:=true
 Bundle-Version: 0.17.0.qualifier
-Bundle-Activator: org.pdtextensions.core.tests.PEXCoreTestPlugin
+Bundle-Activator: org.pdtextensions.semanticanalysis.tests.PEXAnalysisTestPlugin
 Require-Bundle: org.junit,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
@@ -16,13 +16,14 @@ Require-Bundle: org.junit,
  org.eclipse.wst.sse.ui,
  org.eclipse.ui,
  org.eclipse.wst.validation,
- org.pdtextensions.core.ui,
- org.pdtextensions.core,
+ org.pdtextensions.semanticanalysis,
+ org.eclipse.e4.core.di,
+ org.eclipse.e4.core.contexts,
  org.eclipse.php.core.tests,
- org.apache.commons.io
+ org.apache.commons.io,
+ javax.inject
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.pdtextensions.core.tests,
- org.pdtextensions.core.tests.codeassist,
- org.pdtextensions.core.tests.codegeneration
+Export-Package: org.pdtextensions.semanticanalysis.tests,
+ org.pdtextensions.semanticanalysis.tests.validation
 Bundle-ClassPath: .

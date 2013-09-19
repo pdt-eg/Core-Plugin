@@ -1,23 +1,23 @@
-package org.pdtextensions.core.tests;
+package org.pdtextensions.semanticanalysis.ui;
 
-import org.eclipse.php.core.tests.PHPCoreTests;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
  */
-public class PEXCoreTestPlugin extends PHPCoreTests {
+public class PEXAnalysisUIPlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.pdtextensions.core.tests"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.pdtextensions.semanticanalysis.ui"; //$NON-NLS-1$
 
 	// The shared instance
-	private static PEXCoreTestPlugin plugin;
+	private static PEXAnalysisUIPlugin plugin;
 	
 	/**
 	 * The constructor
 	 */
-	public PEXCoreTestPlugin() {
+	public PEXAnalysisUIPlugin() {
 	}
 
 	/*
@@ -43,7 +43,7 @@ public class PEXCoreTestPlugin extends PHPCoreTests {
 	 *
 	 * @return the shared instance
 	 */
-	public static PEXCoreTestPlugin getDefault() {
+	public static PEXAnalysisUIPlugin getDefault() {
 		return plugin;
 	}
 

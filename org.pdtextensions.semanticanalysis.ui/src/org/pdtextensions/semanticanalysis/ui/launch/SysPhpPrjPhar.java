@@ -1,4 +1,4 @@
-package org.pdtextensions.semanticanalysis.launch;
+package org.pdtextensions.semanticanalysis.ui.launch;
 
 import org.apache.commons.exec.CommandLine;
 import org.eclipse.core.resources.IProject;

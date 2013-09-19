@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.semanticanalysis.preferences.csfixer;
+package org.pdtextensions.semanticanalysis.ui.preferences.csfixer;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -50,8 +50,8 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.pdtextensions.core.ui.preferences.PreferenceConstants;
 import org.pdtextensions.core.ui.preferences.launcher.LauncherConfigurationBlock;
 import org.pdtextensions.core.ui.preferences.launcher.LauncherKeyBag;
-import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
-import org.pdtextensions.semanticanalysis.preferences.PEXPreferenceNames;
+import org.pdtextensions.semanticanalysis.ui.PEXAnalysisUIPlugin;
+import org.pdtextensions.semanticanalysis.ui.preferences.PEXPreferenceNames;
 
 
 @SuppressWarnings("restriction")
@@ -526,7 +526,7 @@ public class PHPCSFixerConfigurationBlock extends
 
 	@Override
 	protected String getPluginId() {
-		return PEXAnalysisPlugin.PLUGIN_ID;
+		return PEXAnalysisUIPlugin.PLUGIN_ID;
 	}
 
 	@Override
@@ -578,6 +578,6 @@ public class PHPCSFixerConfigurationBlock extends
 	}
 	
 	protected final static Key getPEXKey(String key) {
-		return getKey(PEXAnalysisPlugin.PLUGIN_ID, key);
+		return getKey(PEXAnalysisUIPlugin.PLUGIN_ID, key);
 	}
 }

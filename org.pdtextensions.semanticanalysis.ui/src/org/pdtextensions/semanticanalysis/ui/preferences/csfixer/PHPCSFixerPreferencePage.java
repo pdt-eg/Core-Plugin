@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.semanticanalysis.preferences.csfixer;
+package org.pdtextensions.semanticanalysis.ui.preferences.csfixer;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
+import org.pdtextensions.semanticanalysis.ui.PEXAnalysisUIPlugin;
 
 
 @SuppressWarnings("restriction")
@@ -25,7 +25,7 @@ public class PHPCSFixerPreferencePage extends PropertyAndPreferencePage {
 	private PHPCSFixerConfigurationBlock fConfigurationBlock;
 
 	public PHPCSFixerPreferencePage() {
-		setPreferenceStore(PEXAnalysisPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(PEXAnalysisUIPlugin.getDefault().getPreferenceStore());
 		setDescription("");
 	}
 
@@ -45,7 +45,7 @@ public class PHPCSFixerPreferencePage extends PropertyAndPreferencePage {
 
 	@Override
 	public IPreferenceStore getPreferenceStore() {
-		return PEXAnalysisPlugin.getDefault().getPreferenceStore();
+		return PEXAnalysisUIPlugin.getDefault().getPreferenceStore();
 	}
 	
 	protected void enableProjectSpecificSettings(

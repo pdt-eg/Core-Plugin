@@ -15,8 +15,13 @@ org.pdtextensions.repos.ui/target/*
 org.pdtextensions.feature/target/*
 org.pdtextensions.semanticanalysis/bin/*
 org.pdtextensions.semanticanalysis/target/*
+org.pdtextensions.semanticanalysis.ui/bin/*
+org.pdtextensions.semanticanalysis.ui/target/*
+org.pdtextensions.semanticanalysis.tests/bin/*
+org.pdtextensions.semanticanalysis.tests/target/*
 org.pdtextensions.core.tests/bin/*
 org.pdtextensions.core.tests/target/*
+
 target/
 *.swp
 copy.sh

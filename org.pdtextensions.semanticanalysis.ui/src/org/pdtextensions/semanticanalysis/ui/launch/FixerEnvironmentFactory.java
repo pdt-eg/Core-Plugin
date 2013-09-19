@@ -1,10 +1,10 @@
-package org.pdtextensions.semanticanalysis.launch;
+package org.pdtextensions.semanticanalysis.ui.launch;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.pdtextensions.core.launch.environment.AbstractEnvironmentFactory;
 import org.pdtextensions.core.launch.environment.PrjPharEnvironment;
-import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
-import org.pdtextensions.semanticanalysis.preferences.AnalysPreferenceConstants.Keys;
+import org.pdtextensions.semanticanalysis.ui.PEXAnalysisUIPlugin;
+import org.pdtextensions.semanticanalysis.ui.preferences.AnalysPreferenceConstants.Keys;
 
 public class FixerEnvironmentFactory extends AbstractEnvironmentFactory {
 
@@ -12,12 +12,12 @@ public class FixerEnvironmentFactory extends AbstractEnvironmentFactory {
 	
 	@Override
 	protected IPreferenceStore getPreferenceStore() {
-		return PEXAnalysisPlugin.getDefault().getPreferenceStore();
+		return PEXAnalysisUIPlugin.getDefault().getPreferenceStore();
 	}
 
 	@Override
 	protected String getPluginId() {
-		return PEXAnalysisPlugin.PLUGIN_ID;
+		return PEXAnalysisUIPlugin.PLUGIN_ID;
 	}
 
 	@Override

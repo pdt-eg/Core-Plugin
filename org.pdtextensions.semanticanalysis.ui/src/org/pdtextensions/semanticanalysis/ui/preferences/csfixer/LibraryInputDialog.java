@@ -24,7 +24,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
-package org.pdtextensions.semanticanalysis.preferences.csfixer;
+package org.pdtextensions.semanticanalysis.ui.preferences.csfixer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.pdtextensions.semanticanalysis.preferences.csfixer.PHPCSFixerConfigurationBlock.FixerPhar;
+import org.pdtextensions.semanticanalysis.ui.preferences.csfixer.PHPCSFixerConfigurationBlock.FixerPhar;
 
 
 /**

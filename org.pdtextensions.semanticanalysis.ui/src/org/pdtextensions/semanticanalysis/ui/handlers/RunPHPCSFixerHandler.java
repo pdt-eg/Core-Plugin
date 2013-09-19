@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.semanticanalysis.handlers;
+package org.pdtextensions.semanticanalysis.ui.handlers;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,9 +48,9 @@ import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.preferences.PreferenceConstants;
 import org.pdtextensions.core.util.ArrayUtil;
-import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
-import org.pdtextensions.semanticanalysis.launch.FixerEnvironmentFactory;
-import org.pdtextensions.semanticanalysis.preferences.PEXPreferenceNames;
+import org.pdtextensions.semanticanalysis.ui.PEXAnalysisUIPlugin;
+import org.pdtextensions.semanticanalysis.ui.launch.FixerEnvironmentFactory;
+import org.pdtextensions.semanticanalysis.ui.preferences.PEXPreferenceNames;
 
 @SuppressWarnings("restriction")
 public class RunPHPCSFixerHandler extends AbstractHandler {
@@ -69,7 +69,7 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 	@SuppressWarnings("unchecked")
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		IPreferenceStore store = PEXAnalysisPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = PEXAnalysisUIPlugin.getDefault().getPreferenceStore();
 		
 		String defaultFixers = store.getString(PreferenceConstants.PREF_PHPCS_USE_DEFAULT_FIXERS);
 		String config = store.getString(PreferenceConstants.PREF_PHPCS_CONFIG);
@@ -194,7 +194,7 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 	
 	protected String getDefaultPhar() throws Exception
 	{
-        IPath location = PEXAnalysisPlugin.getDefault().getStateLocation();
+        IPath location = PEXAnalysisUIPlugin.getDefault().getStateLocation();
         IPath pharPath = location.append("phpcsfixer1.phar");
         File pharFile = pharPath.toFile();
         Logger.debug("checking if phar is already unpacked " + pharPath.toOSString());
@@ -205,7 +205,7 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
         }
         
         Logger.debug("Phar not unpacked yet, resolving internal URL");
-		Bundle bundle = Platform.getBundle( PEXAnalysisPlugin.PLUGIN_ID );
+		Bundle bundle = Platform.getBundle( PEXAnalysisUIPlugin.PLUGIN_ID );
 		InputStream stream = FileLocator.openStream( bundle, new Path("Resources/phpcsfixer/phpcsfixer.phar"), false );
 		
 		if (stream == null) {

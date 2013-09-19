@@ -14,6 +14,8 @@
         <module>org.pdtextensions.server</module>
         <module>org.pdtextensions.server.ui</module>
         <module>org.pdtextensions.semanticanalysis</module>
+        <module>org.pdtextensions.semanticanalysis.tests</module>
+        <module>org.pdtextensions.semanticanalysis.ui</module>
         <module>org.pdtextensions.core.tests</module>
         <module>org.pdtextensions.feature</module>
     </modules>
