@@ -16,7 +16,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.pdtextensions.semanticanalysis.ui.PEXAnalysisUIPlugin;
 
-
 @SuppressWarnings("restriction")
 public class PHPCSFixerPreferencePage extends PropertyAndPreferencePage {
 
@@ -25,7 +24,8 @@ public class PHPCSFixerPreferencePage extends PropertyAndPreferencePage {
 	private PHPCSFixerConfigurationBlock fConfigurationBlock;
 
 	public PHPCSFixerPreferencePage() {
-		setPreferenceStore(PEXAnalysisUIPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(PEXAnalysisUIPlugin.getDefault()
+				.getParentPreferenceStore());
 		setDescription("");
 	}
 
@@ -33,21 +33,22 @@ public class PHPCSFixerPreferencePage extends PropertyAndPreferencePage {
 	public void createControl(Composite parent) {
 
 		IWorkbenchPreferenceContainer container = (IWorkbenchPreferenceContainer) getContainer();
-		fConfigurationBlock = new PHPCSFixerConfigurationBlock(getNewStatusChangedListener(), getProject(), container, new FixerKeyBag());
+		fConfigurationBlock = new PHPCSFixerConfigurationBlock(
+				getNewStatusChangedListener(), getProject(), container,
+				new FixerKeyBag());
 
 		super.createControl(parent);
 	}
 
 	@Override
 	public void init(IWorkbench workbench) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public IPreferenceStore getPreferenceStore() {
-		return PEXAnalysisUIPlugin.getDefault().getPreferenceStore();
+		return PEXAnalysisUIPlugin.getDefault().getParentPreferenceStore();
 	}
-	
+
 	protected void enableProjectSpecificSettings(
 			boolean useProjectSpecificSettings) {
 		if (fConfigurationBlock != null) {
@@ -56,7 +57,6 @@ public class PHPCSFixerPreferencePage extends PropertyAndPreferencePage {
 		}
 		super.enableProjectSpecificSettings(useProjectSpecificSettings);
 	}
-	
 
 	@Override
 	protected void performDefaults() {
@@ -73,12 +73,12 @@ public class PHPCSFixerPreferencePage extends PropertyAndPreferencePage {
 		}
 		return super.performOk();
 	}
-	
+
 	@Override
 	protected Control createPreferenceContent(Composite composite) {
 		return fConfigurationBlock.createContents(composite);
 	}
-	
+
 	@Override
 	protected boolean hasProjectSpecificOptions(IProject project) {
 		return fConfigurationBlock.hasProjectSpecificOptions(project);
@@ -93,7 +93,7 @@ public class PHPCSFixerPreferencePage extends PropertyAndPreferencePage {
 	protected String getPropertyPageID() {
 		return PROP_ID;
 	}
-	
+
 	public void dispose() {
 		if (fConfigurationBlock != null) {
 			fConfigurationBlock.dispose();

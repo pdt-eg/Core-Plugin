@@ -51,7 +51,6 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 	public void build(IBuildContext context) throws CoreException {
 		
 		final ISourceModule sourceModule = context.getSourceModule();
-		System.out.println(manager.getClass());
 		/*if (sourceModule.getResource().isDerived(IResource.CHECK_ANCESTORS)
 				|| !CorePreferencesSupport.getInstance().getBooleanPreference(
 						CorePreferenceConstants.PREF_SA_ENABLE, true,

@@ -87,7 +87,7 @@ public class PEXValidator extends AbstractValidator {
 			return result;
 		}
 		
-		if (getPreferenceStore().contains(CorePreferenceConstants.PREF_SA_ENABLE) && !getPreferenceStore().getBoolean(CorePreferenceConstants.PREF_SA_ENABLE)) {
+		if (getPreferenceStore().contains("s") && !getPreferenceStore().getBoolean("s")) {
 			return result;
 		}
 		
@@ -234,10 +234,10 @@ public class PEXValidator extends AbstractValidator {
 	 * @return
 	 */
 	protected int getSeverity(int type) {
-		if (!getPreferenceStore().contains(CorePreferenceConstants.PREF_SA_ENABLE)) {
+		if (!getPreferenceStore().contains("x")) {
 			return 1;
 		}
-		
+		/*
 		switch (type) {
 			case IPDTProblem.UsageRelated:
 				return translateSeverity(getPreferenceStore().getString(CorePreferenceConstants.PREF_SA_MISSING_USE_STMT_SEVERITY));
@@ -247,7 +247,7 @@ public class PEXValidator extends AbstractValidator {
 				
 			case IPDTProblem.Duplicate:
 				return translateSeverity(getPreferenceStore().getString(CorePreferenceConstants.PREF_SA_DUPLICATE_USE_SEVERITY));
-		}
+		}*/
 		
 		// ignore
 		return -1;

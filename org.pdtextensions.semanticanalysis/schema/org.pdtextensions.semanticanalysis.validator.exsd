@@ -18,8 +18,8 @@
       </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="category"/>
-            <element ref="validator"/>
+            <element ref="category" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="validator" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -99,9 +99,6 @@
                <documentation>
                   
                </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.pdtextensions.semanticanalysis.validator/category/@id"/>
-               </appinfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
@@ -110,11 +107,11 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.pdtextensions.semanticanalysis.Validator"/>
+                  <meta.attribute kind="java" basedOn=":org.pdtextensions.semanticanalysis.IValidatorFactory"/>
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="name" type="string" use="required">
+         <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
                   
@@ -131,7 +128,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="defaultSeverity">
+         <attribute name="defaultSeverity" use="default" value="info">
             <annotation>
                <documentation>
                   
@@ -143,9 +140,9 @@
                   </enumeration>
                   <enumeration value="info">
                   </enumeration>
-                  <enumeration value="warn">
-                  </enumeration>
                   <enumeration value="error">
+                  </enumeration>
+                  <enumeration value="warning">
                   </enumeration>
                </restriction>
             </simpleType>

@@ -5,41 +5,47 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.semanticanalysis.internal.integration;
+package org.pdtextensions.semanticanalysis.internal.validator;
 
 import javax.inject.Inject;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.dltk.core.IScriptProject;
-import org.eclipse.dltk.core.builder.IBuildParticipant;
-import org.eclipse.dltk.core.builder.IBuildParticipantFactory;
+import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.pdtextensions.semanticanalysis.IValidatorManager;
 import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
+import org.pdtextensions.semanticanalysis.PreferenceConstants;
+import org.pdtextensions.semanticanalysis.model.validators.Validator;
 
 /**
  * @author Dawid zulus Pakula <zulus@w3des.net>
  */
-public class BuildParticipantFactory implements IBuildParticipantFactory {
+public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	private boolean init = false;
+	
+	@Inject
+	@Preference(nodePath=PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID)
+	private IEclipsePreferences preferences;
 	
 	@Inject
 	private IValidatorManager manager;
 	
 	@Override
-	public IBuildParticipant createBuildParticipant(IScriptProject project) throws CoreException {
-		inject();
-		return ContextInjectionFactory.make(BuildParticipant.class, PEXAnalysisPlugin.getEclipseContext());
+	public void initializeDefaultPreferences() {
+		init();
+		preferences.putBoolean(PreferenceConstants.ENABLED, true);
+		for (Validator v : manager.getValidators()) {
+			preferences.put(v.getId(), v.getDefaultSeverity().toString());
+		}
+		
 	}
 	
-	private void inject() {
+	private void init() {
 		if (init) {
 			return;
 		}
-		
-		init = true;
 		ContextInjectionFactory.inject(this, PEXAnalysisPlugin.getEclipseContext());
+		init = true;
 	}
-	
 }

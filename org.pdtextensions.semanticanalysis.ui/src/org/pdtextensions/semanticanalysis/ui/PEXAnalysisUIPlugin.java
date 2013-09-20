@@ -1,13 +1,21 @@
 package org.pdtextensions.semanticanalysis.ui;
 
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.BundleContext;
+import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 
 /**
  * The activator class controls the plug-in life cycle
  */
 public class PEXAnalysisUIPlugin extends AbstractUIPlugin {
-
+	/**
+	 * Preference store for PEXAnalysis (fallback)
+	 */
+	IPreferenceStore parentPreferenceStore;
+	
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.pdtextensions.semanticanalysis.ui"; //$NON-NLS-1$
 
@@ -46,5 +54,14 @@ public class PEXAnalysisUIPlugin extends AbstractUIPlugin {
 	public static PEXAnalysisUIPlugin getDefault() {
 		return plugin;
 	}
+	
+	public IPreferenceStore getParentPreferenceStore() {
+        // Create the preference store lazily.
+        if (parentPreferenceStore == null) {
+            parentPreferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, PEXAnalysisPlugin.getDefault().getBundle().getSymbolicName());
 
+        }
+        return parentPreferenceStore;
+    }
+	
 }

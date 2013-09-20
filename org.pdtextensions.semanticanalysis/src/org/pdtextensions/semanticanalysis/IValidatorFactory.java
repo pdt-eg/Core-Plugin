@@ -7,10 +7,11 @@
  ******************************************************************************/
 package org.pdtextensions.semanticanalysis;
 
+import org.eclipse.dltk.core.IScriptProject;
+
 /**
- * 
  * @author Dawid zulus Pakula <zulus@w3des.net>
  */
-public interface IValidator {
-
+public interface IValidatorFactory {
+	public IValidatorParticipant getValidatorParticipant(IScriptProject scriptProject);
 }

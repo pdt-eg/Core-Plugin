@@ -28,19 +28,18 @@
             <requires id="org.eclipse.php.core.buildParticipant.parser" />
         </buildParticipant>
     </extension> 
-    <extension
-        id="org.pdtextensions.semanticanalysis.problem"
-        name="Semantic analysis"
-        point="org.eclipse.core.resources.markers">
-        <persistent value="true"/>
-        <super type="org.eclipse.core.resources.problemmarker"/>
-        <attribute name="lineNumber"/>
-        <attribute name="charStart"/>
-        <attribute name="charEnd"/>
-        <attribute name="message"/>
-        <attribute name="priority"/>
-        <attribute name="severity"/>
-        <attribute name="userEditable" />
-        <super type="org.eclipse.core.resources.textmarker" />
-    </extension>
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated validators -->
+      <package
+            uri="http://validators/1.0"
+            class="org.pdtextensions.semanticanalysis.model.validators.ValidatorsPackage"
+            genModel="model/validators.genmodel"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.pdtextensions.semanticanalysis.internal.validator.PreferenceInitializer">
+      </initializer>
+   </extension>
+
 </plugin>

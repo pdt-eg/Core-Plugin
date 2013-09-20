@@ -69,7 +69,7 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 	@SuppressWarnings("unchecked")
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		IPreferenceStore store = PEXAnalysisUIPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = PEXAnalysisUIPlugin.getDefault().getParentPreferenceStore();
 		
 		String defaultFixers = store.getString(PreferenceConstants.PREF_PHPCS_USE_DEFAULT_FIXERS);
 		String config = store.getString(PreferenceConstants.PREF_PHPCS_CONFIG);

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: PEX Analysis Tests
+Bundle-Name: %pluginName
 Bundle-SymbolicName: org.pdtextensions.semanticanalysis.tests;singleton:=true
 Bundle-Version: 0.17.0.qualifier
 Bundle-Activator: org.pdtextensions.semanticanalysis.tests.PEXAnalysisTestPlugin
@@ -17,13 +17,18 @@ Require-Bundle: org.junit,
  org.eclipse.ui,
  org.eclipse.wst.validation,
  org.pdtextensions.semanticanalysis,
+ org.eclipse.emf.ecore.xmi;visibility:=reexport,
  org.eclipse.e4.core.di,
  org.eclipse.e4.core.contexts,
  org.eclipse.php.core.tests,
  org.apache.commons.io,
  javax.inject
+Import-Package: javax.annotation;version="1.1.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.pdtextensions.semanticanalysis.tests,
- org.pdtextensions.semanticanalysis.tests.validation
+ org.pdtextensions.semanticanalysis.tests.validation,
+ org.pdtextensions.semanticanalysis.model.validators.tests
 Bundle-ClassPath: .
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin

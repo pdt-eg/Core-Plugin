@@ -7,6 +7,26 @@
  ******************************************************************************/
 package org.pdtextensions.semanticanalysis;
 
+import org.eclipse.dltk.core.IScriptProject;
+import org.pdtextensions.semanticanalysis.model.validators.Category;
+import org.pdtextensions.semanticanalysis.model.validators.Validator;
+
+/**
+ * @author Dawid zulus Pakula <zulus@w3des.net>
+ */
 public interface IValidatorManager {
 	public final static String Extension_ID = "org.pdtextensions.semanticanalysis.validator";
+	
+	public boolean isEnabled(IScriptProject scriptProject);
+	
+	public Validator[] getValidators();
+	
+	public Validator[] getValidators(IScriptProject scriptProject);
+	
+	public Category[] getCategories();
+	
+	public Category getCategory(String id);
+	
+	public Validator getValidator(String id);
+	
 }

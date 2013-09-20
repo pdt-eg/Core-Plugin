@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="org.pdtextensions.semanticanalysis.defaults"
+         point="org.pdtextensions.semanticanalysis.validator">
+      <validator
+            id="org.pdtextensions.semanticanalysis.tests.validator"
+            label="Sample validator"
+            class="org.pdtextensions.semanticanalysis.tests.sample.ValidatorFactory"
+            defaultSeverity="info">
+      </validator>
+   </extension>
+</plugin>

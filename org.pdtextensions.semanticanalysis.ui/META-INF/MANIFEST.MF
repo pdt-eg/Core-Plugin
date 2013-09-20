@@ -10,6 +10,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources,
  org.pdtextensions.core,
  org.pdtextensions.core.ui,
+ org.pdtextensions.semanticanalysis,
  org.eclipse.dltk.core,
  org.eclipse.dltk.ui,
  org.eclipse.php.core,
@@ -18,7 +19,9 @@ Require-Bundle: org.eclipse.ui,
  org.apache.commons.exec,
  org.eclipse.e4.core.di,
  org.eclipse.e4.core.contexts,
- javax.inject
+ javax.inject,
+ org.eclipse.ui.forms,
+ org.eclipse.swt
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.pdtextensions.semanticanalysis.ui.handlers

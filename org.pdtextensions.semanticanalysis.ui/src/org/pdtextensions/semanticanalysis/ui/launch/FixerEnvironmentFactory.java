@@ -12,7 +12,7 @@ public class FixerEnvironmentFactory extends AbstractEnvironmentFactory {
 	
 	@Override
 	protected IPreferenceStore getPreferenceStore() {
-		return PEXAnalysisUIPlugin.getDefault().getPreferenceStore();
+		return PEXAnalysisUIPlugin.getDefault().getParentPreferenceStore();
 	}
 
 	@Override

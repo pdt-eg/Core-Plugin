@@ -7,20 +7,32 @@
  ******************************************************************************/
 package org.pdtextensions.semanticanalysis;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectorFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.pdtextensions.semanticanalysis.internal.validator.Manager;
 
+/**
+ * @author Dawid zulus Pakula <zulus@w3des.net>
+ */
 public class PEXAnalysisPlugin extends Plugin {
 
-	public static final String PLUGIN_ID = "org.pdtextensions.semanticanalysis";
+	public static final String PLUGIN_ID = "org.pdtextensions.semanticanalysis"; //$NON-NLS-1$
+	
+	public static final String VALIDATORS_PREFERENCES_NODE_ID = PLUGIN_ID + "/validators"; //$NON-NLS-1$
 
 	private static PEXAnalysisPlugin plugin;
+	
+	@Inject
+	private IValidatorManager validatorManager;
 
 	public static BundleContext getContext() {
 		return FrameworkUtil.getBundle(PEXAnalysisPlugin.class).getBundleContext();
@@ -96,4 +108,15 @@ public class PEXAnalysisPlugin extends Plugin {
 						.getLocalizedMessage(), e));
 	}
 
+	public static IEclipseContext getEclipseContext() {
+		return EclipseContextFactory.getServiceContext(PEXAnalysisPlugin.getContext());
+	}
+	
+	public IValidatorManager getValidatorManager() {
+		if (validatorManager == null) {
+			ContextInjectionFactory.inject(this, getEclipseContext());
+		}
+		
+		return validatorManager;
+	}
 }
