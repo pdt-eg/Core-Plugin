@@ -28,5 +28,4 @@ public interface IValidatorManager {
 	public Category getCategory(String id);
 	
 	public Validator getValidator(String id);
-	
 }

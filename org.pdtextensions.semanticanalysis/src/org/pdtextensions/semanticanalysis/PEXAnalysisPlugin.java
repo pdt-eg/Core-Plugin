@@ -23,6 +23,7 @@ import org.pdtextensions.semanticanalysis.internal.validator.Manager;
 /**
  * @author Dawid zulus Pakula <zulus@w3des.net>
  */
+@SuppressWarnings("restriction")
 public class PEXAnalysisPlugin extends Plugin {
 
 	public static final String PLUGIN_ID = "org.pdtextensions.semanticanalysis"; //$NON-NLS-1$
@@ -43,15 +44,10 @@ public class PEXAnalysisPlugin extends Plugin {
 		registerServices();
 	}
 	
-	@SuppressWarnings("restriction")
 	private void registerServices() {
 		InjectorFactory.getDefault().addBinding(IValidatorManager.class).implementedBy(Manager.class);
 	}
 	
-	public static Manager getManager() {
-		return EclipseContextFactory.getServiceContext(PEXAnalysisPlugin.getContext()).get(Manager.class);
-	}
-
 	public void stop(BundleContext bundleContext) throws Exception {
 		plugin = null;
 		super.stop(bundleContext);

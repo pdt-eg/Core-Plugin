@@ -41,5 +41,4 @@ public class BuildParticipantFactory implements IBuildParticipantFactory {
 		init = true;
 		ContextInjectionFactory.inject(this, PEXAnalysisPlugin.getEclipseContext());
 	}
-	
 }
