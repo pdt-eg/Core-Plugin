@@ -10,6 +10,6 @@ package org.pdtextensions.semanticanalysis;
 /**
  * Constant definitions for plug-in preferences
  */
-public class PreferenceConstants {
+final public class PreferenceConstants {
 	public static final String ENABLED = "_enabled"; //$NON-NLS-1$
 }

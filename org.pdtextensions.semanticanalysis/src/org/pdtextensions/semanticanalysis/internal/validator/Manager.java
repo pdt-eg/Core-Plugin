@@ -14,6 +14,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -39,6 +40,10 @@ final public class Manager implements IValidatorManager {
 	@Inject
 	@Preference(nodePath=PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID)
 	private IEclipsePreferences preferences;
+	
+	@Inject
+	@Preference(nodePath=ProjectScope.SCOPE)
+	private IEclipsePreferences projectPreferences;
 	
 	@PostConstruct
 	public void initialize(IExtensionRegistry registry) {

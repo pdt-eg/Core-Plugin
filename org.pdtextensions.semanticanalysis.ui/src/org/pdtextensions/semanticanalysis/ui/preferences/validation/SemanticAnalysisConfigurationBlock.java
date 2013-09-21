@@ -1,26 +1,29 @@
+/*******************************************************************************
+ * Copyright (c) 2013 The PDT Extension Group (https://github.com/pdt-eg)
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ ******************************************************************************/
 package org.pdtextensions.semanticanalysis.ui.preferences.validation;
 
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.dltk.compiler.problem.ProblemSeverity;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.jface.layout.PixelConverter;
-import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.ComboFieldEditor;
-import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.php.internal.ui.preferences.IStatusChangeListener;
 import org.eclipse.php.internal.ui.preferences.util.Key;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -28,7 +31,6 @@ import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.pdtextensions.core.ui.preferences.AbstractOptionsConfigurationBlock;
 import org.pdtextensions.semanticanalysis.IValidatorManager;
 import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
@@ -43,10 +45,8 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 	private IValidatorManager manager;
 
 	private Composite fieldEditorParent;
-	private FieldEditor[] fields;
-	private Composite[] fieldParents;
-	private BooleanFieldEditor analysisEnabled;
-	private IPreferenceStore prefStore;
+	private Combo[] fields;
+	private Button analysisEnabled;
 	private PixelConverter pixelConverter;
 
 	protected final static Key getSKey(String key) {
@@ -56,18 +56,14 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 	public SemanticAnalysisConfigurationBlock(IStatusChangeListener context,
 			IProject project, IWorkbenchPreferenceContainer container) {
 		super(context, project, getKeys(), container);
-		if (project == null) {
-			prefStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID);
-		} else {
-			prefStore = new ScopedPreferenceStore(new ProjectScope(project), PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID);
-		}
 	}
 
 	private static Key[] getKeys() {
 		Validator[] validators = PEXAnalysisPlugin.getDefault().getValidatorManager().getValidators();
-		Key[] keys = new Key[validators.length];
+		Key[] keys = new Key[validators.length + 1];
+		keys[0] = getSKey(PreferenceConstants.ENABLED);
 		for (int i = 0; i < validators.length; i++) {
-			keys[i] = getSKey(validators[i].getId());
+			keys[i+1] = getSKey(validators[i].getId());
 		}
 		return keys;
 	}
@@ -80,54 +76,65 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 		}
 
 		Composite content = new Composite(parent, SWT.NONE);
-		FillLayout layout = new FillLayout(SWT.VERTICAL);
-		content.setLayout(layout);
+		content.setLayout(new FillLayout(SWT.VERTICAL));
 
 		createFields(content);
-		initialize();
 		updateFieldVisibility();
 
 		return content;
 	}
-
-	protected String[][] getSeverityOptions() {
-		return new String[][] {
-			new String[] {"Error", ProblemSeverity.ERROR.toString()},
-			new String[] {"Warning", ProblemSeverity.WARNING.toString()},
-			new String[] {"Info", ProblemSeverity.INFO.toString()},
-			new String[] {"Ignore", ProblemSeverity.IGNORE.toString()}
+	
+	protected String[] getSeverityLabels() {
+		return new String[] {
+				"Error", "Warning", "Info", "Ignore"
+		};
+	}
+	
+	protected String[] getSeverityValues() {
+		return new String[] {
+				ProblemSeverity.ERROR.toString(), 
+				ProblemSeverity.WARNING.toString(), 
+				ProblemSeverity.INFO.toString(), 
+				ProblemSeverity.IGNORE.toString()
 		};
 	}
 
 	private Composite createFields(Composite parent) {
 
-		fieldEditorParent = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		fieldEditorParent.setLayout(layout);
+		Composite fieldEditorParentWrap = new Composite(parent, SWT.NULL);
+		GridLayout wrapLayout = new GridLayout();
+		wrapLayout.marginHeight = 0;
+		wrapLayout.marginWidth = 0;
+		fieldEditorParentWrap.setLayout(wrapLayout);
+		fieldEditorParentWrap.setFont(parent.getFont());
+		
+		fieldEditorParent = new Composite(fieldEditorParentWrap, SWT.NULL);
+		fieldEditorParent.setLayout(new GridLayout());
+		fieldEditorParent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fieldEditorParent.setFont(parent.getFont());
-
-		analysisEnabled = new BooleanFieldEditor(PreferenceConstants.ENABLED, "Enable semantic analysis", fieldEditorParent);
-		analysisEnabled.setPreferenceStore(getPreferenceStore());
-		analysisEnabled
-				.setPropertyChangeListener(new IPropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent event) {
-						updateFieldVisibility();
-					}
-				});
-		analysisEnabled.fillIntoGrid(fieldEditorParent, 2);
-
-		final Label horizontalLine = new Label(fieldEditorParent, SWT.SEPARATOR
-				| SWT.HORIZONTAL);
-		horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
-				true, false, 2, 1));
+		
+		
+		
+		analysisEnabled = addCheckBox(fieldEditorParent, "Enable semantic analysis", fAllKeys[0], new String[] {"true", "false"}, 0); //$NON-NLS-2$ $NON-NLS-3$
+		analysisEnabled.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateFieldVisibility();
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				updateFieldVisibility();
+			}
+		});
+		
+		final Label horizontalLine = new Label(fieldEditorParent, SWT.SEPARATOR | SWT.HORIZONTAL);
+		horizontalLine.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		horizontalLine.setFont(fieldEditorParent.getFont());
 
-		fields = new FieldEditor[manager.getValidators().length];
-		fieldParents = new Composite[fields.length];
+		fields = new Combo[manager.getValidators().length];
 		int i = 0;
 		boolean first = true;
 		for (Category category : manager.getCategories()) {
@@ -136,31 +143,24 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 			first = false;
 			Composite inner = new Composite(group, SWT.NONE);
 			inner.setFont(parent.getFont());
-			inner.setLayout(new GridLayout(1, true));
-			inner.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+			inner.setLayout( new GridLayout(2, false));
+			inner.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			group.setClient(inner);
 
 			for (Validator v : category.getValidators()) {
-				createCombo(i, v, inner);
+				fields[i] = addComboBox(inner, v.getLabel(), fAllKeys[i+1], getSeverityValues(), getSeverityLabels());
 			}
 		}
 
-		return fieldEditorParent;
-	}
-
-	private void createCombo(int pos, Validator v, Composite parent) {
-		ComboFieldEditor field = new ComboFieldEditor(v.getId(), v.getLabel(), getSeverityOptions(), parent);
-		field.setPreferenceStore(getPreferenceStore());
-		fields[pos] = field;
-		fieldParents[pos++] = parent;
+		return fieldEditorParentWrap;
 	}
 
 	protected ExpandableComposite createGroup(int numColumns, Composite parent, String label) {
 		ExpandableComposite excomposite= new ExpandableComposite(parent, SWT.NONE, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT);
 		excomposite.setText(label);
-		excomposite.setExpanded(false);
 		excomposite.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
-		excomposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, numColumns, 1));
+		excomposite.setLayout(new FillLayout(SWT.VERTICAL));
+		excomposite.setExpanded(false);
 		excomposite.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
 				expandedStateChanged((ExpandableComposite) e.getSource());
@@ -170,56 +170,9 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 		return excomposite;
 	}
 
-	protected static GridData createGridData(int numColumns, int style,
-			int widthHint) {
-		final GridData gd = new GridData(style);
-		gd.horizontalSpan = numColumns;
-		gd.widthHint = widthHint;
-		return gd;
-	}
-
-	protected IPreferenceStore getPreferenceStore() {
-		return prefStore;
-	}
-
 	protected void updateFieldVisibility() {
 		for (int i = 0; i < fields.length; i++) {
-			fields[i].setEnabled(analysisEnabled.getBooleanValue(), fieldParents[i]);
+			fields[i].setEnabled(analysisEnabled.getSelection());
 		}
-	}
-
-	protected void initialize() {
-		if (fields != null) {
-			for (FieldEditor f : fields) {
-				f.setPreferenceStore(getPreferenceStore());
-				f.load();
-			}
-		}
-
-		analysisEnabled.load();
-
-	}
-
-	public void performDefaults() {
-		if (fields != null) {
-			for (FieldEditor f : fields) {
-				f.loadDefault();
-			}
-		}
-
-		analysisEnabled.loadDefault();
-		updateFieldVisibility();
-		super.performDefaults();
-	}
-
-	public boolean performOk() {
-		if (fields != null) {
-			for (FieldEditor f : fields) {
-				f.store();
-			}
-		}
-		analysisEnabled.store();
-
-		return true;
 	}
 }
