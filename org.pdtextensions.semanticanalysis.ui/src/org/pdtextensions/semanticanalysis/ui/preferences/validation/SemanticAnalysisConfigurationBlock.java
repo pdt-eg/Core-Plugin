@@ -3,6 +3,7 @@ package org.pdtextensions.semanticanalysis.ui.preferences.validation;
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.dltk.compiler.problem.ProblemSeverity;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -55,6 +56,11 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 	public SemanticAnalysisConfigurationBlock(IStatusChangeListener context,
 			IProject project, IWorkbenchPreferenceContainer container) {
 		super(context, project, getKeys(), container);
+		if (project == null) {
+			prefStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID);
+		} else {
+			prefStore = new ScopedPreferenceStore(new ProjectScope(project), PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID);
+		}
 	}
 
 	private static Key[] getKeys() {
@@ -173,9 +179,6 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 	}
 
 	protected IPreferenceStore getPreferenceStore() {
-		if (prefStore == null) {
-			prefStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID);
-		}
 		return prefStore;
 	}
 
