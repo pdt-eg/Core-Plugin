@@ -9,7 +9,9 @@ package org.pdtextensions.semanticanalysis.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import org.eclipse.dltk.compiler.problem.ProblemCategory;
 import org.eclipse.dltk.compiler.problem.ProblemSeverity;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -19,6 +21,7 @@ import org.junit.Test;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 import org.pdtextensions.semanticanalysis.model.validators.Category;
+import org.pdtextensions.semanticanalysis.model.validators.Type;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
 import org.pdtextensions.semanticanalysis.tests.sample.Service;
 
@@ -58,13 +61,27 @@ public class ManagerTest {
 	@Test
 	public void initializeValidator() {
 		String validatorId = "org.pdtextensions.semanticanalysis.tests.validator";
-		Validator validator = testService.getManager()
-				.getValidator(validatorId);
+		Validator validator = testService.getManager().getValidator(validatorId);
 
 		assertNotNull(validator);
-		assertEquals(ProblemSeverity.INFO, validator.getDefaultSeverity());
-		assertEquals("org.pdtextensions.semanticanalysis.defaultCategory",
+		assertEquals(ProblemSeverity.INFO, validator.getType("default").getDefaultSeverity());
+		assertEquals("org.pdtextensions.semanticanalysis.tests.category",
 				validator.getCategory().getId());
+		
+		assertEquals(2, validator.getTypes().size());
+		assertNotNull(validator.getType("default")); 
+		assertTrue(validator.getType("default") instanceof Type);
+		
+		Type orig = validator.getType("default");
+		
+		assertNotNull(orig.getId());
+		assertEquals(orig.getName(), "default");
+		assertEquals(orig.getNum(), 1);
+		
+		assertNotNull(validator.getType("second"));
+		
+		assertTrue(validator.getType("second").isImport());
+		assertTrue(validator.getType("second").getId().belongsTo(ProblemCategory.IMPORT));
 	}
 
 }

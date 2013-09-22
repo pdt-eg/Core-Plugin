@@ -14,7 +14,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-package org.pdtextensions.core.ui.quickfix;
+package org.pdtextensions.semanticanalysis.ui.quickfix;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +25,7 @@ import org.eclipse.dltk.ui.text.completion.IScriptCompletionProposal;
 import org.eclipse.php.internal.ui.text.correction.IInvocationContext;
 import org.eclipse.php.internal.ui.text.correction.IProblemLocation;
 import org.eclipse.php.internal.ui.text.correction.IQuickFixProcessor;
-import org.pdtextensions.core.ui.contentassist.InterfaceMethodCompletionProposal;
-import org.pdtextensions.core.validation.IPDTProblem;
+import org.pdtextensions.semanticanalysis.ui.contentassist.InterfaceMethodCompletionProposal;
 
 
 /**
@@ -40,9 +39,9 @@ public class InterfaceMethodQuickFixProcessor implements IQuickFixProcessor {
 	@Override
 	public boolean hasCorrections(ISourceModule unit, int problemId)
 	{
-		if (problemId == IPDTProblem.InterfaceRelated) {
+		/*if (problemId == IPDTProblem.InterfaceRelated) {
 			return true;
-		}
+		}*/
 	
 		return false;
 	}
@@ -58,7 +57,7 @@ public class InterfaceMethodQuickFixProcessor implements IQuickFixProcessor {
 
 		List<IScriptCompletionProposal> corrections = new ArrayList<IScriptCompletionProposal>();
 		List<String> existing = new ArrayList<String>();
-		
+		/*
 		for (IProblemLocation location : locations) {
 			
 			String offset = Integer.toString(location.getOffset());
@@ -69,9 +68,9 @@ public class InterfaceMethodQuickFixProcessor implements IQuickFixProcessor {
 				existing.add(offset);
 				
 			}
-		}
+		}*/
 		
-		return corrections.toArray(new IScriptCompletionProposal[corrections.size()]);		
+		return corrections.toArray(new IScriptCompletionProposal[corrections.size()]);
 		
 	}
 }

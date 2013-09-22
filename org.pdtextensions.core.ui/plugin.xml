@@ -180,25 +180,6 @@
       </handler>
    </extension>
    <extension
-         point="org.eclipse.php.ui.quickFixProcessors">
-      <quickFixProcessor
-            class="org.pdtextensions.core.ui.quickfix.InterfaceMethodQuickFixProcessor"
-            id="org.pdtextensions.core.ui.quickFixProcessor"
-            name="Implement missing Methods">
-            <!--
-         <handledMarkerTypes>
-            <markerType
-                  id="org.pdtextensions.core.validation.MissingMethodMarker">
-            </markerType>
-         </handledMarkerTypes>
-         -->
-      </quickFixProcessor>
-      <quickFixProcessor
-            class="org.pdtextensions.core.ui.quickfix.ReferenceQuickFixProcessor"
-            id="org.pdtextensions.core.ui.referenceQuickFixProcessor">
-      </quickFixProcessor>
-   </extension>
-   <extension
          id="org.pdtextensions.core.ui.scriptCompletionProposalComputer"
          point="org.eclipse.dltk.ui.scriptCompletionProposalComputer">
       <scriptCompletionProposalComputer

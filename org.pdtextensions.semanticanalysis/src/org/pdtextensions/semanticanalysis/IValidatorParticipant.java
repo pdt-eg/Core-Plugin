@@ -7,6 +7,13 @@
  ******************************************************************************/
 package org.pdtextensions.semanticanalysis;
 
+/**
+ * Interface for validator participant
+ * 
+ * @author Dawid zulus Pakula <zulus@w3des.net>
+ */
 public interface IValidatorParticipant {
-
+	public boolean allowDerived();
+	
+	public void validate(IValidatorContext context) throws Exception;
 }

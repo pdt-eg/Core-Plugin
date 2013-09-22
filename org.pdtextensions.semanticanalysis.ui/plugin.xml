@@ -120,4 +120,21 @@
             id="org.pdtextensions.semanticanalysis.fixerLauncherFactory">
       </environmentFactory>
    </extension>
+   <extension
+         point="org.eclipse.php.ui.quickFixProcessors">
+      <quickFixProcessor
+            class="org.pdtextensions.semanticanalysis.ui.quickfix.InterfaceMethodQuickFixProcessor"
+            id="org.pdtextensions.core.ui.quickFixProcessor"
+            name="Implement missing Methods">
+         <!--handledMarkerTypes>
+            <markerType
+                  id="org.pdtextensions.core.validation.MissingMethodMarker">
+            </markerType>
+         </handledMarkerTypes-->
+      </quickFixProcessor>
+      <quickFixProcessor
+            class="org.pdtextensions.semanticanalysis.ui.quickfix.ReferenceQuickFixProcessor"
+            id="org.pdtextensions.core.ui.referenceQuickFixProcessor">
+      </quickFixProcessor>
+   </extension>
 </plugin>

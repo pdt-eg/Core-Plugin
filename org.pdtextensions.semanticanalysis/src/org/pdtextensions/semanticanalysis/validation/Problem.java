@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.semanticanalysis;
+package org.pdtextensions.semanticanalysis.validation;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.compiler.problem.CategorizedProblem;
@@ -16,7 +16,7 @@ public class Problem extends CategorizedProblem {
 
 	public static final String MARKER_TYPE_PREFIX = "org.pdtextensions.semanticanalysis"; //$NON-NLS-1$
 
-	public static final String MARKER_TYPE = "org.pdtextensions.semanticanalysis.problem"; //$NON-NLS-1$
+	public static final String MARKER_TYPE = "org.pdtextensions.semanticanalysis.problem";
 
 	private IProblemIdentifier id;
 	private String[] arguments;
@@ -27,10 +27,12 @@ public class Problem extends CategorizedProblem {
 	private int lineNumber;
 	private ProblemSeverity severity;
 	private int categoryId = CategorizedProblem.CAT_UNSPECIFIED;
+	private String validator;
 
-	public Problem(IProblemIdentifier id, ProblemSeverity severity,
+	public Problem(String validator, IProblemIdentifier id, ProblemSeverity severity,
 			int categoryId, String[] arguments, String message,
 			String filename, int sourceStart, int sourceEnd, int lineNumber) {
+		super();
 		this.id = id;
 		this.severity = severity;
 		this.categoryId = categoryId;
@@ -40,6 +42,7 @@ public class Problem extends CategorizedProblem {
 		this.sourceStart = sourceStart;
 		this.sourceEnd = sourceEnd;
 		this.lineNumber = lineNumber;
+		this.validator = validator;
 	}
 
 	@Override
@@ -56,7 +59,7 @@ public class Problem extends CategorizedProblem {
 	public String getMessage() {
 		return message;
 	}
-
+	
 	@Override
 	public String getOriginatingFileName() {
 		return fileName;
@@ -81,6 +84,11 @@ public class Problem extends CategorizedProblem {
 	public void setSeverity(ProblemSeverity severity) {
 		Assert.isNotNull(severity);
 		this.severity = severity;
+	}
+	
+	@Override
+	public ProblemSeverity getSeverity() {
+		return this.severity;
 	}
 
 	@Override
@@ -126,6 +134,20 @@ public class Problem extends CategorizedProblem {
 	@Override
 	public String getMarkerType() {
 		return MARKER_TYPE;
+	}
+	
+	@Override
+	public String[] getExtraMarkerAttributeNames() {
+		return new String[] {"validator"};
+	}
+	
+	@Override
+	public Object[] getExtraMarkerAttributeValues() {
+		return new String[] {validator};
+	}
+	
+	public String getValidator() {
+		return validator;
 	}
 
 }

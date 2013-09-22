@@ -1,4 +1,4 @@
-package org.pdtextensions.core.validation.validator;
+package org.pdtextensions.semanticanalysis.validation.validator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,7 +12,6 @@ import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.references.TypeReference;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IScriptProject;
-import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.index2.search.ISearchEngine.MatchRule;
@@ -22,13 +21,15 @@ import org.eclipse.dltk.ti.types.IEvaluatedType;
 import org.eclipse.php.core.compiler.PHPFlags;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ClassDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.FullyQualifiedReference;
-import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.php.internal.core.model.PhpModelAccess;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.eclipse.php.internal.core.typeinference.PHPTypeInferenceUtils;
 import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.util.PDTModelUtils;
 import org.pdtextensions.core.validation.MissingMethodImplementation;
+import org.pdtextensions.semanticanalysis.IValidatorContext;
+import org.pdtextensions.semanticanalysis.validation.AbstractValidator;
+import org.pdtextensions.semanticanalysis.validation.Problem;
 
 /**
  * 
@@ -40,15 +41,12 @@ import org.pdtextensions.core.validation.MissingMethodImplementation;
  *
  */
 @SuppressWarnings("restriction")
-public class ImplementationValidator extends PHPASTVisitor {
+public class ImplementationValidator extends AbstractValidator{
+	public static String MISSING_METHODS = "methods"; //$NON-NLS-1$
 
-	private ISourceModule context;
 	private ClassDeclaration classDeclaration;
 	private List<MissingMethodImplementation> missingMethods;
-
-	public ImplementationValidator(ISourceModule context) {
-		this.context = context;
-	}
+	
 	
 	@Override
 	public boolean visit(ClassDeclaration s) throws Exception {
@@ -61,16 +59,16 @@ public class ImplementationValidator extends PHPASTVisitor {
 		
 		Collection<TypeReference> interfaces = getClassDeclaration().getInterfaceList();
 		
-		IScriptProject project = context.getScriptProject();
+		IScriptProject project = context.getProject();
 		List<IMethod> unimplemented = new ArrayList<IMethod>();		
 		IDLTKSearchScope scope = SearchEngine.createSearchScope(project);		
 		PhpModelAccess model = PhpModelAccess.getDefault();		
 		IType classType = null;
 		
-		IType nss = PHPModelUtils.getCurrentNamespace(context, getClassDeclaration().getNameStart());
+		IType nss = PHPModelUtils.getCurrentNamespace(context.getSourceModule(), getClassDeclaration().getNameStart());
 				
 		// namespaced class
-		if (nss != null) {			
+		if (nss != null) {
 			IType[] ts = model.findTypes(nss.getElementName(), getClassDeclaration().getName(), MatchRule.EXACT, 0, 0, scope, null);
 			if (ts.length != 1) {
 				return false;
@@ -82,7 +80,7 @@ public class ImplementationValidator extends PHPASTVisitor {
 			if (ts.length != 1) {
 				return false;
 			}			
-			classType = ts[0];			
+			classType = ts[0];
 		}
 		Map<String, IMethod> listImported = PDTModelUtils.getImportedMethods(classType);
 		// iterate over all interfaces and check if the current class
@@ -97,7 +95,7 @@ public class ImplementationValidator extends PHPASTVisitor {
 				if (fqr.getNamespace() != null) {
 					name = fqr.getNamespace().getName() + "\\" + fqr.getName();					
 				} else {
-					IEvaluatedType eval = PHPTypeInferenceUtils.resolveExpression(context, fqr);				
+					IEvaluatedType eval = PHPTypeInferenceUtils.resolveExpression(context.getSourceModule(), fqr);				
 					String separator = "\\";				
 					name = eval.getTypeName();
 					if (eval.getTypeName().startsWith(separator)) {
@@ -120,7 +118,10 @@ public class ImplementationValidator extends PHPASTVisitor {
 					for (IMethod method : type.getMethods()) {
 
 						boolean implemented = false;
-						String methodSignature = PDTModelUtils.getMethodSignature(method);					
+						String methodSignature = PDTModelUtils.getMethodSignature(method);
+						if (methodSignature == null) {
+							continue;
+						}
 						IMethod[] ms = PHPModelUtils.getSuperTypeHierarchyMethod(classType, method.getElementName(), true, null);
 						
 						for (IMethod me : ms) {						
@@ -132,8 +133,8 @@ public class ImplementationValidator extends PHPASTVisitor {
 							}
 						}
 						
-						for (MethodDeclaration typeMethod : getClassDeclaration().getMethods()) {					
-							String signature = PDTModelUtils.getMethodSignature(typeMethod, project);						
+						for (MethodDeclaration typeMethod : getClassDeclaration().getMethods()) {
+							String signature = PDTModelUtils.getMethodSignature(typeMethod, project);
 							if (methodSignature.equals(signature) && !typeMethod.isAbstract()) {
 								implemented = true;
 								break;
@@ -191,5 +192,18 @@ public class ImplementationValidator extends PHPASTVisitor {
 
 	public ClassDeclaration getClassDeclaration() {
 		return classDeclaration;
+	}
+	
+	@Override
+	public void validate(IValidatorContext context) throws Exception {
+		super.validate(context);
+		if (hasMissing() && getClassDeclaration() != null) {
+			int start = getClassDeclaration().getNameStart();
+			int stop = getClassDeclaration().getNameEnd();
+
+			String message = "The class " + getClassDeclaration().getName() + " must implement the inherited abstract method "
+			+ getMissing().get(0).getFirstMethodName();
+			context.registerProblem(MISSING_METHODS, Problem.CAT_RESTRICTION, message, start, stop);
+		}
 	}
 }

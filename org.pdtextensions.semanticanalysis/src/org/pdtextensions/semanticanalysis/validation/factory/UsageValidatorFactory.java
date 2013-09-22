@@ -5,16 +5,18 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.semanticanalysis.tests.sample;
+package org.pdtextensions.semanticanalysis.validation.factory;
 
 import org.eclipse.dltk.core.IScriptProject;
 import org.pdtextensions.semanticanalysis.IValidatorFactory;
 import org.pdtextensions.semanticanalysis.IValidatorParticipant;
+import org.pdtextensions.semanticanalysis.validation.validator.UsageValidator;
 
-public class ValidatorFactory implements IValidatorFactory {
+public class UsageValidatorFactory implements IValidatorFactory {
+
 	@Override
 	public IValidatorParticipant getValidatorParticipant(IScriptProject scriptProject) {
-		return null;
+		return new UsageValidator();
 	}
-	
+
 }

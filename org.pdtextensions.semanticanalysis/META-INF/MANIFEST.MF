@@ -29,4 +29,6 @@ Import-Package: javax.annotation;version="1.1.0"
 Export-Package: org.pdtextensions.semanticanalysis,
  org.pdtextensions.semanticanalysis.model.validators,
  org.pdtextensions.semanticanalysis.model.validators.impl,
- org.pdtextensions.semanticanalysis.model.validators.util
+ org.pdtextensions.semanticanalysis.model.validators.util,
+ org.pdtextensions.semanticanalysis.validation,
+ org.pdtextensions.semanticanalysis.validation.validator

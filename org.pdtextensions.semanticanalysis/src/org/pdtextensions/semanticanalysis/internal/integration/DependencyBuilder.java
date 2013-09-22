@@ -31,8 +31,10 @@ import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 /**
  * Used to report resource dependencies
  * 
+ * TODO: Move to PDT
  * @author Dawid zulus Pakula <zulus@w3des.net>
  */
+@SuppressWarnings("restriction")
 public class DependencyBuilder implements IScriptBuilder {
 
 	@Override
@@ -75,7 +77,6 @@ public class DependencyBuilder implements IScriptBuilder {
 		
 	}
 	
-	@SuppressWarnings("restriction")
 	private class Visitor extends PHPASTVisitor {
 		final private IBuildState state;
 		final private ISourceModule module;
@@ -92,7 +93,7 @@ public class DependencyBuilder implements IScriptBuilder {
 			IType[] types = PhpModelAccess.getDefault().findTypes(searchString, MatchRule.EXACT, 0, 0, searchScope, new NullProgressMonitor());
 
 			for (IType type : types) {
-				if (searchString.equals(type.getFullyQualifiedName("\\"))) {
+				if (searchString.equals(type.getFullyQualifiedName("\\"))) { //$NON-NLS-1$
 					state.recordDependency(module.getResource().getFullPath(), type.getResource() == null ? type.getPath() : type.getResource().getFullPath(), IBuildState.STRUCTURAL);
 					return true;
 				}
@@ -101,7 +102,7 @@ public class DependencyBuilder implements IScriptBuilder {
 			types = PhpModelAccess.getDefault().findTraits(searchString, MatchRule.EXACT, 0, 0, searchScope, new NullProgressMonitor());
 
 			for (IType type : types) {
-				if (searchString.equals(type.getFullyQualifiedName("\\"))) {
+				if (searchString.equals(type.getFullyQualifiedName("\\"))) { //$NON-NLS-1$
 					state.recordDependency(module.getResource().getFullPath(), type.getResource() == null ? type.getPath() : type.getResource().getFullPath(), IBuildState.STRUCTURAL);
 					return true;
 				}

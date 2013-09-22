@@ -33,5 +33,4 @@ Export-Package: org.pdtextensions.core,
  org.pdtextensions.core.launch.execution,
  org.pdtextensions.core.log,
  org.pdtextensions.core.util,
- org.pdtextensions.core.validation,
- org.pdtextensions.core.validation.validator
+ org.pdtextensions.core.validation

@@ -5,10 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.semanticanalysis.internal.validator;
+package org.pdtextensions.semanticanalysis.internal.validation;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -21,6 +23,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.dltk.compiler.problem.ProblemSeverity;
 import org.eclipse.dltk.core.IScriptProject;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.php.internal.core.project.PHPNature;
 import org.osgi.service.prefs.Preferences;
@@ -29,9 +32,11 @@ import org.pdtextensions.semanticanalysis.IValidatorManager;
 import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 import org.pdtextensions.semanticanalysis.PreferenceConstants;
 import org.pdtextensions.semanticanalysis.model.validators.Category;
+import org.pdtextensions.semanticanalysis.model.validators.Type;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
 import org.pdtextensions.semanticanalysis.model.validators.ValidatorsFactory;
 import org.pdtextensions.semanticanalysis.model.validators.impl.ValidatorsPackageImpl;
+import org.pdtextensions.semanticanalysis.validation.Identifier;
 
 @Singleton
 @SuppressWarnings("restriction")
@@ -40,6 +45,7 @@ final public class Manager implements IValidatorManager {
 
 	final private Map<String, Category> categories = new HashMap<String, Category>();
 	final private Map<String, Validator> validators = new HashMap<String, Validator>();
+	final private Map<String, Identifier> identifiers = new HashMap<String, Identifier>();
 	final private Validator[] emptyList = new Validator[0];
 
 	@Inject
@@ -96,12 +102,28 @@ final public class Manager implements IValidatorManager {
 
 		validator.setCategory(categories.get(categoryId));
 		validator.getCategory().getValidators().add(validator);
-		validator.setLabel(el.getAttribute("label")); //$NON-NLS-1$
-		validator.setDescription(el.getAttribute("description")); //$NON-NLS-1$
-		validator.setDefaultSeverity(ProblemSeverity.valueOf(preferences.get(validator.getId(), el.getAttribute("defaultSeverity")).toUpperCase())); //$NON-NLS-1$
-		System.out.println(el.getAttribute("class"));
+		
 		try {
+			for (IConfigurationElement typeCfg : el.getChildren("type")) { //$NON-NLS-1$
+				Type type = ValidatorsFactory.eINSTANCE.createType();
+				type.setName(typeCfg.getAttribute("id")); //$NON-NLS-1$
+				type.setImport(Boolean.valueOf(typeCfg.getAttribute("import"))); //$NON-NLS-1$ //$NON-NLS-2$
+				
+				type.setNum(Integer.valueOf(typeCfg.getAttribute("num"))); //$NON-NLS-1$
+				type.setDefaultSeverity(ProblemSeverity.valueOf(preferences.node(validator.getId()).get(type.getName(), typeCfg.getAttribute("defaultSeverity") == null ? "warning" : typeCfg.getAttribute("defaultSeverity")).toUpperCase())); //$NON-NLS-1$ //$NON-NLS-2$
+				type.setLabel(typeCfg.getAttribute("label")); //$NON-NLS-1$
+				type.setDescription(typeCfg.getAttribute("description")); //$NON-NLS-1$
+				
+				final Identifier ident = new Identifier(type.isImport(), type.getNum());
+				
+				type.setId(ident);
+				identifiers.put(validator.getId() + type.getId(), ident);
+				
+				type.setValidator(validator);
+				validator.getTypes().add(type);
+			}
 			IValidatorFactory exec = (IValidatorFactory) el.createExecutableExtension("class");  //$NON-NLS-1$
+			ContextInjectionFactory.inject(exec, PEXAnalysisPlugin.getEclipseContext());
 			validator.setValidatorFactory(exec);
 			validators.put(validator.getId(), validator);
 		} catch (CoreException e) {
@@ -124,8 +146,32 @@ final public class Manager implements IValidatorManager {
 		}
 	}
 	
+	@Override
+	public ProblemSeverity getSeverity(IScriptProject scriptProject, String validator, String type) {
+		return getSeverity(scriptProject, validators.get(validator), type);
+	}
+	
+	@Override
+	public ProblemSeverity getSeverity(IScriptProject scriptProject, Validator validator, String type) {
+		assert validator != null;
+		if (!isEnabled(scriptProject)) {
+			return ProblemSeverity.IGNORE;
+		}
+		
+		Preferences prefs = getProjectPreferences(scriptProject).node(validator.getId());
+		Type t = validator.getType(type);
+		
+		try {
+			return ProblemSeverity.valueOf(prefs.get(type, preferences.node(validator.getId()).get(type, t.getDefaultSeverity().toString())));
+		} catch (Exception e) {
+			PEXAnalysisPlugin.error(e);
+			
+			return t.getDefaultSeverity();
+		}
+	}
+	
 	private Preferences getProjectPreferences(IScriptProject project) {
-		Preferences node = projectPreferences.node(project.getProject().getName()).node(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID); //$NON-NLS-1$
+		Preferences node = projectPreferences.node(project.getProject().getName()).node(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID);
 		if (node.get(PreferenceConstants.ENABLED, null) != null) {
 			return node;
 		}
@@ -143,9 +189,21 @@ final public class Manager implements IValidatorManager {
 		if (!isEnabled(scriptProject)) {
 			return emptyList;
 		}
+		Set<Validator> ret = new HashSet<Validator>();
+		for (Validator v : validators.values()) {
+			boolean found = false;
+			for (Type t : v.getTypes()) {
+				if (!getSeverity(scriptProject, v, t.getName()).equals(ProblemSeverity.IGNORE)) {
+					found = true;
+					break;
+				}
+			}
+			if (found) {
+				ret.add(v);
+			}
+		}
 		
-		
-		return null;
+		return ret.toArray(new Validator[ret.size()]);
 	}
 
 	@Override

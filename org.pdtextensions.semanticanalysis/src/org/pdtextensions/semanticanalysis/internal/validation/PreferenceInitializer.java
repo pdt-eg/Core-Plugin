@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.semanticanalysis.internal.validator;
+package org.pdtextensions.semanticanalysis.internal.validation;
 
 import javax.inject.Inject;
 
@@ -16,6 +16,7 @@ import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.pdtextensions.semanticanalysis.IValidatorManager;
 import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 import org.pdtextensions.semanticanalysis.PreferenceConstants;
+import org.pdtextensions.semanticanalysis.model.validators.Type;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
 
 /**
@@ -33,7 +34,10 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		ScopedPreferenceStore prefs = new ScopedPreferenceStore(InstanceScope.INSTANCE, PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID);
 		prefs.setDefault(PreferenceConstants.ENABLED, true);
 		for (Validator v : manager.getValidators()) {
-			prefs.setDefault(v.getId(), v.getDefaultSeverity().toString());
+			ScopedPreferenceStore vPrefs = new ScopedPreferenceStore(InstanceScope.INSTANCE, PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID + "/" + v.getId()); //$NON-NLS-1$
+			for (Type t : v.getTypes()) {
+				vPrefs.setDefault(t.getName(), t.getDefaultSeverity().toString());
+			}
 		}
 	}
 

@@ -3,21 +3,12 @@
 package org.pdtextensions.semanticanalysis.model.validators.impl;
 
 import java.util.Collection;
-
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.InternalEObject;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.InternalEList;
-
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.pdtextensions.semanticanalysis.model.validators.Category;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
 import org.pdtextensions.semanticanalysis.model.validators.ValidatorsPackage;
@@ -100,7 +91,7 @@ public class CategoryImpl extends MinimalEObjectImpl.Container implements Catego
 	protected String description = DESCRIPTION_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getValidators() <em>Validators</em>}' containment reference list.
+	 * The cached value of the '{@link #getValidators() <em>Validators</em>}' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getValidators()
@@ -198,23 +189,9 @@ public class CategoryImpl extends MinimalEObjectImpl.Container implements Catego
 	 */
 	public EList<Validator> getValidators() {
 		if (validators == null) {
-			validators = new EObjectContainmentEList<Validator>(Validator.class, this, ValidatorsPackage.CATEGORY__VALIDATORS);
+			validators = new EObjectResolvingEList<Validator>(Validator.class, this, ValidatorsPackage.CATEGORY__VALIDATORS);
 		}
 		return validators;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case ValidatorsPackage.CATEGORY__VALIDATORS:
-				return ((InternalEList<?>)getValidators()).basicRemove(otherEnd, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**

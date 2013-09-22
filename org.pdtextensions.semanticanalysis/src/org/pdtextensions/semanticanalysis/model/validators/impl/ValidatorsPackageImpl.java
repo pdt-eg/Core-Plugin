@@ -6,14 +6,17 @@ import org.eclipse.dltk.compiler.problem.ProblemSeverity;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.pdtextensions.semanticanalysis.IValidatorFactory;
 import org.pdtextensions.semanticanalysis.model.validators.Category;
+import org.pdtextensions.semanticanalysis.model.validators.Type;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
 import org.pdtextensions.semanticanalysis.model.validators.ValidatorsFactory;
 import org.pdtextensions.semanticanalysis.model.validators.ValidatorsPackage;
+import org.pdtextensions.semanticanalysis.validation.Identifier;
 
 /**
  * <!-- begin-user-doc -->
@@ -41,6 +44,13 @@ public class ValidatorsPackageImpl extends EPackageImpl implements ValidatorsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass typeEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EDataType validatorFactoryEDataType = null;
 
 	/**
@@ -49,6 +59,13 @@ public class ValidatorsPackageImpl extends EPackageImpl implements ValidatorsPac
 	 * @generated
 	 */
 	private EDataType statusEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType identifierEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -134,7 +151,7 @@ public class ValidatorsPackageImpl extends EPackageImpl implements ValidatorsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getValidator_Label() {
+	public EAttribute getValidator_ValidatorFactory() {
 		return (EAttribute)validatorEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -143,53 +160,26 @@ public class ValidatorsPackageImpl extends EPackageImpl implements ValidatorsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getValidator_Description() {
-		return (EAttribute)validatorEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getValidator_DefaultSeverity() {
-		return (EAttribute)validatorEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getValidator_ValidatorFactory() {
-		return (EAttribute)validatorEClass.getEStructuralFeatures().get(4);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getValidator_Categories() {
-		return (EReference)validatorEClass.getEStructuralFeatures().get(5);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getValidator_Validators() {
-		return (EReference)validatorEClass.getEStructuralFeatures().get(6);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EReference getValidator_Category() {
-		return (EReference)validatorEClass.getEStructuralFeatures().get(7);
+		return (EReference)validatorEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getValidator_Types() {
+		return (EReference)validatorEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getValidator__GetType__String() {
+		return validatorEClass.getEOperations().get(0);
 	}
 
 	/**
@@ -242,6 +232,87 @@ public class ValidatorsPackageImpl extends EPackageImpl implements ValidatorsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getType() {
+		return typeEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getType_Label() {
+		return (EAttribute)typeEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getType_Description() {
+		return (EAttribute)typeEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getType_DefaultSeverity() {
+		return (EAttribute)typeEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getType_Validator() {
+		return (EReference)typeEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getType_Id() {
+		return (EAttribute)typeEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getType_Num() {
+		return (EAttribute)typeEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getType_Import() {
+		return (EAttribute)typeEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getType_Name() {
+		return (EAttribute)typeEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EDataType getValidatorFactory() {
 		return validatorFactoryEDataType;
 	}
@@ -253,6 +324,15 @@ public class ValidatorsPackageImpl extends EPackageImpl implements ValidatorsPac
 	 */
 	public EDataType getStatus() {
 		return statusEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getIdentifier() {
+		return identifierEDataType;
 	}
 
 	/**
@@ -285,13 +365,10 @@ public class ValidatorsPackageImpl extends EPackageImpl implements ValidatorsPac
 		// Create classes and their features
 		validatorEClass = createEClass(VALIDATOR);
 		createEAttribute(validatorEClass, VALIDATOR__ID);
-		createEAttribute(validatorEClass, VALIDATOR__LABEL);
-		createEAttribute(validatorEClass, VALIDATOR__DESCRIPTION);
-		createEAttribute(validatorEClass, VALIDATOR__DEFAULT_SEVERITY);
 		createEAttribute(validatorEClass, VALIDATOR__VALIDATOR_FACTORY);
-		createEReference(validatorEClass, VALIDATOR__CATEGORIES);
-		createEReference(validatorEClass, VALIDATOR__VALIDATORS);
 		createEReference(validatorEClass, VALIDATOR__CATEGORY);
+		createEReference(validatorEClass, VALIDATOR__TYPES);
+		createEOperation(validatorEClass, VALIDATOR___GET_TYPE__STRING);
 
 		categoryEClass = createEClass(CATEGORY);
 		createEAttribute(categoryEClass, CATEGORY__ID);
@@ -299,9 +376,20 @@ public class ValidatorsPackageImpl extends EPackageImpl implements ValidatorsPac
 		createEAttribute(categoryEClass, CATEGORY__DESCRIPTION);
 		createEReference(categoryEClass, CATEGORY__VALIDATORS);
 
+		typeEClass = createEClass(TYPE);
+		createEAttribute(typeEClass, TYPE__LABEL);
+		createEAttribute(typeEClass, TYPE__DESCRIPTION);
+		createEAttribute(typeEClass, TYPE__DEFAULT_SEVERITY);
+		createEReference(typeEClass, TYPE__VALIDATOR);
+		createEAttribute(typeEClass, TYPE__ID);
+		createEAttribute(typeEClass, TYPE__NUM);
+		createEAttribute(typeEClass, TYPE__IMPORT);
+		createEAttribute(typeEClass, TYPE__NAME);
+
 		// Create data types
 		validatorFactoryEDataType = createEDataType(VALIDATOR_FACTORY);
 		statusEDataType = createEDataType(STATUS);
+		identifierEDataType = createEDataType(IDENTIFIER);
 	}
 
 	/**
@@ -336,23 +424,33 @@ public class ValidatorsPackageImpl extends EPackageImpl implements ValidatorsPac
 		// Initialize classes, features, and operations; add parameters
 		initEClass(validatorEClass, Validator.class, "Validator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getValidator_Id(), ecorePackage.getEString(), "id", null, 0, 1, Validator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getValidator_Label(), ecorePackage.getEString(), "label", null, 0, 1, Validator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getValidator_Description(), ecorePackage.getEString(), "description", null, 0, 1, Validator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getValidator_DefaultSeverity(), this.getStatus(), "defaultSeverity", null, 0, 1, Validator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getValidator_ValidatorFactory(), this.getValidatorFactory(), "validatorFactory", null, 0, 1, Validator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getValidator_Categories(), this.getCategory(), null, "categories", null, 0, 1, Validator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getValidator_Validators(), this.getCategory(), null, "validators", null, 0, -1, Validator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getValidator_Category(), this.getCategory(), null, "category", null, 1, 1, Validator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getValidator_Types(), this.getType(), null, "types", null, 0, -1, Validator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		EOperation op = initEOperation(getValidator__GetType__String(), this.getType(), "getType", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "id", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(categoryEClass, Category.class, "Category", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getCategory_Id(), ecorePackage.getEString(), "id", null, 0, 1, Category.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCategory_Label(), ecorePackage.getEString(), "label", null, 0, 1, Category.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCategory_Description(), ecorePackage.getEString(), "description", null, 0, 1, Category.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getCategory_Validators(), this.getValidator(), null, "validators", null, 0, -1, Category.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getCategory_Validators(), this.getValidator(), null, "validators", null, 0, -1, Category.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(typeEClass, Type.class, "Type", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getType_Label(), ecorePackage.getEString(), "label", null, 0, 1, Type.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getType_Description(), ecorePackage.getEString(), "description", null, 0, 1, Type.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getType_DefaultSeverity(), this.getStatus(), "defaultSeverity", null, 0, 1, Type.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getType_Validator(), this.getValidator(), null, "validator", null, 1, 1, Type.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getType_Id(), this.getIdentifier(), "id", null, 0, 1, Type.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getType_Num(), ecorePackage.getEInt(), "num", null, 0, 1, Type.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getType_Import(), ecorePackage.getEBoolean(), "import", null, 0, 1, Type.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getType_Name(), ecorePackage.getEString(), "name", null, 0, 1, Type.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(validatorFactoryEDataType, IValidatorFactory.class, "ValidatorFactory", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(statusEDataType, ProblemSeverity.class, "Status", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(identifierEDataType, Identifier.class, "Identifier", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

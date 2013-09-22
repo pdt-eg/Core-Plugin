@@ -7,6 +7,7 @@
  ******************************************************************************/
 package org.pdtextensions.semanticanalysis;
 
+import org.eclipse.dltk.compiler.problem.ProblemSeverity;
 import org.eclipse.dltk.core.IScriptProject;
 import org.pdtextensions.semanticanalysis.model.validators.Category;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
@@ -22,6 +23,10 @@ public interface IValidatorManager {
 	public Validator[] getValidators();
 	
 	public Validator[] getValidators(IScriptProject scriptProject);
+	
+	public ProblemSeverity getSeverity(IScriptProject scriptProject, Validator validator, String type);
+	
+	public ProblemSeverity getSeverity(IScriptProject scriptProject, String validator, String type);
 	
 	public Category[] getCategories();
 	

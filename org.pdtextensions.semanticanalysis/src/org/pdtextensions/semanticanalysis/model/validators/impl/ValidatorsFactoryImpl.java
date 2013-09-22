@@ -11,6 +11,7 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.pdtextensions.semanticanalysis.IValidatorFactory;
 import org.pdtextensions.semanticanalysis.model.validators.*;
+import org.pdtextensions.semanticanalysis.validation.Identifier;
 
 /**
  * <!-- begin-user-doc -->
@@ -58,6 +59,7 @@ public class ValidatorsFactoryImpl extends EFactoryImpl implements ValidatorsFac
 		switch (eClass.getClassifierID()) {
 			case ValidatorsPackage.VALIDATOR: return createValidator();
 			case ValidatorsPackage.CATEGORY: return createCategory();
+			case ValidatorsPackage.TYPE: return createType();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -75,6 +77,8 @@ public class ValidatorsFactoryImpl extends EFactoryImpl implements ValidatorsFac
 				return createValidatorFactoryFromString(eDataType, initialValue);
 			case ValidatorsPackage.STATUS:
 				return createStatusFromString(eDataType, initialValue);
+			case ValidatorsPackage.IDENTIFIER:
+				return createIdentifierFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -92,6 +96,8 @@ public class ValidatorsFactoryImpl extends EFactoryImpl implements ValidatorsFac
 				return convertValidatorFactoryToString(eDataType, instanceValue);
 			case ValidatorsPackage.STATUS:
 				return convertStatusToString(eDataType, instanceValue);
+			case ValidatorsPackage.IDENTIFIER:
+				return convertIdentifierToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -115,6 +121,16 @@ public class ValidatorsFactoryImpl extends EFactoryImpl implements ValidatorsFac
 	public Category createCategory() {
 		CategoryImpl category = new CategoryImpl();
 		return category;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Type createType() {
+		TypeImpl type = new TypeImpl();
+		return type;
 	}
 
 	/**
@@ -150,6 +166,24 @@ public class ValidatorsFactoryImpl extends EFactoryImpl implements ValidatorsFac
 	 * @generated
 	 */
 	public String convertStatusToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Identifier createIdentifierFromString(EDataType eDataType, String initialValue) {
+		return (Identifier)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertIdentifierToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

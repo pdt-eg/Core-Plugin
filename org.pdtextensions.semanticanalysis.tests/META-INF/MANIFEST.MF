@@ -27,8 +27,7 @@ Import-Package: javax.annotation;version="1.1.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.pdtextensions.semanticanalysis.tests,
- org.pdtextensions.semanticanalysis.tests.validation,
- org.pdtextensions.semanticanalysis.model.validators.tests
+ org.pdtextensions.semanticanalysis.tests.validation
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin

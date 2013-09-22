@@ -7,34 +7,24 @@
  ******************************************************************************/
 package org.pdtextensions.semanticanalysis.internal.integration;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import javax.inject.Inject;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
-import org.eclipse.dltk.compiler.problem.CategorizedProblem;
-import org.eclipse.dltk.compiler.problem.ProblemSeverity;
-import org.eclipse.dltk.core.ISourceModule;
-import org.eclipse.dltk.core.SourceParserUtil;
 import org.eclipse.dltk.core.builder.IBuildChange;
 import org.eclipse.dltk.core.builder.IBuildContext;
 import org.eclipse.dltk.core.builder.IBuildParticipant;
-import org.eclipse.dltk.core.builder.IBuildParticipantExtension;
 import org.eclipse.dltk.core.builder.IBuildParticipantExtension2;
 import org.eclipse.dltk.core.builder.IBuildParticipantExtension3;
 import org.eclipse.dltk.core.builder.IBuildParticipantExtension4;
 import org.eclipse.dltk.core.builder.IBuildState;
-import org.eclipse.dltk.internal.core.builder.BuildProblemReporter;
-import org.eclipse.dltk.internal.core.builder.SourceModuleBuildContext;
-import org.pdtextensions.core.CorePreferenceConstants;
 import org.pdtextensions.semanticanalysis.IValidatorManager;
+import org.pdtextensions.semanticanalysis.IValidatorParticipant;
 import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
-import org.pdtextensions.semanticanalysis.Problem;
+import org.pdtextensions.semanticanalysis.internal.validation.ValidatorContext;
+import org.pdtextensions.semanticanalysis.model.validators.Validator;
+import org.pdtextensions.semanticanalysis.validation.Problem;
 
 /**
  * Build participant for semantic validators
@@ -50,49 +40,35 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 	@Override
 	public void build(IBuildContext context) throws CoreException {
 		
-		final ISourceModule sourceModule = context.getSourceModule();
-		/*if (sourceModule.getResource().isDerived(IResource.CHECK_ANCESTORS)
-				|| !CorePreferencesSupport.getInstance().getBooleanPreference(
-						CorePreferenceConstants.PREF_SA_ENABLE, true,
-						sourceModule.getScriptProject().getProject())) {
+		if (!context.getSourceModule().getScriptProject().isOnBuildpath(context.getSourceModule().getResource()) || !manager.isEnabled(context.getSourceModule().getScriptProject())) {
 			return;
 		}
 		
-		final ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(sourceModule);
+		for (Validator validator : manager.getValidators(context.getSourceModule().getScriptProject())) {
+			final ValidatorContext validatorContext = new ValidatorContext(validator, context, manager);
+			
+			validate(validatorContext, validator.getValidatorFactory().getValidatorParticipant(validatorContext.getProject()));
+		}
 		
-		try {
-			moduleDeclaration.traverse(new UsageValidator(context,sourceModule, moduleDeclaration));
-		} catch (Exception e) {
-			PEXAnalysisPlugin.error(e);
+	}
+	
+	private void validate(final ValidatorContext validatorContext, final IValidatorParticipant validatorParticipant) {
+		// if null ignore
+		if (validatorParticipant == null) {
+			return;
+		}
+		
+		if (validatorContext.isDerived() && !validatorParticipant.allowDerived()) {
+			return;
 		}
 
 		try {
-			final ImplementationValidator visitor = new ImplementationValidator(sourceModule);
-			moduleDeclaration.traverse(visitor);
-			
-			if (visitor.hasMissing() && visitor.getClassDeclaration() != null) {
-				int start = visitor.getClassDeclaration().getNameStart();
-				int end = visitor.getClassDeclaration().getNameEnd();
-
-				String message = "The class " + visitor.getClassDeclaration().getName() + " must implement the inherited abstract method "
-				+ visitor.getMissing().get(0).getFirstMethodName();
-				context.getProblemReporter().reportProblem(
-						new ValidationProblem(PEXProblem.INTERFACE_IMPLEMENTATION, 
-						ProblemSeverity.WARNING, 
-						CategorizedProblem.CAT_RESTRICTION, 
-						new String[0], 
-						message, 
-						sourceModule.getElementName(), 
-						visitor.getClassDeclaration().getNameStart(), 
-						visitor.getClassDeclaration().getNameEnd(), 
-						context.getLineTracker().getLineNumberOfOffset(visitor.getClassDeclaration().getNameStart())
-						));
-			}
+			validatorParticipant.validate(validatorContext);
 		} catch (Exception e) {
-			PEXAnalysisPlugin.error(e);
-		}*/
+			PEXAnalysisPlugin.error("Exception during validation", e); //$NON-NLS-1$
+		}
 	}
-	
+
 	/**
 	 * clear all markers in project
 	 */
@@ -118,8 +94,7 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 	}
 
 	@Override
-	public void prepare(IBuildChange buildChange, IBuildState buildState)
-			throws CoreException {
+	public void prepare(IBuildChange buildChange, IBuildState buildState) throws CoreException {
 		this.buildChange = buildChange;
 	}
 
@@ -137,7 +112,9 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 	public void afterBuild(IBuildContext context) {
 		//clean old markers
 		try {
-			context.getSourceModule().getResource().deleteMarkers(Problem.MARKER_TYPE, true, IResource.DEPTH_INFINITE);
+			if (context.getBuildType() != IBuildContext.RECONCILE_BUILD) {
+				context.getSourceModule().getResource().deleteMarkers(Problem.MARKER_TYPE, true, IResource.DEPTH_INFINITE);
+			}
 		} catch (CoreException e) {
 			PEXAnalysisPlugin.error(e);
 		}

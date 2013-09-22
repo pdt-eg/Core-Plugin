@@ -2,7 +2,6 @@
  */
 package org.pdtextensions.semanticanalysis.model.validators;
 
-import org.eclipse.dltk.compiler.problem.ProblemSeverity;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.pdtextensions.semanticanalysis.IValidatorFactory;
@@ -26,13 +25,9 @@ import org.pdtextensions.semanticanalysis.IValidatorFactory;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getId <em>Id</em>}</li>
- *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getLabel <em>Label</em>}</li>
- *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getDescription <em>Description</em>}</li>
- *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getDefaultSeverity <em>Default Severity</em>}</li>
  *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getValidatorFactory <em>Validator Factory</em>}</li>
- *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getCategories <em>Categories</em>}</li>
- *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getValidators <em>Validators</em>}</li>
  *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getCategory <em>Category</em>}</li>
+ *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getTypes <em>Types</em>}</li>
  * </ul>
  * </p>
  *
@@ -68,84 +63,6 @@ public interface Validator extends EObject {
 	void setId(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Label</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Label</em>' attribute.
-	 * @see #setLabel(String)
-	 * @see org.pdtextensions.semanticanalysis.model.validators.ValidatorsPackage#getValidator_Label()
-	 * @model
-	 * @generated
-	 */
-	String getLabel();
-
-	/**
-	 * Sets the value of the '{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getLabel <em>Label</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Label</em>' attribute.
-	 * @see #getLabel()
-	 * @generated
-	 */
-	void setLabel(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Description</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Description</em>' attribute.
-	 * @see #setDescription(String)
-	 * @see org.pdtextensions.semanticanalysis.model.validators.ValidatorsPackage#getValidator_Description()
-	 * @model
-	 * @generated
-	 */
-	String getDescription();
-
-	/**
-	 * Sets the value of the '{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getDescription <em>Description</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Description</em>' attribute.
-	 * @see #getDescription()
-	 * @generated
-	 */
-	void setDescription(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Default Severity</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Default Severity</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Default Severity</em>' attribute.
-	 * @see #setDefaultSeverity(ProblemSeverity)
-	 * @see org.pdtextensions.semanticanalysis.model.validators.ValidatorsPackage#getValidator_DefaultSeverity()
-	 * @model dataType="org.pdtextensions.semanticanalysis.model.validators.Status"
-	 * @generated
-	 */
-	ProblemSeverity getDefaultSeverity();
-
-	/**
-	 * Sets the value of the '{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getDefaultSeverity <em>Default Severity</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Default Severity</em>' attribute.
-	 * @see #getDefaultSeverity()
-	 * @generated
-	 */
-	void setDefaultSeverity(ProblemSeverity value);
-
-	/**
 	 * Returns the value of the '<em><b>Validator Factory</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -172,48 +89,6 @@ public interface Validator extends EObject {
 	void setValidatorFactory(IValidatorFactory value);
 
 	/**
-	 * Returns the value of the '<em><b>Categories</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Categories</em>' reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Categories</em>' reference.
-	 * @see #setCategories(Category)
-	 * @see org.pdtextensions.semanticanalysis.model.validators.ValidatorsPackage#getValidator_Categories()
-	 * @model
-	 * @generated
-	 */
-	Category getCategories();
-
-	/**
-	 * Sets the value of the '{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getCategories <em>Categories</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Categories</em>' reference.
-	 * @see #getCategories()
-	 * @generated
-	 */
-	void setCategories(Category value);
-
-	/**
-	 * Returns the value of the '<em><b>Validators</b></em>' reference list.
-	 * The list contents are of type {@link org.pdtextensions.semanticanalysis.model.validators.Category}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Validators</em>' reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Validators</em>' reference list.
-	 * @see org.pdtextensions.semanticanalysis.model.validators.ValidatorsPackage#getValidator_Validators()
-	 * @model
-	 * @generated
-	 */
-	EList<Category> getValidators();
-
-	/**
 	 * Returns the value of the '<em><b>Category</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -238,5 +113,29 @@ public interface Validator extends EObject {
 	 * @generated
 	 */
 	void setCategory(Category value);
+
+	/**
+	 * Returns the value of the '<em><b>Types</b></em>' reference list.
+	 * The list contents are of type {@link org.pdtextensions.semanticanalysis.model.validators.Type}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Types</em>' reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Types</em>' reference list.
+	 * @see org.pdtextensions.semanticanalysis.model.validators.ValidatorsPackage#getValidator_Types()
+	 * @model
+	 * @generated
+	 */
+	EList<Type> getTypes();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model
+	 * @generated
+	 */
+	Type getType(String id);
 
 } // Validator

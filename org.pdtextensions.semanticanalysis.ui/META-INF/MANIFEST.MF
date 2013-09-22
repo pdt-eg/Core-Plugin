@@ -21,7 +21,10 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.e4.core.contexts,
  javax.inject,
  org.eclipse.ui.forms,
- org.eclipse.swt
+ org.eclipse.swt,
+ org.eclipse.jface.text,
+ org.eclipse.wst.sse.core,
+ org.eclipse.wst.sse.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.pdtextensions.semanticanalysis.ui.handlers

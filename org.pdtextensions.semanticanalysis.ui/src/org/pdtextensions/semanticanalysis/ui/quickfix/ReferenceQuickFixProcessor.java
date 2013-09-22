@@ -1,4 +1,4 @@
-package org.pdtextensions.core.ui.quickfix;
+package org.pdtextensions.semanticanalysis.ui.quickfix;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +9,7 @@ import org.eclipse.dltk.ui.text.completion.IScriptCompletionProposal;
 import org.eclipse.php.internal.ui.text.correction.IInvocationContext;
 import org.eclipse.php.internal.ui.text.correction.IProblemLocation;
 import org.eclipse.php.internal.ui.text.correction.IQuickFixProcessor;
-import org.pdtextensions.core.ui.contentassist.InjectUseStatementCompletionProposal;
-import org.pdtextensions.core.validation.IPDTProblem;
+import org.pdtextensions.semanticanalysis.ui.contentassist.InjectUseStatementCompletionProposal;
 
 @SuppressWarnings("restriction")
 public class ReferenceQuickFixProcessor implements IQuickFixProcessor {
@@ -20,8 +19,8 @@ public class ReferenceQuickFixProcessor implements IQuickFixProcessor {
 
 	@Override
 	public boolean hasCorrections(ISourceModule unit, int problemId) {
-		
-		return problemId == IPDTProblem.UsageRelated;
+		return false;
+		//return problemId == IPDTProblem.UsageRelated;
 	}
 
 	@Override
@@ -34,7 +33,7 @@ public class ReferenceQuickFixProcessor implements IQuickFixProcessor {
 
 		List<IScriptCompletionProposal> corrections = new ArrayList<IScriptCompletionProposal>();
 		List<String> existing = new ArrayList<String>();
-		
+		/*
 		for (IProblemLocation location : locations) {
 			
 			String offset = Integer.toString(location.getOffset());
@@ -46,7 +45,7 @@ public class ReferenceQuickFixProcessor implements IQuickFixProcessor {
 				
 			}
 		}
-		
+		*/
 		return corrections.toArray(new IScriptCompletionProposal[corrections.size()]);		
 		
 	}

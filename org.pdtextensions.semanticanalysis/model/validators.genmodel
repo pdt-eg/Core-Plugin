@@ -9,11 +9,9 @@
       disposableProviderFactory="true" ecorePackage="validators.ecore#/">
     <genDataTypes ecoreDataType="validators.ecore#//ValidatorFactory"/>
     <genDataTypes ecoreDataType="validators.ecore#//Status"/>
+    <genDataTypes ecoreDataType="validators.ecore#//Identifier"/>
     <genClasses ecoreClass="validators.ecore#//Validator">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute validators.ecore#//Validator/id"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute validators.ecore#//Validator/label"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute validators.ecore#//Validator/description"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute validators.ecore#//Validator/defaultSeverity"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute validators.ecore#//Validator/validatorFactory"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference validators.ecore#//Validator/categories"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference validators.ecore#//Validator/validators"/>
@@ -24,6 +22,13 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute validators.ecore#//Category/label"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute validators.ecore#//Category/description"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference validators.ecore#//Category/validators"/>
+    </genClasses>
+    <genClasses ecoreClass="validators.ecore#//Type">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute validators.ecore#//Type/label"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute validators.ecore#//Type/description"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute validators.ecore#//Type/defaultSeverity"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference validators.ecore#//Type/validator"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute validators.ecore#//Type/id"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

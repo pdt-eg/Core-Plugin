@@ -9,6 +9,30 @@
             id="org.pdtextensions.semanticanalysis.defaultCategory"
             label="PHP Basic Analysis">
       </category>
+      <validator
+            id="org.pdtextensions.semanticanalysis.validator.usageValidator" 
+            class="org.pdtextensions.semanticanalysis.validation.factory.UsageValidatorFactory">
+            <type
+                  id="duplicate"
+                  num="1"
+                  label="Duplicate use statement"
+                  defaultSeverity="error" />
+            <type
+                 id="use"
+                 num="2"
+                 label="Type not found"
+                 import="true"
+                 defaultSeverity="warning" />
+      </validator>
+      <validator
+            id="org.pdtextensions.semanticanalysis.validator.implementationValidator" 
+            class="org.pdtextensions.semanticanalysis.validation.factory.ImplementationValidatorFactory">
+            <type
+                 id="methods"
+                 num="1"
+                 label="Missing method implementation"
+                 defaultSeverity="warning" />
+      </validator>
 
    </extension>
    <extension
@@ -38,8 +62,22 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="org.pdtextensions.semanticanalysis.internal.validator.PreferenceInitializer">
+            class="org.pdtextensions.semanticanalysis.internal.validation.PreferenceInitializer">
       </initializer>
    </extension>
-
+    <extension
+        id="org.pdtextensions.semanticanalysis.problem"
+        name="PHP Semantic analysis"
+        point="org.eclipse.core.resources.markers">
+        <persistent value="true"/>
+        <attribute name="lineNumber"/>
+        <attribute name="charStart"/>
+        <attribute name="charEnd"/>
+        <attribute name="message"/>
+        <attribute name="priority"/>
+        <attribute name="severity"/>
+        <attribute name="userEditable" />
+        <attribute name="validator" />
+        <super type="org.eclipse.core.resources.problemmarker"/>
+    </extension>
 </plugin>

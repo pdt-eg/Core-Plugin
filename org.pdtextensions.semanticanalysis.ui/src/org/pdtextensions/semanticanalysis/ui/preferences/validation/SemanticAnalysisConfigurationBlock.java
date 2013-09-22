@@ -7,6 +7,9 @@
  ******************************************************************************/
 package org.pdtextensions.semanticanalysis.ui.preferences.validation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.eclipse.core.resources.IProject;
@@ -36,6 +39,7 @@ import org.pdtextensions.semanticanalysis.IValidatorManager;
 import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 import org.pdtextensions.semanticanalysis.PreferenceConstants;
 import org.pdtextensions.semanticanalysis.model.validators.Category;
+import org.pdtextensions.semanticanalysis.model.validators.Type;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
 
 @SuppressWarnings("restriction")
@@ -49,10 +53,6 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 	private Button analysisEnabled;
 	private PixelConverter pixelConverter;
 
-	protected final static Key getSKey(String key) {
-		return getKey(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID, key);
-	}
-
 	public SemanticAnalysisConfigurationBlock(IStatusChangeListener context,
 			IProject project, IWorkbenchPreferenceContainer container) {
 		super(context, project, getKeys(), container);
@@ -60,12 +60,14 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 
 	private static Key[] getKeys() {
 		Validator[] validators = PEXAnalysisPlugin.getDefault().getValidatorManager().getValidators();
-		Key[] keys = new Key[validators.length + 1];
-		keys[0] = getSKey(PreferenceConstants.ENABLED);
-		for (int i = 0; i < validators.length; i++) {
-			keys[i+1] = getSKey(validators[i].getId());
+		List<Key >res = new ArrayList<Key>();
+		res.add(getKey(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID, PreferenceConstants.ENABLED));
+		for (Validator v : validators) {
+			for (Type t : v.getTypes()) {
+				res.add(getKey(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID + "/" + v.getId(), t.getName()));
+			}
 		}
-		return keys;
+		return res.toArray(new Key[res.size()]);
 	}
 
 	@Override
@@ -134,13 +136,10 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 		horizontalLine.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		horizontalLine.setFont(fieldEditorParent.getFont());
 
-		fields = new Combo[manager.getValidators().length];
+		fields = new Combo[fAllKeys.length];
 		int i = 0;
-		boolean first = true;
 		for (Category category : manager.getCategories()) {
 			ExpandableComposite group = createGroup(1, fieldEditorParent, category.getLabel());
-			group.setExpanded(first);
-			first = false;
 			Composite inner = new Composite(group, SWT.NONE);
 			inner.setFont(parent.getFont());
 			inner.setLayout( new GridLayout(2, false));
@@ -148,7 +147,9 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 			group.setClient(inner);
 
 			for (Validator v : category.getValidators()) {
-				fields[i] = addComboBox(inner, v.getLabel(), fAllKeys[i+1], getSeverityValues(), getSeverityLabels());
+				for (Type t : v.getTypes()) {
+					fields[i] = addComboBox(inner, t.getLabel(), fAllKeys[++i], getSeverityValues(), getSeverityLabels());
+				}
 			}
 		}
 
@@ -160,7 +161,7 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 		excomposite.setText(label);
 		excomposite.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
 		excomposite.setLayout(new FillLayout(SWT.VERTICAL));
-		excomposite.setExpanded(false);
+		excomposite.setExpanded(true);
 		excomposite.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
 				expandedStateChanged((ExpandableComposite) e.getSource());
@@ -172,7 +173,9 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 
 	protected void updateFieldVisibility() {
 		for (int i = 0; i < fields.length; i++) {
-			fields[i].setEnabled(analysisEnabled.getSelection());
+			if (fields[i] != null) {
+				fields[i].setEnabled(analysisEnabled.getSelection());
+			}
 		}
 	}
 }

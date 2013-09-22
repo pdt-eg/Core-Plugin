@@ -3,7 +3,6 @@
 package org.pdtextensions.semanticanalysis.model.validators;
 
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -115,17 +114,17 @@ public interface Category extends EObject {
 	void setDescription(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Validators</b></em>' containment reference list.
+	 * Returns the value of the '<em><b>Validators</b></em>' reference list.
 	 * The list contents are of type {@link org.pdtextensions.semanticanalysis.model.validators.Validator}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Validators</em>' containment reference list isn't clear,
+	 * If the meaning of the '<em>Validators</em>' reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Validators</em>' containment reference list.
+	 * @return the value of the '<em>Validators</em>' reference list.
 	 * @see org.pdtextensions.semanticanalysis.model.validators.ValidatorsPackage#getCategory_Validators()
-	 * @model containment="true"
+	 * @model
 	 * @generated
 	 */
 	EList<Validator> getValidators();

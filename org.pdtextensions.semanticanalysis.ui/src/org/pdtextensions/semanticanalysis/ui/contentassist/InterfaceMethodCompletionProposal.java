@@ -6,7 +6,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  ******************************************************************************/
-package org.pdtextensions.core.ui.contentassist;
+package org.pdtextensions.semanticanalysis.ui.contentassist;
 
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.core.IMethod;
@@ -29,7 +29,7 @@ import org.pdtextensions.core.ui.PDTPluginImages;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.codemanipulation.MethodStub;
 import org.pdtextensions.core.validation.MissingMethodImplementation;
-import org.pdtextensions.core.validation.validator.ImplementationValidator;
+import org.pdtextensions.semanticanalysis.validation.validator.ImplementationValidator;
 
 
 /**
@@ -79,7 +79,7 @@ public class InterfaceMethodCompletionProposal extends PHPCompletionProposal {
 					if (sourceModule.getTypes().length != 1) {
 						return;
 					}
-
+					/*
 					ModuleDeclaration module = SourceParserUtil.getModuleDeclaration(sourceModule);
 					ImplementationValidator validator = new ImplementationValidator(sourceModule);
 					module.traverse(validator);
@@ -103,9 +103,9 @@ public class InterfaceMethodCompletionProposal extends PHPCompletionProposal {
 						/*
 						Formatter formatter = new Formatter();
 						formatter.format(document);
-						*/
+						*
 						
-					}					
+					}*/
 					
 				} catch (Exception e) {
 					Logger.logException(e);

@@ -87,6 +87,9 @@
 
    <element name="validator">
       <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="type"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -111,6 +114,30 @@
                </appinfo>
             </annotation>
          </attribute>
+      </complexType>
+   </element>
+
+   <element name="type">
+      <annotation>
+         <documentation>
+            Validator type, used to generate identifiers
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Short STRING id.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="num" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Type number (for PDT)
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
@@ -119,13 +146,6 @@
                <appinfo>
                   <meta.attribute translatable="true"/>
                </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
             </annotation>
          </attribute>
          <attribute name="defaultSeverity" use="default" value="info">
@@ -146,6 +166,23 @@
                   </enumeration>
                </restriction>
             </simpleType>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="import" type="boolean">
+            <annotation>
+               <documentation>
+                  Mark true if it usage related
+               </documentation>
+            </annotation>
          </attribute>
       </complexType>
    </element>

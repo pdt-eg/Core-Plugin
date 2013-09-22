@@ -1,4 +1,4 @@
-package org.pdtextensions.core.ui.contentassist;
+package org.pdtextensions.semanticanalysis.ui.contentassist;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dltk.core.ICodeAssist;

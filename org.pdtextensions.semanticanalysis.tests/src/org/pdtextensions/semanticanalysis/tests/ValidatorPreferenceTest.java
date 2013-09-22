@@ -87,5 +87,7 @@ public class ValidatorPreferenceTest {
 		projectNode.remove(PreferenceConstants.ENABLED);
 		
 		assertFalse(manager.isEnabled(scriptProject));
+		
+		globalNode.putBoolean(PreferenceConstants.ENABLED, true);
 	}
 }
