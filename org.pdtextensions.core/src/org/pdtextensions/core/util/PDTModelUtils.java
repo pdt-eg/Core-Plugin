@@ -32,6 +32,8 @@ import org.eclipse.dltk.ast.references.SimpleReference;
 import org.eclipse.dltk.ast.references.TypeReference;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IModelElement;
+import org.eclipse.dltk.core.IProjectFragment;
+import org.eclipse.dltk.core.IScriptFolder;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
@@ -44,6 +46,7 @@ import org.eclipse.dltk.core.search.SearchEngine;
 import org.eclipse.dltk.evaluation.types.MultiTypeType;
 import org.eclipse.dltk.internal.core.util.LRUCache;
 import org.eclipse.dltk.ti.types.IEvaluatedType;
+import org.eclipse.php.core.compiler.IPHPModifiers;
 import org.eclipse.php.core.compiler.PHPFlags;
 import org.eclipse.php.internal.core.Logger;
 import org.eclipse.php.internal.core.ast.nodes.Bindings;
@@ -78,9 +81,10 @@ import org.pdtextensions.core.PEXCorePlugin;
  */
 @SuppressWarnings("restriction")
 public class PDTModelUtils {
-
+	public final static String BACK_SLASH = "\\"; //$NON-NLS-1$
+	
 	private final static Pattern ARRAY_TYPE_PATTERN = Pattern
-			.compile("array\\[.*\\]");	
+			.compile("array\\[.*\\]");	 //$NON-NLS-1$
 
 	private static LRUCache typeCache = new LRUCache();
 	private static List<String> builtinTypes = new ArrayList<String>(Arrays.asList("array", "static", "self", "parent"));
@@ -688,5 +692,74 @@ public class PDTModelUtils {
 		public IMethod getOverriddenMethod() {
 			return overriddenMethod;
 		}
+	}
+	
+	
+	/**
+	 * Ease method to select to find IType (Classes, Interfaces, Traits) by FQN
+	 * 
+	 * Because sometimes DLTK index is not ready (for ex. while start), force options allow to search file by file.
+	 * @since 0.18
+	 */
+	public static IType[] findTypes(IScriptProject project, String fqn) {
+		Set<IType> list = new HashSet<IType>();
+		
+		IDLTKSearchScope searchScope = SearchEngine.createSearchScope(project);
+		IType[] types = PhpModelAccess.getDefault().findTypes(fqn,
+				MatchRule.EXACT, 0, 0, searchScope, new NullProgressMonitor());
+
+		for (IType type : types) {
+			if (fqn.equals(type.getFullyQualifiedName(BACK_SLASH))) {
+				list.add(type);
+			}
+		}
+
+		types = PhpModelAccess.getDefault().findTraits(fqn,
+				MatchRule.EXACT, 0, 0, searchScope, new NullProgressMonitor());
+
+		for (IType type : types) {
+			if (fqn.equals(type.getFullyQualifiedName(BACK_SLASH))) {
+				list.add(type);
+			}
+		}
+		
+		return list.toArray(new IType[list.size()]);
+	}
+	
+	public static IType[] findTypes(IScriptProject project, String fqn, boolean force) throws ModelException {
+		if (!force) {
+			return findTypes(project, fqn);
+		}
+		Set<IType> list = new HashSet<IType>();
+		for (IProjectFragment f : project.getAllProjectFragments()) {
+			rawSearch(list, f, fqn);
+		}
+		
+		return list.toArray(new IType[list.size()]);
+	}
+	
+	private static void rawSearch(Set<IType> list, IModelElement el, String name) throws ModelException {
+		if (el instanceof IScriptFolder ) {
+			for (IModelElement sub : ((IScriptFolder) el).getChildren()) {
+				rawSearch(list, sub, name);
+			}
+		} else if (el instanceof IProjectFragment ) {
+			for (IModelElement sub : ((IProjectFragment) el).getChildren()) {
+				rawSearch(list, sub, name);
+			}
+		} else if (el instanceof ISourceModule){
+			ISourceModule mod = (ISourceModule) el;
+			for (IType t : mod.getAllTypes()) {
+				if (t.getFullyQualifiedName(BACK_SLASH).equals(name) && (
+						(IPHPModifiers.AccTrait & t.getFlags()) == IPHPModifiers.AccTrait || 
+						(IPHPModifiers.AccInterface & t.getFlags()) == IPHPModifiers.AccInterface || 
+						(PHPFlags.AccNameSpace & t.getFlags()) == PHPFlags.AccNameSpace 
+					)) {
+					
+					list.add(t);
+				}
+			}
+		}
+		
 	}
 }

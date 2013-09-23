@@ -13,6 +13,6 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.pdtextensions.semanticanalysis.tests.validation.ValidationTestSuite;
 
 @RunWith(Suite.class)
-@SuiteClasses({ValidationTestSuite.class})
+@SuiteClasses({/*ValidationTestSuite.class,*/ ManagerTest.class, ValidatorPreferenceTest.class})
 public class TestRunner {
 }

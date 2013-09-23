@@ -33,16 +33,7 @@
                  label="Missing method implementation"
                  defaultSeverity="warning" />
       </validator>
-
    </extension>
-   <extension
-        point="org.eclipse.dltk.core.builder">
-        <builder     
-            priority="15"
-            nature="org.eclipse.php.core.PHPNature"
-            class="org.pdtextensions.semanticanalysis.internal.integration.DependencyBuilder">
-        </builder>
-    </extension>
     <extension point="org.eclipse.dltk.core.buildParticipant">
         <buildParticipant
             id="org.pdtextensions.validation.buildParticipant"
@@ -70,14 +61,6 @@
         name="PHP Semantic analysis"
         point="org.eclipse.core.resources.markers">
         <persistent value="true"/>
-        <attribute name="lineNumber"/>
-        <attribute name="charStart"/>
-        <attribute name="charEnd"/>
-        <attribute name="message"/>
-        <attribute name="priority"/>
-        <attribute name="severity"/>
-        <attribute name="userEditable" />
-        <attribute name="validator" />
-        <super type="org.eclipse.core.resources.problemmarker"/>
+        <super type="org.eclipse.dltk.core.problem"/>
     </extension>
 </plugin>

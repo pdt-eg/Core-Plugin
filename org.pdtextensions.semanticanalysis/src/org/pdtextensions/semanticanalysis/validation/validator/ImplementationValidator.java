@@ -26,9 +26,9 @@ import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.eclipse.php.internal.core.typeinference.PHPTypeInferenceUtils;
 import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.util.PDTModelUtils;
-import org.pdtextensions.core.validation.MissingMethodImplementation;
 import org.pdtextensions.semanticanalysis.IValidatorContext;
 import org.pdtextensions.semanticanalysis.validation.AbstractValidator;
+import org.pdtextensions.semanticanalysis.validation.MissingMethodImplementation;
 import org.pdtextensions.semanticanalysis.validation.Problem;
 
 /**

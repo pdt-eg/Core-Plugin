@@ -28,7 +28,7 @@ import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.ui.PDTPluginImages;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.codemanipulation.MethodStub;
-import org.pdtextensions.core.validation.MissingMethodImplementation;
+import org.pdtextensions.semanticanalysis.validation.MissingMethodImplementation;
 import org.pdtextensions.semanticanalysis.validation.validator.ImplementationValidator;
 
 

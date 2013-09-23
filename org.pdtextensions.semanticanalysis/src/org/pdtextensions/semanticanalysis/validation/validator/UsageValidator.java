@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dltk.ast.references.TypeReference;
 import org.eclipse.dltk.core.IType;
+import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.index2.search.ISearchEngine.MatchRule;
 import org.eclipse.dltk.core.search.IDLTKSearchScope;
 import org.eclipse.dltk.core.search.SearchEngine;
@@ -22,6 +23,8 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.UseStatement;
 import org.eclipse.php.internal.core.model.PhpModelAccess;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.pdtextensions.core.util.PDTModelUtils;
+import org.pdtextensions.semanticanalysis.IValidatorContext;
+import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 import org.pdtextensions.semanticanalysis.validation.AbstractValidator;
 import org.pdtextensions.semanticanalysis.validation.Problem;
 
@@ -29,6 +32,7 @@ import org.pdtextensions.semanticanalysis.validation.Problem;
  * Checks a PHP sourcemodule for unresolved type references.
  * 
  * @author Robert Gruendler <r.gruendler@gmail.com>
+ * @author Dawid zulus Pakula <zulus@w3des.net> 
  */
 @SuppressWarnings("restriction")
 public class UsageValidator extends AbstractValidator {
@@ -46,10 +50,19 @@ public class UsageValidator extends AbstractValidator {
 
 	// protected Map<UseStatement, UseParts> statements;
 	Map<UsePart, Boolean> parts;
+	Map<String, Boolean> found;
 
 	public UsageValidator() {
 		super();
 		parts = new HashMap<UsePart, Boolean>();
+		found = new HashMap<String, Boolean>();
+	}
+	
+	@Override
+	public void validate(IValidatorContext context) throws Exception {
+		super.validate(context);
+		parts.clear();
+		found.clear();
 	}
 	
 	@Override
@@ -270,29 +283,27 @@ public class UsageValidator extends AbstractValidator {
 		if (isResolved(check)) {
 			return true;
 		}
-
+		System.out.println(sFullName);
 		for (Entry<UsePart, Boolean> entry : parts.entrySet()) {
 
-			String useName = entry.getKey().getNamespace().getName();
+			String useName = entry.getKey().getAlias() != null ? entry.getKey().getAlias().getName() :entry.getKey().getNamespace().getName();
 			String realName = entry.getKey().getNamespace()
 					.getFullyQualifiedName();
-			boolean useResolved = entry.getValue();
-
 			if (entry.getKey().getAlias() != null) {
 				useName = entry.getKey().getAlias().getName();
 			}
-			if (useResolved && sFullName.contains(BACK_SLASH)) { // namespaced usage
+			
+			if (!sFullName.contains(BACK_SLASH) && !sFullName.equals(useName)) {
 				continue;
-			} else if (useResolved && !sFullName.equals(useName)) {
-				continue;
-			} else if (!useResolved && !sFullName.startsWith(useName + BACK_SLASH)) {
+			} else if (sFullName.contains(BACK_SLASH) && !sFullName.startsWith(useName + BACK_SLASH)) {
 				continue;
 			}
-
-			check = (realName.startsWith(BACK_SLASH) ? realName : BACK_SLASH + realName)
-					+ (sFullName.contains(BACK_SLASH) ? sFullName.substring(useName
-							.length()) : "");
-
+			StringBuilder builder = new StringBuilder(!realName.startsWith(BACK_SLASH) ? BACK_SLASH : "");
+			builder.append(realName);
+			builder.append(sFullName.contains(BACK_SLASH) ? sFullName.substring(useName.length()) : "");
+			
+			check = builder.toString();
+			
 			if (isResolved(check)) {
 				return true;
 			}
@@ -310,30 +321,24 @@ public class UsageValidator extends AbstractValidator {
 	 */
 	private boolean isResolved(String fullyQualifiedReference) {
 		if (!fullyQualifiedReference.startsWith(BACK_SLASH)) {
-
 			return false;
+		} 
+		final String searchString = fullyQualifiedReference.substring(1);
+		if (found.containsKey(searchString)) {
+			return found.get(searchString);
 		}
-		String searchString = fullyQualifiedReference.substring(1);
-		IDLTKSearchScope searchScope = SearchEngine.createSearchScope(context
-				.getProject());
-		IType[] types = PhpModelAccess.getDefault().findTypes(searchString,
-				MatchRule.EXACT, 0, 0, searchScope, new NullProgressMonitor());
-
-		for (IType type : types) {
-			if (searchString.equals(type.getFullyQualifiedName(BACK_SLASH))) {
+		try {
+			if (PDTModelUtils.findTypes(context.getProject(), searchString).length > 0 || PDTModelUtils.findTypes(context.getProject(), searchString, true).length > 0) {
+				found.put(searchString, true);
 				return true;
 			}
+		} catch (ModelException e) {
+			PEXAnalysisPlugin.error(e);
 		}
-
-		types = PhpModelAccess.getDefault().findTraits(searchString,
-				MatchRule.EXACT, 0, 0, searchScope, new NullProgressMonitor());
-
-		for (IType type : types) {
-			if (searchString.equals(type.getFullyQualifiedName(BACK_SLASH))) {
-				return true;
-			}
-		}
-
+		found.put(searchString, false);
+		
+		
 		return false;
 	}
+	
 }

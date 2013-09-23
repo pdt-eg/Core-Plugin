@@ -32,5 +32,4 @@ Export-Package: org.pdtextensions.core,
  org.pdtextensions.core.launch.environment,
  org.pdtextensions.core.launch.execution,
  org.pdtextensions.core.log,
- org.pdtextensions.core.util,
- org.pdtextensions.core.validation
+ org.pdtextensions.core.util
