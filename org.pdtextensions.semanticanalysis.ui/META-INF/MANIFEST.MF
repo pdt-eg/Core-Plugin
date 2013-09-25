@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: PEX Semanticanalysis Plugin
+Bundle-Name: PEX Semantic Analysis UI Plugin
 Bundle-SymbolicName: org.pdtextensions.semanticanalysis.ui;singleton:=true
 Bundle-Version: 0.17.0.qualifier
 Bundle-Activator: org.pdtextensions.semanticanalysis.ui.PEXAnalysisUIPlugin

@@ -5,11 +5,10 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.semanticanalysis.internal.integration;
+package org.pdtextensions.internal.semanticanalysis.integration;
 
 import javax.inject.Inject;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
@@ -20,17 +19,17 @@ import org.eclipse.dltk.core.builder.IBuildChange;
 import org.eclipse.dltk.core.builder.IBuildContext;
 import org.eclipse.dltk.core.builder.IBuildParticipant;
 import org.eclipse.dltk.core.builder.IBuildParticipantExtension2;
-import org.eclipse.dltk.core.builder.IBuildParticipantExtension3;
+import org.eclipse.dltk.core.builder.IBuildParticipantExtension4;
 import org.eclipse.dltk.core.builder.IBuildState;
+import org.eclipse.dltk.internal.core.ModelManager;
 import org.eclipse.php.internal.core.compiler.ast.nodes.UsePart;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.pdtextensions.core.util.PDTModelUtils;
-import org.pdtextensions.semanticanalysis.IValidatorManager;
-import org.pdtextensions.semanticanalysis.IValidatorParticipant;
+import org.pdtextensions.internal.semanticanalysis.validation.ValidatorContext;
 import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
-import org.pdtextensions.semanticanalysis.internal.validation.ValidatorContext;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
-import org.pdtextensions.semanticanalysis.validation.Problem;
+import org.pdtextensions.semanticanalysis.validation.IValidatorManager;
+import org.pdtextensions.semanticanalysis.validation.IValidatorParticipant;
 
 /**
  * Build participant for semantic validators
@@ -38,30 +37,14 @@ import org.pdtextensions.semanticanalysis.validation.Problem;
  * @author Dawid zulus Pakula <zulus@w3des.net>
  */
 @SuppressWarnings("restriction")
-public class BuildParticipant implements IBuildParticipant, IBuildParticipantExtension2, IBuildParticipantExtension3 {
+public class BuildParticipant implements IBuildParticipant, IBuildParticipantExtension2, IBuildParticipantExtension4 {
 	@Inject
 	private IValidatorManager manager;
 	
-	private IBuildChange buildChange;
 
 	@Override
 	public void build(IBuildContext context) throws CoreException {
-		if (context.getBuildType() != IBuildContext.RECONCILE_BUILD) {
-			try {
-				context.getSourceModule().getResource().deleteMarkers(Problem.MARKER_TYPE, true, IResource.DEPTH_INFINITE);
-			} catch(CoreException e) {
-				PEXAnalysisPlugin.error(e);
-			}
-		}
-		if (!context.getSourceModule().getScriptProject().isOnBuildpath(context.getSourceModule().getResource()) || !manager.isEnabled(context.getSourceModule().getScriptProject())) {
-			return;
-		}
-		 
-		for (Validator validator : manager.getValidators(context.getSourceModule().getScriptProject())) {
-			final ValidatorContext validatorContext = new ValidatorContext(validator, context, manager);
-			
-			validate(validatorContext, validator.getValidatorFactory().getValidatorParticipant(validatorContext.getProject()));
-		}
+		
 		
 	}
 	
@@ -82,20 +65,6 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 		}
 	}
 
-	/**
-	 * clear all markers in project
-	 */
-	@Override
-	public void clean() {
-		try {
-			if (buildChange != null && buildChange.getProject() != null) {
-				buildChange.getProject().deleteMarkers(Problem.MARKER_TYPE, true, IResource.DEPTH_INFINITE);
-			}
-		} catch (CoreException e) {
-			PEXAnalysisPlugin.error(e);
-		}
-	}
-
 	@Override
 	public boolean beginBuild(int buildType) {
 		return true;
@@ -103,7 +72,6 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 
 	@Override
 	public void endBuild(IProgressMonitor monitor) {
-		buildChange = null;
 	}
 
 	@Override
@@ -113,8 +81,6 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 				report(file, buildState);
 			}
 		}
-		
-		this.buildChange = buildChange;
 	}
 
 	@Override
@@ -123,7 +89,6 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 
 	private void report(final ISourceModule module, final IBuildState state) {
 		final ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(module);
-		
 		try {
 			moduleDeclaration.traverse(new Visitor(module, state));
 		} catch (Exception e) {
@@ -144,7 +109,7 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 		@Override
 		public boolean visit(UsePart s) throws Exception {
 			String searchString = s.getNamespace().getFullyQualifiedName();
-
+			
 			for (IType type : PDTModelUtils.findTypes(module.getScriptProject(), searchString)) {
 				if (allow(module, type)) {
 					state.recordDependency(module.getResource().getFullPath(), type.getResource() == null ? type.getPath() : type.getResource().getFullPath());
@@ -165,6 +130,27 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 	
 	public boolean allow(ISourceModule module, IType type) {
 		return !module.getResource().getFullPath().equals(type.getResource() == null ? type.getPath() : type.getResource().getFullPath());
+	}
+
+	@Override
+	public void notifyDependents(IBuildParticipant[] dependents) {
+		
+	}
+
+	@Override
+	public void afterBuild(IBuildContext context) {
+		if (!context.getSourceModule().getScriptProject().isOnBuildpath(context.getSourceModule().getResource()) || !manager.isEnabled(context.getSourceModule().getScriptProject())) {
+			return;
+		}
+		if (context.getBuildType() == IBuildContext.INCREMENTAL_BUILD) {
+			ModelManager.getModelManager().getIndexManager().waitUntilReady();
+		}
+		
+		for (Validator validator : manager.getValidators(context.getSourceModule().getScriptProject())) {
+			final ValidatorContext validatorContext = new ValidatorContext(validator, context, manager);
+			
+			validate(validatorContext, validator.getValidatorFactory().getValidatorParticipant(validatorContext.getProject()));
+		}
 	}
 
 }

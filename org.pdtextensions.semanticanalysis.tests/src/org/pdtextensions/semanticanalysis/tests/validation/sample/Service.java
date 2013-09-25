@@ -5,13 +5,17 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.semanticanalysis;
+package org.pdtextensions.semanticanalysis.tests.validation.sample;
 
-import org.eclipse.dltk.core.IScriptProject;
+import javax.inject.Inject;
 
-/**
- * @author Dawid zulus Pakula <zulus@w3des.net>
- */
-public interface IValidatorFactory {
-	public IValidatorParticipant getValidatorParticipant(IScriptProject scriptProject);
+import org.pdtextensions.semanticanalysis.validation.IValidatorManager;
+
+public class Service {
+	@Inject
+	IValidatorManager manager;
+	
+	public IValidatorManager getManager() {
+		return manager;
+	}
 }

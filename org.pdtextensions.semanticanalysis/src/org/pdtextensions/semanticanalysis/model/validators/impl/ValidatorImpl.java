@@ -4,6 +4,8 @@ package org.pdtextensions.semanticanalysis.model.validators.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -11,11 +13,12 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
-import org.pdtextensions.semanticanalysis.IValidatorFactory;
+import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 import org.pdtextensions.semanticanalysis.model.validators.Category;
 import org.pdtextensions.semanticanalysis.model.validators.Type;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
 import org.pdtextensions.semanticanalysis.model.validators.ValidatorsPackage;
+import org.pdtextensions.semanticanalysis.validation.IValidatorFactory;
 
 /**
  * <!-- begin-user-doc -->
@@ -25,7 +28,6 @@ import org.pdtextensions.semanticanalysis.model.validators.ValidatorsPackage;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.impl.ValidatorImpl#getId <em>Id</em>}</li>
- *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.impl.ValidatorImpl#getValidatorFactory <em>Validator Factory</em>}</li>
  *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.impl.ValidatorImpl#getCategory <em>Category</em>}</li>
  *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.impl.ValidatorImpl#getTypes <em>Types</em>}</li>
  * </ul>
@@ -53,26 +55,6 @@ public class ValidatorImpl extends MinimalEObjectImpl.Container implements Valid
 	 * @ordered
 	 */
 	protected String id = ID_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getValidatorFactory() <em>Validator Factory</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getValidatorFactory()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final IValidatorFactory VALIDATOR_FACTORY_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getValidatorFactory() <em>Validator Factory</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getValidatorFactory()
-	 * @generated
-	 * @ordered
-	 */
-	protected IValidatorFactory validatorFactory = VALIDATOR_FACTORY_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getCategory() <em>Category</em>}' reference.
@@ -139,27 +121,6 @@ public class ValidatorImpl extends MinimalEObjectImpl.Container implements Valid
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public IValidatorFactory getValidatorFactory() {
-		return validatorFactory;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setValidatorFactory(IValidatorFactory newValidatorFactory) {
-		IValidatorFactory oldValidatorFactory = validatorFactory;
-		validatorFactory = newValidatorFactory;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ValidatorsPackage.VALIDATOR__VALIDATOR_FACTORY, oldValidatorFactory, validatorFactory));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public Category getCategory() {
 		if (category != null && category.eIsProxy()) {
 			InternalEObject oldCategory = (InternalEObject)category;
@@ -211,12 +172,25 @@ public class ValidatorImpl extends MinimalEObjectImpl.Container implements Valid
 	 */
 	public Type getType(String id) {
 		for (Type t : getTypes()) {
-			if (t.getName().equals(id)) {
+			if (t.getId().equals(id)) {
 				return t;
 			}
 		}
 		
 		return null;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 */
+	public IValidatorFactory getValidatorFactory() {
+		try {
+			return PEXAnalysisPlugin.getDefault().getValidatorManager().getValidatorFactory(this);
+		} catch (CoreException e) {
+			PEXAnalysisPlugin.error(e);
+			return null;
+		}
 	}
 
 	/**
@@ -229,8 +203,6 @@ public class ValidatorImpl extends MinimalEObjectImpl.Container implements Valid
 		switch (featureID) {
 			case ValidatorsPackage.VALIDATOR__ID:
 				return getId();
-			case ValidatorsPackage.VALIDATOR__VALIDATOR_FACTORY:
-				return getValidatorFactory();
 			case ValidatorsPackage.VALIDATOR__CATEGORY:
 				if (resolve) return getCategory();
 				return basicGetCategory();
@@ -251,9 +223,6 @@ public class ValidatorImpl extends MinimalEObjectImpl.Container implements Valid
 		switch (featureID) {
 			case ValidatorsPackage.VALIDATOR__ID:
 				setId((String)newValue);
-				return;
-			case ValidatorsPackage.VALIDATOR__VALIDATOR_FACTORY:
-				setValidatorFactory((IValidatorFactory)newValue);
 				return;
 			case ValidatorsPackage.VALIDATOR__CATEGORY:
 				setCategory((Category)newValue);
@@ -277,9 +246,6 @@ public class ValidatorImpl extends MinimalEObjectImpl.Container implements Valid
 			case ValidatorsPackage.VALIDATOR__ID:
 				setId(ID_EDEFAULT);
 				return;
-			case ValidatorsPackage.VALIDATOR__VALIDATOR_FACTORY:
-				setValidatorFactory(VALIDATOR_FACTORY_EDEFAULT);
-				return;
 			case ValidatorsPackage.VALIDATOR__CATEGORY:
 				setCategory((Category)null);
 				return;
@@ -300,8 +266,6 @@ public class ValidatorImpl extends MinimalEObjectImpl.Container implements Valid
 		switch (featureID) {
 			case ValidatorsPackage.VALIDATOR__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-			case ValidatorsPackage.VALIDATOR__VALIDATOR_FACTORY:
-				return VALIDATOR_FACTORY_EDEFAULT == null ? validatorFactory != null : !VALIDATOR_FACTORY_EDEFAULT.equals(validatorFactory);
 			case ValidatorsPackage.VALIDATOR__CATEGORY:
 				return category != null;
 			case ValidatorsPackage.VALIDATOR__TYPES:
@@ -320,6 +284,8 @@ public class ValidatorImpl extends MinimalEObjectImpl.Container implements Valid
 		switch (operationID) {
 			case ValidatorsPackage.VALIDATOR___GET_TYPE__STRING:
 				return getType((String)arguments.get(0));
+			case ValidatorsPackage.VALIDATOR___GET_VALIDATOR_FACTORY:
+				return getValidatorFactory();
 		}
 		return super.eInvoke(operationID, arguments);
 	}
@@ -336,8 +302,6 @@ public class ValidatorImpl extends MinimalEObjectImpl.Container implements Valid
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (id: ");
 		result.append(id);
-		result.append(", validatorFactory: ");
-		result.append(validatorFactory);
 		result.append(')');
 		return result.toString();
 	}

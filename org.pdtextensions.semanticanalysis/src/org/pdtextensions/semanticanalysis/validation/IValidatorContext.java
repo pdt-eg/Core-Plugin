@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.semanticanalysis;
+package org.pdtextensions.semanticanalysis.validation;
 
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.core.IScriptProject;
@@ -14,8 +14,6 @@ import org.eclipse.dltk.core.builder.IBuildContext;
 
 /**
  * Validator context for each validator participant
- * 
- * TODO: Create special e4 context for this class
  * 
  * @author Dawid zulus Pakula <zulus@w3des.net>
  */
@@ -38,11 +36,11 @@ public interface IValidatorContext {
 
 	public IBuildContext getRawContext();
 
-	public void registerProblem(String type, int category, String message, int start, int stop);
+	public void registerProblem(IValidatorIdentifier identifier, int category, String message, int start, int stop);
 
-	public void registerProblem(String type, int category, String message, int start, int stop, int lineNumber);
+	public void registerProblem(IValidatorIdentifier identifier, int category, String message, int start, int stop, int lineNumber);
 
-	public void registerProblem(String type, int category, String message, int start, int stop, String[] arguments);
+	public void registerProblem(IValidatorIdentifier identifier, int category, String message, int start, int stop, String[] arguments);
 
-	public void registerProblem(String type, int category, String message, int start, int stop, int lineNumber, String[] arguments);
+	public void registerProblem(IValidatorIdentifier identifier, int category, String message, int start, int stop, int lineNumber, String[] arguments);
 }

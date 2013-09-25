@@ -11,7 +11,6 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.pdtextensions.semanticanalysis.model.validators.Type;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
 import org.pdtextensions.semanticanalysis.model.validators.ValidatorsPackage;
-import org.pdtextensions.semanticanalysis.validation.Identifier;
 
 /**
  * <!-- begin-user-doc -->
@@ -25,9 +24,6 @@ import org.pdtextensions.semanticanalysis.validation.Identifier;
  *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.impl.TypeImpl#getDefaultSeverity <em>Default Severity</em>}</li>
  *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.impl.TypeImpl#getValidator <em>Validator</em>}</li>
  *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.impl.TypeImpl#getId <em>Id</em>}</li>
- *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.impl.TypeImpl#getNum <em>Num</em>}</li>
- *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.impl.TypeImpl#isImport <em>Import</em>}</li>
- *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.impl.TypeImpl#getName <em>Name</em>}</li>
  * </ul>
  * </p>
  *
@@ -112,7 +108,7 @@ public class TypeImpl extends MinimalEObjectImpl.Container implements Type {
 	 * @generated
 	 * @ordered
 	 */
-	protected static final Identifier ID_EDEFAULT = null;
+	protected static final String ID_EDEFAULT = null;
 
 	/**
 	 * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
@@ -122,67 +118,7 @@ public class TypeImpl extends MinimalEObjectImpl.Container implements Type {
 	 * @generated
 	 * @ordered
 	 */
-	protected Identifier id = ID_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getNum() <em>Num</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getNum()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final int NUM_EDEFAULT = 0;
-
-	/**
-	 * The cached value of the '{@link #getNum() <em>Num</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getNum()
-	 * @generated
-	 * @ordered
-	 */
-	protected int num = NUM_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #isImport() <em>Import</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isImport()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean IMPORT_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isImport() <em>Import</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isImport()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean import_ = IMPORT_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getName()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String NAME_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getName()
-	 * @generated
-	 * @ordered
-	 */
-	protected String name = NAME_EDEFAULT;
+	protected String id = ID_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -309,7 +245,7 @@ public class TypeImpl extends MinimalEObjectImpl.Container implements Type {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Identifier getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -318,74 +254,11 @@ public class TypeImpl extends MinimalEObjectImpl.Container implements Type {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setId(Identifier newId) {
-		Identifier oldId = id;
+	public void setId(String newId) {
+		String oldId = id;
 		id = newId;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, ValidatorsPackage.TYPE__ID, oldId, id));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public int getNum() {
-		return num;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setNum(int newNum) {
-		int oldNum = num;
-		num = newNum;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ValidatorsPackage.TYPE__NUM, oldNum, num));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public boolean isImport() {
-		return import_;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setImport(boolean newImport) {
-		boolean oldImport = import_;
-		import_ = newImport;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ValidatorsPackage.TYPE__IMPORT, oldImport, import_));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setName(String newName) {
-		String oldName = name;
-		name = newName;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ValidatorsPackage.TYPE__NAME, oldName, name));
 	}
 
 	/**
@@ -407,12 +280,6 @@ public class TypeImpl extends MinimalEObjectImpl.Container implements Type {
 				return basicGetValidator();
 			case ValidatorsPackage.TYPE__ID:
 				return getId();
-			case ValidatorsPackage.TYPE__NUM:
-				return getNum();
-			case ValidatorsPackage.TYPE__IMPORT:
-				return isImport();
-			case ValidatorsPackage.TYPE__NAME:
-				return getName();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -438,16 +305,7 @@ public class TypeImpl extends MinimalEObjectImpl.Container implements Type {
 				setValidator((Validator)newValue);
 				return;
 			case ValidatorsPackage.TYPE__ID:
-				setId((Identifier)newValue);
-				return;
-			case ValidatorsPackage.TYPE__NUM:
-				setNum((Integer)newValue);
-				return;
-			case ValidatorsPackage.TYPE__IMPORT:
-				setImport((Boolean)newValue);
-				return;
-			case ValidatorsPackage.TYPE__NAME:
-				setName((String)newValue);
+				setId((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -476,15 +334,6 @@ public class TypeImpl extends MinimalEObjectImpl.Container implements Type {
 			case ValidatorsPackage.TYPE__ID:
 				setId(ID_EDEFAULT);
 				return;
-			case ValidatorsPackage.TYPE__NUM:
-				setNum(NUM_EDEFAULT);
-				return;
-			case ValidatorsPackage.TYPE__IMPORT:
-				setImport(IMPORT_EDEFAULT);
-				return;
-			case ValidatorsPackage.TYPE__NAME:
-				setName(NAME_EDEFAULT);
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -507,12 +356,6 @@ public class TypeImpl extends MinimalEObjectImpl.Container implements Type {
 				return validator != null;
 			case ValidatorsPackage.TYPE__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-			case ValidatorsPackage.TYPE__NUM:
-				return num != NUM_EDEFAULT;
-			case ValidatorsPackage.TYPE__IMPORT:
-				return import_ != IMPORT_EDEFAULT;
-			case ValidatorsPackage.TYPE__NAME:
-				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -535,12 +378,6 @@ public class TypeImpl extends MinimalEObjectImpl.Container implements Type {
 		result.append(defaultSeverity);
 		result.append(", id: ");
 		result.append(id);
-		result.append(", num: ");
-		result.append(num);
-		result.append(", import: ");
-		result.append(import_);
-		result.append(", name: ");
-		result.append(name);
 		result.append(')');
 		return result.toString();
 	}

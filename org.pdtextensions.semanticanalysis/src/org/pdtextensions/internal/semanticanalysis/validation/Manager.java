@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.semanticanalysis.internal.validation;
+package org.pdtextensions.internal.semanticanalysis.validation;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,15 +20,13 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.dltk.compiler.problem.ProblemSeverity;
 import org.eclipse.dltk.core.IScriptProject;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.php.internal.core.project.PHPNature;
 import org.osgi.service.prefs.Preferences;
-import org.pdtextensions.semanticanalysis.IValidatorFactory;
-import org.pdtextensions.semanticanalysis.IValidatorManager;
 import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 import org.pdtextensions.semanticanalysis.PreferenceConstants;
 import org.pdtextensions.semanticanalysis.model.validators.Category;
@@ -36,30 +34,31 @@ import org.pdtextensions.semanticanalysis.model.validators.Type;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
 import org.pdtextensions.semanticanalysis.model.validators.ValidatorsFactory;
 import org.pdtextensions.semanticanalysis.model.validators.impl.ValidatorsPackageImpl;
-import org.pdtextensions.semanticanalysis.validation.Identifier;
+import org.pdtextensions.semanticanalysis.validation.IValidatorFactory;
+import org.pdtextensions.semanticanalysis.validation.IValidatorIdentifier;
+import org.pdtextensions.semanticanalysis.validation.IValidatorManager;
 
 @Singleton
 @SuppressWarnings("restriction")
 final public class Manager implements IValidatorManager {
-	public static String DEFAULT_CATEGORY_ID = "org.pdtextensions.semanticanalysis.defaultCategory"; //$NON-NLS-1$
-
+	private static final String SLASH = "/";  //$NON-NLS-1$
+	
 	final private Map<String, Category> categories = new HashMap<String, Category>();
 	final private Map<String, Validator> validators = new HashMap<String, Validator>();
-	final private Map<String, Identifier> identifiers = new HashMap<String, Identifier>();
 	final private Validator[] emptyList = new Validator[0];
 
 	@Inject
 	@Preference(nodePath=PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID)
 	private IEclipsePreferences preferences;
-
+	
 	@Inject
-	@Preference(nodePath="/" + ProjectScope.SCOPE) //$NON-NLS-1$
+	@Preference(nodePath=SLASH + ProjectScope.SCOPE) 
 	private IEclipsePreferences projectPreferences;
 
 	@PostConstruct
 	public void initialize(IExtensionRegistry registry) {
 		ValidatorsPackageImpl.init();
-		final IConfigurationElement[] config = registry.getConfigurationElementsFor(Extension_ID);
+		final IConfigurationElement[] config = registry.getConfigurationElementsFor(EXTENSION_ID);
 
 		// build categories
 		for(final IConfigurationElement el : config) {
@@ -73,26 +72,26 @@ final public class Manager implements IValidatorManager {
 	}
 
 	private void registerCategory(IConfigurationElement el) {
-		if (!el.getName().equals("category")) { //$NON-NLS-1$
+		if (!el.getName().equals(ELEMENT_CATEGORY)) {
 			return;
 		}
 		final Category category = ValidatorsFactory.eINSTANCE.createCategory();
-		category.setId(el.getAttribute("id")); //$NON-NLS-1$
-		category.setLabel(el.getAttribute("label")); //$NON-NLS-1$
-		category.setDescription(el.getAttribute("description")); //$NON-NLS-1$
+		category.setId(el.getAttribute(ATTR_ID));
+		category.setLabel(el.getAttribute(ATTR_LABEL));
+		category.setDescription(el.getAttribute(ATTR_DESCRIPTION));
 		
 		categories.put(category.getId(), category);
 	}
 
 	private void registerValidator(IConfigurationElement el) {
-		if (!el.getName().equals("validator")) { //$NON-NLS-1$
+		if (!el.getName().equals(ELEMENT_VALIDATOR)) {
 			return;
 		}
 
 		final Validator validator = ValidatorsFactory.eINSTANCE.createValidator();
-		String categoryId = el.getAttribute("categoryId"); //$NON-NLS-1$
+		String categoryId = el.getAttribute(ATTR_CATEGORY);
 
-		validator.setId(el.getAttribute("id")); //$NON-NLS-1$
+		validator.setId(el.getAttribute(ATTR_ID));
 		if (!categories.containsKey(categoryId)) {
 			if (categoryId != null)
 				PEXAnalysisPlugin.error(String.format("Validator %s has reference to a non-existent category %s", validator.getId(), categoryId)); //$NON-NLS-1$
@@ -103,32 +102,19 @@ final public class Manager implements IValidatorManager {
 		validator.setCategory(categories.get(categoryId));
 		validator.getCategory().getValidators().add(validator);
 		
-		try {
-			for (IConfigurationElement typeCfg : el.getChildren("type")) { //$NON-NLS-1$
-				Type type = ValidatorsFactory.eINSTANCE.createType();
-				type.setName(typeCfg.getAttribute("id")); //$NON-NLS-1$
-				type.setImport(Boolean.valueOf(typeCfg.getAttribute("import"))); //$NON-NLS-1$ //$NON-NLS-2$
-				
-				type.setNum(Integer.valueOf(typeCfg.getAttribute("num"))); //$NON-NLS-1$
-				type.setDefaultSeverity(ProblemSeverity.valueOf(preferences.node(validator.getId()).get(type.getName(), typeCfg.getAttribute("defaultSeverity") == null ? "warning" : typeCfg.getAttribute("defaultSeverity")).toUpperCase())); //$NON-NLS-1$ //$NON-NLS-2$
-				type.setLabel(typeCfg.getAttribute("label")); //$NON-NLS-1$
-				type.setDescription(typeCfg.getAttribute("description")); //$NON-NLS-1$
-				
-				final Identifier ident = new Identifier(type.isImport(), type.getNum());
-				
-				type.setId(ident);
-				identifiers.put(validator.getId() + type.getId(), ident);
-				
-				type.setValidator(validator);
-				validator.getTypes().add(type);
-			}
-			IValidatorFactory exec = (IValidatorFactory) el.createExecutableExtension("class");  //$NON-NLS-1$
-			ContextInjectionFactory.inject(exec, PEXAnalysisPlugin.getEclipseContext());
-			validator.setValidatorFactory(exec);
-			validators.put(validator.getId(), validator);
-		} catch (CoreException e) {
-			PEXAnalysisPlugin.error(String.format("Error during %s extension initialization.", validator.getId())); //$NON-NLS-1$
+		for (IConfigurationElement typeCfg : el.getChildren(ELEMENT_TYPE)) {
+			Type type = ValidatorsFactory.eINSTANCE.createType();
+			type.setId(typeCfg.getAttribute(ATTR_ID)); 
+			
+			type.setDefaultSeverity(ProblemSeverity.valueOf(preferences.node(validator.getId()).get(type.getId(), typeCfg.getAttribute(ATTR_DEFAULT_SEVERITY) == null ? DEFAULT_SEVERITY: typeCfg.getAttribute(ATTR_DEFAULT_SEVERITY)).toUpperCase()));
+			type.setLabel(typeCfg.getAttribute(ATTR_LABEL)); 
+			type.setDescription(typeCfg.getAttribute(ATTR_DESCRIPTION)); 
+			
+			type.setValidator(validator);
+			validator.getTypes().add(type);
 		}
+
+		validators.put(validator.getId(), validator);
 	}
 
 	@Override
@@ -137,7 +123,6 @@ final public class Manager implements IValidatorManager {
 			if (!scriptProject.getProject().hasNature(PHPNature.ID)) {
 				return false;
 			}
-
 			return getProjectPreferences(scriptProject).getBoolean(PreferenceConstants.ENABLED, true);
 		} catch (CoreException e) {
 			PEXAnalysisPlugin.error(e);
@@ -147,26 +132,32 @@ final public class Manager implements IValidatorManager {
 	}
 	
 	@Override
-	public ProblemSeverity getSeverity(IScriptProject scriptProject, String validator, String type) {
-		return getSeverity(scriptProject, validators.get(validator), type);
+	public Type getType(IValidatorIdentifier identifier) {
+		assert getValidator(identifier.validator()) != null;
+		
+		return getValidator(identifier.validator()).getType(identifier.type());
 	}
 	
 	@Override
-	public ProblemSeverity getSeverity(IScriptProject scriptProject, Validator validator, String type) {
-		assert validator != null;
+	public ProblemSeverity getSeverity(IScriptProject scriptProject, IValidatorIdentifier identifier) {
+		return getSeverity(scriptProject, getType(identifier));
+	}
+	
+	@Override
+	public ProblemSeverity getSeverity(IScriptProject scriptProject, Type type) {
+		assert type != null;
 		if (!isEnabled(scriptProject)) {
 			return ProblemSeverity.IGNORE;
 		}
 		
-		Preferences prefs = getProjectPreferences(scriptProject).node(validator.getId());
-		Type t = validator.getType(type);
+		Preferences prefs = getProjectPreferences(scriptProject).node(type.getValidator().getId());
 		
 		try {
-			return ProblemSeverity.valueOf(prefs.get(type, preferences.node(validator.getId()).get(type, t.getDefaultSeverity().toString())));
+			return ProblemSeverity.valueOf(prefs.get(type.getId(), preferences.node(type.getValidator().getId()).get(type.getId(), type.getDefaultSeverity().toString())));
 		} catch (Exception e) {
 			PEXAnalysisPlugin.error(e);
 			
-			return t.getDefaultSeverity();
+			return type.getDefaultSeverity();
 		}
 	}
 	
@@ -193,7 +184,7 @@ final public class Manager implements IValidatorManager {
 		for (Validator v : validators.values()) {
 			boolean found = false;
 			for (Type t : v.getTypes()) {
-				if (!getSeverity(scriptProject, v, t.getName()).equals(ProblemSeverity.IGNORE)) {
+				if (!getSeverity(scriptProject, t).equals(ProblemSeverity.IGNORE)) {
 					found = true;
 					break;
 				}
@@ -219,5 +210,17 @@ final public class Manager implements IValidatorManager {
 	@Override
 	public Validator getValidator(String id) {
 		return validators.get(id);
+	}
+	
+
+	@Override
+	public IValidatorFactory getValidatorFactory(Validator validator) throws CoreException {
+		for (IConfigurationElement cfg : Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_ID)) {
+			if (cfg.getName().equals(ELEMENT_VALIDATOR) && cfg.getAttribute(ATTR_ID).equals(validator.getId())) {
+				return (IValidatorFactory) cfg.createExecutableExtension(ATTR_CLASS);
+			}
+		}
+		
+		return null;
 	}
 }

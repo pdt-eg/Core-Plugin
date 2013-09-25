@@ -9,9 +9,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-import org.pdtextensions.semanticanalysis.IValidatorFactory;
+import org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier;
 import org.pdtextensions.semanticanalysis.model.validators.*;
-import org.pdtextensions.semanticanalysis.validation.Identifier;
+import org.pdtextensions.semanticanalysis.validation.IValidatorFactory;
 
 /**
  * <!-- begin-user-doc -->
@@ -174,8 +174,8 @@ public class ValidatorsFactoryImpl extends EFactoryImpl implements ValidatorsFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Identifier createIdentifierFromString(EDataType eDataType, String initialValue) {
-		return (Identifier)super.createFromString(eDataType, initialValue);
+	public PEXProblemIdentifier createIdentifierFromString(EDataType eDataType, String initialValue) {
+		return (PEXProblemIdentifier)super.createFromString(eDataType, initialValue);
 	}
 
 	/**

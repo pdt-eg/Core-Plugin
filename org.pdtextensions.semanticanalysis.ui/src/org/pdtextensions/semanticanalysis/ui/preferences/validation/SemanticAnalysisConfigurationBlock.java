@@ -35,12 +35,12 @@ import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.pdtextensions.core.ui.preferences.AbstractOptionsConfigurationBlock;
-import org.pdtextensions.semanticanalysis.IValidatorManager;
 import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 import org.pdtextensions.semanticanalysis.PreferenceConstants;
 import org.pdtextensions.semanticanalysis.model.validators.Category;
 import org.pdtextensions.semanticanalysis.model.validators.Type;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
+import org.pdtextensions.semanticanalysis.validation.IValidatorManager;
 
 @SuppressWarnings("restriction")
 public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigurationBlock {
@@ -64,7 +64,7 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 		res.add(getKey(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID, PreferenceConstants.ENABLED));
 		for (Validator v : validators) {
 			for (Type t : v.getTypes()) {
-				res.add(getKey(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID + "/" + v.getId(), t.getName()));
+				res.add(getKey(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID + "/" + v.getId(), t.getId()));
 			}
 		}
 		return res.toArray(new Key[res.size()]);

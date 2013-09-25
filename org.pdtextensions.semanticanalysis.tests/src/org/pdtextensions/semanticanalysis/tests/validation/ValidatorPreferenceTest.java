@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.semanticanalysis.tests;
+package org.pdtextensions.semanticanalysis.tests.validation;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -28,9 +28,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
-import org.pdtextensions.semanticanalysis.IValidatorManager;
 import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 import org.pdtextensions.semanticanalysis.PreferenceConstants;
+import org.pdtextensions.semanticanalysis.validation.IValidatorManager;
 
 /**
  * @author Dawid zulus Pakula <zulus@w3des.net>
@@ -68,6 +68,9 @@ public class ValidatorPreferenceTest {
 	
 	@After
 	public void after() throws CoreException {
+		Preferences node = Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE).node(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID);
+		node.remove(PreferenceConstants.ENABLED);
+		
 		project.delete(true, true, null);
 	}
 

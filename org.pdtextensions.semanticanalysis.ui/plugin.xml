@@ -122,19 +122,25 @@
    </extension>
    <extension
          point="org.eclipse.php.ui.quickFixProcessors">
-      <quickFixProcessor
+         <quickFixProcessor
             class="org.pdtextensions.semanticanalysis.ui.quickfix.InterfaceMethodQuickFixProcessor"
-            id="org.pdtextensions.core.ui.quickFixProcessor"
-            name="Implement missing Methods">
-         <!--handledMarkerTypes>
+            id="org.pdtextensions.core.ui.interfaceMethodQuickfixProcessor"
+            name="Validation Processors">
+         <handledMarkerTypes>
             <markerType
-                  id="org.pdtextensions.core.validation.MissingMethodMarker">
+                  id="org.pdtextensions.semanticanalysis.problem">
             </markerType>
-         </handledMarkerTypes-->
+         </handledMarkerTypes>
       </quickFixProcessor>
       <quickFixProcessor
             class="org.pdtextensions.semanticanalysis.ui.quickfix.ReferenceQuickFixProcessor"
-            id="org.pdtextensions.core.ui.referenceQuickFixProcessor">
+            id="org.pdtextensions.core.ui.referenceQuickFixProcessor"
+            name="Validation Processors">
+         <handledMarkerTypes>
+            <markerType
+                  id="org.pdtextensions.semanticanalysis.problem">
+            </markerType>
+         </handledMarkerTypes>
       </quickFixProcessor>
    </extension>
 </plugin>

@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.semanticanalysis.internal.validation;
+package org.pdtextensions.internal.semanticanalysis.validation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,12 +17,10 @@ import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.SourceParserUtil;
 import org.eclipse.dltk.core.builder.IBuildContext;
-import org.pdtextensions.semanticanalysis.IValidatorContext;
-import org.pdtextensions.semanticanalysis.IValidatorManager;
-import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
-import org.pdtextensions.semanticanalysis.model.validators.Type;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
-import org.pdtextensions.semanticanalysis.validation.Identifier;
+import org.pdtextensions.semanticanalysis.validation.IValidatorContext;
+import org.pdtextensions.semanticanalysis.validation.IValidatorIdentifier;
+import org.pdtextensions.semanticanalysis.validation.IValidatorManager;
 import org.pdtextensions.semanticanalysis.validation.Problem;
 
 /**
@@ -33,17 +31,13 @@ final public class ValidatorContext implements IValidatorContext {
 	private ModuleDeclaration moduleDeclaration;
 	private final IBuildContext buildContext;
 	private final boolean derived;
-	private final Validator validator;
-	private final Map<String, Type> types;
-	private final Map<String, ProblemSeverity> severities;
+	private final Map<IValidatorIdentifier, ProblemSeverity> severities;
 	private final IValidatorManager manager;
 	
 	public ValidatorContext(Validator validator, IBuildContext buildContext, IValidatorManager manager) {
 		this.buildContext = buildContext;
-		this.validator = validator;
 		this.derived = getSourceModule().getResource().isDerived(IResource.CHECK_ANCESTORS);
-		this.types = new HashMap<String, Type>();
-		this.severities = new HashMap<String, ProblemSeverity>();
+		this.severities = new HashMap<IValidatorIdentifier, ProblemSeverity>();
 		this.manager = manager;
 	}
 	
@@ -82,49 +76,35 @@ final public class ValidatorContext implements IValidatorContext {
 	}
 
 	@Override
-	public void registerProblem(String type, int category,
+	public void registerProblem(IValidatorIdentifier identifier, int category,
 			String message, int start, int stop) {
-		registerProblem(type, category, message, start, stop, buildContext.getLineTracker().getLineNumberOfOffset(start), emptyArguments);
+		registerProblem(identifier, category, message, start, stop, buildContext.getLineTracker().getLineNumberOfOffset(start), emptyArguments);
 	}
 
 	@Override
-	public void registerProblem(String type, int category,
+	public void registerProblem(IValidatorIdentifier identifier, int category,
 			String message, int start, int stop, int lineNumber) {
-		registerProblem(type, category, message, start, stop, buildContext.getLineTracker().getLineNumberOfOffset(start), emptyArguments);
+		registerProblem(identifier, category, message, start, stop, buildContext.getLineTracker().getLineNumberOfOffset(start), emptyArguments);
 	}
 
 	@Override
-	public void registerProblem(String type, int category,
+	public void registerProblem(IValidatorIdentifier identifier, int category,
 			String message, int start, int stop, String[] arguments) {
-		registerProblem(type, category, message, start, stop, buildContext.getLineTracker().getLineNumberOfOffset(start), arguments);
+		registerProblem(identifier, category, message, start, stop, buildContext.getLineTracker().getLineNumberOfOffset(start), arguments);
 	}
 
 	@Override
-	public void registerProblem(String type, int category,
+	public void registerProblem(IValidatorIdentifier identifier, int category,
 			String message, int start, int stop, int lineNumber,
 			String[] arguments) {
-		buildContext.getProblemReporter().reportProblem(new Problem(validator.getId(), getIdentifier(type), getSeverity(type), category, arguments, message, buildContext.getFileName(), start, stop, lineNumber));
-	}
-	
-	private Identifier getIdentifier(String type) {
-		if (!types.containsKey(type)) {
-			types.put(type, validator.getType(type));
-		}
-		
-		try {
-			return types.get(type).getId();
-		} catch (Exception e) {
-			PEXAnalysisPlugin.error("Type not exists");
-		}
-		
-		return null;
+		buildContext.getProblemReporter().reportProblem(new Problem(identifier, getSeverity(identifier), category, arguments, message, buildContext.getFileName(), start, stop, lineNumber));
 	}
 
-	private ProblemSeverity getSeverity(String type) {
-		if (!severities.containsKey(type)) {
-			severities.put(type, manager.getSeverity(getProject(), validator, type));
+	private ProblemSeverity getSeverity(IValidatorIdentifier identifier) {
+		if (!severities.containsKey(identifier)) {
+			severities.put(identifier, manager.getSeverity(getProject(), manager.getType(identifier)));
 		}
 		
-		return severities.get(type);
+		return severities.get(identifier);
 	}
 }

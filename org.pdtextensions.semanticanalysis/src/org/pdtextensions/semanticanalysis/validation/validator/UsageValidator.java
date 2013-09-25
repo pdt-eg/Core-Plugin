@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dltk.ast.references.TypeReference;
 import org.eclipse.dltk.core.IType;
-import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.index2.search.ISearchEngine.MatchRule;
 import org.eclipse.dltk.core.search.IDLTKSearchScope;
 import org.eclipse.dltk.core.search.SearchEngine;
@@ -23,9 +22,9 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.UseStatement;
 import org.eclipse.php.internal.core.model.PhpModelAccess;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.pdtextensions.core.util.PDTModelUtils;
-import org.pdtextensions.semanticanalysis.IValidatorContext;
-import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
+import org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier;
 import org.pdtextensions.semanticanalysis.validation.AbstractValidator;
+import org.pdtextensions.semanticanalysis.validation.IValidatorContext;
 import org.pdtextensions.semanticanalysis.validation.Problem;
 
 /**
@@ -45,8 +44,7 @@ public class UsageValidator extends AbstractValidator {
 	final private static String MESSAGE_CANNOT_RESOLVE_USE = "The type %s cannot be resolved or namespace is empty";
 	final private static String MESSAGE_DUPLATE_USE = "%s is a duplicate";
 
-	final public static String SUB_DUPLICATE = "duplicate"; //$NON-NLS-1$
-	final public static String SUB_UNRESOVABLE = "use"; //$NON-NLS-1$
+	final public static String ID = "org.pdtextensions.semanticanalysis.validator.usageValidator"; //$NON-NLS-1$
 
 	// protected Map<UseStatement, UseParts> statements;
 	Map<UsePart, Boolean> parts;
@@ -89,8 +87,8 @@ public class UsageValidator extends AbstractValidator {
 			for (UsePart existsPart : parts.keySet()) {
 				if (existsPart.toString().equals(part.toString())) {
 					
-					context.registerProblem(SUB_DUPLICATE,
-							Problem.CAT_IMPORT, String.format(
+					context.registerProblem(PEXProblemIdentifier.DUPLICATE,
+							Problem.CAT_RESTRICTION, String.format(
 									MESSAGE_DUPLATE_USE, part.getNamespace()
 											.getFullyQualifiedName()), part
 									.getNamespace().sourceStart(), part
@@ -111,7 +109,7 @@ public class UsageValidator extends AbstractValidator {
 						sFullName.substring(1) + BACK_SLASH, MatchRule.PREFIX, 0, 0, //$NON-NLS-1$
 						searchScope, new NullProgressMonitor());
 				if (types.length == 0) {
-					context.registerProblem(SUB_UNRESOVABLE, Problem.CAT_IMPORT, String.format(MESSAGE_CANNOT_RESOLVE_USE,
+					context.registerProblem(PEXProblemIdentifier.UNRESOVABLE, Problem.CAT_IMPORT, String.format(MESSAGE_CANNOT_RESOLVE_USE,
 							part.getNamespace().getFullyQualifiedName()), part.getNamespace().sourceStart(), part.getNamespace().sourceEnd());
 				}
 			}
@@ -141,7 +139,7 @@ public class UsageValidator extends AbstractValidator {
 			FullyQualifiedReference fqr = (FullyQualifiedReference) s
 					.getParameterType();
 			if (!isResolved(fqr)) {
-				context.registerProblem(SUB_UNRESOVABLE, Problem.CAT_POTENTIAL_PROGRAMMING_PROBLEM, String.format(MESSAGE_CANNOT_RESOLVE_TYPE, s
+				context.registerProblem(PEXProblemIdentifier.USAGE_RELATED, Problem.CAT_POTENTIAL_PROGRAMMING_PROBLEM, String.format(MESSAGE_CANNOT_RESOLVE_TYPE, s
 						.getParameterType().getName()), s.getParameterType().sourceStart(), s.getParameterType().sourceEnd());
 			}
 		}
@@ -163,7 +161,7 @@ public class UsageValidator extends AbstractValidator {
 				// not revoled, provide an "inject use statement" quickfix
 
 				context.registerProblem(
-						SUB_UNRESOVABLE, 
+						PEXProblemIdentifier.USAGE_RELATED, 
 						Problem.CAT_POTENTIAL_PROGRAMMING_PROBLEM, 
 						String.format(MESSAGE_CANNOT_RESOLVE_TYPE, fqr.getFullyQualifiedName()), 
 						fqr.sourceStart(), 
@@ -186,7 +184,7 @@ public class UsageValidator extends AbstractValidator {
 			if (!"self".equals(fqr.getName()) //$NON-NLS-1$
 					&& !"static".equals(fqr.getName()) && !isResolved(fqr)) { //$NON-NLS-1$
 				context.registerProblem(
-						SUB_UNRESOVABLE, 
+						PEXProblemIdentifier.USAGE_RELATED, 
 						Problem.CAT_POTENTIAL_PROGRAMMING_PROBLEM, 
 						String.format(MESSAGE_CANNOT_RESOLVE_TYPE, fqr.getFullyQualifiedName()), 
 						fqr.sourceStart(), 
@@ -213,7 +211,7 @@ public class UsageValidator extends AbstractValidator {
 
 			if (!isResolved(fqr)) {
 				context.registerProblem(
-						SUB_UNRESOVABLE, 
+						PEXProblemIdentifier.USAGE_RELATED, 
 						Problem.CAT_POTENTIAL_PROGRAMMING_PROBLEM, 
 						String.format(MESSAGE_CANNOT_RESOLVE_TYPE, fqr.getFullyQualifiedName()), 
 						fqr.sourceStart(), 
@@ -242,7 +240,7 @@ public class UsageValidator extends AbstractValidator {
 
 			if (!isResolved(fqr)) {
 				context.registerProblem(
-						SUB_UNRESOVABLE, 
+						PEXProblemIdentifier.USAGE_RELATED, 
 						Problem.CAT_POTENTIAL_PROGRAMMING_PROBLEM, 
 						String.format(MESSAGE_CANNOT_RESOLVE_TYPE, fqr.getFullyQualifiedName()), 
 						fqr.sourceStart(), 
@@ -283,15 +281,11 @@ public class UsageValidator extends AbstractValidator {
 		if (isResolved(check)) {
 			return true;
 		}
-		System.out.println(sFullName);
 		for (Entry<UsePart, Boolean> entry : parts.entrySet()) {
 
 			String useName = entry.getKey().getAlias() != null ? entry.getKey().getAlias().getName() :entry.getKey().getNamespace().getName();
 			String realName = entry.getKey().getNamespace()
 					.getFullyQualifiedName();
-			if (entry.getKey().getAlias() != null) {
-				useName = entry.getKey().getAlias().getName();
-			}
 			
 			if (!sFullName.contains(BACK_SLASH) && !sFullName.equals(useName)) {
 				continue;
@@ -315,7 +309,6 @@ public class UsageValidator extends AbstractValidator {
 	/**
 	 * Found item by absolute address
 	 * 
-	 * @todo Find bitmask for traits
 	 * @param fullyQualifiedReference
 	 * @return
 	 */
@@ -327,14 +320,15 @@ public class UsageValidator extends AbstractValidator {
 		if (found.containsKey(searchString)) {
 			return found.get(searchString);
 		}
-		try {
-			if (PDTModelUtils.findTypes(context.getProject(), searchString).length > 0 || PDTModelUtils.findTypes(context.getProject(), searchString, true).length > 0) {
-				found.put(searchString, true);
-				return true;
-			}
-		} catch (ModelException e) {
-			PEXAnalysisPlugin.error(e);
+		//try {
+		// || PDTModelUtils.findTypes(context.getProject(), searchString, true).length > 0
+		if (PDTModelUtils.findTypes(context.getProject(), searchString).length > 0) {
+			found.put(searchString, true);
+			return true;
 		}
+		//} catch (ModelException e) {
+		//	PEXAnalysisPlugin.error(e);
+		//}
 		found.put(searchString, false);
 		
 		

@@ -8,8 +8,6 @@
 package org.pdtextensions.semanticanalysis.validation;
 
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
-import org.pdtextensions.semanticanalysis.IValidatorContext;
-import org.pdtextensions.semanticanalysis.IValidatorParticipant;
 
 /**
  * Basic Validator implementation

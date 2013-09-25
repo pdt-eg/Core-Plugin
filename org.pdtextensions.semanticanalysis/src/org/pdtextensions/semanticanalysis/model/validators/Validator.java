@@ -4,7 +4,7 @@ package org.pdtextensions.semanticanalysis.model.validators;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.pdtextensions.semanticanalysis.IValidatorFactory;
+import org.pdtextensions.semanticanalysis.validation.IValidatorFactory;
 
 /**
  * <!-- begin-user-doc -->
@@ -25,7 +25,6 @@ import org.pdtextensions.semanticanalysis.IValidatorFactory;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getId <em>Id</em>}</li>
- *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getValidatorFactory <em>Validator Factory</em>}</li>
  *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getCategory <em>Category</em>}</li>
  *   <li>{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getTypes <em>Types</em>}</li>
  * </ul>
@@ -61,32 +60,6 @@ public interface Validator extends EObject {
 	 * @generated
 	 */
 	void setId(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Validator Factory</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Validator Factory</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Validator Factory</em>' attribute.
-	 * @see #setValidatorFactory(IValidatorFactory)
-	 * @see org.pdtextensions.semanticanalysis.model.validators.ValidatorsPackage#getValidator_ValidatorFactory()
-	 * @model dataType="org.pdtextensions.semanticanalysis.model.validators.ValidatorFactory"
-	 * @generated
-	 */
-	IValidatorFactory getValidatorFactory();
-
-	/**
-	 * Sets the value of the '{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getValidatorFactory <em>Validator Factory</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Validator Factory</em>' attribute.
-	 * @see #getValidatorFactory()
-	 * @generated
-	 */
-	void setValidatorFactory(IValidatorFactory value);
 
 	/**
 	 * Returns the value of the '<em><b>Category</b></em>' reference.
@@ -137,5 +110,13 @@ public interface Validator extends EObject {
 	 * @generated
 	 */
 	Type getType(String id);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model kind="operation" dataType="org.pdtextensions.semanticanalysis.model.validators.ValidatorFactory"
+	 * @generated
+	 */
+	IValidatorFactory getValidatorFactory();
 
 } // Validator

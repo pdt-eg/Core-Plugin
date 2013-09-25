@@ -8,10 +8,13 @@
 package org.pdtextensions.semanticanalysis.validation.factory;
 
 import org.eclipse.dltk.core.IScriptProject;
-import org.pdtextensions.semanticanalysis.IValidatorFactory;
-import org.pdtextensions.semanticanalysis.IValidatorParticipant;
+import org.pdtextensions.semanticanalysis.validation.IValidatorFactory;
+import org.pdtextensions.semanticanalysis.validation.IValidatorParticipant;
 import org.pdtextensions.semanticanalysis.validation.validator.UsageValidator;
 
+/**
+ * @author Dawid zulus Pakula <zulus@w3des.net>
+ */
 public class UsageValidatorFactory implements IValidatorFactory {
 
 	@Override

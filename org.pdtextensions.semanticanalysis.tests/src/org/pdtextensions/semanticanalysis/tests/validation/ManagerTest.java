@@ -5,13 +5,12 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.semanticanalysis.tests;
+package org.pdtextensions.semanticanalysis.tests.validation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.dltk.compiler.problem.ProblemCategory;
 import org.eclipse.dltk.compiler.problem.ProblemSeverity;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -23,7 +22,8 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.pdtextensions.semanticanalysis.model.validators.Category;
 import org.pdtextensions.semanticanalysis.model.validators.Type;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
-import org.pdtextensions.semanticanalysis.tests.sample.Service;
+import org.pdtextensions.semanticanalysis.tests.PEXAnalysisTestPlugin;
+import org.pdtextensions.semanticanalysis.tests.validation.sample.Service;
 
 /**
  * @author Dawid zulus Pakula <zulus@w3des.net>
@@ -75,13 +75,10 @@ public class ManagerTest {
 		Type orig = validator.getType("default");
 		
 		assertNotNull(orig.getId());
-		assertEquals(orig.getName(), "default");
-		assertEquals(orig.getNum(), 1);
+		assertEquals(orig.getId(), "default");
 		
 		assertNotNull(validator.getType("second"));
 		
-		assertTrue(validator.getType("second").isImport());
-		assertTrue(validator.getType("second").getId().belongsTo(ProblemCategory.IMPORT));
 	}
 
 }

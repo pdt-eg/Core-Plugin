@@ -7,42 +7,55 @@
  ******************************************************************************/
 package org.pdtextensions.semanticanalysis.validation;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.compiler.problem.CategorizedProblem;
 import org.eclipse.dltk.compiler.problem.IProblemIdentifier;
 import org.eclipse.dltk.compiler.problem.ProblemSeverity;
 
 public class Problem extends CategorizedProblem {
 
-	public static final String MARKER_TYPE_PREFIX = "org.pdtextensions.semanticanalysis"; //$NON-NLS-1$
-
-	public static final String MARKER_TYPE = "org.pdtextensions.semanticanalysis.problem";
-
-	private IProblemIdentifier id;
-	private String[] arguments;
+	private int categoryId = CategorizedProblem.CAT_UNSPECIFIED;
+	private final IValidatorIdentifier identifier;
+	
+	private String filename;
 	private String message;
-	private String fileName;
-	private int sourceEnd;
+	private String[] arguments;
 	private int sourceStart;
+	private int sourceEnd;
 	private int lineNumber;
 	private ProblemSeverity severity;
-	private int categoryId = CategorizedProblem.CAT_UNSPECIFIED;
-	private String validator;
+	
 
-	public Problem(String validator, IProblemIdentifier id, ProblemSeverity severity,
+	public Problem(final IValidatorIdentifier identifier, ProblemSeverity severity,
 			int categoryId, String[] arguments, String message,
 			String filename, int sourceStart, int sourceEnd, int lineNumber) {
 		super();
-		this.id = id;
-		this.severity = severity;
+		//super(filename, message, identifier, arguments, severity, sourceStart, sourceEnd, lineNumber, 0);
+		//super(filename, message, identifier.id(), arguments, severity, sourceStart, sourceEnd, lineNumber);
+
+		this.identifier = identifier;
 		this.categoryId = categoryId;
-		this.arguments = arguments;
+		this.filename = filename;
 		this.message = message;
-		this.fileName = filename;
+		this.arguments = arguments;
 		this.sourceStart = sourceStart;
 		this.sourceEnd = sourceEnd;
 		this.lineNumber = lineNumber;
-		this.validator = validator;
+		this.severity = severity;
+	}
+
+	@Override
+	public boolean isTask() {
+		return false;
+	}
+
+	@Override
+	public int getCategoryID() {
+		return categoryId;
+	}
+
+	@Override
+	public String getMarkerType() {
+		return identifier.getMarkerType();
 	}
 
 	@Override
@@ -52,17 +65,17 @@ public class Problem extends CategorizedProblem {
 
 	@Override
 	public IProblemIdentifier getID() {
-		return id;
+		return identifier;
 	}
 
 	@Override
 	public String getMessage() {
 		return message;
 	}
-	
+
 	@Override
 	public String getOriginatingFileName() {
-		return fileName;
+		return filename;
 	}
 
 	@Override
@@ -82,72 +95,31 @@ public class Problem extends CategorizedProblem {
 
 	@Override
 	public void setSeverity(ProblemSeverity severity) {
-		Assert.isNotNull(severity);
 		this.severity = severity;
-	}
-	
-	@Override
-	public ProblemSeverity getSeverity() {
-		return this.severity;
 	}
 
 	@Override
 	public boolean isError() {
-		return ProblemSeverity.ERROR.equals(severity);
+		return severity == ProblemSeverity.ERROR;
 	}
 
 	@Override
 	public boolean isWarning() {
-		return ProblemSeverity.WARNING.equals(severity);
-	}
-
-	@Override
-	public boolean isTask() {
-		return false;
+		return severity == ProblemSeverity.WARNING;
 	}
 
 	@Override
 	public void setSourceEnd(int sourceEnd) {
-		Assert.isLegal(sourceEnd >= 0);
 		this.sourceEnd = sourceEnd;
-
 	}
 
 	@Override
 	public void setSourceLineNumber(int lineNumber) {
-		Assert.isLegal(lineNumber >= 0);
 		this.lineNumber = lineNumber;
-
 	}
 
 	@Override
 	public void setSourceStart(int sourceStart) {
-		Assert.isLegal(sourceStart >= 0);
 		this.sourceStart = sourceStart;
 	}
-
-	@Override
-	public int getCategoryID() {
-		return categoryId;
-	}
-
-	@Override
-	public String getMarkerType() {
-		return MARKER_TYPE;
-	}
-	
-	@Override
-	public String[] getExtraMarkerAttributeNames() {
-		return new String[] {"validator"};
-	}
-	
-	@Override
-	public Object[] getExtraMarkerAttributeValues() {
-		return new String[] {validator};
-	}
-	
-	public String getValidator() {
-		return validator;
-	}
-
 }

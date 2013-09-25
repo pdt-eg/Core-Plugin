@@ -110,7 +110,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.pdtextensions.semanticanalysis.IValidatorFactory"/>
+                  <meta.attribute kind="java" basedOn=":org.pdtextensions.semanticanalysis.validation.IValidatorFactory"/>
                </appinfo>
             </annotation>
          </attribute>
@@ -128,13 +128,6 @@
             <annotation>
                <documentation>
                   Short STRING id.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="num" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Type number (for PDT)
                </documentation>
             </annotation>
          </attribute>
@@ -175,13 +168,6 @@
                <appinfo>
                   <meta.attribute translatable="true"/>
                </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="import" type="boolean">
-            <annotation>
-               <documentation>
-                  Mark true if it usage related
-               </documentation>
             </annotation>
          </attribute>
       </complexType>

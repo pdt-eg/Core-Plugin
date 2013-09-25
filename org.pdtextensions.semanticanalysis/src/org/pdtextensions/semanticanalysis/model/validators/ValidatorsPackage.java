@@ -78,22 +78,13 @@ public interface ValidatorsPackage extends EPackage {
 	int VALIDATOR__ID = 0;
 
 	/**
-	 * The feature id for the '<em><b>Validator Factory</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VALIDATOR__VALIDATOR_FACTORY = 1;
-
-	/**
 	 * The feature id for the '<em><b>Category</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int VALIDATOR__CATEGORY = 2;
+	int VALIDATOR__CATEGORY = 1;
 
 	/**
 	 * The feature id for the '<em><b>Types</b></em>' reference list.
@@ -102,7 +93,7 @@ public interface ValidatorsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int VALIDATOR__TYPES = 3;
+	int VALIDATOR__TYPES = 2;
 
 	/**
 	 * The number of structural features of the '<em>Validator</em>' class.
@@ -111,7 +102,7 @@ public interface ValidatorsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int VALIDATOR_FEATURE_COUNT = 4;
+	int VALIDATOR_FEATURE_COUNT = 3;
 
 	/**
 	 * The operation id for the '<em>Get Type</em>' operation.
@@ -123,13 +114,22 @@ public interface ValidatorsPackage extends EPackage {
 	int VALIDATOR___GET_TYPE__STRING = 0;
 
 	/**
+	 * The operation id for the '<em>Get Validator Factory</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int VALIDATOR___GET_VALIDATOR_FACTORY = 1;
+
+	/**
 	 * The number of operations of the '<em>Validator</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int VALIDATOR_OPERATION_COUNT = 1;
+	int VALIDATOR_OPERATION_COUNT = 2;
 
 	/**
 	 * The meta object id for the '{@link org.pdtextensions.semanticanalysis.model.validators.impl.CategoryImpl <em>Category</em>}' class.
@@ -251,40 +251,13 @@ public interface ValidatorsPackage extends EPackage {
 	int TYPE__ID = 4;
 
 	/**
-	 * The feature id for the '<em><b>Num</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TYPE__NUM = 5;
-
-	/**
-	 * The feature id for the '<em><b>Import</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TYPE__IMPORT = 6;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TYPE__NAME = 7;
-
-	/**
 	 * The number of structural features of the '<em>Type</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TYPE_FEATURE_COUNT = 8;
+	int TYPE_FEATURE_COUNT = 5;
 
 	/**
 	 * The number of operations of the '<em>Type</em>' class.
@@ -299,7 +272,7 @@ public interface ValidatorsPackage extends EPackage {
 	 * The meta object id for the '<em>Validator Factory</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.pdtextensions.semanticanalysis.IValidatorFactory
+	 * @see org.pdtextensions.semanticanalysis.validation.IValidatorFactory
 	 * @see org.pdtextensions.semanticanalysis.model.validators.impl.ValidatorsPackageImpl#getValidatorFactory()
 	 * @generated
 	 */
@@ -320,7 +293,7 @@ public interface ValidatorsPackage extends EPackage {
 	 * The meta object id for the '<em>Identifier</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.pdtextensions.semanticanalysis.validation.Identifier
+	 * @see org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier
 	 * @see org.pdtextensions.semanticanalysis.model.validators.impl.ValidatorsPackageImpl#getIdentifier()
 	 * @generated
 	 */
@@ -347,17 +320,6 @@ public interface ValidatorsPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getValidator_Id();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getValidatorFactory <em>Validator Factory</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Validator Factory</em>'.
-	 * @see org.pdtextensions.semanticanalysis.model.validators.Validator#getValidatorFactory()
-	 * @see #getValidator()
-	 * @generated
-	 */
-	EAttribute getValidator_ValidatorFactory();
 
 	/**
 	 * Returns the meta object for the reference '{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getCategory <em>Category</em>}'.
@@ -390,6 +352,16 @@ public interface ValidatorsPackage extends EPackage {
 	 * @generated
 	 */
 	EOperation getValidator__GetType__String();
+
+	/**
+	 * Returns the meta object for the '{@link org.pdtextensions.semanticanalysis.model.validators.Validator#getValidatorFactory() <em>Get Validator Factory</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Get Validator Factory</em>' operation.
+	 * @see org.pdtextensions.semanticanalysis.model.validators.Validator#getValidatorFactory()
+	 * @generated
+	 */
+	EOperation getValidator__GetValidatorFactory();
 
 	/**
 	 * Returns the meta object for class '{@link org.pdtextensions.semanticanalysis.model.validators.Category <em>Category</em>}'.
@@ -511,45 +483,12 @@ public interface ValidatorsPackage extends EPackage {
 	EAttribute getType_Id();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.pdtextensions.semanticanalysis.model.validators.Type#getNum <em>Num</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Num</em>'.
-	 * @see org.pdtextensions.semanticanalysis.model.validators.Type#getNum()
-	 * @see #getType()
-	 * @generated
-	 */
-	EAttribute getType_Num();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.pdtextensions.semanticanalysis.model.validators.Type#isImport <em>Import</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Import</em>'.
-	 * @see org.pdtextensions.semanticanalysis.model.validators.Type#isImport()
-	 * @see #getType()
-	 * @generated
-	 */
-	EAttribute getType_Import();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.pdtextensions.semanticanalysis.model.validators.Type#getName <em>Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see org.pdtextensions.semanticanalysis.model.validators.Type#getName()
-	 * @see #getType()
-	 * @generated
-	 */
-	EAttribute getType_Name();
-
-	/**
-	 * Returns the meta object for data type '{@link org.pdtextensions.semanticanalysis.IValidatorFactory <em>Validator Factory</em>}'.
+	 * Returns the meta object for data type '{@link org.pdtextensions.semanticanalysis.validation.IValidatorFactory <em>Validator Factory</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for data type '<em>Validator Factory</em>'.
-	 * @see org.pdtextensions.semanticanalysis.IValidatorFactory
-	 * @model instanceClass="org.pdtextensions.semanticanalysis.IValidatorFactory"
+	 * @see org.pdtextensions.semanticanalysis.validation.IValidatorFactory
+	 * @model instanceClass="org.pdtextensions.semanticanalysis.validation.IValidatorFactory"
 	 * @generated
 	 */
 	EDataType getValidatorFactory();
@@ -566,11 +505,11 @@ public interface ValidatorsPackage extends EPackage {
 	EDataType getStatus();
 
 	/**
-	 * Returns the meta object for data type '{@link org.pdtextensions.semanticanalysis.validation.Identifier <em>Identifier</em>}'.
+	 * Returns the meta object for data type '{@link org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier <em>Identifier</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for data type '<em>Identifier</em>'.
-	 * @see org.pdtextensions.semanticanalysis.validation.Identifier
+	 * @see org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier
 	 * @model instanceClass="org.pdtextensions.semanticanalysis.validation.Identifier"
 	 * @generated
 	 */
@@ -618,14 +557,6 @@ public interface ValidatorsPackage extends EPackage {
 		EAttribute VALIDATOR__ID = eINSTANCE.getValidator_Id();
 
 		/**
-		 * The meta object literal for the '<em><b>Validator Factory</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute VALIDATOR__VALIDATOR_FACTORY = eINSTANCE.getValidator_ValidatorFactory();
-
-		/**
 		 * The meta object literal for the '<em><b>Category</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -648,6 +579,14 @@ public interface ValidatorsPackage extends EPackage {
 		 * @generated
 		 */
 		EOperation VALIDATOR___GET_TYPE__STRING = eINSTANCE.getValidator__GetType__String();
+
+		/**
+		 * The meta object literal for the '<em><b>Get Validator Factory</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation VALIDATOR___GET_VALIDATOR_FACTORY = eINSTANCE.getValidator__GetValidatorFactory();
 
 		/**
 		 * The meta object literal for the '{@link org.pdtextensions.semanticanalysis.model.validators.impl.CategoryImpl <em>Category</em>}' class.
@@ -742,34 +681,10 @@ public interface ValidatorsPackage extends EPackage {
 		EAttribute TYPE__ID = eINSTANCE.getType_Id();
 
 		/**
-		 * The meta object literal for the '<em><b>Num</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute TYPE__NUM = eINSTANCE.getType_Num();
-
-		/**
-		 * The meta object literal for the '<em><b>Import</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute TYPE__IMPORT = eINSTANCE.getType_Import();
-
-		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute TYPE__NAME = eINSTANCE.getType_Name();
-
-		/**
 		 * The meta object literal for the '<em>Validator Factory</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.pdtextensions.semanticanalysis.IValidatorFactory
+		 * @see org.pdtextensions.semanticanalysis.validation.IValidatorFactory
 		 * @see org.pdtextensions.semanticanalysis.model.validators.impl.ValidatorsPackageImpl#getValidatorFactory()
 		 * @generated
 		 */
@@ -789,7 +704,7 @@ public interface ValidatorsPackage extends EPackage {
 		 * The meta object literal for the '<em>Identifier</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.pdtextensions.semanticanalysis.validation.Identifier
+		 * @see org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier
 		 * @see org.pdtextensions.semanticanalysis.model.validators.impl.ValidatorsPackageImpl#getIdentifier()
 		 * @generated
 		 */

@@ -26,8 +26,9 @@ import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.eclipse.php.internal.core.typeinference.PHPTypeInferenceUtils;
 import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.util.PDTModelUtils;
-import org.pdtextensions.semanticanalysis.IValidatorContext;
+import org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier;
 import org.pdtextensions.semanticanalysis.validation.AbstractValidator;
+import org.pdtextensions.semanticanalysis.validation.IValidatorContext;
 import org.pdtextensions.semanticanalysis.validation.MissingMethodImplementation;
 import org.pdtextensions.semanticanalysis.validation.Problem;
 
@@ -38,11 +39,10 @@ import org.pdtextensions.semanticanalysis.validation.Problem;
  * TODO: Currently assumes one class per file. Refactor to handle multiple classes per file.
  * 
  * @author Robert Gruendler <r.gruendler@gmail.com>
- *
  */
 @SuppressWarnings("restriction")
 public class ImplementationValidator extends AbstractValidator{
-	public static String MISSING_METHODS = "methods"; //$NON-NLS-1$
+	public static final String ID = "org.pdtextensions.semanticanalysis.validator.implementationValidator"; //$NON-NLS-1$
 
 	private ClassDeclaration classDeclaration;
 	private List<MissingMethodImplementation> missingMethods;
@@ -85,6 +85,9 @@ public class ImplementationValidator extends AbstractValidator{
 		Map<String, IMethod> listImported = PDTModelUtils.getImportedMethods(classType);
 		// iterate over all interfaces and check if the current class
 		// or any of the superclasses implements the method
+		if (listImported == null) {
+			return true;
+		}
 		for (TypeReference interf : interfaces) {
 			
 			if (interf instanceof FullyQualifiedReference) {
@@ -203,7 +206,7 @@ public class ImplementationValidator extends AbstractValidator{
 
 			String message = "The class " + getClassDeclaration().getName() + " must implement the inherited abstract method "
 			+ getMissing().get(0).getFirstMethodName();
-			context.registerProblem(MISSING_METHODS, Problem.CAT_RESTRICTION, message, start, stop);
+			context.registerProblem(PEXProblemIdentifier.INTERFACE_RELATED, Problem.CAT_RESTRICTION, message, start, stop);
 		}
 	}
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="org.pdtextensions.semanticanalysis.validator" name="PEX Semantic Analysis Extension" schema="schema/org.pdtextensions.semanticanalysis.validator.exsd"/>
+   <extension-point id="org.pdtextensions.semanticanalysis.validator" name="PEX Semantic Analysis Validation Extension" schema="schema/org.pdtextensions.semanticanalysis.validator.exsd"/>
    <extension
          id="org.pdtextensions.semanticanalysis.defaults"
          point="org.pdtextensions.semanticanalysis.validator">
@@ -14,14 +14,11 @@
             class="org.pdtextensions.semanticanalysis.validation.factory.UsageValidatorFactory">
             <type
                   id="duplicate"
-                  num="1"
                   label="Duplicate use statement"
                   defaultSeverity="error" />
             <type
                  id="use"
-                 num="2"
                  label="Type not found"
-                 import="true"
                  defaultSeverity="warning" />
       </validator>
       <validator
@@ -29,7 +26,6 @@
             class="org.pdtextensions.semanticanalysis.validation.factory.ImplementationValidatorFactory">
             <type
                  id="methods"
-                 num="1"
                  label="Missing method implementation"
                  defaultSeverity="warning" />
       </validator>
@@ -37,7 +33,7 @@
     <extension point="org.eclipse.dltk.core.buildParticipant">
         <buildParticipant
             id="org.pdtextensions.validation.buildParticipant"
-            class="org.pdtextensions.semanticanalysis.internal.integration.BuildParticipantFactory"
+            class="org.pdtextensions.internal.semanticanalysis.integration.BuildParticipantFactory"
             name="org.pdtextensions.validation.buildParticipant"
             nature="org.eclipse.php.core.PHPNature">
             <requires id="org.eclipse.php.core.buildParticipant.parser" />
@@ -53,7 +49,7 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="org.pdtextensions.semanticanalysis.internal.validation.PreferenceInitializer">
+            class="org.pdtextensions.internal.semanticanalysis.validation.PreferenceInitializer">
       </initializer>
    </extension>
     <extension
@@ -61,6 +57,13 @@
         name="PHP Semantic analysis"
         point="org.eclipse.core.resources.markers">
         <persistent value="true"/>
-        <super type="org.eclipse.dltk.core.problem"/>
+        <super type="org.eclipse.dltk.core.problem" />
+    </extension>
+    <extension
+          point="org.eclipse.dltk.core.problemFactory">
+       <problemIdentifierFactory
+             class="org.pdtextensions.semanticanalysis.integration.ProblemIdentifierFactory"
+             namespace="org.pdtextensions.semanticanalysis">
+       </problemIdentifierFactory>
     </extension>
 </plugin>

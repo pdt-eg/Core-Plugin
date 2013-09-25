@@ -25,6 +25,7 @@ import org.eclipse.dltk.ui.text.completion.IScriptCompletionProposal;
 import org.eclipse.php.internal.ui.text.correction.IInvocationContext;
 import org.eclipse.php.internal.ui.text.correction.IProblemLocation;
 import org.eclipse.php.internal.ui.text.correction.IQuickFixProcessor;
+import org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier;
 import org.pdtextensions.semanticanalysis.ui.contentassist.InterfaceMethodCompletionProposal;
 
 
@@ -35,42 +36,21 @@ import org.pdtextensions.semanticanalysis.ui.contentassist.InterfaceMethodComple
  */
 @SuppressWarnings("restriction")
 public class InterfaceMethodQuickFixProcessor implements IQuickFixProcessor {
-
 	@Override
-	public boolean hasCorrections(ISourceModule unit, int problemId)
-	{
-		/*if (problemId == IPDTProblem.InterfaceRelated) {
-			return true;
-		}*/
-	
-		return false;
+	public boolean hasCorrections(ISourceModule unit, int problemId) {
+		return problemId == PEXProblemIdentifier.INTERFACE_RELATED.id();
 	}
 
 	@Override
-	public IScriptCompletionProposal[] getCorrections(
-			IInvocationContext context, IProblemLocation[] locations)
-			throws CoreException
-	{
-		
-		if (locations.length == 0)
-			return null;
-
+	public IScriptCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations) throws CoreException {
 		List<IScriptCompletionProposal> corrections = new ArrayList<IScriptCompletionProposal>();
-		List<String> existing = new ArrayList<String>();
-		/*
+		
 		for (IProblemLocation location : locations) {
-			
-			String offset = Integer.toString(location.getOffset());
-			if (location.getProblemId() == IPDTProblem.InterfaceRelated && ! existing.contains(offset)) {
-
-				InterfaceMethodCompletionProposal prop = new InterfaceMethodCompletionProposal("", 0, 100, null, "Add unimplemented methods", 100);
-				corrections.add(prop);
-				existing.add(offset);
-				
+			if (location.getProblemId() == PEXProblemIdentifier.INTERFACE_RELATED.id()) {
+				corrections.add(new InterfaceMethodCompletionProposal("", 0, 100, null, "Add unimplemented methods", 100));
 			}
-		}*/
-		
+		}
+			
 		return corrections.toArray(new IScriptCompletionProposal[corrections.size()]);
-		
 	}
 }

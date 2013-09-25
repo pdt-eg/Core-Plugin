@@ -18,7 +18,8 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectorFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
-import org.pdtextensions.semanticanalysis.internal.validation.Manager;
+import org.pdtextensions.internal.semanticanalysis.validation.Manager;
+import org.pdtextensions.semanticanalysis.validation.IValidatorManager;
 
 /**
  * @author Dawid zulus Pakula <zulus@w3des.net>

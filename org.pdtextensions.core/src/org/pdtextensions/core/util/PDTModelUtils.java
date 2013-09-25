@@ -46,7 +46,6 @@ import org.eclipse.dltk.core.search.SearchEngine;
 import org.eclipse.dltk.evaluation.types.MultiTypeType;
 import org.eclipse.dltk.internal.core.util.LRUCache;
 import org.eclipse.dltk.ti.types.IEvaluatedType;
-import org.eclipse.php.core.compiler.IPHPModifiers;
 import org.eclipse.php.core.compiler.PHPFlags;
 import org.eclipse.php.internal.core.Logger;
 import org.eclipse.php.internal.core.ast.nodes.Bindings;
@@ -726,6 +725,9 @@ public class PDTModelUtils {
 		return list.toArray(new IType[list.size()]);
 	}
 	
+	/**
+	 * Too slow on startup
+	 */
 	public static IType[] findTypes(IScriptProject project, String fqn, boolean force) throws ModelException {
 		if (!force) {
 			return findTypes(project, fqn);
@@ -750,11 +752,7 @@ public class PDTModelUtils {
 		} else if (el instanceof ISourceModule){
 			ISourceModule mod = (ISourceModule) el;
 			for (IType t : mod.getAllTypes()) {
-				if (t.getFullyQualifiedName(BACK_SLASH).equals(name) && (
-						(IPHPModifiers.AccTrait & t.getFlags()) == IPHPModifiers.AccTrait || 
-						(IPHPModifiers.AccInterface & t.getFlags()) == IPHPModifiers.AccInterface || 
-						(PHPFlags.AccNameSpace & t.getFlags()) == PHPFlags.AccNameSpace 
-					)) {
+				if (t.getFullyQualifiedName(BACK_SLASH).equals(name)) {
 					
 					list.add(t);
 				}

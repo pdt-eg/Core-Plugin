@@ -79,9 +79,8 @@ public class InterfaceMethodCompletionProposal extends PHPCompletionProposal {
 					if (sourceModule.getTypes().length != 1) {
 						return;
 					}
-					/*
 					ModuleDeclaration module = SourceParserUtil.getModuleDeclaration(sourceModule);
-					ImplementationValidator validator = new ImplementationValidator(sourceModule);
+					ImplementationValidator validator = new ImplementationValidator();
 					module.traverse(validator);
 					String code = "";
 										
@@ -103,9 +102,9 @@ public class InterfaceMethodCompletionProposal extends PHPCompletionProposal {
 						/*
 						Formatter formatter = new Formatter();
 						formatter.format(document);
-						*
+						*/
 						
-					}*/
+					}
 					
 				} catch (Exception e) {
 					Logger.logException(e);

@@ -5,15 +5,13 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  ******************************************************************************/
-package org.pdtextensions.semanticanalysis;
+package org.pdtextensions.semanticanalysis.validation;
+
+import org.eclipse.dltk.core.IScriptProject;
 
 /**
- * Interface for validator participant
- * 
  * @author Dawid zulus Pakula <zulus@w3des.net>
  */
-public interface IValidatorParticipant {
-	public boolean allowDerived();
-	
-	public void validate(IValidatorContext context) throws Exception;
+public interface IValidatorFactory {
+	public IValidatorParticipant getValidatorParticipant(IScriptProject scriptProject);
 }
