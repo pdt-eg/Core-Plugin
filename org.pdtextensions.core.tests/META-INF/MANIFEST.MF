@@ -24,6 +24,5 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.pdtextensions.core.tests,
  org.pdtextensions.core.tests.codeassist,
- org.pdtextensions.core.tests.codegeneration,
- org.pdtextensions.core.tests.validation
+ org.pdtextensions.core.tests.codegeneration
 Bundle-ClassPath: .

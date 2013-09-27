@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
@@ -32,6 +33,8 @@ import org.eclipse.dltk.ast.references.SimpleReference;
 import org.eclipse.dltk.ast.references.TypeReference;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IModelElement;
+import org.eclipse.dltk.core.IProjectFragment;
+import org.eclipse.dltk.core.IScriptFolder;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
@@ -78,9 +81,10 @@ import org.pdtextensions.core.PEXCorePlugin;
  */
 @SuppressWarnings("restriction")
 public class PDTModelUtils {
-
+	public final static String BACK_SLASH = "\\"; //$NON-NLS-1$
+	
 	private final static Pattern ARRAY_TYPE_PATTERN = Pattern
-			.compile("array\\[.*\\]");	
+			.compile("array\\[.*\\]");	 //$NON-NLS-1$
 
 	private static LRUCache typeCache = new LRUCache();
 	private static List<String> builtinTypes = new ArrayList<String>(Arrays.asList("array", "static", "self", "parent"));
@@ -117,6 +121,47 @@ public class PDTModelUtils {
 				
 		return statements;		
 		
+	}
+	
+	/**
+	 * Extension for {@link PHPModelUtils#getSuperTypeHierarchyMethod(IType, String, boolean, IProgressMonitor)}
+	 * 
+	 * This method looking for non hierarchy also
+	 * 
+	 * @since 0.18
+	 */
+	public static IMethod[] getSuperTypeHierarchyMethod(IType type, String prefix, boolean exactName, IProgressMonitor monitor) throws CoreException {
+		List<IMethod> list = Arrays.asList(PHPModelUtils.getSuperTypeHierarchyMethod(type, prefix, exactName, monitor));
+		superTypeHierarchyMethods(list, type, prefix, exactName);
+		
+		return list.toArray(new IMethod[list.size()]);
+	}
+	
+	private static boolean superTypeHierarchyMethods(List<IMethod> list, IType type, String prefix, boolean exactName) {
+		try {
+			if ( type.getSuperClasses() == null || type.getSuperClasses().length == 0) {
+				return false;
+			}
+			
+			for (String n : type.getSuperClasses()) {
+				if (type.getSourceModule().getType(n) != null) {
+					final IType sub = type.getSourceModule().getType(n);
+					for (IMethod m : sub.getMethods()) {
+						if (!list.contains(m) && m.getElementName().equals(prefix) || (!exactName && m.getElementName().startsWith(prefix))) {
+							list.add(m);
+							return true;
+						}
+					}
+					
+					if (superTypeHierarchyMethods(list, sub, prefix, exactName)) {
+						return true;
+					}
+				}
+			}
+		} catch (ModelException e) {
+		}
+		
+		return false;
 	}
 	
 	public static List<IEvaluatedType> collectParameterTypes(IMethod method) throws ModelException {
@@ -414,6 +459,10 @@ public class PDTModelUtils {
 		Map<String, IType> traits = new HashMap<String, IType>();
 		Set<String> usedMethods = new HashSet<String>();
 		for (String traitName : parsed.getTraits()) {
+			if (findType(type.getSourceModule(), traitName) != null) {
+				traits.put(traitName, findType(type.getSourceModule(), traitName)); // out of index
+				continue;
+			}
 			IType[] traitTypes = PhpModelAccess.getDefault().findTraits(traitName, MatchRule.EXACT, 0, 0, scope, new NullProgressMonitor());
 			if (traitTypes.length != 1) {
 				continue; //more than one ignore it
@@ -432,8 +481,10 @@ public class PDTModelUtils {
 			if (trait == null) {
 				continue;
 			}
+
 			IMethod[] methods;
 			try {
+				
 				methods = PHPModelUtils.getTypeMethod(trait, alias.traitMethodName, true);
 				if (methods.length != 1) {
 					continue;
@@ -688,5 +739,94 @@ public class PDTModelUtils {
 		public IMethod getOverriddenMethod() {
 			return overriddenMethod;
 		}
+	}
+	
+	/**
+	 * Allow to find IType in current module (source file)
+	 * 
+	 * @since 0.18
+	 */
+	public static IType findType(ISourceModule module, String fqn) {
+		try {
+			for (IType t : module.getAllTypes()) {
+				if (t.getFullyQualifiedName(BACK_SLASH).equals(fqn)) {
+					return t;
+				}
+			}
+		} catch (ModelException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	
+	/**
+	 * Ease method to select to find IType (Classes, Interfaces, Traits) by FQN
+	 * 
+	 * @since 0.18
+	 */
+	public static IType[] findTypes(IScriptProject project, String fqn) {
+		Set<IType> list = new HashSet<IType>();
+		
+		IDLTKSearchScope searchScope = SearchEngine.createSearchScope(project);
+		IType[] types = PhpModelAccess.getDefault().findTypes(fqn,
+				MatchRule.EXACT, 0, 0, searchScope, new NullProgressMonitor());
+
+		for (IType type : types) {
+			if (fqn.equals(type.getFullyQualifiedName(BACK_SLASH))) {
+				list.add(type);
+			}
+		}
+
+		types = PhpModelAccess.getDefault().findTraits(fqn,
+				MatchRule.EXACT, 0, 0, searchScope, new NullProgressMonitor());
+
+		for (IType type : types) {
+			if (fqn.equals(type.getFullyQualifiedName(BACK_SLASH))) {
+				list.add(type);
+			}
+		}
+		
+		return list.toArray(new IType[list.size()]);
+	}
+	
+	/**
+	 * Too slow on startup
+	 * Because sometimes DLTK index is not ready (for ex. while start), force options allow to search file by file.
+	 * 
+	 * @since 0.18
+	 */
+	public static IType[] findTypes(IScriptProject project, String fqn, boolean force) throws ModelException {
+		if (!force) {
+			return findTypes(project, fqn);
+		}
+		Set<IType> list = new HashSet<IType>();
+		for (IProjectFragment f : project.getAllProjectFragments()) {
+			rawSearch(list, f, fqn);
+		}
+		
+		return list.toArray(new IType[list.size()]);
+	}
+	
+	private static void rawSearch(Set<IType> list, IModelElement el, String name) throws ModelException {
+		if (el instanceof IScriptFolder ) {
+			for (IModelElement sub : ((IScriptFolder) el).getChildren()) {
+				rawSearch(list, sub, name);
+			}
+		} else if (el instanceof IProjectFragment ) {
+			for (IModelElement sub : ((IProjectFragment) el).getChildren()) {
+				rawSearch(list, sub, name);
+			}
+		} else if (el instanceof ISourceModule){
+			ISourceModule mod = (ISourceModule) el;
+			for (IType t : mod.getAllTypes()) {
+				if (t.getFullyQualifiedName(BACK_SLASH).equals(name)) {
+					
+					list.add(t);
+				}
+			}
+		}
+		
 	}
 }

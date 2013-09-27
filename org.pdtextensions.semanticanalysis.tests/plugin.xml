@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="org.pdtextensions.semanticanalysis.defaults"
+         point="org.pdtextensions.semanticanalysis.validator">
+      <category
+            id="org.pdtextensions.semanticanalysis.tests.category"
+            label="Test category">
+      </category>
+      <validator
+            id="org.pdtextensions.semanticanalysis.tests.validator"
+            class="org.pdtextensions.semanticanalysis.tests.validation.sample.ValidatorFactory"
+            categoryId="org.pdtextensions.semanticanalysis.tests.category">
+            <type
+                  id="default"
+                  label="Sample validator"
+                  defaultSeverity="info" />
+            <type
+                  id="second"
+                  label="Sample validator 2"
+                  defaultSeverity="info" />
+      </validator>
+   </extension>
+</plugin>
