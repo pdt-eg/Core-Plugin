@@ -12,6 +12,7 @@ import org.eclipse.dltk.ast.declarations.MethodDeclaration;
 import org.eclipse.dltk.ast.references.TypeReference;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IScriptProject;
+import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.index2.search.ISearchEngine.MatchRule;
@@ -37,16 +38,27 @@ import org.pdtextensions.semanticanalysis.validation.Problem;
  * Checks ClassDeclarations for missing method implementations.
  * 
  * TODO: Currently assumes one class per file. Refactor to handle multiple classes per file.
+ * TODO: Optimisation
  * 
  * @author Robert Gruendler <r.gruendler@gmail.com>
  */
 @SuppressWarnings("restriction")
 public class ImplementationValidator extends AbstractValidator{
 	public static final String ID = "org.pdtextensions.semanticanalysis.validator.implementationValidator"; //$NON-NLS-1$
-
+	private static final String BACK_SLASH = "\\"; //$NON-NLS-1$
+	private IScriptProject project;
+	private ISourceModule sourceModule;
+	
 	private ClassDeclaration classDeclaration;
 	private List<MissingMethodImplementation> missingMethods;
 	
+	public ImplementationValidator() {
+	}
+	
+	public ImplementationValidator(ISourceModule module) {
+		this.sourceModule = module;
+		this.project = module.getScriptProject();
+	}
 	
 	@Override
 	public boolean visit(ClassDeclaration s) throws Exception {
@@ -59,29 +71,24 @@ public class ImplementationValidator extends AbstractValidator{
 		
 		Collection<TypeReference> interfaces = getClassDeclaration().getInterfaceList();
 		
-		IScriptProject project = context.getProject();
 		List<IMethod> unimplemented = new ArrayList<IMethod>();		
 		IDLTKSearchScope scope = SearchEngine.createSearchScope(project);		
 		PhpModelAccess model = PhpModelAccess.getDefault();		
-		IType classType = null;
+		IType nss = PHPModelUtils.getCurrentNamespace(sourceModule, getClassDeclaration().getNameStart());
+		String search = nss != null ? nss.getElementName() + BACK_SLASH + getClassDeclaration().getName() : getClassDeclaration().getName();
 		
-		IType nss = PHPModelUtils.getCurrentNamespace(context.getSourceModule(), getClassDeclaration().getNameStart());
+		IType classType = context != null ? PDTModelUtils.findType(sourceModule, search) : null;
 				
-		// namespaced class
-		if (nss != null) {
-			IType[] ts = model.findTypes(nss.getElementName(), getClassDeclaration().getName(), MatchRule.EXACT, 0, 0, scope, null);
-			if (ts.length != 1) {
+		if (classType == null) {
+			for (IType t : PDTModelUtils.findTypes(project, search)) {
+				classType = t;
+				break;
+			}
+			if (classType == null) {
 				return false;
-			}			
-			classType = ts[0];
-			
-		} else {
-			IType[] ts = model.findTypes(getClassDeclaration().getName(), MatchRule.EXACT, 0, 0, scope, null);
-			if (ts.length != 1) {
-				return false;
-			}			
-			classType = ts[0];
+			}
 		}
+		
 		Map<String, IMethod> listImported = PDTModelUtils.getImportedMethods(classType);
 		// iterate over all interfaces and check if the current class
 		// or any of the superclasses implements the method
@@ -92,16 +99,15 @@ public class ImplementationValidator extends AbstractValidator{
 			
 			if (interf instanceof FullyQualifiedReference) {
 				
-				FullyQualifiedReference fqr = (FullyQualifiedReference) interf;				
+				FullyQualifiedReference fqr = (FullyQualifiedReference) interf;
 				String name = null;
 				// we have a namespace
 				if (fqr.getNamespace() != null) {
-					name = fqr.getNamespace().getName() + "\\" + fqr.getName();					
+					name = fqr.getNamespace().getName() + BACK_SLASH + fqr.getName();
 				} else {
-					IEvaluatedType eval = PHPTypeInferenceUtils.resolveExpression(context.getSourceModule(), fqr);				
-					String separator = "\\";				
+					IEvaluatedType eval = PHPTypeInferenceUtils.resolveExpression(sourceModule, fqr);
 					name = eval.getTypeName();
-					if (eval.getTypeName().startsWith(separator)) {
+					if (eval.getTypeName().startsWith(BACK_SLASH)) {
 						name = eval.getTypeName().replaceFirst("\\\\", "");
 					}					
 				}
@@ -109,8 +115,12 @@ public class ImplementationValidator extends AbstractValidator{
 				if (name == null) {
 					continue;
 				}
-				IType[] types = model.findTypes(name, MatchRule.EXACT, 0, 0, scope, new NullProgressMonitor());
-				
+				IType[] types;
+				if (PDTModelUtils.findType(sourceModule, name) != null) {
+					types = new IType[] {PDTModelUtils.findType(sourceModule, name)};
+				} else {
+					types = model.findTypes(name, MatchRule.EXACT, 0, 0, scope, new NullProgressMonitor());
+				}
 				if (types.length != 1) {
 					continue;
 				}
@@ -125,9 +135,9 @@ public class ImplementationValidator extends AbstractValidator{
 						if (methodSignature == null) {
 							continue;
 						}
-						IMethod[] ms = PHPModelUtils.getSuperTypeHierarchyMethod(classType, method.getElementName(), true, null);
+						IMethod[] ms = PDTModelUtils.getSuperTypeHierarchyMethod(classType, method.getElementName(), true, null);
 						
-						for (IMethod me : ms) {						
+						for (IMethod me : ms) {
 							if (me.getParent().getElementName().equals(fqr.getName())) {
 								continue;
 							}
@@ -135,7 +145,7 @@ public class ImplementationValidator extends AbstractValidator{
 								implemented = true;
 							}
 						}
-						
+
 						for (MethodDeclaration typeMethod : getClassDeclaration().getMethods()) {
 							String signature = PDTModelUtils.getMethodSignature(typeMethod, project);
 							if (methodSignature.equals(signature) && !typeMethod.isAbstract()) {
@@ -199,6 +209,8 @@ public class ImplementationValidator extends AbstractValidator{
 	
 	@Override
 	public void validate(IValidatorContext context) throws Exception {
+		project = context.getProject();
+		sourceModule = context.getSourceModule();
 		super.validate(context);
 		if (hasMissing() && getClassDeclaration() != null) {
 			int start = getClassDeclaration().getNameStart();

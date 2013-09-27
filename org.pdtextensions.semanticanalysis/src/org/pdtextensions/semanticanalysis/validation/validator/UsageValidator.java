@@ -5,14 +5,18 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.dltk.ast.ASTListNode;
 import org.eclipse.dltk.ast.references.TypeReference;
 import org.eclipse.dltk.core.IType;
+import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.index2.search.ISearchEngine.MatchRule;
 import org.eclipse.dltk.core.search.IDLTKSearchScope;
 import org.eclipse.dltk.core.search.SearchEngine;
+import org.eclipse.php.internal.core.compiler.ast.nodes.ClassDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ClassInstanceCreation;
 import org.eclipse.php.internal.core.compiler.ast.nodes.FormalParameter;
 import org.eclipse.php.internal.core.compiler.ast.nodes.FullyQualifiedReference;
+import org.eclipse.php.internal.core.compiler.ast.nodes.InterfaceDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.NamespaceDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.StaticConstantAccess;
 import org.eclipse.php.internal.core.compiler.ast.nodes.StaticFieldAccess;
@@ -23,6 +27,7 @@ import org.eclipse.php.internal.core.model.PhpModelAccess;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.pdtextensions.core.util.PDTModelUtils;
 import org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier;
+import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 import org.pdtextensions.semanticanalysis.validation.AbstractValidator;
 import org.pdtextensions.semanticanalysis.validation.IValidatorContext;
 import org.pdtextensions.semanticanalysis.validation.Problem;
@@ -46,7 +51,6 @@ public class UsageValidator extends AbstractValidator {
 
 	final public static String ID = "org.pdtextensions.semanticanalysis.validator.usageValidator"; //$NON-NLS-1$
 
-	// protected Map<UseStatement, UseParts> statements;
 	Map<UsePart, Boolean> parts;
 	Map<String, Boolean> found;
 
@@ -155,43 +159,45 @@ public class UsageValidator extends AbstractValidator {
 	 */
 	public boolean visit(ClassInstanceCreation s) {
 		if (s.getClassName() instanceof FullyQualifiedReference) {
-			FullyQualifiedReference fqr = (FullyQualifiedReference) s
-					.getClassName();
-			if (!isResolved(fqr)) {
-				// not revoled, provide an "inject use statement" quickfix
-
-				context.registerProblem(
-						PEXProblemIdentifier.USAGE_RELATED, 
-						Problem.CAT_POTENTIAL_PROGRAMMING_PROBLEM, 
-						String.format(MESSAGE_CANNOT_RESOLVE_TYPE, fqr.getFullyQualifiedName()), 
-						fqr.sourceStart(), 
-						fqr.sourceEnd()
-					);
-			}
+			markIfNotExists((FullyQualifiedReference) s.getClassName());
 		}
 
 		return true;
 	}
-
+	
+	@Override
+	public boolean visit(ClassDeclaration s) throws Exception {
+		for (TypeReference fqr : s.getInterfaceList()) {
+			markIfNotExists(fqr);
+		}
+		
+		markIfNotExists(s.getSuperClass());
+		
+		return super.visit(s);
+	}
+	
+	@Override
+	public boolean visit(InterfaceDeclaration s) throws Exception {
+		ASTListNode superClasses = s.getSuperClasses();
+		if (superClasses != null) {
+			for (Object ob : superClasses.getChilds()) {
+				markIfNotExists(ob);
+			}
+		}
+		return super.visit(s);
+	}
+	
 	@Override
 	public boolean visit(StaticConstantAccess s) throws Exception {
-
 		if (s.getDispatcher() instanceof FullyQualifiedReference) {
 
 			FullyQualifiedReference fqr = (FullyQualifiedReference) s
 					.getDispatcher();
 
 			if (!"self".equals(fqr.getName()) //$NON-NLS-1$
-					&& !"static".equals(fqr.getName()) && !isResolved(fqr)) { //$NON-NLS-1$
-				context.registerProblem(
-						PEXProblemIdentifier.USAGE_RELATED, 
-						Problem.CAT_POTENTIAL_PROGRAMMING_PROBLEM, 
-						String.format(MESSAGE_CANNOT_RESOLVE_TYPE, fqr.getFullyQualifiedName()), 
-						fqr.sourceStart(), 
-						fqr.sourceEnd()
-					);
+					&& !"static".equals(fqr.getName())) { //$NON-NLS-1$
+				markIfNotExists(fqr);
 			}
-
 		}
 
 		return true;
@@ -199,26 +205,15 @@ public class UsageValidator extends AbstractValidator {
 
 	@Override
 	public boolean visit(StaticFieldAccess s) throws Exception {
-
 		if (s.getDispatcher() instanceof FullyQualifiedReference) {
-
 			FullyQualifiedReference fqr = (FullyQualifiedReference) s
 					.getDispatcher();
 
 			if ("self".equals(fqr.getName()) || "static".equals(fqr.getName())) { //$NON-NLS-1$ //$NON-NLS-2$
 				return true;
 			}
-
-			if (!isResolved(fqr)) {
-				context.registerProblem(
-						PEXProblemIdentifier.USAGE_RELATED, 
-						Problem.CAT_POTENTIAL_PROGRAMMING_PROBLEM, 
-						String.format(MESSAGE_CANNOT_RESOLVE_TYPE, fqr.getFullyQualifiedName()), 
-						fqr.sourceStart(), 
-						fqr.sourceEnd()
-					);
-			}
-
+			
+			markIfNotExists(fqr);
 		}
 
 		return true;
@@ -226,9 +221,7 @@ public class UsageValidator extends AbstractValidator {
 
 	@Override
 	public boolean visit(StaticMethodInvocation s) throws Exception {
-
 		if (s.getReceiver() instanceof FullyQualifiedReference) {
-
 			FullyQualifiedReference fqr = (FullyQualifiedReference) s
 					.getReceiver();
 			String fqn = fqr.getFullyQualifiedName();
@@ -238,15 +231,7 @@ public class UsageValidator extends AbstractValidator {
 				return true;
 			}
 
-			if (!isResolved(fqr)) {
-				context.registerProblem(
-						PEXProblemIdentifier.USAGE_RELATED, 
-						Problem.CAT_POTENTIAL_PROGRAMMING_PROBLEM, 
-						String.format(MESSAGE_CANNOT_RESOLVE_TYPE, fqr.getFullyQualifiedName()), 
-						fqr.sourceStart(), 
-						fqr.sourceEnd()
-					);
-			}
+			markIfNotExists(fqr);
 		}
 
 		return false;
@@ -260,10 +245,12 @@ public class UsageValidator extends AbstractValidator {
 	 */
 	private boolean isResolved(FullyQualifiedReference fqr) {
 		// ignore builtin
-
 		if (PDTModelUtils.isBuiltinType(fqr.getFullyQualifiedName())) {
 			return true;
 		}
+		
+		// check this file
+		
 		if (fqr.getFullyQualifiedName().startsWith(BACK_SLASH)) {
 			return isResolved(fqr.getFullyQualifiedName());
 		}
@@ -315,24 +302,49 @@ public class UsageValidator extends AbstractValidator {
 	private boolean isResolved(String fullyQualifiedReference) {
 		if (!fullyQualifiedReference.startsWith(BACK_SLASH)) {
 			return false;
-		} 
+		}
 		final String searchString = fullyQualifiedReference.substring(1);
+		
+		try {
+			for (IType t : context.getSourceModule().getAllTypes()) {
+				if (t.getFullyQualifiedName(BACK_SLASH).equals(searchString)) {
+					return true;
+				}
+			}
+		} catch (ModelException e) {
+			PEXAnalysisPlugin.error(e);
+		}
+		
 		if (found.containsKey(searchString)) {
 			return found.get(searchString);
 		}
-		//try {
-		// || PDTModelUtils.findTypes(context.getProject(), searchString, true).length > 0
+
 		if (PDTModelUtils.findTypes(context.getProject(), searchString).length > 0) {
 			found.put(searchString, true);
 			return true;
 		}
-		//} catch (ModelException e) {
-		//	PEXAnalysisPlugin.error(e);
-		//}
 		found.put(searchString, false);
-		
 		
 		return false;
 	}
 	
+	private void markIfNotExists(Object ref) {
+		if (ref == null) {
+			return;
+		} else if (ref instanceof FullyQualifiedReference){
+			markIfNotExists((FullyQualifiedReference) ref);
+		}
+	}
+	
+	private void markIfNotExists(FullyQualifiedReference fqr){
+		if (!isResolved(fqr)) {
+			context.registerProblem(
+					PEXProblemIdentifier.USAGE_RELATED, 
+					Problem.CAT_POTENTIAL_PROGRAMMING_PROBLEM, 
+					String.format(MESSAGE_CANNOT_RESOLVE_TYPE, fqr.getFullyQualifiedName()), 
+					fqr.sourceStart(), 
+					fqr.sourceEnd()
+				);
+		}
+	}
 }

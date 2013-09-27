@@ -12,7 +12,6 @@ import java.util.Set;
 
 import org.eclipse.dltk.compiler.problem.IProblemCategory;
 import org.eclipse.dltk.compiler.problem.IProblemIdentifier;
-import org.eclipse.dltk.compiler.problem.IProblemIdentifierFactory;
 import org.eclipse.dltk.compiler.problem.ProblemCategory;
 import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 import org.pdtextensions.semanticanalysis.validation.IValidatorIdentifier;
@@ -27,12 +26,12 @@ import org.pdtextensions.semanticanalysis.validation.validator.UsageValidator;
  * @author Robert Gruendler <r.gruendler@gmail.com>
  * @author Dawid zulus Pakula <zulus@w3des.net>
  */
-public class PEXProblemIdentifier implements IValidatorIdentifier, IProblemIdentifierFactory {
+public class PEXProblemIdentifier implements IValidatorIdentifier {
 	public static final String MARKER_TYPE = "org.pdtextensions.semanticanalysis.problem"; //$NON-NLS-1$
 	private static Set<PEXProblemIdentifier> values = new HashSet<PEXProblemIdentifier>();
 	
 	private static int curr = 100000;
-	public static final PEXProblemIdentifier INTERFACE_RELATED = new PEXProblemIdentifier(false, "methods", ImplementationValidator.ID); //$NON-NLS-1$
+	public static final PEXProblemIdentifier INTERFACE_RELATED = new PEXProblemIdentifier(true, "methods", ImplementationValidator.ID); //$NON-NLS-1$
 	public static final PEXProblemIdentifier USAGE_RELATED = new PEXProblemIdentifier(true, "use", UsageValidator.ID); //$NON-NLS-1$
 	public static final PEXProblemIdentifier UNRESOVABLE = new PEXProblemIdentifier(true, "use", UsageValidator.ID); //$NON-NLS-1$
 	public static final PEXProblemIdentifier DUPLICATE = new PEXProblemIdentifier(false, "duplicate", UsageValidator.ID); //$NON-NLS-1$
@@ -92,8 +91,7 @@ public class PEXProblemIdentifier implements IValidatorIdentifier, IProblemIdent
 		return String.valueOf(id); //$NON-NLS-1$
 	}
 
-	@Override
-	public IProblemIdentifier valueOf(String localName) throws IllegalArgumentException {
+	public static IProblemIdentifier valueOf(String localName) throws IllegalArgumentException {
 		for (IProblemIdentifier ident : values) {
 			if (ident.name().equals(localName)) {
 				return ident;
@@ -103,8 +101,7 @@ public class PEXProblemIdentifier implements IValidatorIdentifier, IProblemIdent
 		return null;
 	}
 
-	@Override
-	public IProblemIdentifier[] values() {
+	public static IProblemIdentifier[] values() {
 		return values.toArray(new IProblemIdentifier[values.size()]);
 	}
 }

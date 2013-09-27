@@ -142,13 +142,15 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 			ExpandableComposite group = createGroup(1, fieldEditorParent, category.getLabel());
 			Composite inner = new Composite(group, SWT.NONE);
 			inner.setFont(parent.getFont());
-			inner.setLayout( new GridLayout(2, false));
+			inner.setLayout( new GridLayout(3, false));
 			inner.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			group.setClient(inner);
 
 			for (Validator v : category.getValidators()) {
 				for (Type t : v.getTypes()) {
-					fields[i] = addComboBox(inner, t.getLabel(), fAllKeys[++i], getSeverityValues(), getSeverityLabels());
+					Combo combo = fields[i] = addComboBox(inner, t.getLabel(), fAllKeys[++i], getSeverityValues(), getSeverityLabels());
+					Label object = (Label)fLabels.get(combo);
+					object.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 				}
 			}
 		}
@@ -160,7 +162,7 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 		ExpandableComposite excomposite= new ExpandableComposite(parent, SWT.NONE, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT);
 		excomposite.setText(label);
 		excomposite.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
-		excomposite.setLayout(new FillLayout(SWT.VERTICAL));
+		excomposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
 		excomposite.setExpanded(true);
 		excomposite.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {

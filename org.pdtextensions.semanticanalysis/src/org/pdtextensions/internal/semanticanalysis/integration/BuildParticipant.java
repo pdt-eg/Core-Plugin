@@ -19,6 +19,7 @@ import org.eclipse.dltk.core.builder.IBuildChange;
 import org.eclipse.dltk.core.builder.IBuildContext;
 import org.eclipse.dltk.core.builder.IBuildParticipant;
 import org.eclipse.dltk.core.builder.IBuildParticipantExtension2;
+import org.eclipse.dltk.core.builder.IBuildParticipantExtension3;
 import org.eclipse.dltk.core.builder.IBuildParticipantExtension4;
 import org.eclipse.dltk.core.builder.IBuildState;
 import org.eclipse.dltk.internal.core.ModelManager;
@@ -37,15 +38,25 @@ import org.pdtextensions.semanticanalysis.validation.IValidatorParticipant;
  * @author Dawid zulus Pakula <zulus@w3des.net>
  */
 @SuppressWarnings("restriction")
-public class BuildParticipant implements IBuildParticipant, IBuildParticipantExtension2, IBuildParticipantExtension4 {
+public class BuildParticipant implements IBuildParticipantExtension4, IBuildParticipantExtension2 {
 	@Inject
 	private IValidatorManager manager;
 	
 
 	@Override
 	public void build(IBuildContext context) throws CoreException {
+		if (!context.getSourceModule().getScriptProject().isOnBuildpath(context.getSourceModule().getResource()) || !manager.isEnabled(context.getSourceModule().getScriptProject())) {
+			return;
+		}
+		if (context.getBuildType() != IBuildContext.RECONCILE_BUILD) {
+			ModelManager.getModelManager().getIndexManager().waitUntilReady();
+		}
 		
-		
+		for (Validator validator : manager.getValidators(context.getSourceModule().getScriptProject())) {
+			final ValidatorContext validatorContext = new ValidatorContext(validator, context, manager);
+			
+			validate(validatorContext, validator.getValidatorFactory().getValidatorParticipant(validatorContext.getProject()));
+		}
 	}
 	
 	private void validate(final ValidatorContext validatorContext, final IValidatorParticipant validatorParticipant) {
@@ -66,17 +77,31 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 	}
 
 	@Override
+	public void notifyDependents(IBuildParticipant[] dependents) {
+	}
+
+	/**
+	 * TODO: Find better position for validators
+	 */
+	@Override
+	public void afterBuild(IBuildContext context) {
+		
+	}
+	
+	@Override
 	public boolean beginBuild(int buildType) {
 		return true;
 	}
 
 	@Override
 	public void endBuild(IProgressMonitor monitor) {
+		
 	}
 
 	@Override
 	public void prepare(IBuildChange buildChange, IBuildState buildState) throws CoreException {
-		if (buildChange.getBuildType() != IBuildContext.INCREMENTAL_BUILD) {
+		if (buildChange.isDependencyBuild()) {
+			ModelManager.getModelManager().getIndexManager().waitUntilReady();
 			for (ISourceModule file : buildChange.getSourceModules(IBuildChange.DEFAULT)) {
 				report(file, buildState);
 			}
@@ -86,7 +111,7 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 	@Override
 	public void buildExternalModule(IBuildContext context) throws CoreException {
 	}
-
+	
 	private void report(final ISourceModule module, final IBuildState state) {
 		final ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(module);
 		try {
@@ -96,6 +121,9 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 		}
 	}
 	
+	private boolean allow(ISourceModule module, IType type) {
+		return !module.getResource().getFullPath().equals(type.getResource() == null ? type.getPath() : type.getResource().getFullPath());
+	}
 	
 	private class Visitor extends PHPASTVisitor {
 		final private IBuildState state;
@@ -127,30 +155,4 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 			return true;
 		}
 	}
-	
-	public boolean allow(ISourceModule module, IType type) {
-		return !module.getResource().getFullPath().equals(type.getResource() == null ? type.getPath() : type.getResource().getFullPath());
-	}
-
-	@Override
-	public void notifyDependents(IBuildParticipant[] dependents) {
-		
-	}
-
-	@Override
-	public void afterBuild(IBuildContext context) {
-		if (!context.getSourceModule().getScriptProject().isOnBuildpath(context.getSourceModule().getResource()) || !manager.isEnabled(context.getSourceModule().getScriptProject())) {
-			return;
-		}
-		if (context.getBuildType() == IBuildContext.INCREMENTAL_BUILD) {
-			ModelManager.getModelManager().getIndexManager().waitUntilReady();
-		}
-		
-		for (Validator validator : manager.getValidators(context.getSourceModule().getScriptProject())) {
-			final ValidatorContext validatorContext = new ValidatorContext(validator, context, manager);
-			
-			validate(validatorContext, validator.getValidatorFactory().getValidatorParticipant(validatorContext.getProject()));
-		}
-	}
-
 }

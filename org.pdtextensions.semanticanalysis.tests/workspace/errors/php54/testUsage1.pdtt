@@ -8,3 +8,4 @@ class A extends B {}
 ?>
 --EXPECT--
 [line=2, start=10, end=20] The type com\name\B cannot be resolved or namespace is empty
+[line=4, start=39, end=40] The type B cannot be resolved

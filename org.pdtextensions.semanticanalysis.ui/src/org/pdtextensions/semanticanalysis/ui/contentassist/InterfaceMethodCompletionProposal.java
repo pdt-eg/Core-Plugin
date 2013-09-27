@@ -80,10 +80,14 @@ public class InterfaceMethodCompletionProposal extends PHPCompletionProposal {
 						return;
 					}
 					ModuleDeclaration module = SourceParserUtil.getModuleDeclaration(sourceModule);
-					ImplementationValidator validator = new ImplementationValidator();
-					module.traverse(validator);
+					ImplementationValidator validator = new ImplementationValidator(sourceModule);
 					String code = "";
-										
+					try {
+						module.traverse(validator);
+					} catch (Exception e) {
+						e.getClass();
+						e.printStackTrace();
+					}
 					char indentChar = FormatPreferencesSupport.getInstance().getIndentationChar(document);
 					String indent = String.valueOf(indentChar);
 					

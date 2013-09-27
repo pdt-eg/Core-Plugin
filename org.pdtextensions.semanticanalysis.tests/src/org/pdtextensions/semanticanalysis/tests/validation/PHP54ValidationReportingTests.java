@@ -107,7 +107,7 @@ public class PHP54ValidationReportingTests extends AbstractPDTTTest {
 
 							IMarker[] markers = file.findMarkers(
 									PEXProblemIdentifier.MARKER_TYPE, true,
-									IResource.DEPTH_INFINITE);
+									IResource.DEPTH_ZERO);
 							for (IMarker marker : markers) {
 								buf.append("\n[line=");
 								buf.append(marker
