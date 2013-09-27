@@ -19,7 +19,6 @@ import org.eclipse.dltk.core.builder.IBuildChange;
 import org.eclipse.dltk.core.builder.IBuildContext;
 import org.eclipse.dltk.core.builder.IBuildParticipant;
 import org.eclipse.dltk.core.builder.IBuildParticipantExtension2;
-import org.eclipse.dltk.core.builder.IBuildParticipantExtension3;
 import org.eclipse.dltk.core.builder.IBuildParticipantExtension4;
 import org.eclipse.dltk.core.builder.IBuildState;
 import org.eclipse.dltk.internal.core.ModelManager;
