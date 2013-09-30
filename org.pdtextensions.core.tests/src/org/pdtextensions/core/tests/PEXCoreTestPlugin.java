@@ -44,7 +44,6 @@ public class PEXCoreTestPlugin extends PHPCoreTests {
 	 * @return the shared instance
 	 */
 	public static PEXCoreTestPlugin getDefault() {
-		System.out.println("Test kurwa");
 		return plugin;
 	}
 

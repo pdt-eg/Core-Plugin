@@ -1,12 +1,8 @@
 package org.pdtextensions.core.ui.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
-import org.pdtextensions.core.CorePreferenceConstants;
-import org.pdtextensions.core.PEXCorePlugin;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
@@ -52,20 +48,5 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(PreferenceConstants.PREF_PHPCS_OPTION_PSR0, "phpcs_option_psr0::psr0:: Classes must be in a path that matches their namespace, be at least one namespace deep, and the class name should match the file name.::true");
 		store.setDefault(PreferenceConstants.PREF_PHPCS_OPTION_CONTROLS_SPACE, "phpcs_option_controls_space::controls_spaces::A single space should be between: the closing brace and the control, the control and the opening parenthese, the closing parenthese and the opening brace.::true");
 		store.setDefault(PreferenceConstants.PREF_PHPCS_OPTION_ELSEIF, "phpcs_option_elseif::elseif::The keyword elseif should be used instead of else if so that all control keywords looks like single words.::true");
-		
-		
-		/**
-		 * Initialize core preferences
-		 */
-		ScopedPreferenceStore coreStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, PEXCorePlugin.PLUGIN_ID); 
-			
-		/**
-		 * Semantic analysis page
-		 */
-		coreStore.setDefault(CorePreferenceConstants.PREF_SA_ENABLE, true);
-		coreStore.setDefault(CorePreferenceConstants.PREF_SA_MISSING_METHOD_SEVERITY, CorePreferenceConstants.PREF_WARN);
-		coreStore.setDefault(CorePreferenceConstants.PREF_SA_MISSING_USE_STMT_SEVERITY, CorePreferenceConstants.PREF_WARN);
-		coreStore.setDefault(CorePreferenceConstants.PREF_SA_DUPLICATE_USE_SEVERITY, CorePreferenceConstants.PREF_ERROR);
-		
 	}
 }

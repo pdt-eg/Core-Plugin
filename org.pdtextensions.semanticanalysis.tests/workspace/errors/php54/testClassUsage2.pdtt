@@ -1,0 +1,13 @@
+--TEST--
+Test import type
+--FILE--
+<?php
+namespace space\testClassUsage2\sample {
+    interface exampleInterface { }
+}
+namespace space\testClassUsage2\test {
+    use space\testClassUsage2\sample\exampleInterface;
+    class A implements exampleInterface {}
+}
+?>
+--EXPECT--
