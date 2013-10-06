@@ -154,9 +154,9 @@
       </command>
       <command
             name="Quick Assist - Assign to local variable"
-            description="Invokes quick assist and selects 'Assign to local variable"
+            description="Invokes quick assist and selects Assign to local variable"
             categoryId="org.eclipse.php.ui.category.source"
-            id="org.pdtextensions.ui.correction.assignToLocal.assist">
+            id="org.pdtextensions.core.ui.correction.assignToLocal.assist">
       </command>
    </extension>
    
@@ -220,7 +220,7 @@
       <key
             sequence="M1+2 L"
             contextId="org.eclipse.php.ui.phpEditorScope"
-            commandId="org.pdtextensions.ui.correction.assignToLocal.assist"
+            commandId="org.pdtextensions.core.ui.correction.assignToLocal.assist"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/> 
    </extension>
    <extension

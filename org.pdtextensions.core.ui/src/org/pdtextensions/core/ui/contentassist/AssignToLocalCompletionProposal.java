@@ -1,8 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2012 The PDT Extension Group (https://github.com/pdt-eg)
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ ******************************************************************************/
 package org.pdtextensions.core.ui.contentassist;
 
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.dltk.core.ISourceModule;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.php.internal.core.ast.nodes.AST;
 import org.eclipse.php.internal.core.ast.nodes.ASTNode;
 import org.eclipse.php.internal.core.ast.nodes.Assignment;
@@ -17,7 +25,9 @@ import org.eclipse.php.internal.core.ast.nodes.Variable;
 import org.eclipse.php.internal.core.ast.rewrite.ASTRewrite;
 import org.eclipse.php.internal.ui.corext.fix.LinkedProposalModel;
 import org.eclipse.php.internal.ui.text.correction.proposals.ASTRewriteCorrectionProposal;
+import org.eclipse.php.internal.ui.util.PHPPluginImages;
 import org.eclipse.text.edits.TextEditGroup;
+import org.pdtextensions.core.ui.actions.CorrectionCommandHandler;
 
 /**
  * Create local variable for function/method call
@@ -26,7 +36,7 @@ import org.eclipse.text.edits.TextEditGroup;
  */
 @SuppressWarnings("restriction")
 public class AssignToLocalCompletionProposal extends ASTRewriteCorrectionProposal {
-	public static final String ASSIGN_TO_LOCAL_ID = "org.pdtextensions.ui.correction.assignToLocal.assist"; //$NON-NLS-1$
+	public static final String ASSIGN_TO_LOCAL_ID = "org.pdtextensions.core.ui.correction.assignToLocal.assist"; //$NON-NLS-1$
 	public static final String KEY_NAME = "name"; //$NON-NLS-1$
 	public static final String KEY_EXPR = "value"; //$NON-NLS-1$
 	public static final String DEFAULT_NAME = "localVar"; //$NON-NLS-1$
@@ -34,7 +44,7 @@ public class AssignToLocalCompletionProposal extends ASTRewriteCorrectionProposa
 	protected ASTNode context;
 	
 	public AssignToLocalCompletionProposal(ISourceModule cu, ASTNode context) {
-		super("Assign statement to new local variable", cu, null, 0, null);
+		super("Assign statement to new local variable", cu, null, 0, PHPPluginImages.DESC_FIELD_DEFAULT.createImage());
 		this.context = context;
 		setCommandId(ASSIGN_TO_LOCAL_ID);
 	}
@@ -141,5 +151,10 @@ public class AssignToLocalCompletionProposal extends ASTRewriteCorrectionProposa
 		}
 		
 		return DEFAULT_NAME;
+	}
+	
+	@Override
+	public StyledString getStyledDisplayString() {
+		return CorrectionCommandHandler.appendStyledDisplay(super.getStyledDisplayString(), this); 
 	}
 }
