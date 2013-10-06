@@ -7,7 +7,6 @@
  ******************************************************************************/
 package org.pdtextensions.core.ui.contentassist;
 
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.jface.viewers.StyledString;
@@ -17,12 +16,15 @@ import org.eclipse.php.internal.core.ast.nodes.Assignment;
 import org.eclipse.php.internal.core.ast.nodes.ClassInstanceCreation;
 import org.eclipse.php.internal.core.ast.nodes.Expression;
 import org.eclipse.php.internal.core.ast.nodes.ExpressionStatement;
+import org.eclipse.php.internal.core.ast.nodes.FunctionDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.FunctionInvocation;
 import org.eclipse.php.internal.core.ast.nodes.Identifier;
+import org.eclipse.php.internal.core.ast.nodes.MethodDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.MethodInvocation;
 import org.eclipse.php.internal.core.ast.nodes.StaticMethodInvocation;
 import org.eclipse.php.internal.core.ast.nodes.Variable;
 import org.eclipse.php.internal.core.ast.rewrite.ASTRewrite;
+import org.eclipse.php.internal.core.ast.visitor.HierarchicalVisitor;
 import org.eclipse.php.internal.ui.corext.fix.LinkedProposalModel;
 import org.eclipse.php.internal.ui.text.correction.proposals.ASTRewriteCorrectionProposal;
 import org.eclipse.php.internal.ui.util.PHPPluginImages;
@@ -117,8 +119,28 @@ public class AssignToLocalCompletionProposal extends ASTRewriteCorrectionProposa
 		if (basic == null || basic.length() < 1) {
 			basic = DEFAULT_NAME;
 		}
+		basic = Character.toLowerCase(basic.charAt(0)) + basic.substring(1);
 		
-		return new String[] {Character.toLowerCase(basic.charAt(0)) + basic.substring(1)};
+		ASTNode scope = searchScope(node);
+		FindVariableVisitor find;
+		int num = -1;
+		do {
+			num++;
+			find = new FindVariableVisitor(num == 0 ? basic : basic + num);
+			scope.childrenAccept(find);
+		} while(find.found);
+		
+		return new String[] {find.search};
+	}
+	
+	private ASTNode searchScope(ASTNode node) {
+		if (node.getParent() == null) {
+			return node.getRoot();
+		} if (node.getParent() instanceof FunctionDeclaration) {
+			return node.getParent();
+		}
+		
+		return searchScope(node.getParent());
 	}
 
 	private String getBasicName(ASTNode node) {
@@ -151,6 +173,44 @@ public class AssignToLocalCompletionProposal extends ASTRewriteCorrectionProposa
 		}
 		
 		return DEFAULT_NAME;
+	}
+	
+	private class FindVariableVisitor extends HierarchicalVisitor {
+		public boolean found = false;
+		public String search;
+		
+		public FindVariableVisitor(String search) {
+			this.search = search;
+		}
+		
+		@Override
+		public boolean visit(ASTNode node) {
+			return !found && super.visit(node);
+		}
+		
+		@Override
+		public boolean visit(FunctionDeclaration node) {
+			return false;
+		}
+		
+		@Override
+		public boolean visit(MethodDeclaration method) {
+			return false;
+		}
+		
+		@Override
+		public boolean visit(Variable var) {
+			if (var.isDollared() && var.getName() instanceof Identifier) {
+				String name = ((Identifier) var.getName()).getName();
+				if (name != null && name.equals(search)) {
+					found = true;
+					return false;
+				}
+			}
+			
+			return super.visit(var);
+		}
+		
 	}
 	
 	@Override
