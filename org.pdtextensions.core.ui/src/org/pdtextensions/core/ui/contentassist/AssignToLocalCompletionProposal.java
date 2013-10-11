@@ -40,7 +40,6 @@ import org.pdtextensions.core.ui.actions.CorrectionCommandHandler;
 public class AssignToLocalCompletionProposal extends ASTRewriteCorrectionProposal {
 	public static final String ASSIGN_TO_LOCAL_ID = "org.pdtextensions.core.ui.correction.assignToLocal.assist"; //$NON-NLS-1$
 	public static final String KEY_NAME = "name"; //$NON-NLS-1$
-	public static final String KEY_EXPR = "value"; //$NON-NLS-1$
 	public static final String DEFAULT_NAME = "localVar"; //$NON-NLS-1$
 	
 	protected ASTNode context;
@@ -108,7 +107,6 @@ public class AssignToLocalCompletionProposal extends ASTRewriteCorrectionProposa
 		astRewrite.replace(expression, assign, editGroup);
 
 		linkedModel.getPositionGroup(KEY_NAME, true).addPosition(astRewrite.track(variable.getName()), true);
-		linkedModel.getPositionGroup(KEY_EXPR, true).addPosition(astRewrite.track(assign.getRightHandSide()), false);
 		linkedModel.setEndPosition(astRewrite.track(statement));
 		
 		return astRewrite;
