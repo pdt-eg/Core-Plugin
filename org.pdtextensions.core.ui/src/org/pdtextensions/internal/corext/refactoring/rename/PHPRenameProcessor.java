@@ -14,6 +14,7 @@ package org.pdtextensions.internal.corext.refactoring.rename;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -25,6 +26,7 @@ import org.eclipse.dltk.core.IMember;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ISourceRange;
+import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.internal.corext.refactoring.ScriptRefactoringArguments;
 import org.eclipse.dltk.internal.corext.refactoring.ScriptRefactoringDescriptor;
@@ -150,12 +152,20 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 
 	@Override
 	public boolean canEnableUpdateReferences() {
+		IType enclosingType = (IType) modelElement.getAncestor(IModelElement.TYPE);
+		if (enclosingType == null) return false;
+
+		IResource resource = enclosingType.getResource();
+		if (!(resource instanceof IFile)) return false;
+
+		if (!((IFile) resource).getName().substring(0, ((IFile) resource).getName().indexOf(((IFile) resource).getFileExtension()) - 1).equals(enclosingType.getElementName())) return false;
+
 		return true;
 	}
 
 	@Override
 	public void setUpdateReferences(boolean update) {
-		updateReferences = update;
+		updateReferences = update && canEnableUpdateReferences();
 	}
 
 	@Override

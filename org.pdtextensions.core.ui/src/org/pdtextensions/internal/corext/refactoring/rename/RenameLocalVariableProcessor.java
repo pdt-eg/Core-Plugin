@@ -59,6 +59,14 @@ public class RenameLocalVariableProcessor extends PHPRenameProcessor {
 		return false;
 	}
 
+	/**
+	 * @since 0.19.0
+	 */
+	@Override
+	public boolean canEnableUpdateReferences() {
+		return true;
+	}
+
 	@Override
 	protected String getRefactoringId() {
 		return IPHPRefactorings.RENAME_LOCAL_VARIABLE;
