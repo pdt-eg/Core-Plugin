@@ -145,26 +145,29 @@ public class RenameTypeProcessor extends PHPRenameProcessor {
 										public boolean visit(FullyQualifiedReference s) throws Exception {
 											if (s.sourceStart() == match.getOffset() && s.sourceEnd() == match.getOffset() + match.getLength()) {
 												IModelElement sourceElement = PDTModelUtils.getSourceElement(module, s.sourceStart(), s.matchLength());
-												if (sourceElement != null && sourceElement.getElementType() == IModelElement.TYPE && PDTModelUtils.isInstanceOf((IType) sourceElement, (IType) modelElement)) {
-													int offset;
-													if (s.getNamespace() == null) {
-														offset = s.sourceStart();
-													} else {
-														if ("\\".equals(s.getNamespace().getName())) {
-															offset = s.getNamespace().sourceEnd();
+												if (sourceElement != null) {
+													IType sourceType = (IType) sourceElement.getAncestor(IModelElement.TYPE);
+													if (sourceType != null && PDTModelUtils.isInstanceOf(sourceType, (IType) modelElement)) {
+														int offset;
+														if (s.getNamespace() == null) {
+															offset = s.sourceStart();
 														} else {
-															offset = s.getNamespace().sourceEnd() + 1;
+															if ("\\".equals(s.getNamespace().getName())) { //$NON-NLS-1$
+																offset = s.getNamespace().sourceEnd();
+															} else {
+																offset = s.getNamespace().sourceEnd() + 1;
+															}
 														}
-													}
 
-													try {
-														addTextEdit(
-															changeManager.get(module),
-															getProcessorName(),
-															new ReplaceEdit(offset, getCurrentElementName().length(), getNewElementName())
-														);
-													} catch (MalformedTreeException e) {
-														// conflicting update -> omit text match
+														try {
+															addTextEdit(
+																changeManager.get(module),
+																getProcessorName(),
+																new ReplaceEdit(offset, getCurrentElementName().length(), getNewElementName())
+															);
+														} catch (MalformedTreeException e) {
+															// conflicting update -> omit text match
+														}
 													}
 												}
 
