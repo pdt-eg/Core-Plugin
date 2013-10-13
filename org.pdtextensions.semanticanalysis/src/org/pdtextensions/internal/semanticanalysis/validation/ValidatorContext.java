@@ -44,7 +44,14 @@ final public class ValidatorContext implements IValidatorContext {
 	@Override
 	public ModuleDeclaration getModuleDeclaration() {
 		if (moduleDeclaration == null) {
-			 moduleDeclaration = SourceParserUtil.getModuleDeclaration(buildContext.getSourceModule());
+			// read from context if possible
+			if (buildContext.get(IBuildContext.ATTR_MODULE_DECLARATION) != null) { 
+				moduleDeclaration = (ModuleDeclaration) buildContext.get(IBuildContext.ATTR_MODULE_DECLARATION) ;
+			} else {
+				// on full build PDT leave empty, fix:
+				moduleDeclaration = SourceParserUtil.getModuleDeclaration(buildContext.getSourceModule());
+				buildContext.set(IBuildContext.ATTR_MODULE_DECLARATION, moduleDeclaration);
+			}
 		}
 		
 		return moduleDeclaration;
