@@ -8,33 +8,27 @@
 package org.pdtextensions.core.util;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Region;
 import org.eclipse.php.internal.core.format.DefaultCodeFormattingProcessor;
 import org.eclipse.php.internal.core.format.ICodeFormattingProcessor;
 import org.eclipse.php.internal.core.format.IFormatterProcessorFactory;
 import org.eclipse.php.internal.core.project.ProjectOptions;
 import org.pdtextensions.core.log.Logger;
 import org.eclipse.php.internal.core.PHPVersion;
-import org.eclipse.text.edits.TextEdit;
 
 @SuppressWarnings("restriction")
 public class PDTFormatterUtils {
-	private final static String facetName = "php.component"; //$NON-NLS-1$
 	private final static String extensionName = "org.eclipse.php.ui.phpFormatterProcessor"; //$NON-NLS-1$
 	private static IFormatterProcessorFactory formatterFactory;
 
-	public static IFormatterProcessorFactory getFormatterFactory() {
+	private static IFormatterProcessorFactory getFormatterFactory() {
 		if (formatterFactory == null) {
 			IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(extensionName);
 			for (int i = 0; i < elements.length; i++) {
@@ -76,12 +70,5 @@ public class PDTFormatterUtils {
 		} catch (Exception e) {
 			Logger.logException(e);
 		}
-	}
-	
-	public static String format(String content, IProject project) {
-		Document tmp = new Document(content);
-		format(tmp, new Region(0, tmp.getLength()), project);
-		
-		return tmp.get();
 	}
 }

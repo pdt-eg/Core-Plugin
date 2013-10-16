@@ -53,7 +53,6 @@ import org.pdtextensions.core.ui.util.PHPContentProposalAdapter;
 import org.pdtextensions.core.ui.util.PHPContentProposalProvider;
 import org.pdtextensions.core.ui.util.PHPTypeContentProposal;
 import org.pdtextensions.core.ui.util.PHPTypeSelectionExtension;
-import org.pdtextensions.core.util.PDTFormatterUtils;
 
 @SuppressWarnings("restriction")
 public abstract class NewElementWizardPage extends NewSourceModulePage {
@@ -601,7 +600,7 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 
 	@Override
 	protected String getFileContent(ISourceModule module) {
-		return PDTFormatterUtils.format(generateFileContent(), module.getScriptProject().getProject());
+		return generateFileContent();
 	}
 
 	abstract protected String generateFileContent();
