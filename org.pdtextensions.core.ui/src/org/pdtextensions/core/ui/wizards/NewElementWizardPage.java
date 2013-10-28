@@ -29,6 +29,8 @@ import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalListener;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -598,18 +600,7 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 
 	@Override
 	protected String getFileContent(ISourceModule module) {
-	
 		return generateFileContent();
-		
-		//TODO: format document using new PDT formatter
-		/*
-		IDocument doc = Formatter.createPHPDocument();
-		Formatter formatter = new Formatter();
-		doc.set(generateFileContent());
-		formatter.format(doc);
-	
-		return doc.get();
-		*/
 	}
 
 	abstract protected String generateFileContent();

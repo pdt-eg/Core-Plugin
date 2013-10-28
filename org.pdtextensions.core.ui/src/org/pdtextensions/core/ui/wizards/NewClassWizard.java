@@ -57,5 +57,5 @@ public class NewClassWizard extends NewSourceModuleWizard {
 		if (page != null) {
 			page.setScriptFolder(folder, false);
 		}
-	}	
+	}
 }

@@ -231,4 +231,11 @@
             priority="9">
       </action>
    </extension>
+   <extension
+         point="org.eclipse.dltk.ui.sourceModuleWizardExtension">
+      <wizardExtension
+            class="org.pdtextensions.core.ui.wizards.extension.FormatterExtension"
+            nature="org.eclipse.php.core.PHPNature">
+      </wizardExtension>
+   </extension>
 </plugin>
