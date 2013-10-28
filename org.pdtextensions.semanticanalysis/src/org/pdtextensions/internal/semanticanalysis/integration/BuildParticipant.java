@@ -7,18 +7,25 @@
  ******************************************************************************/
 package org.pdtextensions.internal.semanticanalysis.integration;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
+import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.SourceParserUtil;
 import org.eclipse.dltk.core.builder.IBuildChange;
 import org.eclipse.dltk.core.builder.IBuildContext;
 import org.eclipse.dltk.core.builder.IBuildParticipant;
 import org.eclipse.dltk.core.builder.IBuildParticipantExtension2;
+import org.eclipse.dltk.core.builder.IBuildParticipantExtension3;
 import org.eclipse.dltk.core.builder.IBuildParticipantExtension4;
 import org.eclipse.dltk.core.builder.IBuildState;
 import org.eclipse.dltk.internal.core.ModelManager;
@@ -38,33 +45,35 @@ import org.pdtextensions.semanticanalysis.validation.IValidatorParticipant;
  * @author Dawid zulus Pakula <zulus@w3des.net>
  */
 @SuppressWarnings("restriction")
-public class BuildParticipant implements IBuildParticipantExtension4, IBuildParticipantExtension2 {
+public class BuildParticipant implements IBuildParticipantExtension4, IBuildParticipantExtension2, IBuildParticipantExtension3 {
 	@Inject
 	private IValidatorManager manager;
-	
+
+	private Map<String, Files> tmpTypes = new HashMap<String, Files>();
 
 	@Override
-	public void build(IBuildContext context) throws CoreException {		
-		if (!context.getSourceModule().getScriptProject().isOnBuildpath(context.getSourceModule().getResource()) || !manager.isEnabled(context.getSourceModule().getScriptProject())) {
+	public void build(IBuildContext context) throws CoreException {
+		if (!context.getSourceModule().getScriptProject().isOnBuildpath(context.getSourceModule().getResource())
+				|| !manager.isEnabled(context.getSourceModule().getScriptProject())) {
 			return;
 		}
 		if (context.getBuildType() != IBuildContext.RECONCILE_BUILD) {
 			ModelManager.getModelManager().getIndexManager().waitUntilReady();
 		}
-		
+
 		for (Validator validator : manager.getValidators(context.getSourceModule().getScriptProject())) {
 			final ValidatorContext validatorContext = new ValidatorContext(validator, context, manager);
-			
+
 			validate(validatorContext, validator.getValidatorFactory().getValidatorParticipant(validatorContext.getProject()));
 		}
 	}
-	
+
 	private void validate(final ValidatorContext validatorContext, final IValidatorParticipant validatorParticipant) {
 		// if null ignore
 		if (validatorParticipant == null) {
 			return;
 		}
-		
+
 		if (validatorContext.isDerived() && !validatorParticipant.allowDerived()) {
 			return;
 		}
@@ -80,12 +89,9 @@ public class BuildParticipant implements IBuildParticipantExtension4, IBuildPart
 	public void notifyDependents(IBuildParticipant[] dependents) {
 	}
 
-	/**
-	 * TODO: Find better position for validators
-	 */
 	@Override
 	public void afterBuild(IBuildContext context) {
-		
+
 	}
 	
 	/**
@@ -98,7 +104,12 @@ public class BuildParticipant implements IBuildParticipantExtension4, IBuildPart
 
 	@Override
 	public void endBuild(IProgressMonitor monitor) {
-		
+
+	}
+	
+	@Override
+	public void clean() {
+		tmpTypes.clear();
 	}
 
 	@Override
@@ -114,7 +125,7 @@ public class BuildParticipant implements IBuildParticipantExtension4, IBuildPart
 	@Override
 	public void buildExternalModule(IBuildContext context) throws CoreException {
 	}
-	
+
 	private void report(final ISourceModule module, final IBuildState state) {
 		final ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(module);
 		try {
@@ -123,11 +134,9 @@ public class BuildParticipant implements IBuildParticipantExtension4, IBuildPart
 			PEXAnalysisPlugin.error(e);
 		}
 	}
+
 	
-	private boolean allow(ISourceModule module, IType type) {
-		return !module.getResource().getFullPath().equals(type.getResource() == null ? type.getPath() : type.getResource().getFullPath());
-	}
-	
+
 	private class Visitor extends PHPASTVisitor {
 		final private IBuildState state;
 		final private ISourceModule module;
@@ -136,26 +145,48 @@ public class BuildParticipant implements IBuildParticipantExtension4, IBuildPart
 			this.state = state;
 			this.module = module;
 		}
-		
+
 		@Override
 		public boolean visit(UsePart s) throws Exception {
-			String searchString = s.getNamespace().getFullyQualifiedName();
-			
-			for (IType type : PDTModelUtils.findTypes(module.getScriptProject(), searchString)) {
-				if (allow(module, type)) {
-					state.recordDependency(module.getResource().getFullPath(), type.getResource() == null ? type.getPath() : type.getResource().getFullPath());
-					return true;
-				}
+			final String searchString = s.getNamespace().getFullyQualifiedName();
+			if (!tmpTypes.containsKey(searchString)) {
+				resolve(searchString, tmpTypes.put(searchString, new Files()));
 			}
-
-			for (IType type : PDTModelUtils.findTypes(module.getScriptProject(), searchString, true)) {
-				if (allow(module, type)) {
-					state.recordDependency(module.getResource().getFullPath(), type.getResource() == null ? type.getPath() : type.getResource().getFullPath());
-					return true;
-				}
+			final Files files = tmpTypes.get(searchString);
+			
+			for (IPath f : files) {
+				state.recordDependency(getModulePath(), f);
 			}
 			
 			return true;
 		}
+		
+		private void resolve(String searchString, Files files) throws ModelException {
+			registerTypes(PDTModelUtils.findTypes(module.getScriptProject(), searchString), files);
+			if (files.size() == 0) {
+				registerTypes(PDTModelUtils.findTypes(module.getScriptProject(), searchString, true), files);
+			}
+		}
+
+		private void registerTypes(IType[] types, Files files) {
+			for (IType type : types) {
+				if (getModulePath().equals(getTypePath(type))) {
+					files.add(getTypePath(type));
+				}
+			}
+		}
+		
+		private IPath getModulePath() {
+			return module.getResource().getFullPath();
+		}
+		
+		private IPath getTypePath(IType type) {
+			return type.getResource() == null ? type.getPath() : type.getResource().getFullPath();
+		}
 	}
+
+	private class Files extends HashSet<IPath> {
+		private static final long serialVersionUID = -4757183524417278724L;
+	}
+
 }
