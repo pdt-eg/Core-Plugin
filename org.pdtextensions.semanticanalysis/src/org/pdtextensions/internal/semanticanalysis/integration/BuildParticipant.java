@@ -22,6 +22,7 @@ import org.eclipse.dltk.core.builder.IBuildParticipantExtension2;
 import org.eclipse.dltk.core.builder.IBuildParticipantExtension4;
 import org.eclipse.dltk.core.builder.IBuildState;
 import org.eclipse.dltk.internal.core.ModelManager;
+import org.eclipse.php.internal.core.PHPCorePlugin;
 import org.eclipse.php.internal.core.compiler.ast.nodes.UsePart;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.pdtextensions.core.util.PDTModelUtils;
@@ -43,7 +44,7 @@ public class BuildParticipant implements IBuildParticipantExtension4, IBuildPart
 	
 
 	@Override
-	public void build(IBuildContext context) throws CoreException {
+	public void build(IBuildContext context) throws CoreException {		
 		if (!context.getSourceModule().getScriptProject().isOnBuildpath(context.getSourceModule().getResource()) || !manager.isEnabled(context.getSourceModule().getScriptProject())) {
 			return;
 		}
@@ -87,9 +88,12 @@ public class BuildParticipant implements IBuildParticipantExtension4, IBuildPart
 		
 	}
 	
+	/**
+	 * Do not run if toolkit is not ready
+	 */
 	@Override
 	public boolean beginBuild(int buildType) {
-		return true;
+		return PHPCorePlugin.toolkitInitialized;
 	}
 
 	@Override
