@@ -19,3 +19,12 @@ other PDT extenders.
 
 Join our [mailinglist](https://groups.google.com/forum/?fromgroups#!forum/pdt-extensions-platform) if you are interested in the discussion or want to help improve the PDT ecosystem.
 
+
+### Contributors
+
+- Kubo Atsuhiro - [iteman](https://github.com/iteman)
+- Dawid Pakula - [zulus](https://github.com/zulus)
+- Marek Maksimczyk- [mandos](https://github.com/Mandos)
+- Thomas Gossmann - [gossi](https://github.com/gossi)
+- Martin Eisengardt - [Martin Eisengardt](https://github.com/mepeisen)
+- Robert Gr√ndler - [pulse00](https://github.com/pulse00)
