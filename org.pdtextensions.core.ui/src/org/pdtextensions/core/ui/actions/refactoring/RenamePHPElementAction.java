@@ -65,10 +65,10 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 		if (selection.size() == 1) {
 			Object element = selection.getFirstElement();
 			if (element instanceof IModelElement) {
-				setEnabled(ActionUtil.isEditable(getShell(), (IModelElement) element));
+				setEnabled(true);
 			} else if (element instanceof IImplForPhp) {
 				element = ((IImplForPhp) element).getModelElement();
-				setEnabled(element != null && ActionUtil.isEditable(getShell(), (IModelElement) element));
+				setEnabled(element != null);
 			} else {
 				setEnabled(false);
 			}
@@ -135,7 +135,7 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 	}
 
 	private void run(IModelElement element) throws CoreException {
-		// Work around for http://dev.eclipse.org/bugs/show_bug.cgi?id=19104		
+		// Work around for http://dev.eclipse.org/bugs/show_bug.cgi?id=19104
 		if (!ActionUtil.isProcessable(getShell(), element)) return;
 		//XXX workaround bug 31998
 		if (ActionUtil.mustDisableScriptModelAction(getShell(), element)) return;
