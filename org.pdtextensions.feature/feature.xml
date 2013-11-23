@@ -2,7 +2,7 @@
 <feature
       id="org.pdtextensions.feature"
       label="PDT Extensions"
-      version="0.19.0.qualifier"
+      version="0.19.1.qualifier"
       provider-name="http://pdt-extensions.org">
 
    <description url="https://github.com/pdt-eg">
