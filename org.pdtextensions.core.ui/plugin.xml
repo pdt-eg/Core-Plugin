@@ -257,4 +257,14 @@
             class="org.pdtextensions.core.ui.quickassist.AssignToLocalQuickAssistProcessor">
       </quickAssistProcessor>
    </extension>
+   <extension
+         point="org.eclipse.dltk.ui.dltkElementFilters">
+      <filter
+            class="org.pdtextensions.core.ui.filter.UseStatementsFilter"
+            enabled="true"
+            id="org.pdtextensions.ui.outline.useStatmentsFilter"
+            name="Hide use statements"
+            targetId="org.eclipse.php.ui.OutlinePage">
+      </filter>
+   </extension>
 </plugin>
