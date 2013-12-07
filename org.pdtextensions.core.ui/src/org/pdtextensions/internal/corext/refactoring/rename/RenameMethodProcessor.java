@@ -105,7 +105,7 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 			SearchPattern.createPattern(
 				method,
 				IDLTKSearchConstants.REFERENCES,
-				SearchPattern.R_FULL_MATCH,
+				SearchPattern.R_FULL_MATCH | SearchPattern.R_ERASURE_MATCH,
 				PHPLanguageToolkit.getDefault()
 			),
 			new SearchParticipant[]{ SearchEngine.getDefaultSearchParticipant() },
