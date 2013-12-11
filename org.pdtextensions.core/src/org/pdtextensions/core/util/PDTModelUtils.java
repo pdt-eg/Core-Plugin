@@ -21,6 +21,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -47,6 +50,7 @@ import org.eclipse.dltk.core.search.SearchEngine;
 import org.eclipse.dltk.evaluation.types.MultiTypeType;
 import org.eclipse.dltk.internal.core.util.LRUCache;
 import org.eclipse.dltk.ti.types.IEvaluatedType;
+import org.eclipse.php.core.compiler.IPHPModifiers;
 import org.eclipse.php.core.compiler.PHPFlags;
 import org.eclipse.php.internal.core.Logger;
 import org.eclipse.php.internal.core.ast.nodes.Bindings;
@@ -828,5 +832,135 @@ public class PDTModelUtils {
 			}
 		}
 		
+	}
+
+	/**
+	 * @since 0.20.0
+	 */
+	public static boolean isClass(IType type) throws CoreException {
+		return isClass(type.getFlags());
+	}
+
+	/**
+	 * @since 0.20.0
+	 */
+	public static boolean isClass(int flags) throws CoreException {
+		return !isNamespace(flags) && !isInterface(flags) && !isTrait(flags);
+	}
+
+	/**
+	 * @since 0.20.0
+	 */
+	public static boolean isInterface(IType type) throws CoreException {
+		return isInterface(type.getFlags());
+	}
+
+	/**
+	 * @since 0.20.0
+	 */
+	public static boolean isInterface(int flags) throws CoreException {
+		return (flags & IPHPModifiers.AccInterface) != 0;
+	}
+
+	/**
+	 * @since 0.20.0
+	 */
+	public static boolean isNamespace(IType type) throws CoreException {
+		return isNamespace(type.getFlags());
+	}
+
+	/**
+	 * @since 0.20.0
+	 */
+	public static boolean isNamespace(int flags) {
+		return (flags & IPHPModifiers.AccNameSpace) != 0;
+	}
+
+	/**
+	 * @since 0.20.0
+	 */
+	public static boolean isTrait(IType type) throws CoreException {
+		return isTrait(type.getFlags());
+	}
+
+	/**
+	 * @since 0.20.0
+	 */
+	public static boolean isTrait(int flags) throws CoreException {
+		return (flags & IPHPModifiers.AccTrait) != 0;
+	}
+
+	/**
+	 * @since 0.20.0
+	 */
+	public static boolean hasNamespace(IType type) {
+		Assert.isNotNull(type);
+
+		return PHPClassType.fromIType(type).getNamespace() != null;
+	}
+
+	/**
+	 * @since 0.20.0
+	 */
+	public static boolean inResourceWithSameName(IType type) throws CoreException {
+		Assert.isNotNull(type);
+
+		IResource resource = type.getResource();
+		if (resource == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PEXCorePlugin.PLUGIN_ID, "The type '" + type.getElementName() + "' is included in an external archive")); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		return inResourceWithSameName(type, resource);
+	}
+
+	/**
+	 * @since 0.20.0
+	 */
+	public static boolean inResourceWithSameName(IType type, IResource resource) throws CoreException {
+		Assert.isNotNull(type);
+		Assert.isNotNull(resource);
+
+		return inResourceWithSameName(type.getElementName(), resource);
+	}
+
+	/**
+	 * @since 0.20.0
+	 */
+	public static boolean inResourceWithSameName(String typeName, IResource resource) throws CoreException {
+		Assert.isNotNull(typeName);
+		Assert.isNotNull(resource);
+
+		if (resource instanceof IFile) {
+			return resource.getName().substring(0, resource.getName().indexOf(resource.getFileExtension()) - 1).equals(typeName);
+		} else if (resource instanceof IFolder) {
+			return resource.getName().equals(typeName.substring(typeName.lastIndexOf(BACK_SLASH) + 1));
+		} else {
+			throw new CoreException(new Status(IStatus.ERROR, PEXCorePlugin.PLUGIN_ID, "The resource is neither a file or folder")); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * @since 0.20.0
+	 */
+	public static boolean isPSR0Compliant(IType type) throws CoreException {
+		Assert.isNotNull(type);
+
+		if (hasNamespace(type)) {
+			String typeQualfiedName = type.getTypeQualifiedName(BACK_SLASH);
+			IResource resource = type.getResource();
+
+			do {
+				if (!inResourceWithSameName(typeQualfiedName.substring(typeQualfiedName.lastIndexOf(BACK_SLASH) + 1), resource)) {
+					return false;
+				}
+
+				typeQualfiedName = typeQualfiedName.substring(0, typeQualfiedName.lastIndexOf(BACK_SLASH));
+				resource = resource.getParent();
+			} while (typeQualfiedName.contains(BACK_SLASH));
+
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

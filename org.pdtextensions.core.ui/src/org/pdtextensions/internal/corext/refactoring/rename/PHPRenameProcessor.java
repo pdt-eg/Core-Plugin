@@ -14,7 +14,6 @@ package org.pdtextensions.internal.corext.refactoring.rename;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -53,6 +52,7 @@ import org.eclipse.text.edits.TextEditGroup;
 import org.pdtextensions.core.ui.Messages;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.refactoring.IPHPRefactorings;
+import org.pdtextensions.core.util.PDTModelUtils;
 import org.pdtextensions.internal.corext.refactoring.Checks;
 import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
 import org.pdtextensions.internal.corext.refactoring.RenamePHPElementDescriptor;
@@ -155,12 +155,23 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 		IType enclosingType = (IType) modelElement.getAncestor(IModelElement.TYPE);
 		if (enclosingType == null) return false;
 
-		IResource resource = enclosingType.getResource();
-		if (!(resource instanceof IFile)) return false;
+		if (PDTModelUtils.hasNamespace(enclosingType)) {
+			try {
+				return PDTModelUtils.isPSR0Compliant(enclosingType);
+			} catch (CoreException e) {
+				PEXUIPlugin.getDefault().getLog().log(new Status(IStatus.WARNING, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
 
-		if (!((IFile) resource).getName().substring(0, ((IFile) resource).getName().indexOf(((IFile) resource).getFileExtension()) - 1).equals(enclosingType.getElementName())) return false;
+				return false;
+			}
+		} else {
+			try {
+				return PDTModelUtils.inResourceWithSameName(enclosingType);
+			} catch (CoreException e) {
+				PEXUIPlugin.getDefault().getLog().log(new Status(IStatus.WARNING, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
 
-		return true;
+				return false;
+			}
+		}
 	}
 
 	@Override
