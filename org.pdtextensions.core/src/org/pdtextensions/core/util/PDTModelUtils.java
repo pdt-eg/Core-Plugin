@@ -549,7 +549,7 @@ public class PDTModelUtils {
 		Assert.isNotNull(type);
 		Assert.isNotNull(targetType);
 
-		return isInstanceOf(type, targetType.getFullyQualifiedName("\\")); //$NON-NLS-1$
+		return isInstanceOf(type, targetType.getFullyQualifiedName(BACK_SLASH)); //$NON-NLS-1$
 	}
 
 	/**
@@ -597,8 +597,8 @@ public class PDTModelUtils {
 
 		PHPClassType classType = PHPClassType.fromIType(type);
 
-		if (classType.getNamespace() != null && !targetTypeName.startsWith("\\")) { //$NON-NLS-1$
-			targetTypeName = "\\" + targetTypeName; //$NON-NLS-1$
+		if (classType.getNamespace() != null && !targetTypeName.startsWith(BACK_SLASH)) { //$NON-NLS-1$
+			targetTypeName = BACK_SLASH + targetTypeName; //$NON-NLS-1$
 		}
 
 		return classType.getTypeName().equals(targetTypeName);
