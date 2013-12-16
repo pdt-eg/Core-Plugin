@@ -49,10 +49,10 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.TextEditGroup;
+import org.pdtextensions.core.PHPType;
 import org.pdtextensions.core.ui.Messages;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.refactoring.IPHPRefactorings;
-import org.pdtextensions.core.util.PDTModelUtils;
 import org.pdtextensions.internal.corext.refactoring.Checks;
 import org.pdtextensions.internal.corext.refactoring.RefactoringCoreMessages;
 import org.pdtextensions.internal.corext.refactoring.RenamePHPElementDescriptor;
@@ -155,9 +155,10 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 		IType enclosingType = (IType) modelElement.getAncestor(IModelElement.TYPE);
 		if (enclosingType == null) return false;
 
-		if (PDTModelUtils.hasNamespace(enclosingType)) {
+		PHPType phpType = new PHPType(enclosingType);
+		if (phpType.inNamespace()) {
 			try {
-				return PDTModelUtils.isPSR0Compliant(enclosingType);
+				return phpType.isPSR0Compliant();
 			} catch (CoreException e) {
 				PEXUIPlugin.getDefault().getLog().log(new Status(IStatus.WARNING, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
 
@@ -165,7 +166,7 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 			}
 		} else {
 			try {
-				return PDTModelUtils.inResourceWithSameName(enclosingType);
+				return phpType.inResourceWithSameName();
 			} catch (CoreException e) {
 				PEXUIPlugin.getDefault().getLog().log(new Status(IStatus.WARNING, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
 
