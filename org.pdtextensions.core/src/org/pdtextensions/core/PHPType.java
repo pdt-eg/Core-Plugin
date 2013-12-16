@@ -15,14 +15,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dltk.core.IType;
-import org.eclipse.php.internal.core.typeinference.PHPClassType;
 
 /**
  * This class provides information about the type as a PHP class, interface, trait, and namespace.
  *
  * @since 0.20.0
  */
-@SuppressWarnings("restriction")
 public class PHPType {
 	private final static String NAMESPACE_SEPARATOR = "\\"; //$NON-NLS-1$
 	private IType type;
@@ -34,7 +32,7 @@ public class PHPType {
 	}
 
 	public boolean inNamespace() {
-		return PHPClassType.fromIType(type).getNamespace() != null;
+		return type.getDeclaringType() != null;
 	}
 
 	public boolean inResourceWithSameName() throws CoreException {
