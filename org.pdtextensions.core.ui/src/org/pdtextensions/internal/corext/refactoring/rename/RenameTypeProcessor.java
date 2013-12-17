@@ -42,6 +42,7 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.FullyQualifiedReference;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.ReplaceEdit;
+import org.pdtextensions.core.PHPType;
 import org.pdtextensions.core.ui.PEXUIPlugin;
 import org.pdtextensions.core.ui.refactoring.IPHPRefactorings;
 import org.pdtextensions.core.ui.refactoring.IRefactoringProcessorIds;
@@ -147,7 +148,7 @@ public class RenameTypeProcessor extends PHPRenameProcessor {
 												IModelElement sourceElement = PDTModelUtils.getSourceElement(module, s.sourceStart(), s.matchLength());
 												if (sourceElement != null) {
 													IType sourceType = (IType) sourceElement.getAncestor(IModelElement.TYPE);
-													if (sourceType != null && PDTModelUtils.isInstanceOf(sourceType, (IType) modelElement)) {
+													if (sourceType != null && new PHPType(sourceType).isInstanceOf((IType) modelElement)) {
 														int offset;
 														if (s.getNamespace() == null) {
 															offset = s.sourceStart();

@@ -36,8 +36,8 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.PHPCallExpression;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.ReplaceEdit;
+import org.pdtextensions.core.PHPType;
 import org.pdtextensions.core.ui.PEXUIPlugin;
-import org.pdtextensions.core.util.PDTModelUtils;
 import org.pdtextensions.core.util.PDTTypeInferenceUtils;
 
 /**
@@ -141,7 +141,7 @@ public abstract class RenameFieldProcessor extends PHPRenameProcessor {
 							}
 							if (receiverTypes != null && receiverTypes.length > 0) {
 								IType ancestorType = (IType) modelElement.getAncestor(IModelElement.TYPE);
-								if (ancestorType != null && PDTModelUtils.isInstanceOf(receiverTypes[0], ancestorType)) {
+								if (ancestorType != null && new PHPType(receiverTypes[0]).isInstanceOf(ancestorType)) {
 									replaceEdit = createReplaceEdit(astNode);
 								}
 							}

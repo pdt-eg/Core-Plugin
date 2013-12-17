@@ -32,6 +32,7 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.FullyQualifiedReference;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPCallExpression;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.ReplaceEdit;
+import org.pdtextensions.core.PHPType;
 import org.pdtextensions.core.ui.refactoring.IPHPRefactorings;
 import org.pdtextensions.core.ui.refactoring.IRefactoringProcessorIds;
 import org.pdtextensions.core.util.PDTModelUtils;
@@ -144,7 +145,7 @@ public class RenameMethodProcessor extends PHPRenameProcessor {
 									IModelElement sourceElement = PDTModelUtils.getSourceElement(module, expression.getCallName().sourceStart(), expression.getCallName().matchLength());
 									if (sourceElement != null && sourceElement.getElementType() == IModelElement.METHOD) {
 										IType declaringType = ((IMethod) sourceElement).getDeclaringType();
-										if (declaringType != null && PDTModelUtils.isInstanceOf(declaringType, method.getDeclaringType())) {
+										if (declaringType != null && new PHPType(declaringType).isInstanceOf(method.getDeclaringType())) {
 											try {
 												addTextEdit(
 													changeManager.get(module),
