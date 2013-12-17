@@ -13,8 +13,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dltk.core.IType;
+import org.eclipse.dltk.core.ITypeHierarchy;
+import org.eclipse.dltk.core.ModelException;
 
 /**
  * This class provides information about the type as a PHP class, interface, trait, and namespace.
@@ -74,6 +77,29 @@ public class PHPType {
 
 	public boolean equals(String typeName) {
 		return type.getTypeQualifiedName(NAMESPACE_SEPARATOR).equals(typeName);
+	}
+
+	public boolean isInstanceOf(IType type) throws ModelException {
+		return isInstanceOf(type.getFullyQualifiedName(NAMESPACE_SEPARATOR));
+	}
+
+	public boolean isInstanceOf(String typeName) throws ModelException {
+		if (equals(typeName)) {
+			return true;
+		} else {
+			ITypeHierarchy hierarchy = type.newSupertypeHierarchy(new NullProgressMonitor());
+			if (hierarchy == null) return false;
+			IType[] superTypes = hierarchy.getAllSuperclasses(type);
+			if (superTypes == null) return false;
+
+			for (IType variableSuperType: superTypes) {
+				if (new PHPType(variableSuperType).equals(typeName)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	private static boolean inResourceWithSameName(IResource resource, String typeName) throws CoreException {
