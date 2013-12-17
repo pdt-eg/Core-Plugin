@@ -578,32 +578,6 @@ public class PDTModelUtils {
 	/**
 	 * @since 0.17.0
 	 */
-	public static boolean isSameType(IType type, IType targetType) {
-		Assert.isNotNull(type);
-		Assert.isNotNull(targetType);
-
-		return isSameType(type, PHPClassType.fromIType(targetType).getTypeName());
-	}
-
-	/**
-	 * @since 0.17.0
-	 */
-	public static boolean isSameType(IType type, String targetTypeName) {
-		Assert.isNotNull(type);
-		Assert.isNotNull(targetTypeName);
-
-		PHPClassType classType = PHPClassType.fromIType(type);
-
-		if (classType.getNamespace() != null && !targetTypeName.startsWith(BACK_SLASH)) { //$NON-NLS-1$
-			targetTypeName = BACK_SLASH + targetTypeName; //$NON-NLS-1$
-		}
-
-		return classType.getTypeName().equals(targetTypeName);
-	}
-
-	/**
-	 * @since 0.17.0
-	 */
 	public static IModelElement getSourceElement(IModelElement element, int offset, int length) throws CoreException {
 		Assert.isNotNull(element);
 
