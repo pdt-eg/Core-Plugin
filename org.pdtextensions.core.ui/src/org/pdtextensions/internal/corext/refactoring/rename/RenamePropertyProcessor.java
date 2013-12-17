@@ -61,7 +61,7 @@ public class RenamePropertyProcessor extends RenameFieldProcessor {
 		return SearchPattern.createPattern(
 			modelElement,
 			IDLTKSearchConstants.REFERENCES,
-			SearchPattern.R_FULL_MATCH | SearchPattern.R_CASE_SENSITIVE,
+			SearchPattern.R_FULL_MATCH | SearchPattern.R_CASE_SENSITIVE | SearchPattern.R_ERASURE_MATCH,
 			PHPLanguageToolkit.getDefault()
 		);
 	}
