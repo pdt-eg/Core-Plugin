@@ -59,6 +59,23 @@ public class PHPType {
 		}
 	}
 
+	public boolean equals(IType type) {
+		return equals(type.getTypeQualifiedName(NAMESPACE_SEPARATOR));
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof PHPType) {
+			return equals(((PHPType) obj).type);
+		} else {
+			return false;
+		}
+	}
+
+	public boolean equals(String typeName) {
+		return type.getTypeQualifiedName(NAMESPACE_SEPARATOR).equals(typeName);
+	}
+
 	private static boolean inResourceWithSameName(IResource resource, String typeName) throws CoreException {
 		if (resource instanceof IFile) {
 			return resource.getName().substring(0, resource.getName().indexOf(resource.getFileExtension()) - 1).equals(typeName);
