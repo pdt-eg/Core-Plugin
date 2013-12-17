@@ -38,7 +38,6 @@ import org.eclipse.dltk.core.IScriptFolder;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
-import org.eclipse.dltk.core.ITypeHierarchy;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.SourceParserUtil;
 import org.eclipse.dltk.core.index2.search.ISearchEngine.MatchRule;
@@ -71,7 +70,6 @@ import org.eclipse.php.internal.core.typeinference.TraitUtils;
 import org.eclipse.php.internal.core.typeinference.UseTrait;
 import org.eclipse.php.ui.editor.SharedASTProvider;
 import org.pdtextensions.core.PEXCorePlugin;
-import org.pdtextensions.core.PHPType;
 
 /**
  * 
@@ -537,42 +535,6 @@ public class PDTModelUtils {
 		}
 		
 		return ret;
-	}
-
-	/**
-	 * @since 0.17.0
-	 */
-	public static boolean isInstanceOf(IType type, IType targetType) throws ModelException {
-		Assert.isNotNull(type);
-		Assert.isNotNull(targetType);
-
-		return isInstanceOf(type, targetType.getFullyQualifiedName(BACK_SLASH)); //$NON-NLS-1$
-	}
-
-	/**
-	 * @since 0.17.0
-	 */
-	public static boolean isInstanceOf(IType type, String targetTypeName) throws ModelException {
-		Assert.isNotNull(type);
-		Assert.isNotNull(targetTypeName);
-		Assert.isTrue(!targetTypeName.equals("")); //$NON-NLS-1$
-
-		if (new PHPType(type).equals(targetTypeName)) {
-			return true;
-		} else {
-			ITypeHierarchy hierarchy = type.newSupertypeHierarchy(new NullProgressMonitor());
-			if (hierarchy == null) return false;
-			IType[] superTypes = hierarchy.getAllSuperclasses(type);
-			if (superTypes == null) return false;
-
-			for (IType variableSuperType: superTypes) {
-				if (new PHPType(variableSuperType).equals(targetTypeName)) {
-					return true;
-				}
-			}
-		}
-
-		return false;
 	}
 
 	/**
