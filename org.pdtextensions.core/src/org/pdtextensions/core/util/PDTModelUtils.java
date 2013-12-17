@@ -71,6 +71,7 @@ import org.eclipse.php.internal.core.typeinference.TraitUtils;
 import org.eclipse.php.internal.core.typeinference.UseTrait;
 import org.eclipse.php.ui.editor.SharedASTProvider;
 import org.pdtextensions.core.PEXCorePlugin;
+import org.pdtextensions.core.PHPType;
 
 /**
  * 
@@ -556,7 +557,7 @@ public class PDTModelUtils {
 		Assert.isNotNull(targetTypeName);
 		Assert.isTrue(!targetTypeName.equals("")); //$NON-NLS-1$
 
-		if (isSameType(type, targetTypeName)) {
+		if (new PHPType(type).equals(targetTypeName)) {
 			return true;
 		} else {
 			ITypeHierarchy hierarchy = type.newSupertypeHierarchy(new NullProgressMonitor());
@@ -565,7 +566,7 @@ public class PDTModelUtils {
 			if (superTypes == null) return false;
 
 			for (IType variableSuperType: superTypes) {
-				if (isSameType(variableSuperType, targetTypeName)) {
+				if (new PHPType(variableSuperType).equals(targetTypeName)) {
 					return true;
 				}
 			}
