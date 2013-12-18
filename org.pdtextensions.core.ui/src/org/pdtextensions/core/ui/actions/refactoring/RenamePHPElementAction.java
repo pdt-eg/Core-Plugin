@@ -33,6 +33,7 @@ import org.eclipse.php.internal.core.documentModel.dom.IImplForPhp;
 import org.eclipse.php.internal.ui.actions.SelectionConverter;
 import org.eclipse.php.internal.ui.editor.PHPStructuredEditor;
 import org.eclipse.ui.IWorkbenchSite;
+import org.pdtextensions.core.PHPMethod;
 import org.pdtextensions.core.ui.refactoring.RefactoringMessages;
 import org.pdtextensions.core.ui.refactoring.RenameSupport;
 import org.pdtextensions.core.util.PDTModelUtils;
@@ -210,15 +211,6 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 		}
 	}
 
-	private static IMethod getFarthestOverriddenMethod(IMethod method) throws CoreException {
-		IMethod overriddenMethod = PDTModelUtils.getOverriddenMethod(method);
-		if (overriddenMethod == null) {
-			return method;
-		} else {
-			return getFarthestOverriddenMethod(overriddenMethod);
-		}
-	}
-
 	private static IModelElement getSourceElement(IModelElement element, int offset, int length) throws CoreException {
 		ISourceModule sourceModule = (ISourceModule) element.getAncestor(IModelElement.SOURCE_MODULE);
 		if (sourceModule == null) return null;
@@ -229,7 +221,7 @@ public class RenamePHPElementAction extends SelectionDispatchAction {
 	private static IModelElement getSourceElement(ISourceModule sourceModule, int offset, int length) throws CoreException {
 		IModelElement sourceElement = PDTModelUtils.getSourceElement(sourceModule, offset, length);
 		if (sourceElement instanceof IMethod) {
-			IMethod farthestOverriddenMethod = getFarthestOverriddenMethod((IMethod) sourceElement);
+			IMethod farthestOverriddenMethod = new PHPMethod((IMethod) sourceElement).getFarthestOverriddenMethod();
 			if (sourceElement.equals(farthestOverriddenMethod)) {
 				return sourceElement;
 			} else {
