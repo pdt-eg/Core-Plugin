@@ -17,7 +17,7 @@ import org.pdtextensions.semanticanalysis.validation.IValidatorIdentifier;
 
 /**
  * Extension that allow fix severities on markers
- * 
+ *
  * @author Dawid zulus Pakula <zulus@w3des.net>
  * @since 0.18
  */
@@ -27,10 +27,10 @@ public class ProblemFactory extends DefaultProblemFactory {
 	public IProblemSeverityTranslator createSeverityTranslator(IScriptProject project) {
 		return new SeverityTranslator(project);
 	}
-	
+
 	private class SeverityTranslator implements IProblemSeverityTranslator {
 		private final IScriptProject project;
-		
+
 		public SeverityTranslator(IScriptProject project) {
 			this.project = project;
 		}
@@ -40,10 +40,10 @@ public class ProblemFactory extends DefaultProblemFactory {
 			if (problemId instanceof IValidatorIdentifier) {
 				return PEXAnalysisPlugin.getDefault().getValidatorManager().getSeverity(project, (IValidatorIdentifier) problemId);
 			}
-			
+
 			return IProblemSeverityTranslator.IDENTITY.getSeverity(problemId, defaultServerity);
 		}
-		
+
 	}
 
 }

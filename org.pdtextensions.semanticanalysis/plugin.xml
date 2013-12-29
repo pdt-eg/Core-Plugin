@@ -63,7 +63,7 @@
           point="org.eclipse.dltk.core.problemFactory">
        <problemIdentifierFactory
              class="org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifierFactory"
-             namespace="org.pdtextensions.semanticanalysis">
+             namespace="org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier">
        </problemIdentifierFactory>
        <problemFactory
              class="org.pdtextensions.internal.semanticanalysis.validation.ProblemFactory"

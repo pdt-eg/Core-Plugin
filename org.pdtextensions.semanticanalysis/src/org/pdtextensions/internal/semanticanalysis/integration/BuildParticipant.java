@@ -20,13 +20,9 @@ import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ModelException;
-import org.eclipse.dltk.core.SourceParserUtil;
-import org.eclipse.dltk.core.builder.IBuildChange;
 import org.eclipse.dltk.core.builder.IBuildContext;
 import org.eclipse.dltk.core.builder.IBuildParticipant;
-import org.eclipse.dltk.core.builder.IBuildParticipantExtension2;
 import org.eclipse.dltk.core.builder.IBuildParticipantExtension3;
-import org.eclipse.dltk.core.builder.IBuildParticipantExtension4;
 import org.eclipse.dltk.core.builder.IBuildState;
 import org.eclipse.dltk.internal.core.ModelManager;
 import org.eclipse.php.internal.core.PHPCorePlugin;
@@ -41,11 +37,11 @@ import org.pdtextensions.semanticanalysis.validation.IValidatorParticipant;
 
 /**
  * Build participant for semantic validators
- * 
+ *
  * @author Dawid zulus Pakula <zulus@w3des.net>
  */
 @SuppressWarnings("restriction")
-public class BuildParticipant implements IBuildParticipantExtension4, IBuildParticipantExtension2, IBuildParticipantExtension3 {
+public class BuildParticipant implements IBuildParticipant, IBuildParticipantExtension3 {
 	@Inject
 	private IValidatorManager manager;
 
@@ -66,6 +62,20 @@ public class BuildParticipant implements IBuildParticipantExtension4, IBuildPart
 
 			validate(validatorContext, validator.getValidatorFactory().getValidatorParticipant(validatorContext.getProject()));
 		}
+
+		// dependency report
+		if (context.getBuildType() == IBuildContext.RECONCILE_BUILD) {
+			return;
+		}
+
+		ModuleDeclaration moduleDeclaration = (ModuleDeclaration) context.get(IBuildContext.ATTR_MODULE_DECLARATION);
+		if (moduleDeclaration != null) {
+			try {
+				moduleDeclaration.traverse(new UsageVisitor(context));
+			} catch (Exception e) {
+				PEXAnalysisPlugin.error("Exception during dependency detection", e); //$NON-NLS-1$
+			}
+		}
 	}
 
 	private void validate(final ValidatorContext validatorContext, final IValidatorParticipant validatorParticipant) {
@@ -85,15 +95,6 @@ public class BuildParticipant implements IBuildParticipantExtension4, IBuildPart
 		}
 	}
 
-	@Override
-	public void notifyDependents(IBuildParticipant[] dependents) {
-	}
-
-	@Override
-	public void afterBuild(IBuildContext context) {
-
-	}
-	
 	/**
 	 * Do not run if toolkit is not ready
 	 */
@@ -106,80 +107,55 @@ public class BuildParticipant implements IBuildParticipantExtension4, IBuildPart
 	public void endBuild(IProgressMonitor monitor) {
 
 	}
-	
+
 	@Override
 	public void clean() {
 		tmpTypes.clear();
 	}
 
-	@Override
-	public void prepare(IBuildChange buildChange, IBuildState buildState) throws CoreException {
-		if (buildChange.isDependencyBuild()) {
-			ModelManager.getModelManager().getIndexManager().waitUntilReady();
-			for (ISourceModule file : buildChange.getSourceModules(IBuildChange.DEFAULT)) {
-				report(file, buildState);
-			}
-		}
-	}
-
-	@Override
-	public void buildExternalModule(IBuildContext context) throws CoreException {
-	}
-
-	private void report(final ISourceModule module, final IBuildState state) {
-		final ModuleDeclaration moduleDeclaration = SourceParserUtil.getModuleDeclaration(module);
-		try {
-			moduleDeclaration.traverse(new Visitor(module, state));
-		} catch (Exception e) {
-			PEXAnalysisPlugin.error(e);
-		}
-	}
-
-	
-
-	private class Visitor extends PHPASTVisitor {
-		final private IBuildState state;
+	/**
+	 * TODO: Detect real use (not only imports)
+	 */
+	private class UsageVisitor extends PHPASTVisitor {
+		final private IBuildContext context;
 		final private ISourceModule module;
 
-		public Visitor(final ISourceModule module, final IBuildState state) {
-			this.state = state;
-			this.module = module;
+		public UsageVisitor(final IBuildContext context) {
+			this.context = context;
+			this.module = context.getSourceModule();
 		}
 
 		@Override
 		public boolean visit(UsePart s) throws Exception {
 			final String searchString = s.getNamespace().getFullyQualifiedName();
 			if (!tmpTypes.containsKey(searchString)) {
-				resolve(searchString, tmpTypes.put(searchString, new Files()));
+				final Files files = new Files();
+				tmpTypes.put(searchString, files);
+				resolve(searchString, files);
 			}
 			final Files files = tmpTypes.get(searchString);
-			
 			for (IPath f : files) {
-				state.recordDependency(getModulePath(), f);
+				context.recordDependency(f, IBuildState.STRUCTURAL); // mark as dependecy as structural
 			}
-			
 			return true;
 		}
-		
+
 		private void resolve(String searchString, Files files) throws ModelException {
 			registerTypes(PDTModelUtils.findTypes(module.getScriptProject(), searchString), files);
-			if (files.size() == 0) {
-				registerTypes(PDTModelUtils.findTypes(module.getScriptProject(), searchString, true), files);
-			}
 		}
 
 		private void registerTypes(IType[] types, Files files) {
 			for (IType type : types) {
-				if (getModulePath().equals(getTypePath(type))) {
+				if (!getModulePath().equals(getTypePath(type))) {
 					files.add(getTypePath(type));
 				}
 			}
 		}
-		
+
 		private IPath getModulePath() {
 			return module.getResource().getFullPath();
 		}
-		
+
 		private IPath getTypePath(IType type) {
 			return type.getResource() == null ? type.getPath() : type.getResource().getFullPath();
 		}
@@ -188,5 +164,4 @@ public class BuildParticipant implements IBuildParticipantExtension4, IBuildPart
 	private class Files extends HashSet<IPath> {
 		private static final long serialVersionUID = -4757183524417278724L;
 	}
-
 }

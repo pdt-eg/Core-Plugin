@@ -33,30 +33,30 @@ final public class ValidatorContext implements IValidatorContext {
 	private final boolean derived;
 	private final Map<IValidatorIdentifier, ProblemSeverity> severities;
 	private final IValidatorManager manager;
-	
+
 	public ValidatorContext(Validator validator, IBuildContext buildContext, IValidatorManager manager) {
 		this.buildContext = buildContext;
 		this.derived = getSourceModule().getResource().isDerived(IResource.CHECK_ANCESTORS);
 		this.severities = new HashMap<IValidatorIdentifier, ProblemSeverity>();
 		this.manager = manager;
 	}
-	
+
 	@Override
 	public ModuleDeclaration getModuleDeclaration() {
 		if (moduleDeclaration == null) {
 			// read from context if possible
-			if (buildContext.get(IBuildContext.ATTR_MODULE_DECLARATION) != null) { 
+			if (buildContext.get(IBuildContext.ATTR_MODULE_DECLARATION) != null) {
 				moduleDeclaration = (ModuleDeclaration) buildContext.get(IBuildContext.ATTR_MODULE_DECLARATION) ;
 			} else {
-				// on full build PDT leave empty, fix:
+				// if empty, try create
 				moduleDeclaration = SourceParserUtil.getModuleDeclaration(buildContext.getSourceModule());
 				buildContext.set(IBuildContext.ATTR_MODULE_DECLARATION, moduleDeclaration);
 			}
 		}
-		
+
 		return moduleDeclaration;
 	}
-	
+
 	@Override
 	public ISourceModule getSourceModule() {
 		return buildContext.getSourceModule();
@@ -104,6 +104,7 @@ final public class ValidatorContext implements IValidatorContext {
 	public void registerProblem(IValidatorIdentifier identifier, int category,
 			String message, int start, int stop, int lineNumber,
 			String[] arguments) {
+
 		buildContext.getProblemReporter().reportProblem(new Problem(identifier, getSeverity(identifier), category, arguments, message, buildContext.getFileName(), start, stop, lineNumber));
 	}
 
@@ -111,7 +112,7 @@ final public class ValidatorContext implements IValidatorContext {
 		if (!severities.containsKey(identifier)) {
 			severities.put(identifier, manager.getSeverity(getProject(), manager.getType(identifier)));
 		}
-		
+
 		return severities.get(identifier);
 	}
 }
