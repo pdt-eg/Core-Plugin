@@ -83,12 +83,16 @@ public abstract class ElementStub {
 		return PHPModelUtils.extractNameSapceName(type.getFullyQualifiedName().replace("$", "\\"));
 	}
 
-	protected abstract void generateCode();
+	protected abstract String generateCode() throws Exception;
 
 	public String toString() {
 
 		if (code == null) {
-			generateCode();
+			try {
+				code =  generateCode();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 		return code;

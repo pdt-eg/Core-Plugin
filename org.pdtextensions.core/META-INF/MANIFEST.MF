@@ -26,6 +26,7 @@ Export-Package: org.pdtextensions.core,
  org.pdtextensions.core.codeassist,
  org.pdtextensions.core.codeassist.context,
  org.pdtextensions.core.codeassist.strategy,
+ org.pdtextensions.core.codegenerator,
  org.pdtextensions.core.debug,
  org.pdtextensions.core.exception,
  org.pdtextensions.core.launch,
@@ -33,3 +34,4 @@ Export-Package: org.pdtextensions.core,
  org.pdtextensions.core.launch.execution,
  org.pdtextensions.core.log,
  org.pdtextensions.core.util
+Import-Package: org.eclipse.php.core.tests

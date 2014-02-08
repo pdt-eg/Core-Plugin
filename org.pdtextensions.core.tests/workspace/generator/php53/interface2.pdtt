@@ -1,0 +1,11 @@
+--TEST--
+Test generating code for basic interface without namespace
+--CONFIG--
+name:Boo
+interfaces:Foo,Moo
+--FILE--
+--EXPECT--
+<?php
+interface Boo extends Foo, Moo{
+}
+?>

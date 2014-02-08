@@ -1,6 +1,10 @@
 package org.pdtextensions.core.ui.wizards;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
@@ -349,8 +353,14 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 					scope,
 					null);
 
+				HashSet<String> uniqueNamespaces = new HashSet<String>();
+
 				for (IType type : types) {
-					props.add(type.getFullyQualifiedName());
+					uniqueNamespaces.add(type.getFullyQualifiedName());
+				}
+
+				for (String namespace : uniqueNamespaces) {
+					props.add(namespace);
 				}
 
 				acField2.setProposals((String[]) props.toArray(new String[props.size()]));
@@ -600,10 +610,16 @@ public abstract class NewElementWizardPage extends NewSourceModulePage {
 
 	@Override
 	protected String getFileContent(ISourceModule module) {
-		return generateFileContent();
+		try {
+			return generateFileContent();
+		} catch (Exception e) {
+			Logger.logException(e);
+		}
+		
+		return null;
 	}
 
-	abstract protected String generateFileContent();
+	abstract protected String generateFileContent() throws Exception;
 	
 	@Override
 	public IScriptFolder getScriptFolder() {

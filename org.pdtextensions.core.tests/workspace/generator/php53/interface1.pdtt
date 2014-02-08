@@ -1,0 +1,10 @@
+--TEST--
+Test generating code for basic interface without namespace
+--CONFIG--
+name:Boo
+--FILE--
+--EXPECT--
+<?php
+interface Boo{
+}
+?>

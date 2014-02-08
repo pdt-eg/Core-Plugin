@@ -8,10 +8,11 @@
 package org.pdtextensions.core.ui.wizards;
 
 import org.eclipse.dltk.core.IScriptFolder;
+import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.ui.dialogs.StatusInfo;
 import org.eclipse.jface.viewers.ISelection;
+import org.pdtextensions.core.codegenerator.InterfaceGenerator;
 import org.pdtextensions.core.ui.PDTPluginImages;
-import org.pdtextensions.core.ui.codemanipulation.InterfaceStub;
 
 public class NewInterfaceWizardPage extends NewElementWizardPage {
 
@@ -55,9 +56,15 @@ public class NewInterfaceWizardPage extends NewElementWizardPage {
 	}
 
 	@Override
-	protected String generateFileContent() {
-		return new InterfaceStub(getScriptFolder().getScriptProject(), getElementname(), getNamespace(),
-				getInterfaces(), isGenerateComments()).toString();
+	protected String generateFileContent() throws Exception {
+			InterfaceGenerator interfaceGenerator = new InterfaceGenerator();
+			interfaceGenerator.setName(getElementname());
+			interfaceGenerator.setNamespace(getNamespace());
+			for (IType interfaceName : getInterfaces()) {
+				interfaceGenerator.addInterface(interfaceName.getFullyQualifiedName("\\"));
+			}
+
+			return interfaceGenerator.toString();
 	}
 
 }

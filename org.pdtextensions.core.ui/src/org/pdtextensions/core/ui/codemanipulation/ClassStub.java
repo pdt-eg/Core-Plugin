@@ -57,10 +57,11 @@ public class ClassStub extends ElementStub {
 
 	/**
 	 * Retrieve the code for a class stub.
+	 * @return 
 	 * 
 	 * @throws CoreException
 	 */
-	protected void generateCode() {
+	protected String generateCode() {
 
 		try {
 			StringBuilder buffer = new StringBuilder("<?php");
@@ -95,9 +96,12 @@ public class ClassStub extends ElementStub {
 
 			buffer.append(lineDelim + "}");
 			code = buffer.toString();
+			return code;
 		} catch (CoreException e) {
 			Logger.logException(e);
 		}
+
+		return null;
 	}
 
 	private String generateConstructor() {

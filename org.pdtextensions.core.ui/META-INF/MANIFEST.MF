@@ -29,7 +29,8 @@ Require-Bundle: org.eclipse.ui,
  org.apache.commons.exec,
  org.eclipse.dltk.core.manipulation,
  org.eclipse.ltk.core.refactoring,
- org.eclipse.ltk.ui.refactoring
+ org.eclipse.ltk.ui.refactoring,
+ org.eclipse.php.core.parser
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.pdtextensions.core.ui,

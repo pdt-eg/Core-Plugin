@@ -25,8 +25,5 @@ org.pdtextensions.core.tests/target/*
 target/
 *.swp
 copy.sh
-.project
-.settings/
-.classpath
 *.m2e.core.prefs
 bin
