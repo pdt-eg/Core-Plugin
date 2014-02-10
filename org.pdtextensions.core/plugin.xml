@@ -2,17 +2,4 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="executableLauncher" name="PHP executable launcher" schema="schema/executableLauncher.exsd"/>
-
-   <extension
-         point="org.eclipse.php.core.completionContextResolvers">
-      <resolver
-            class="org.pdtextensions.core.codeassist.CompletionContextResolver">
-      </resolver>
-   </extension>
-   <extension
-         point="org.eclipse.php.core.completionStrategyFactories">
-      <factory
-            class="org.pdtextensions.core.codeassist.CompletionStrategyFactory">
-      </factory>
-   </extension>
 </plugin>

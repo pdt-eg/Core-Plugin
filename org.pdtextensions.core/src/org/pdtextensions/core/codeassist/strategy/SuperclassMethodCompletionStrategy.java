@@ -1,8 +1,8 @@
 /*******************************************************************************
  * This file is part of the PDT Extensions eclipse plugin.
- * 
+ *
  * (c) Robert Gruendler <r.gruendler@gmail.com>
- * 
+ *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  ******************************************************************************/
@@ -35,7 +35,7 @@ import org.pdtextensions.core.codeassist.context.SuperclassMethodContext;
 
 /**
  * Completionstrategy to insert method stubs from superclasses.
- * 
+ *
  */
 @SuppressWarnings({ "restriction", "deprecation" })
 public class SuperclassMethodCompletionStrategy extends
@@ -56,28 +56,28 @@ AbstractCompletionStrategy implements ICompletionStrategy {
 	public void apply(ICompletionReporter reporter) throws Exception {
 
 		SuperclassMethodContext context = (SuperclassMethodContext) getContext();
-		ISourceModule module = context.getSourceModule();		
+		ISourceModule module = context.getSourceModule();
 
 		IModelElement element = module.getElementAt(context.getOffset());
 
-		if (!(element instanceof SourceType)) {			
-			while(element.getParent() != null) {				
-				element = element.getParent();				
+		if (!(element instanceof SourceType)) {
+			while(element.getParent() != null) {
+				element = element.getParent();
 				if (element instanceof SourceType) {
 					break;
 				}
 			}
 		}
 
-		if (element == null || !(element instanceof SourceType)) {			
+		if (element == null || !(element instanceof SourceType)) {
 			return;
 		}
 
-		IDLTKSearchScope scope = SearchEngine.createSearchScope(module.getScriptProject());		
+		IDLTKSearchScope scope = SearchEngine.createSearchScope(module.getScriptProject());
 		SourceType type = (SourceType) element;
 		SourceRange range = getReplacementRange(context);
 		String prefix = context.getPrefix();
-		
+
 		IType[] projectTypes = PhpModelAccess.getDefault().findTypes(type.getElementName(), MatchRule.EXACT, 0, 0, scope, null);
 
 		if (projectTypes.length != 1) {
@@ -85,12 +85,11 @@ AbstractCompletionStrategy implements ICompletionStrategy {
 		}
 
 		IType currentType = projectTypes[0];
-
-		ITypeHierarchy hierarchy = type.newSupertypeHierarchy(new NullProgressMonitor());		
+		ITypeHierarchy hierarchy = this.getCompanion().getSuperTypeHierarchy(type, new NullProgressMonitor());
 		IType[] superTypes = hierarchy.getAllSupertypes(currentType);
 
 		List<String> reported = new ArrayList<String>();
-		
+
 		for (IType superType : superTypes) {
 
 			for (IMethod method : superType.getMethods()) {
@@ -105,11 +104,11 @@ AbstractCompletionStrategy implements ICompletionStrategy {
 
 				} catch (ModelException e) {
 
-					if (CodeAssistUtils.startsWithIgnoreCase(moduleMethod.getElementName(), prefix) && !reported.contains(method.getElementName())) {					    
+					if (CodeAssistUtils.startsWithIgnoreCase(moduleMethod.getElementName(), prefix) && !reported.contains(method.getElementName())) {
 						reporter.reportMethod(method, "", range, new PDTCompletionInfo(module));
 						reported.add(method.getElementName());
-					}										
-				}							
+					}
+				}
 			}
 		}
 	}
