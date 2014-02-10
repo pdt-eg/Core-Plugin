@@ -16,13 +16,12 @@ import org.eclipse.php.internal.ui.editor.contentassist.PHPCompletionProposalCom
 public class ScriptCompletionProposalComputer extends
 		PHPCompletionProposalComputer {
 
-
 	@Override
 	protected ScriptCompletionProposalCollector createCollector(
 			ScriptContentAssistInvocationContext context) {
-		
+
 		return new PDTScriptCompletionProposalCollector(context.getDocument(), context.getSourceModule(), true);
-		
+
 	}
 
 }
