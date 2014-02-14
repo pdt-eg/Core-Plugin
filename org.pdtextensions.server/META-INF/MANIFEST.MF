@@ -3,7 +3,7 @@ Bundle-Localization: plugin
 Bundle-ManifestVersion: 2
 Bundle-Name: PDT Extensions Server Plugin
 Bundle-SymbolicName: org.pdtextensions.server;singleton:=true
-Bundle-Version: 0.19.1.qualifier
+Bundle-Version: 0.20.0.qualifier
 Bundle-Activator: org.pdtextensions.server.PEXServerPlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
