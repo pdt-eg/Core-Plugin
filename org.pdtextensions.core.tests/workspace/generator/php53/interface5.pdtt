@@ -1,0 +1,15 @@
+--TEST--
+Test generating code for basic interface (namespace, fully qualified name, global name)
+--CONFIG--
+generator:interface
+name:Boo
+namespace:Poo\Roo
+interfaces:namespace\subnamespace\Foo,\Goo
+--FILE--
+--EXPECT--
+<?php
+namespace Poo\Roo;
+use namespace\subnamespace\Foo;
+interface Boo extends Foo, \Goo{
+}
+?>

@@ -1,0 +1,13 @@
+--TEST--
+Test generating code for basic interface with namespace
+--CONFIG--
+generator:trait
+name:Boo
+namespace:Foo\Moo
+--FILE--
+--EXPECT--
+<?php
+namespace Foo\Moo;
+trait Boo{
+}
+?>

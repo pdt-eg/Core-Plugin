@@ -1,14 +1,14 @@
 --TEST--
 Test generating code for basic interface with namespace and inheritance
 --CONFIG--
-generator:interface
+generator:trait
 name:Boo
-namespace:Poo\Roo
-interfaces:Foo,Goo
+namespace:Foo\Moo
+superclass:Noo
 --FILE--
 --EXPECT--
 <?php
-namespace Poo\Roo;
-interface Boo extends Foo, Goo{
+namespace Foo\Moo;
+trait Boo extends Noo{
 }
 ?>

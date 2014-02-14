@@ -6,7 +6,7 @@
 
 	<extension point="org.eclipse.ui.perspectiveExtensions">
 		<perspectiveExtension targetID="org.eclipse.php.perspective">			
-			<newWizardShortcut id="org.pdtextensions.core.ui.wizards.classes.ClassCreationWizard" />
+			<newWizardShortcut id="org.pdtextensions.core.ui.wizards.class" />
    <newWizardShortcut
          id="org.pdtextensions.core.ui.wizards.interface">
    </newWizardShortcut>
@@ -21,7 +21,7 @@
         class="org.pdtextensions.core.ui.wizards.NewClassWizard"
         hasPages="true"
         icon="ico/full/obj16/newclass_wiz.gif"
-        id="org.pdtextensions.core.ui.wizards.classes.ClassCreationWizard"
+        id="org.pdtextensions.core.ui.wizards.class"
         name="Class"
         project="false">
         </wizard>
@@ -33,6 +33,16 @@
         icon="ico/full/obj16/newint_wiz.gif"
         id="org.pdtextensions.core.ui.wizards.interface"
         name="Interface"
+        project="false">
+  </wizard>
+  <wizard
+        canFinishEarly="false"
+        category="org.eclipse.php.project.ui"
+        class="org.pdtextensions.core.ui.wizards.NewTraitWizard"
+        hasPages="true"
+        icon="ico/full/obj16/trait_obj.gif"
+        id="org.pdtextensions.core.ui.wizards.trait"
+        name="Trait"
         project="false">
   </wizard>
    </extension>

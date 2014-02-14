@@ -7,29 +7,31 @@
  ******************************************************************************/
 package org.pdtextensions.core.codegenerator;
 
-import org.eclipse.php.internal.core.ast.nodes.InterfaceDeclaration;
+import org.eclipse.php.internal.core.ast.nodes.ClassDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.Statement;
 
 @SuppressWarnings("restriction")
-public class InterfaceGenerator extends ElementGenerator {
+public class ClassGenerator extends ElementGenerator {
 
-	public InterfaceGenerator() throws Exception {
+	public ClassGenerator() throws Exception {
 		super();
 	}
 
 	@Override
 	protected Statement generateElementNode() {
-		InterfaceDeclaration interfaceModel = ast.newInterfaceDeclaration();
-		interfaceModel.setName(ast.newIdentifier(name));
-		interfaceModel.setBody(ast.newBlock());
+		ClassDeclaration classModel = ast.newClassDeclaration();
+		classModel.setName(ast.newIdentifier(name));
+		classModel.setBody(ast.newBlock());
 
-		for (String interfaceName : interfaces) {
-			if (interfaceName.lastIndexOf("\\") != 0) {
-				interfaceName = interfaceName.substring(interfaceName.lastIndexOf("\\") + 1);
-			}
-			interfaceModel.interfaces().add(ast.newIdentifier(interfaceName));
+		if (getSuperclass() != null) {
+			classModel.setSuperClass(ast.newIdentifier(getSuperclass()));
 		}
 
-		return interfaceModel;
+		for (String item : interfaces) {
+			classModel.interfaces().add(ast.newIdentifier(item));
+		}
+
+		return classModel;
+
 	}
 }

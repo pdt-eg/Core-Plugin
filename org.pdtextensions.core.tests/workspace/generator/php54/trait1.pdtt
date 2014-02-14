@@ -1,0 +1,11 @@
+--TEST--
+Test generating code for basic trait without namespace
+--CONFIG--
+generator:trait
+name:Boo
+--FILE--
+--EXPECT--
+<?php
+trait Boo{
+}
+?>

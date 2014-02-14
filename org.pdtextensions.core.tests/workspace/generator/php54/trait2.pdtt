@@ -1,0 +1,14 @@
+--TEST--
+Test generating code for basic trait with namespace and implements interfaces
+--CONFIG--
+generator:trait
+name:Boo
+namespace:Foo\Moo
+interfaces:Ioo,Koo
+--FILE--
+--EXPECT--
+<?php
+namespace Foo\Moo;
+trait Boo implements Ioo, Koo{
+}
+?>

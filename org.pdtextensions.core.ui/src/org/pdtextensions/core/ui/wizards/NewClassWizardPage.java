@@ -10,10 +10,8 @@ package org.pdtextensions.core.ui.wizards;
 import org.eclipse.dltk.core.IScriptFolder;
 import org.eclipse.dltk.ui.dialogs.StatusInfo;
 import org.eclipse.jface.viewers.ISelection;
+import org.pdtextensions.core.codegenerator.ClassGenerator;
 import org.pdtextensions.core.ui.PDTPluginImages;
-import org.pdtextensions.core.ui.codemanipulation.ClassStub;
-import org.pdtextensions.core.ui.codemanipulation.ClassStubParameter;
-import org.pdtextensions.core.ui.codemanipulation.ElementStub;
 
 public class NewClassWizardPage extends NewElementWizardPage {
 
@@ -47,40 +45,33 @@ public class NewClassWizardPage extends NewElementWizardPage {
 		return "Create a new PHP Class";
 	}
 
-	protected String generateFileContent() {
-		ClassStubParameter classStubParameter = new ClassStubParameter();
+	protected String generateFileContent() throws Exception {
+		
+		ClassGenerator classGenerator = new ClassGenerator();
 
-		classStubParameter.setName(getElementname());
-		classStubParameter.setAbstractClass(isAbstract());
-		classStubParameter.setFinalClass(isFinal());
-		classStubParameter.setNamespace(getNamespace());
-		classStubParameter.setInterfaces(getInterfaces());
-		classStubParameter.setSuperclass(getSuperclass());
-		classStubParameter.setInheritedMethods(isGenerateMethodStubs());
-		classStubParameter.setConstructor(isGenerateConstructorStubs());
-		classStubParameter.setComments(isGenerateComments());
+		classGenerator.setName(getElementname());
+//		classStubParameter.setAbstractClass(isAbstract());
+//		classStubParameter.setFinalClass(isFinal());
+		classGenerator.setNamespace(getNamespace());
+//		classStubParameter.setInterfaces(getInterfaces());
+		classGenerator.setSuperclass(getSuperclass().getFullyQualifiedName("\\"));
+//		classStubParameter.setInheritedMethods(isGenerateMethodStubs());
+//		classStubParameter.setConstructor(isGenerateConstructorStubs());
+//		classStubParameter.setComments(isGenerateComments());
+		
+		return classGenerator.generateCode();
 
-		ElementStub classStub = new ClassStub(getScriptFolder().getScriptProject(), classStubParameter);
-		return classStub.toString();
 	}
 
 	protected void createControls() {
 		createNameControls();
-	
 		createClassModifierControls();
-	
 		createFileNameControls();
-	
 		createNamespaceControls();
-	
 		createSuperClassControls();
-	
 		createInterfaceControls("Interfa&ces:");
-	
-		createMethodStubControls();
-	
-		createCommentsControls();
+//		createMethodStubControls();
+//		createCommentsControls();
 	}
-
 
 }

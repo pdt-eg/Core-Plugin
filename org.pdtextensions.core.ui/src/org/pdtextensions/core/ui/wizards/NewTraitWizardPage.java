@@ -12,21 +12,21 @@ import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.ui.dialogs.StatusInfo;
 import org.eclipse.jface.viewers.ISelection;
 import org.pdtextensions.core.codegenerator.IElementGenerator;
-import org.pdtextensions.core.codegenerator.InterfaceGenerator;
+import org.pdtextensions.core.codegenerator.TraitGenerator;
 import org.pdtextensions.core.ui.PDTPluginImages;
 
-public class NewInterfaceWizardPage extends NewElementWizardPage {
+public class NewTraitWizardPage extends NewElementWizardPage {
 
-	public NewInterfaceWizardPage(final ISelection selection, String initialFileName) {
+	public NewTraitWizardPage(final ISelection selection, String initialFileName) {
 		super();
-		setImageDescriptor(PDTPluginImages.DESC_WIZBAN_NEW_PHPINTERFACE);
+		setImageDescriptor(PDTPluginImages.DESC_WIZBAN_NEW_PHPCLASS);
 		this.selection = selection;
 		this.initialFilename = initialFileName;
 
 		status = new StatusInfo();
 	}
 
-	public NewInterfaceWizardPage(final ISelection selection, String initialFileName, String namespace,
+	public NewTraitWizardPage(final ISelection selection, String initialFileName, String namespace,
 			String className, IScriptFolder scriptFolder) {
 		this(selection, initialFileName);
 
@@ -40,32 +40,32 @@ public class NewInterfaceWizardPage extends NewElementWizardPage {
 		super.createNameControls();
 		super.createFileNameControls();
 		super.createNamespaceControls();
-		super.createInterfaceControls("Interfa&ces:");
+		super.createInterfaceControls("Extended interfa&ces:");
 //		super.createCommentsControls();
 	}
 
 	@Override
 	protected String getPageTitle() {
 
-		return "PHP Interface";
+		return "PHP Trait";
 	}
 
 	@Override
 	protected String getPageDescription() {
 
-		return "Create a new PHP Interface";
+		return "Create a new PHP Trait";
 	}
 
 	@Override
 	protected String generateFileContent() throws Exception {
-			IElementGenerator interfaceGenerator = new InterfaceGenerator();
-			interfaceGenerator.setName(getElementname());
-			interfaceGenerator.setNamespace(getNamespace());
+			IElementGenerator traitGenerator = new TraitGenerator();
+			traitGenerator.setName(getElementname());
+			traitGenerator.setNamespace(getNamespace());
 			for (IType interfaceName : getInterfaces()) {
-				interfaceGenerator.addInterface(interfaceName.getFullyQualifiedName("\\"));
+				traitGenerator.addInterface(interfaceName.getFullyQualifiedName("\\"));
 			}
 
-			return interfaceGenerator.toString();
+			return traitGenerator.toString();
 	}
 
 }

@@ -10,8 +10,9 @@ import junit.framework.TestSuite;
 
 import org.eclipse.php.core.tests.AbstractPDTTTest;
 import org.eclipse.php.core.tests.PdttFile;
-import org.pdtextensions.core.codegenerator.ElementGenerator;
+import org.pdtextensions.core.codegenerator.IElementGenerator;
 import org.pdtextensions.core.codegenerator.InterfaceGenerator;
+import org.pdtextensions.core.codegenerator.TraitGenerator;
 import org.eclipse.php.internal.core.PHPVersion;
 
 @SuppressWarnings("restriction")
@@ -21,6 +22,7 @@ public class ElementGeneratorTests extends AbstractPDTTTest {
 
 	static {
 		TESTS.put(PHPVersion.PHP5_3, new String[] { "/workspace/generator/php53" });
+		TESTS.put(PHPVersion.PHP5_4, new String[] { "/workspace/generator/php54" });
 	};
 
 	public ElementGeneratorTests(String description) {
@@ -42,8 +44,8 @@ public class ElementGeneratorTests extends AbstractPDTTTest {
 
 							protected void runTest() throws Throwable {
 
-								ElementGenerator interfaceGenerator = createCodeGenerator(pdttFile);
-								String actual = interfaceGenerator.generateCode();
+								IElementGenerator generator = createCodeGenerator(pdttFile);
+								String actual = generator.generateCode();
 								assertContents(pdttFile.getExpected(), actual);
 							}
 						});
@@ -88,23 +90,41 @@ public class ElementGeneratorTests extends AbstractPDTTTest {
 	 * @return InterfaceGenerator
 	 * @throws Exception
 	 */
-	private static ElementGenerator createCodeGenerator(PdttFile testFile) throws Exception {
-		ElementGenerator interfaceGenerator = new InterfaceGenerator();
-		interfaceGenerator.setName(testFile.getConfig().get("name"));
+	private static IElementGenerator createCodeGenerator(PdttFile testFile) throws Exception {
+		IElementGenerator generator;
 
+		if (testFile.getConfig().get("generator") == null) {
+			throw new Exception("No 'generator' param in config section in pdtt file");
+		}
+
+		if (testFile.getConfig().get("generator").equals("interface")) {
+			generator = new InterfaceGenerator();
+		} else if (testFile.getConfig().get("generator").equals("trait")) {
+			generator = new TraitGenerator();
+		} else {
+			throw new Exception("Cannot create class according config section in pdtt file ("
+					+ testFile.getConfig().get("generator") + ")");
+		}
+
+		generator.setName(testFile.getConfig().get("name"));
+        
 		String namespace = testFile.getConfig().get("namespace");
 		if (namespace != null) {
-			interfaceGenerator.setNamespace(namespace);
+			generator.setNamespace(namespace);
+		}
+		String superclass = testFile.getConfig().get("superclass");
+		if(superclass != null) {
+			generator.setSuperclass(superclass);
 		}
 
 		String interfacesConfig = testFile.getConfig().get("interfaces");
 		if (interfacesConfig != null) {
 			String[] interfaces = interfacesConfig.split(",");
 			for (String item : interfaces) {
-				interfaceGenerator.addInterface(item.trim());
+				generator.addInterface(item.trim());
 			}
 		}
 
-		return interfaceGenerator;
+		return generator;
 	}
 }

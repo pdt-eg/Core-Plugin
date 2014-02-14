@@ -2,17 +2,15 @@ package org.pdtextensions.core.codegenerator;
 
 public interface IElementGenerator {
 
-	/**
-	 * 
-	 * @param name - stub name, stub can be class, trait, interface etc. 
-	 */
-	void setName(String name);
+	public abstract void setName(String name);
 
-	/**
-	 * 
-	 * @param namespace - namespace for
-	 */
-	void setNamespace(String namespace);
+	public abstract void setSuperclass(String superclass);
 
-	void addInterface(String interfaceName);
+	public abstract void setNamespace(String namespace);
+
+	public abstract String generateCode();
+
+	public abstract void addInterface(String interfaceFullName);
+
+	public abstract void addTrait(String traitFullQualifiName);
 }
