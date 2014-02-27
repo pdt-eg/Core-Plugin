@@ -3,6 +3,8 @@ package org.pdtextensions.core.launch.environment;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.php.internal.ui.preferences.util.PreferencesSupport;
+import org.pdtextensions.core.exception.ExecutableNotFoundException;
+import org.pdtextensions.core.util.LaunchUtil;
 
 @SuppressWarnings("restriction")
 public abstract class AbstractEnvironmentFactory implements EnvironmentFactory {
@@ -16,7 +18,18 @@ public abstract class AbstractEnvironmentFactory implements EnvironmentFactory {
 		String useProjectPhar = prefSupport.getPreferencesValue(getUseProjectKey(), null, project);
 		String systemPhar = prefSupport.getPreferencesValue(getScriptKey(), null, project);
 		
-		if (executable != null && executable.length() > 0) {
+		if (executable == null || executable.isEmpty()) {
+			// the user has not set any preference for PHP executable yet,
+			// so try finding any PHP executable, e.g. contributed via the
+			// phpExe extension point
+			try {
+				executable = LaunchUtil.getPHPExecutable();
+			} catch (ExecutableNotFoundException e) {
+				// no php exe found - executable will remain null
+			}
+		}
+		
+		if (executable != null && !executable.isEmpty()) {
 			if (useProjectPhar != null && "true".equals(useProjectPhar) || (systemPhar == null || systemPhar.length() == 0) ) {
 				return getProjectEnvironment(executable);
 			}
