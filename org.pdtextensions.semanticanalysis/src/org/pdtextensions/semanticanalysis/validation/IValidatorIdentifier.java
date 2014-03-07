@@ -14,7 +14,7 @@ import org.eclipse.dltk.compiler.problem.IProblemIdentifierExtension3;
 /**
  * Validation identifiers
  *
- * Force users to select own marker (should should be subtype of org.eclipse.dltk.core.problem marker)
+ * Force users to select own marker (should be subtype of org.eclipse.dltk.core.problem marker)
  *
  * @author Dawid zulus Pakula <zulus@w3des.net>
  */

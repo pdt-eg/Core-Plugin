@@ -11,14 +11,14 @@ import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 
 /**
  * Basic Validator implementation
- * 
+ *
  * @author Dawid zulus Pakula <zulus@w3des.net>
  */
 @SuppressWarnings("restriction")
 abstract public class AbstractValidator extends PHPASTVisitor implements IValidatorParticipant {
-	
+
 	protected IValidatorContext context;
-	
+
 	@Override
 	public boolean allowDerived() {
 		return false;
@@ -27,7 +27,8 @@ abstract public class AbstractValidator extends PHPASTVisitor implements IValida
 	@Override
 	public void validate(IValidatorContext context) throws Exception {
 		this.context = context;
-		context.getModuleDeclaration().traverse(this);
+		if (context.getModuleDeclaration() != null) {
+			context.getModuleDeclaration().traverse(this);
+		}
 	}
-	
 }

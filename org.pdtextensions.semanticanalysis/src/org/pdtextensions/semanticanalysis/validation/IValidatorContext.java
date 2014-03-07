@@ -14,8 +14,10 @@ import org.eclipse.dltk.core.builder.IBuildContext;
 
 /**
  * Validator context for each validator participant
- * 
+ *
  * @author Dawid zulus Pakula <zulus@w3des.net>
+ *
+ * TODO Model cache!
  */
 public interface IValidatorContext {
 	/**

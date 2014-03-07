@@ -49,6 +49,7 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 
 	@Override
 	public void build(IBuildContext context) throws CoreException {
+
 		if (!context.getSourceModule().getScriptProject().isOnBuildpath(context.getSourceModule().getResource())
 				|| !manager.isEnabled(context.getSourceModule().getScriptProject())) {
 			return;
@@ -68,7 +69,8 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 			return;
 		}
 
-		ModuleDeclaration moduleDeclaration = (ModuleDeclaration) context.get(IBuildContext.ATTR_MODULE_DECLARATION);
+		final ModuleDeclaration moduleDeclaration = (ModuleDeclaration) context.get(IBuildContext.ATTR_MODULE_DECLARATION);
+
 		if (moduleDeclaration != null) {
 			try {
 				moduleDeclaration.traverse(new UsageVisitor(context));

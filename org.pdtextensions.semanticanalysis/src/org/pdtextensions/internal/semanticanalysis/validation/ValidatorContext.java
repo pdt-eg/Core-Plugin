@@ -15,7 +15,6 @@ import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.compiler.problem.ProblemSeverity;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
-import org.eclipse.dltk.core.SourceParserUtil;
 import org.eclipse.dltk.core.builder.IBuildContext;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
 import org.pdtextensions.semanticanalysis.validation.IValidatorContext;
@@ -28,7 +27,7 @@ import org.pdtextensions.semanticanalysis.validation.Problem;
  */
 final public class ValidatorContext implements IValidatorContext {
 	private static final String[] emptyArguments = new String[0];
-	private ModuleDeclaration moduleDeclaration;
+	private final ModuleDeclaration moduleDeclaration;
 	private final IBuildContext buildContext;
 	private final boolean derived;
 	private final Map<IValidatorIdentifier, ProblemSeverity> severities;
@@ -39,21 +38,15 @@ final public class ValidatorContext implements IValidatorContext {
 		this.derived = getSourceModule().getResource().isDerived(IResource.CHECK_ANCESTORS);
 		this.severities = new HashMap<IValidatorIdentifier, ProblemSeverity>();
 		this.manager = manager;
+		if (buildContext.get(IBuildContext.ATTR_MODULE_DECLARATION) != null) {
+			this.moduleDeclaration = (ModuleDeclaration) buildContext.get(IBuildContext.ATTR_MODULE_DECLARATION);
+		} else {
+			this.moduleDeclaration = null;
+		}
 	}
 
 	@Override
 	public ModuleDeclaration getModuleDeclaration() {
-		if (moduleDeclaration == null) {
-			// read from context if possible
-			if (buildContext.get(IBuildContext.ATTR_MODULE_DECLARATION) != null) {
-				moduleDeclaration = (ModuleDeclaration) buildContext.get(IBuildContext.ATTR_MODULE_DECLARATION) ;
-			} else {
-				// if empty, try create
-				moduleDeclaration = SourceParserUtil.getModuleDeclaration(buildContext.getSourceModule());
-				buildContext.set(IBuildContext.ATTR_MODULE_DECLARATION, moduleDeclaration);
-			}
-		}
-
 		return moduleDeclaration;
 	}
 
