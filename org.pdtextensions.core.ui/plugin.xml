@@ -5,16 +5,16 @@
    <extension-point id="namespaceresolver" name="PDT Namespaceresolver" schema="schema/namespaceresolver.exsd"/>
 
 	<extension point="org.eclipse.ui.perspectiveExtensions">
-		<perspectiveExtension targetID="org.eclipse.php.perspective">			
+		<perspectiveExtension targetID="org.eclipse.php.perspective">
 			<newWizardShortcut id="org.pdtextensions.core.ui.wizards.classes.ClassCreationWizard" />
    <newWizardShortcut
          id="org.pdtextensions.core.ui.wizards.interface">
    </newWizardShortcut>
-		</perspectiveExtension>		
-	</extension>	
-	
+		</perspectiveExtension>
+	</extension>
+
    <extension
-         point="org.eclipse.ui.newWizards">         
+         point="org.eclipse.ui.newWizards">
 		<wizard
         canFinishEarly="false"
         category="org.eclipse.php.project.ui"
@@ -53,7 +53,7 @@
             -->
          </menu>
       </menuContribution>
-      
+
       <menuContribution
             allPopups="false"
             locationURI="menu:sourceMenuId?before=sourceBegin">
@@ -125,18 +125,18 @@
             </command>
          </toolbar>
       </menuContribution>
-      
+
    </extension>
-   
-   
+
+
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
             class="org.pdtextensions.core.ui.preferences.PreferenceInitializer">
       </initializer>
-   </extension>   
+   </extension>
 
-   
+
    <extension point="org.eclipse.ui.commands">
       <command
             categoryId="org.eclipse.ui.category.edit"
@@ -159,8 +159,8 @@
             id="org.pdtextensions.core.ui.correction.assignToLocal.assist">
       </command>
    </extension>
-   
-   
+
+
       <extension point="org.eclipse.ui.handlers">
       <handler
             class="org.pdtextensions.core.ui.actions.GenerateGettersHandler"
@@ -221,7 +221,7 @@
             sequence="M1+2 L"
             contextId="org.eclipse.php.ui.phpEditorScope"
             commandId="org.pdtextensions.core.ui.correction.assignToLocal.assist"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/> 
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -264,6 +264,13 @@
             enabled="true"
             id="org.pdtextensions.ui.outline.useStatmentsFilter"
             name="Hide use statements"
+            targetId="org.eclipse.php.ui.OutlinePage">
+      </filter>
+      <filter
+            class="org.eclipse.dltk.internal.ui.filters.ImportDeclarationFilter"
+            enabled="false"
+            id="org.pdtextensions.ui.outline.importDelcarationsFilter"
+            name="Hide import declarations"
             targetId="org.eclipse.php.ui.OutlinePage">
       </filter>
    </extension>
