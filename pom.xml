@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.pdtextensions</groupId>
     <artifactId>parent</artifactId>
-    <version>0.20.0-SNAPSHOT</version>
+    <version>0.21.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
         <module>org.pdtextensions.core</module>

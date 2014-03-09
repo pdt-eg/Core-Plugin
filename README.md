@@ -12,6 +12,8 @@ Currently the core plugin supports following features:
 - Use-Statement validation (injecting of missing use statements through quick-fixes)
 - Class / Interface dialog
 - Implementation of missing interface/abstract classes methods
+- Assign to local variable quick-fix
+- Import statements outline filters
 
 
 We are in the process of migrating general functionality of our plugins into the core plugin, and add more core features for
