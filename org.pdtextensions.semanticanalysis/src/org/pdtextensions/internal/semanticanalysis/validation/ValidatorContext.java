@@ -37,19 +37,13 @@ final public class ValidatorContext implements IValidatorContext {
 	private final IValidatorManager manager;
 	private ISourceModule workingCopy;
 
-	public ValidatorContext(Validator validator, IBuildContext buildContext, IValidatorManager manager) {
+	public ValidatorContext(Validator validator, ISourceModule workingCopy, IBuildContext buildContext, IValidatorManager manager) {
 		this.buildContext = buildContext;
 		this.derived = buildContext.getSourceModule().getResource().isDerived(IResource.CHECK_ANCESTORS);
 		this.severities = new HashMap<IValidatorIdentifier, ProblemSeverity>();
 		this.manager = manager;
-		this.workingCopy = buildContext.getSourceModule();
-		if (buildContext.getBuildType() == IBuildContext.RECONCILE_BUILD) {
-			try {
-				this.workingCopy = workingCopy.getWorkingCopy(null);
-			} catch (ModelException e) {
-				e.printStackTrace();
-			}
-		}
+		this.workingCopy = workingCopy;
+
 		if (buildContext.get(IBuildContext.ATTR_MODULE_DECLARATION) != null) {
 			this.moduleDeclaration = (ModuleDeclaration) buildContext.get(IBuildContext.ATTR_MODULE_DECLARATION);
 		} else {

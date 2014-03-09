@@ -28,6 +28,7 @@ import org.eclipse.dltk.internal.core.ModelManager;
 import org.eclipse.php.internal.core.PHPCorePlugin;
 import org.eclipse.php.internal.core.compiler.ast.nodes.UsePart;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
+import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.util.PDTModelUtils;
 import org.pdtextensions.internal.semanticanalysis.validation.ValidatorContext;
 import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
@@ -57,9 +58,16 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 		if (context.getBuildType() != IBuildContext.RECONCILE_BUILD) {
 			ModelManager.getModelManager().getIndexManager().waitUntilReady();
 		}
-
+		ISourceModule workingCopy = context.getSourceModule();
+		if (context.getBuildType() == IBuildContext.RECONCILE_BUILD) {
+			try {
+				workingCopy = context.getSourceModule().getWorkingCopy(null);
+			} catch (ModelException e) {
+				Logger.logException(e);
+			}
+		}
 		for (Validator validator : manager.getValidators(context.getSourceModule().getScriptProject())) {
-			final ValidatorContext validatorContext = new ValidatorContext(validator, context, manager);
+			final ValidatorContext validatorContext = new ValidatorContext(validator, workingCopy, context, manager);
 
 			validate(validatorContext, validator.getValidatorFactory().getValidatorParticipant(validatorContext.getProject()));
 		}
