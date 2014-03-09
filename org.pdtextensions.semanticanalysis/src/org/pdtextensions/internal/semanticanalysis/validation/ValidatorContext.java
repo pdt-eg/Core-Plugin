@@ -15,7 +15,10 @@ import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.compiler.problem.ProblemSeverity;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
+import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.builder.IBuildContext;
+import org.eclipse.dltk.internal.core.AbstractSourceModule;
+import org.eclipse.dltk.internal.core.ModelManager;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
 import org.pdtextensions.semanticanalysis.validation.IValidatorContext;
 import org.pdtextensions.semanticanalysis.validation.IValidatorIdentifier;
@@ -32,12 +35,21 @@ final public class ValidatorContext implements IValidatorContext {
 	private final boolean derived;
 	private final Map<IValidatorIdentifier, ProblemSeverity> severities;
 	private final IValidatorManager manager;
+	private ISourceModule workingCopy;
 
 	public ValidatorContext(Validator validator, IBuildContext buildContext, IValidatorManager manager) {
 		this.buildContext = buildContext;
-		this.derived = getSourceModule().getResource().isDerived(IResource.CHECK_ANCESTORS);
+		this.derived = buildContext.getSourceModule().getResource().isDerived(IResource.CHECK_ANCESTORS);
 		this.severities = new HashMap<IValidatorIdentifier, ProblemSeverity>();
 		this.manager = manager;
+		this.workingCopy = buildContext.getSourceModule();
+		if (buildContext.getBuildType() == IBuildContext.RECONCILE_BUILD) {
+			try {
+				this.workingCopy = workingCopy.getWorkingCopy(null);
+			} catch (ModelException e) {
+				e.printStackTrace();
+			}
+		}
 		if (buildContext.get(IBuildContext.ATTR_MODULE_DECLARATION) != null) {
 			this.moduleDeclaration = (ModuleDeclaration) buildContext.get(IBuildContext.ATTR_MODULE_DECLARATION);
 		} else {
@@ -52,7 +64,7 @@ final public class ValidatorContext implements IValidatorContext {
 
 	@Override
 	public ISourceModule getSourceModule() {
-		return buildContext.getSourceModule();
+		return workingCopy;
 	}
 
 	@Override
