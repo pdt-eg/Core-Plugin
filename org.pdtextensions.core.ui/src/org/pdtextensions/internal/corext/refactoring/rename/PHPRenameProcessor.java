@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2009, 2013-2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -155,23 +155,12 @@ public abstract class PHPRenameProcessor extends ScriptRenameProcessor implement
 		IType enclosingType = (IType) modelElement.getAncestor(IModelElement.TYPE);
 		if (enclosingType == null) return false;
 
-		PHPType phpType = new PHPType(enclosingType);
-		if (phpType.inNamespace()) {
-			try {
-				return phpType.isPSR0Compliant();
-			} catch (CoreException e) {
-				PEXUIPlugin.getDefault().getLog().log(new Status(IStatus.WARNING, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
+		try {
+			return new PHPType(enclosingType).inResourceWithSameName();
+		} catch (CoreException e) {
+			PEXUIPlugin.getDefault().getLog().log(new Status(IStatus.WARNING, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
 
-				return false;
-			}
-		} else {
-			try {
-				return phpType.inResourceWithSameName();
-			} catch (CoreException e) {
-				PEXUIPlugin.getDefault().getLog().log(new Status(IStatus.WARNING, PEXUIPlugin.PLUGIN_ID, e.getMessage(), e));
-
-				return false;
-			}
+			return false;
 		}
 	}
 
