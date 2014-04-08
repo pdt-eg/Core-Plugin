@@ -20,6 +20,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -705,5 +708,18 @@ public class PDTModelUtils {
 			}
 		}
 		
+	}
+
+	/**
+	 * @since 0.22.0
+	 */
+	public static boolean inResourceWithSameName(IResource resource, String typeName) throws CoreException {
+		if (resource instanceof IFile) {
+			return resource.getName().substring(0, resource.getName().indexOf(resource.getFileExtension()) - 1).equals(typeName);
+		} else if (resource instanceof IFolder) {
+			return resource.getName().equals(typeName.substring(typeName.lastIndexOf(BACK_SLASH) + 1));
+		} else {
+			throw new CoreException(new Status(IStatus.ERROR, PEXCorePlugin.PLUGIN_ID, "The resource is neither a file or folder")); //$NON-NLS-1$
+		}
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 The PDT Extension Group (https://github.com/pdt-eg)
+ * Copyright (c) 2013-2014 The PDT Extension Group (https://github.com/pdt-eg)
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -192,9 +192,9 @@ public class RenameTypeProcessor extends PHPRenameProcessor {
 		return new RefactoringStatus();
 	}
 
-	private boolean willRenameCU(IFile file) {
+	private boolean willRenameCU(IFile file) throws CoreException {
 		if (file.isLinked()) return false;
-		if (!file.getName().substring(0, file.getName().indexOf(file.getFileExtension()) - 1).equals(modelElement.getElementName())) return false;
+		if (!PDTModelUtils.inResourceWithSameName(file, modelElement.getElementName())) return false;
 		if (!DLTKContentTypeManager.isValidFileNameForContentType(PHPLanguageToolkit.getDefault(), getNewElementName() + "." + file.getFileExtension())) return false; //$NON-NLS-1$
 
 		return true;
