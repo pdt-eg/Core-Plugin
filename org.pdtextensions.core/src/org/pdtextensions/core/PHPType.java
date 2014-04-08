@@ -7,7 +7,6 @@
  ******************************************************************************/
 package org.pdtextensions.core;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -31,32 +30,8 @@ public class PHPType {
 		this.type = type;
 	}
 
-	public boolean inNamespace() {
-		return type.getDeclaringType() != null;
-	}
-
 	public boolean inResourceWithSameName() throws CoreException {
 		return PDTModelUtils.inResourceWithSameName(type.getResource(), type.getElementName());
-	}
-
-	public boolean isPSR0Compliant() throws CoreException {
-		if (inNamespace()) {
-			String typeQualfiedName = type.getTypeQualifiedName(NAMESPACE_SEPARATOR);
-			IResource resource = type.getResource();
-
-			do {
-				if (!PDTModelUtils.inResourceWithSameName(resource, typeQualfiedName.substring(typeQualfiedName.lastIndexOf(NAMESPACE_SEPARATOR) + 1))) {
-					return false;
-				}
-
-				typeQualfiedName = typeQualfiedName.substring(0, typeQualfiedName.lastIndexOf(NAMESPACE_SEPARATOR));
-				resource = resource.getParent();
-			} while (typeQualfiedName.contains(NAMESPACE_SEPARATOR));
-
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	public boolean equals(IType type) {
