@@ -1,7 +1,7 @@
 PDT Extensions Group / Core Plugin
 ==================================
 
-[![Build Status](https://secure.travis-ci.org/pdt-eg/Core-Plugin.png)](http://travis-ci.org/pdt-eg/Core-Plugin)
+[![Build Status](https://ci.pdt-extensions.org/buildStatus/icon?job=PEX Core)](https://ci.pdt-extensions.org/view/Plugins/job/PEX%20Core/)
 
 The PDT extension group is a collobaration of PDT plugin maintainers to build a central PDT extension platform and codebase.
 
