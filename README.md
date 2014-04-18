@@ -29,4 +29,4 @@ Join our [mailinglist](https://groups.google.com/forum/?fromgroups#!forum/pdt-ex
 - Marek Maksimczyk- [mandos](https://github.com/Mandos)
 - Thomas Gossmann - [gossi](https://github.com/gossi)
 - Martin Eisengardt - [Martin Eisengardt](https://github.com/mepeisen)
-- Robert Gr√ndler - [pulse00](https://github.com/pulse00)
+- Robert Gr√ºndler - [pulse00](https://github.com/pulse00)
