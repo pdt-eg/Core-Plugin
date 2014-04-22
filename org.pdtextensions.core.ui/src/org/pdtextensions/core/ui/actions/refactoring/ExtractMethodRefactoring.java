@@ -72,6 +72,8 @@ import org.pdtextensions.internal.corext.refactoring.ParameterInfo;
  * 
  * TODO: Maybe add "final" and "static" modifier. If "static" is checked, then $this, must explicitly be concerned... 
  * 
+ * TODO: If a parameter has a type, then add a type hint for the extracted method? 
+ * 
  * @author Alex
  *
  */
@@ -174,7 +176,7 @@ public class ExtractMethodRefactoring extends Refactoring {
 		fSelectedNodesFinder = new RangeNodeFinder(fSelectedSourceRange);
 		fProgram.accept(fSelectedNodesFinder);
 		if(fSelectedNodesFinder.getNodes().size() == 0) {
-			throw new RefactoringStatusException("No nodes found!");
+			throw new RefactoringStatusException(RefactoringMessages.ExtractMethodInputPage_errorCouldNotParseSelectedCode);
 		}
 		
 		ReturnStatementFinder returnFinder = new ReturnStatementFinder();
