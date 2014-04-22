@@ -19,7 +19,35 @@ public class RefactoringMessages extends NLS {
 	public static String RenamePHPElementAction_exception;
 	public static String RenamePHPElementAction_name;
 	public static String RenamePHPElementAction_not_available;
-
+	
+	public static String ExtractMethod_name;
+	public static String ExtractMethod_must_select_code;
+	public static String ExtractMethod_must_select_code_in_method;
+	public static String ExtractMethodPage;
+	public static String ExtractMethodPage_LabelMethod;
+	
+	public static String ExtractMethodInputPage_access_Modifiers;
+	public static String ExtractMethodInputPage_access_public;
+	public static String ExtractMethodInputPage_access_protected;
+	public static String ExtractMethodInputPage_access_private;
+	public static String ExtractMethodInputPage_signature_preview;
+	public static String ExtractMethodInputPage_description;
+	public static String ExtractMethodInputPage_generatePhpdocComment;
+	public static String ExtractMethodInputPage_duplicates_none;
+	public static String ExtractMethodInputPage_duplicates_single;
+	public static String ExtractMethodInputPage_duplicates_multi;
+	public static String ExtractMethodInputPage_returnMultipleVariables;
+	
+	public static String ExtractMethodInputPage_errorCouldNotParseSourceCode;
+	public static String ExtractMethodInputPage_errorCouldNotParseSelectedCode;
+	public static String ExtractMethodInputPage_errorMethodCannotReturnMultipleVariables;
+	public static String ExtractMethodInputPage_errorCouldNotRetrieveCoveringMethodDeclaration;
+	public static String ExtractMethodInputPage_errorNoValidMethodName;
+	public static String ExtractMethodInputPage_errorNoValidParameterName;
+	public static String ExtractMethodInputPage_errorContainsReturnStatement;
+	public static String ExtractMethodInputPage_errorMultipleReturnValuesNotAllowed;
+	
+	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, RefactoringMessages.class);
 	}
