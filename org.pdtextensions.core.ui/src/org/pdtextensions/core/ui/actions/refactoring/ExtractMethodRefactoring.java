@@ -8,6 +8,7 @@ import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -36,6 +37,7 @@ import org.eclipse.php.internal.core.ast.nodes.Identifier;
 import org.eclipse.php.internal.core.ast.nodes.MethodDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.MethodInvocation;
 import org.eclipse.php.internal.core.ast.nodes.Program;
+import org.eclipse.php.internal.core.ast.nodes.Statement;
 import org.eclipse.php.internal.core.ast.nodes.Variable;
 import org.eclipse.php.internal.core.ast.nodes.Assignment;
 import org.eclipse.php.internal.core.ast.nodes.VariableBase;
@@ -144,7 +146,7 @@ public class ExtractMethodRefactoring extends Refactoring {
 		
 		try {
 			// retrieve method, which covers the selected code
-			fSelectedMethodSourceRange = new SourceRange(fCoveringDeclarationFinder.getCoveringMethodDeclaration().getStart(), fCoveringDeclarationFinder.getCoveringMethodDeclaration().getLength());
+			fSelectedMethodSourceRange = SourceRangeUtil.createFrom(fCoveringDeclarationFinder.getCoveringMethodDeclaration());
 			// get the access modifiers from the covering method (e.g. public/protected/private) and ignore final/static etc.. modifiers
 			fModifierAccessFlag = fCoveringDeclarationFinder.getCoveringMethodDeclaration().getModifier() & (Modifiers.AccPublic | Modifiers.AccProtected | Modifiers.AccPrivate | Modifiers.AccStatic);
 		} catch(NullPointerException e) {
@@ -409,10 +411,29 @@ public class ExtractMethodRefactoring extends Refactoring {
 
 	private void computeReplacements() {
 		
-		BlockContainsFinder replacementFinder = new BlockContainsFinder(fCoveringDeclarationFinder.getCoveringFunctionDeclaration().getBody(), fSelectedNodesFinder.getNodes().toArray(new ASTNode[]{}));
-		replacementFinder.perform();
+		// retrieve all method declarations
+		List<Statement> classStatements = ((Block) fCoveringDeclarationFinder.getCoveringMethodDeclaration().getParent()).statements();
 		
-		fDuplicates = replacementFinder.getMatches();
+		ASTNode[] toSearchNodes = fSelectedNodesFinder.getNodes().toArray(new ASTNode[]{});
+		fDuplicates = new ArrayList<Match>();
+		
+		// loop through every class statement, this might also include field declarations (etc..) so skip everything except MethodDeclarations.
+		// => Check every method in the covering class for similar nodes.
+		for(Statement statement : classStatements) {
+			if(!(statement instanceof MethodDeclaration) ){
+				continue;
+			}
+
+			// find all similar nodes
+			BlockContainsFinder replacementFinder = new BlockContainsFinder(((MethodDeclaration) statement).getFunction().getBody(), toSearchNodes);
+			replacementFinder.perform();
+			
+			// add the matches.
+			fDuplicates.addAll(replacementFinder.getMatches());
+		}
+		
+		// at least, the selected nodes have to get found...
+		Assert.isLegal(fDuplicates.size() > 0);
 	}
 
 	private ArrayList<FormalParameter> computeArguments(AST ast)
