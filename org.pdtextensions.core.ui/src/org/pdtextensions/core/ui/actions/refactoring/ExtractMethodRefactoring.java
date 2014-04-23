@@ -379,9 +379,9 @@ public class ExtractMethodRefactoring extends Refactoring {
 
 		classListRewrite.insertAfter(method, fCoveringDeclarationFinder.getCoveringMethodDeclaration(), newMethodEdit);
 		
-		TextEdit asd = rewriter.rewriteAST(document, null);
+		TextEdit fullDocumentEdit = rewriter.rewriteAST(document, null);
 
-		anotherChange.addEdit(asd);
+		anotherChange.addEdit(fullDocumentEdit);
 		
 		return anotherChange;
 	}
