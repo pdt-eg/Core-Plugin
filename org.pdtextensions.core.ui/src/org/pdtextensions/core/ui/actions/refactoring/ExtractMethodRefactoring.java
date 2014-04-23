@@ -151,7 +151,12 @@ public class ExtractMethodRefactoring extends Refactoring {
 			fSelectedMethodSourceRange = SourceRangeUtil.createFrom(fCoveringDeclarationFinder.getCoveringMethodDeclaration());
 			// get the access modifiers from the covering method (e.g. public/protected/private) and ignore final/static etc.. modifiers
 			fModifierAccessFlag = fCoveringDeclarationFinder.getCoveringMethodDeclaration().getModifier() & (Modifiers.AccPublic | Modifiers.AccProtected | Modifiers.AccPrivate | Modifiers.AccStatic);
-		} catch(NullPointerException e) {
+			
+			if(!SourceRangeUtil.covers(SourceRangeUtil.createFrom(fCoveringDeclarationFinder.getCoveringFunctionDeclaration().getBody()), fSelectedSourceRange)) {
+				throw new Exception();
+			}
+			
+		} catch(Exception e) {
 			throw new RefactoringStatusException(RefactoringMessages.ExtractMethodInputPage_errorCouldNotRetrieveCoveringMethodDeclaration);
 		}
 		
@@ -179,6 +184,7 @@ public class ExtractMethodRefactoring extends Refactoring {
 		
 		fSelectedNodesFinder = new RangeNodeFinder(fSelectedSourceRange);
 		fProgram.accept(fSelectedNodesFinder);
+		
 		if(fSelectedNodesFinder.getNodes().size() == 0) {
 			throw new RefactoringStatusException(RefactoringMessages.ExtractMethodInputPage_errorCouldNotParseSelectedCode);
 		}
@@ -347,7 +353,7 @@ public class ExtractMethodRefactoring extends Refactoring {
 			if(parent instanceof Block) {
 				
 				if(!createdMethodBody) {
-					extractedMethodBody.statements().addAll(ASTNode.copySubtrees(ast, fSelectedNodesFinder.getNodes()));
+					extractedMethodBody.statements().addAll(ASTNode.copySubtrees(ast, selectedNodeOccurence));
 					addReturnStatement(ast, extractedMethodBody, fReturnStatement);
 					createdMethodBody = true;
 				}

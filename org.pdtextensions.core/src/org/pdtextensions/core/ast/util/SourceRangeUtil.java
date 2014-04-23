@@ -21,7 +21,24 @@ public class SourceRangeUtil {
 			return false;
 		}
 		
-		return range.getOffset() <= node.getStart() && (range.getLength() + range.getOffset()) >= node.getLength() + node.getStart();
+		return range.getOffset() <= node.getStart() && (range.getLength() + range.getOffset()) >= node.getEnd();
+	}
+	
+	/**
+	 * Returns true if range covers toBeCovered
+	 * 
+	 * @param range
+	 * @param toBeCovered
+	 * @return
+	 */
+	public static boolean covers(ISourceRange range, ISourceRange toBeCovered)
+	{
+		if(range == null || toBeCovered == null) {
+			return false;
+		}
+		
+		return range.getOffset() <= toBeCovered.getOffset() && (range.getLength() + range.getOffset()) >= toBeCovered.getLength() + toBeCovered.getOffset();
+	
 	}
 	
 	/**
@@ -37,7 +54,7 @@ public class SourceRangeUtil {
 			return false;
 		}
 		
-		return range.getOffset() >= node.getStart() && (range.getLength() + range.getOffset()) <= node.getLength() + node.getStart();
+		return range.getOffset() >= node.getStart() && (range.getLength() + range.getOffset()) <=  node.getEnd();
 	}
 	
 	public static ISourceRange createFrom(ASTNode node)
