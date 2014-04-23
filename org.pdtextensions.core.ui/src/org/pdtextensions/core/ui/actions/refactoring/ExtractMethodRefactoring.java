@@ -37,6 +37,7 @@ import org.eclipse.php.internal.core.ast.nodes.Identifier;
 import org.eclipse.php.internal.core.ast.nodes.MethodDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.MethodInvocation;
 import org.eclipse.php.internal.core.ast.nodes.Program;
+import org.eclipse.php.internal.core.ast.nodes.Reference;
 import org.eclipse.php.internal.core.ast.nodes.Statement;
 import org.eclipse.php.internal.core.ast.nodes.Variable;
 import org.eclipse.php.internal.core.ast.nodes.Assignment;
@@ -64,10 +65,7 @@ import org.pdtextensions.internal.corext.refactoring.ParameterInfo;
 /**
  * TODO: This class ignores the scope of variables and compares them just by name. Better approach would be
  * 		 to use the scope too, to determine whether the variables are pointing to the same value.  
- * 
- * TODO: if a parameter is passed by reference to the covering method, and this parameter is used in the selected code, then
- *       this parameter must be an argument of the extracted method AND must get passed by reference (or must get returned) 
- *       
+ *        
  * TODO: create the signature preview with AST, not by hand...
  * 
  * TODO: Finding duplicates should ignore the variable name. (currently it searches for the exact same names)
@@ -481,12 +479,11 @@ public class ExtractMethodRefactoring extends Refactoring {
 	}
 	
 	/**
-	 * The extracted method required an argument iff
+	 * The extracted method requires an argument iff
 	 * 	1. A variable is used in the selected code, and
 	 *  2. this variable was used in the code fragment, before the selected code, and
 	 *  3. the variable is local (local scope or a parameter for the covering method)
 	 * 
-	 * @throws ModelException
 	 */
 	private void computeRequiredArgumentsForExtractedMethod() {
 
@@ -499,7 +496,7 @@ public class ExtractMethodRefactoring extends Refactoring {
 		for(Variable possibleParameter : fMethodVariables) 
 		{
 			// this covers 1. and for performance reasons, we skipping if the possibleParameter is already a method parameter..
-			if(!SourceRangeUtil.covers(selectedRange, possibleParameter) && !isMethodParameter(possibleParameter)) {
+			if(!SourceRangeUtil.covers(selectedRange, possibleParameter) || isMethodParameter(possibleParameter)) {
 				continue;
 			}
 
@@ -537,6 +534,8 @@ public class ExtractMethodRefactoring extends Refactoring {
 	 * 	2. the variable is used in the selected code<br>
 	 *  3. the variable is local (local scope or argument for the covering method) <br>
 	 *  4. the variable is not an argument which references to an object and it will not get assigned in the selected code<br><br>
+	 *  OR
+	 *  5. the variable is an argument for the covering method and is passed by reference and is used in the selected code
 	 * 
 	 * Why 4.?<br>
 	 * Because in PHP every argument which is an object, is passed by reference, there is no need
@@ -562,7 +561,6 @@ public class ExtractMethodRefactoring extends Refactoring {
 	 * </pre>
 	 * which is not the same code! So we have to return $object even though $object is an object.
 	 * 
-	 * @throws ModelException
 	 */
 	private void computeMethodReturnValues() {
 
@@ -573,11 +571,23 @@ public class ExtractMethodRefactoring extends Refactoring {
 		// again, 3. is fulfilled, since fMethodVariables only contains local variables
 		for(Variable var : fMethodVariables)
 		{
+			// covers 5.
+			if (SourceRangeUtil.covers(selectedRange, var)) {
+				for (FormalParameter methodParameter : fMethodParameters) {
+					Expression parameterName = methodParameter.getParameterName();
+					if (parameterName instanceof Reference) {
+						if (areTheSameVariables((Variable) ((Reference) parameterName).getExpression(),var)) {
+							addMethodReturnValue(var);
+							break;
+						}
+					}
+				}
+			}
+			
 			// covers 1. and performance
-			if(!SourceRangeUtil.covers(postSelectionRange, var) && !isMethodReturnValue(var)) {
+			if(!SourceRangeUtil.covers(postSelectionRange, var) || isMethodReturnValue(var)) {
 				continue;
 			}
-						
 			// covers 2.
 			if(isVariableUsedInRange(var, selectedRange))
 			{
@@ -630,11 +640,7 @@ public class ExtractMethodRefactoring extends Refactoring {
 	 *  
 	 * But if we change $obj in the to be extracted code (by creating any new object or assigning any primitiv type) we have to return the state
 	 * of $obj at the end of the extracted method, since it's reference was changed.
-	 *  
-	 *  
-	 * @param var
-	 * @return
-	 * @throws ModelException 
+	 *   
 	 */
 	private boolean isUsedAsObject(Variable var) {
 		
