@@ -60,6 +60,8 @@ public class ExtractMethodInputPage extends UserInputWizardPage {
 		
 		addCheckboxForGeneratingPHPComment(result);
 		
+		addCheckboxForAddingTypeHint(result);
+		
 		addCheckboxForReplacingDuplicates(result);
 		
 		addCheckboxForReturningMultipleVariables(result);
@@ -69,6 +71,24 @@ public class ExtractMethodInputPage extends UserInputWizardPage {
 		addMethodSignaturePreview(result);
 		
 		updatePreview();
+	}
+
+	private void addCheckboxForAddingTypeHint(Composite result) {
+		GridData gridLayoutData = new GridData(GridData.FILL_HORIZONTAL);
+		gridLayoutData.horizontalSpan= 2;
+		
+		Button checkBox = new Button(result, SWT.CHECK);
+		
+		checkBox.setLayoutData(gridLayoutData);
+		checkBox.setText(RefactoringMessages.ExtractMethodInputPage_addTypeHint);
+		checkBox.setSelection(fRefactoring.getTypeHint());
+		checkBox.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				fRefactoring.setTypeHint(((Button)e.widget).getSelection());
+				updatePreview();
+			}
+		});
 	}
 
 	public void addParameterInput(Composite result) {
@@ -134,7 +154,7 @@ public class ExtractMethodInputPage extends UserInputWizardPage {
 			Button radio= new Button(group, SWT.RADIO);
 			radio.setText(labels[i]);
 			radio.setData(data[i]);
-			if (data[i].equals(selectionOfAccessModifiers))
+			if ( (data[i] & selectionOfAccessModifiers) != 0)
 				radio.setSelection(true);
 			
 			radio.addSelectionListener(new SelectionAdapter() {

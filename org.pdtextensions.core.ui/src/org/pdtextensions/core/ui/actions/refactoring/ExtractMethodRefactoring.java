@@ -1,7 +1,5 @@
 package org.pdtextensions.core.ui.actions.refactoring;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +9,6 @@ import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -26,7 +23,6 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.DocumentChange;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.php.internal.core.PHPVersion;
 import org.eclipse.php.internal.core.ast.nodes.AST;
 import org.eclipse.php.internal.core.ast.nodes.ASTNode;
 import org.eclipse.php.internal.core.ast.nodes.ASTParser;
@@ -37,6 +33,7 @@ import org.eclipse.php.internal.core.ast.nodes.ExpressionStatement;
 import org.eclipse.php.internal.core.ast.nodes.FormalParameter;
 import org.eclipse.php.internal.core.ast.nodes.FunctionDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.FunctionInvocation;
+import org.eclipse.php.internal.core.ast.nodes.ITypeBinding;
 import org.eclipse.php.internal.core.ast.nodes.Identifier;
 import org.eclipse.php.internal.core.ast.nodes.MethodDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.MethodInvocation;
@@ -74,14 +71,13 @@ import org.pdtextensions.internal.corext.refactoring.ParameterInfo;
  * TODO: Finding duplicates should ignore the variable name. (currently it searches for the exact same names)
  * 
  * TODO: Maybe add "final" and "static" modifier. If "static" is checked, then $this, must explicitly be concerned... 
- * 
- * TODO: If a parameter has a type, then add a type hint for the extracted method? 
- * 
+ *  
  * @author Alex
  *
  */
 public class ExtractMethodRefactoring extends Refactoring {
 
+	private static final String TYPE_HINT_ARRAY = "array";
 	private final static String THIS_VARIABLE_NAME = "this";
 	private final static String METHOD_ARGUMENT_CLOSING_CHAR = ")";
 	
@@ -90,6 +86,7 @@ public class ExtractMethodRefactoring extends Refactoring {
 	private int fSelectionStart;
 	private int fSelectionLength;
 	
+	private boolean fAddTypeHint;
 	private boolean fReturnMultipleVariables;
 	private boolean fGenerateDoc;
 	private String fMethodName;
@@ -132,6 +129,7 @@ public class ExtractMethodRefactoring extends Refactoring {
 		fSelectionLength = selectionLength;
 		fSelectedSourceRange = new SourceRange(selectionStart, selectionLength);
 		fReplaceDuplicates = false;
+		fAddTypeHint = true;
 	}
 
 	private void parsePHPCode() throws RefactoringStatusException {
@@ -235,7 +233,6 @@ public class ExtractMethodRefactoring extends Refactoring {
 		try {
 			parsePHPCode();
 			
-			// TODO: throw exceptions in those methods on wrong behaviour.
 			computeRequiredArgumentsForExtractedMethod();
 			computeMethodReturnValues();
 			computePassByReferenceArguments();
@@ -429,7 +426,9 @@ public class ExtractMethodRefactoring extends Refactoring {
 		}
 		
 		// at least, the selected nodes have to get found...
-		Assert.isLegal(fDuplicates.size() > 0);
+		//Assert.isLegal(fDuplicates.size() > 0);
+		// this does not work if the user doesnt select a statement (e.g. just a variable in a MethodInvocation)
+		// TODO: Currently, the replacement finder does only find statements. The finder should find any kind of an ASTNode!
 	}
 
 	private ArrayList<FormalParameter> computeArguments(AST ast)
@@ -452,7 +451,7 @@ public class ExtractMethodRefactoring extends Refactoring {
 				formalParameter.setDefaultValue(ast.newScalar(parameter.getParameterDefaultValue()));
 			}
 			
-			if(parameter.getParameterType() != null && !parameter.getParameterType().isEmpty()) {
+			if(fAddTypeHint && parameter.getParameterType() != null && !parameter.getParameterType().isEmpty()) {
 				formalParameter.setParameterType(ast.newIdentifier(parameter.getParameterType()));
 			}
 			
@@ -508,8 +507,21 @@ public class ExtractMethodRefactoring extends Refactoring {
 	private void addMethodParameter(Variable variable) {
 		// only add a new method parameter, if it wasn't already one...
 		if (!isMethodParameter(variable)) {
-			fExtractedMethodParameters.add(new ParameterInfo(
-					((Identifier) variable.getName()).getName()));
+			
+			ParameterInfo newParameter = new ParameterInfo(
+					((Identifier) variable.getName()).getName());
+			
+			ITypeBinding binding = variable.resolveTypeBinding();
+
+			if (binding != null) {
+				if (binding.isArray()) {
+					newParameter.setParameterType(TYPE_HINT_ARRAY);
+				} else if (binding.isClass()) {
+					newParameter.setParameterType(binding.getName());
+				}
+			}
+			
+			fExtractedMethodParameters.add(newParameter);
 		}
 	}
 
@@ -799,6 +811,15 @@ public class ExtractMethodRefactoring extends Refactoring {
 		fReturnMultipleVariables = returnMultiple;
 	}
 	
+	public void setTypeHint(boolean addTypeHint) {
+		fAddTypeHint = addTypeHint;
+	}
+	
+	public boolean getTypeHint()
+	{
+		return fAddTypeHint;
+	}
+	
 	public int getMethodReturnVariablesCount()
 	{
 		return fExtractedMethodReturnValues.size();
@@ -815,7 +836,6 @@ public class ExtractMethodRefactoring extends Refactoring {
 	}
 
 	public String getMethodSignature() {
-		
 		
 		try {
 			

@@ -26,6 +26,7 @@ public class RefactoringMessages extends NLS {
 	public static String ExtractMethodPage;
 	public static String ExtractMethodPage_LabelMethod;
 	
+	public static String ExtractMethodInputPage_addTypeHint;
 	public static String ExtractMethodInputPage_access_Modifiers;
 	public static String ExtractMethodInputPage_access_public;
 	public static String ExtractMethodInputPage_access_protected;
