@@ -51,6 +51,7 @@ public class RefactoringMessages extends NLS {
 	public static String ExtractMethodPreviewPage_TextChangeNewMethod;
 	public static String ExtractMethodPreviewPage_TextChangeSubstituteStatements;
 	public static String ExtractMethodPreviewPage_TextChangeSubsituteDuplicateStatements;
+	public static String ExtractMethodPreviewPage_NoSignaturePreviewAvailable;
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, RefactoringMessages.class);

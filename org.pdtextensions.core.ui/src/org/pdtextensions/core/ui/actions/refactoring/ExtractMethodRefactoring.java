@@ -1,5 +1,8 @@
 package org.pdtextensions.core.ui.actions.refactoring;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,11 +20,13 @@ import org.eclipse.dltk.ast.Modifiers;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ISourceRange;
 import org.eclipse.dltk.core.SourceRange;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.DocumentChange;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.php.internal.core.PHPVersion;
 import org.eclipse.php.internal.core.ast.nodes.AST;
 import org.eclipse.php.internal.core.ast.nodes.ASTNode;
 import org.eclipse.php.internal.core.ast.nodes.ASTParser;
@@ -43,6 +48,7 @@ import org.eclipse.php.internal.core.ast.nodes.Assignment;
 import org.eclipse.php.internal.core.ast.nodes.VariableBase;
 import org.eclipse.php.internal.core.ast.rewrite.ASTRewrite;
 import org.eclipse.php.internal.core.ast.rewrite.ListRewrite;
+import org.eclipse.php.internal.core.project.ProjectOptions;
 import org.eclipse.php.internal.core.search.Messages;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
@@ -64,9 +70,7 @@ import org.pdtextensions.internal.corext.refactoring.ParameterInfo;
 /**
  * TODO: This class ignores the scope of variables and compares them just by name. Better approach would be
  * 		 to use the scope too, to determine whether the variables are pointing to the same value.  
- *        
- * TODO: create the signature preview with AST, not by hand...
- * 
+ *         
  * TODO: Finding duplicates should ignore the variable name. (currently it searches for the exact same names)
  * 
  * TODO: Maybe add "final" and "static" modifier. If "static" is checked, then $this, must explicitly be concerned... 
@@ -79,6 +83,7 @@ import org.pdtextensions.internal.corext.refactoring.ParameterInfo;
 public class ExtractMethodRefactoring extends Refactoring {
 
 	private final static String THIS_VARIABLE_NAME = "this";
+	private final static String METHOD_ARGUMENT_CLOSING_CHAR = ")";
 	
 	private ISourceModule fSourceModule;
 	
@@ -810,20 +815,29 @@ public class ExtractMethodRefactoring extends Refactoring {
 	}
 
 	public String getMethodSignature() {
-		String signature = getMethodAccessModifiers() + " function " + fMethodName + "(";
+		
+		
+		try {
 			
-		for(ParameterInfo parameter : fExtractedMethodParameters)
-		{
-			if(passByReference(parameter.getParameterName())) {
-				signature += "&";
-			}
+			StringReader stringReader = new StringReader(new String());
+			ASTParser previewParser = ASTParser.newParser(stringReader, ProjectOptions.getPhpVersion(fSourceModule), false);
+			Program previewProgram = previewParser.createAST(null);
 			
-			signature += "$"+parameter.getParameterName() + ", ";
+			previewProgram.recordModifications();
+			AST previewAST = previewProgram.getAST();
+			
+			FunctionDeclaration function = previewAST.newFunctionDeclaration(previewAST.newIdentifier(fMethodName), computeArguments(previewAST), previewAST.newBlock(), false);
+			MethodDeclaration method = previewAST.newMethodDeclaration(fModifierAccessFlag, function);
+			previewProgram.statements().add(method);
+			
+			Document myDoc = new Document();
+			previewProgram.rewrite(myDoc, null).apply(myDoc);
+			
+			return myDoc.get().substring(0, myDoc.get().indexOf(METHOD_ARGUMENT_CLOSING_CHAR) + 1);
+			
+		} catch (Exception e) {
+			return RefactoringMessages.ExtractMethodPreviewPage_NoSignaturePreviewAvailable;
 		}
-		if(fExtractedMethodParameters.size() > 0) {
-			signature = signature.substring(0, signature.length() - 2);
-		}
-		return signature+ ")";
 	}
 	
 	private boolean passByReference(String parameterName) {
@@ -860,30 +874,5 @@ public class ExtractMethodRefactoring extends Refactoring {
 		}
 		
 		return true;
-	}
-	
-	private String getMethodAccessModifiers() {
-
-		String access = "";
-		
-		int modifier = getAccessOfModifiers();
-
-		if ((modifier & Modifiers.AccPublic) != 0) {
-			access = "public";
-		} else if ((modifier & Modifiers.AccProtected) != 0) {
-			access = "protected";
-		} else if ((modifier & Modifiers.AccPrivate) != 0) {
-			access = "private";
-		}
-
-		if ((modifier & Modifiers.AccStatic) != 0) {
-			access += " static";
-		}
-
-		if ((modifier & Modifiers.AccFinal) != 0) {
-			access += " final";
-		}
-
-		return access;
 	}
 }
