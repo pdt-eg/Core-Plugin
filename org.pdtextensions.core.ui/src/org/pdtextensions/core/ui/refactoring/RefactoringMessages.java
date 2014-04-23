@@ -47,6 +47,10 @@ public class RefactoringMessages extends NLS {
 	public static String ExtractMethodInputPage_errorContainsReturnStatement;
 	public static String ExtractMethodInputPage_errorMultipleReturnValuesNotAllowed;
 	
+	public static String ExtractMethodPreviewPage_TextChangeName;
+	public static String ExtractMethodPreviewPage_TextChangeNewMethod;
+	public static String ExtractMethodPreviewPage_TextChangeSubstituteStatements;
+	public static String ExtractMethodPreviewPage_TextChangeSubsituteDuplicateStatements;
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, RefactoringMessages.class);

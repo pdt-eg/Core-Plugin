@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.dltk.ast.Modifiers;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ISourceRange;
-import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.SourceRange;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -79,6 +78,8 @@ import org.pdtextensions.internal.corext.refactoring.ParameterInfo;
  */
 public class ExtractMethodRefactoring extends Refactoring {
 
+	private final static String THIS_VARIABLE_NAME = "this";
+	
 	private ISourceModule fSourceModule;
 	
 	private int fSelectionStart;
@@ -236,11 +237,7 @@ public class ExtractMethodRefactoring extends Refactoring {
 			computeReplacements();
 			
 		} catch(RefactoringStatusException exception){
-			if(exception.getStatusMessage() != null) {
-				status.addFatalError(exception.getStatusMessage());
-			} else {
-				status.addFatalError("UNKNOWN ERROR");
-			}
+			status.addFatalError(exception.getStatusMessage());
 		}
 		
 		if(fMustExplicitReturnParameters.size() > 1) {
@@ -284,41 +281,37 @@ public class ExtractMethodRefactoring extends Refactoring {
 		ITextFileBufferManager bufferManager = FileBuffers
 				.getTextFileBufferManager();
 		IPath path = fSourceModule.getPath();
-		bufferManager.connect(path, LocationKind.IFILE, null); // (1)
+		bufferManager.connect(path, LocationKind.IFILE, null);
 		ITextFileBuffer textFileBuffer = bufferManager.getTextFileBuffer(path,
 				LocationKind.IFILE);
 		
 		IDocument document = textFileBuffer.getDocument();
 		
-		DocumentChange anotherChange = new DocumentChange("Extract method", document);
+		DocumentChange anotherChange = new DocumentChange(RefactoringMessages.ExtractMethodPreviewPage_TextChangeName, document);
 		
 		MultiTextEdit rootEdit = new MultiTextEdit();
 		
 		anotherChange.setEdit(rootEdit);
 		
-		TextEditGroup newMethodEdit = new TextEditGroup("Create new method '"+fMethodName+"' from selected statements");
-		TextEditGroup inlineReplacementEdit = new TextEditGroup("Substitute statements with call to "+fMethodName);
-		TextEditGroup additionalInlineReplacementEdit = new TextEditGroup("Replace duplicate code fragments with call to "+fMethodName);
+		TextEditGroup newMethodEdit = new TextEditGroup(Messages.format(RefactoringMessages.ExtractMethodPreviewPage_TextChangeNewMethod, fMethodName));
+		TextEditGroup inlineReplacementEdit = new TextEditGroup(Messages.format(RefactoringMessages.ExtractMethodPreviewPage_TextChangeSubstituteStatements, fMethodName));
+		TextEditGroup additionalInlineReplacementEdit = new TextEditGroup(Messages.format(RefactoringMessages.ExtractMethodPreviewPage_TextChangeSubsituteDuplicateStatements, fMethodName));
 		anotherChange.addTextEditGroup(newMethodEdit);
 		anotherChange.addTextEditGroup(inlineReplacementEdit);
 		anotherChange.addTextEditGroup(additionalInlineReplacementEdit);
 		
 		AST ast = fProgram.getAST();
 		MethodDeclaration method = ast.newMethodDeclaration();
-		ArrayList<FormalParameter> formalParameters = new ArrayList<FormalParameter>();
-		Block body = ast.newBlock();
-		FormalParameter formalParameter = new FormalParameter(ast);
-		formalParameter.setParameterName(ast.newVariable("MY_PARAM"));
-		formalParameters.add(formalParameter);
+		Block extractedMethodBody = ast.newBlock();
 				
-		FunctionDeclaration functionDec = ast.newFunctionDeclaration(ast.newIdentifier(fMethodName), computeArguments(ast), body, false);
+		FunctionDeclaration functionDec = ast.newFunctionDeclaration(ast.newIdentifier(fMethodName), computeArguments(ast), extractedMethodBody, false);
 		method.setModifier(fModifierAccessFlag);
 		method.setFunction(functionDec);
 		
 		ASTRewrite rewriter = ASTRewrite.create(ast);
 		
 		ListRewrite classListRewrite = rewriter.getListRewrite( fCoveringDeclarationFinder.getCoveringClassDeclaration().getBody(), Block.STATEMENTS_PROPERTY);
-		VariableBase dispatcher = ast.newVariable("this"); 
+		VariableBase dispatcher = ast.newVariable(THIS_VARIABLE_NAME);
 		FunctionInvocation calledExtractedMethod = ast.newFunctionInvocation(ast.newFunctionName(ast.newIdentifier(fMethodName)), computeParameters(ast));
 		MethodInvocation inlineMethodCall = ast.newMethodInvocation(dispatcher, calledExtractedMethod);
 
@@ -352,8 +345,8 @@ public class ExtractMethodRefactoring extends Refactoring {
 			if(parent instanceof Block) {
 				
 				if(!createdMethodBody) {
-					body.statements().addAll(ASTNode.copySubtrees(ast, fSelectedNodesFinder.getNodes()));
-					addReturnStatement(ast, body, fReturnStatement);
+					extractedMethodBody.statements().addAll(ASTNode.copySubtrees(ast, fSelectedNodesFinder.getNodes()));
+					addReturnStatement(ast, extractedMethodBody, fReturnStatement);
 					createdMethodBody = true;
 				}
 				
@@ -376,7 +369,7 @@ public class ExtractMethodRefactoring extends Refactoring {
 				
 			} else {
 				if(!createdMethodBody) {
-					addReturnStatement(ast, body, ASTNode.copySubtree(ast, selectedNodeOccurence.get(0)));
+					addReturnStatement(ast, extractedMethodBody, ASTNode.copySubtree(ast, selectedNodeOccurence.get(0)));
 					createdMethodBody = true;
 				}
 				rewriter.replace( selectedNodeOccurence.get(0), inlineMethodCall, inlineReplacementEditGroup);
