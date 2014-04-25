@@ -61,7 +61,8 @@ public class CoveringDeclarationFinder extends AbstractRangeFinder {
 	{
 		if(covers(declaration)) {
 			fCoveringFunctionDeclaration = declaration;
-			return true;
+			// this is the deepest node we're looking at.
+			return false;
 		}
 		
 		// php does not support function declarations in functions

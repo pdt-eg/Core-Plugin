@@ -1,5 +1,6 @@
 package org.pdtextensions.core.ui.actions.refactoring;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,8 +16,8 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.dltk.ast.Modifiers;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ISourceRange;
-import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.SourceRange;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.DocumentChange;
@@ -32,15 +33,19 @@ import org.eclipse.php.internal.core.ast.nodes.ExpressionStatement;
 import org.eclipse.php.internal.core.ast.nodes.FormalParameter;
 import org.eclipse.php.internal.core.ast.nodes.FunctionDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.FunctionInvocation;
+import org.eclipse.php.internal.core.ast.nodes.ITypeBinding;
 import org.eclipse.php.internal.core.ast.nodes.Identifier;
 import org.eclipse.php.internal.core.ast.nodes.MethodDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.MethodInvocation;
 import org.eclipse.php.internal.core.ast.nodes.Program;
+import org.eclipse.php.internal.core.ast.nodes.Reference;
+import org.eclipse.php.internal.core.ast.nodes.Statement;
 import org.eclipse.php.internal.core.ast.nodes.Variable;
 import org.eclipse.php.internal.core.ast.nodes.Assignment;
 import org.eclipse.php.internal.core.ast.nodes.VariableBase;
 import org.eclipse.php.internal.core.ast.rewrite.ASTRewrite;
 import org.eclipse.php.internal.core.ast.rewrite.ListRewrite;
+import org.eclipse.php.internal.core.project.ProjectOptions;
 import org.eclipse.php.internal.core.search.Messages;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
@@ -62,28 +67,26 @@ import org.pdtextensions.internal.corext.refactoring.ParameterInfo;
 /**
  * TODO: This class ignores the scope of variables and compares them just by name. Better approach would be
  * 		 to use the scope too, to determine whether the variables are pointing to the same value.  
- * 
- * TODO: if a parameter is passed by reference to the covering method, and this parameter is used in the selected code, then
- *       this parameter must be an argument of the extracted method AND must get passed by reference (or must get returned) 
- *       
- * TODO: create the signature preview with AST, not by hand...
- * 
+ *         
  * TODO: Finding duplicates should ignore the variable name. (currently it searches for the exact same names)
  * 
  * TODO: Maybe add "final" and "static" modifier. If "static" is checked, then $this, must explicitly be concerned... 
- * 
- * TODO: If a parameter has a type, then add a type hint for the extracted method? 
- * 
+ *  
  * @author Alex
  *
  */
 public class ExtractMethodRefactoring extends Refactoring {
 
+	private static final String TYPE_HINT_ARRAY = "array";
+	private final static String THIS_VARIABLE_NAME = "this";
+	private final static String METHOD_ARGUMENT_CLOSING_CHAR = ")";
+	
 	private ISourceModule fSourceModule;
 	
 	private int fSelectionStart;
 	private int fSelectionLength;
 	
+	private boolean fAddTypeHint;
 	private boolean fReturnMultipleVariables;
 	private boolean fGenerateDoc;
 	private String fMethodName;
@@ -126,6 +129,7 @@ public class ExtractMethodRefactoring extends Refactoring {
 		fSelectionLength = selectionLength;
 		fSelectedSourceRange = new SourceRange(selectionStart, selectionLength);
 		fReplaceDuplicates = false;
+		fAddTypeHint = true;
 	}
 
 	private void parsePHPCode() throws RefactoringStatusException {
@@ -144,10 +148,15 @@ public class ExtractMethodRefactoring extends Refactoring {
 		
 		try {
 			// retrieve method, which covers the selected code
-			fSelectedMethodSourceRange = new SourceRange(fCoveringDeclarationFinder.getCoveringMethodDeclaration().getStart(), fCoveringDeclarationFinder.getCoveringMethodDeclaration().getLength());
+			fSelectedMethodSourceRange = SourceRangeUtil.createFrom(fCoveringDeclarationFinder.getCoveringMethodDeclaration());
 			// get the access modifiers from the covering method (e.g. public/protected/private) and ignore final/static etc.. modifiers
 			fModifierAccessFlag = fCoveringDeclarationFinder.getCoveringMethodDeclaration().getModifier() & (Modifiers.AccPublic | Modifiers.AccProtected | Modifiers.AccPrivate | Modifiers.AccStatic);
-		} catch(NullPointerException e) {
+			
+			if(!SourceRangeUtil.covers(SourceRangeUtil.createFrom(fCoveringDeclarationFinder.getCoveringFunctionDeclaration().getBody()), fSelectedSourceRange)) {
+				throw new Exception();
+			}
+			
+		} catch(Exception e) {
 			throw new RefactoringStatusException(RefactoringMessages.ExtractMethodInputPage_errorCouldNotRetrieveCoveringMethodDeclaration);
 		}
 		
@@ -175,6 +184,7 @@ public class ExtractMethodRefactoring extends Refactoring {
 		
 		fSelectedNodesFinder = new RangeNodeFinder(fSelectedSourceRange);
 		fProgram.accept(fSelectedNodesFinder);
+		
 		if(fSelectedNodesFinder.getNodes().size() == 0) {
 			throw new RefactoringStatusException(RefactoringMessages.ExtractMethodInputPage_errorCouldNotParseSelectedCode);
 		}
@@ -229,18 +239,13 @@ public class ExtractMethodRefactoring extends Refactoring {
 		try {
 			parsePHPCode();
 			
-			// TODO: throw exceptions in those methods on wrong behaviour.
 			computeRequiredArgumentsForExtractedMethod();
 			computeMethodReturnValues();
 			computePassByReferenceArguments();
 			computeReplacements();
 			
 		} catch(RefactoringStatusException exception){
-			if(exception.getStatusMessage() != null) {
-				status.addFatalError(exception.getStatusMessage());
-			} else {
-				status.addFatalError("UNKNOWN ERROR");
-			}
+			status.addFatalError(exception.getStatusMessage());
 		}
 		
 		if(fMustExplicitReturnParameters.size() > 1) {
@@ -284,41 +289,37 @@ public class ExtractMethodRefactoring extends Refactoring {
 		ITextFileBufferManager bufferManager = FileBuffers
 				.getTextFileBufferManager();
 		IPath path = fSourceModule.getPath();
-		bufferManager.connect(path, LocationKind.IFILE, null); // (1)
+		bufferManager.connect(path, LocationKind.IFILE, null);
 		ITextFileBuffer textFileBuffer = bufferManager.getTextFileBuffer(path,
 				LocationKind.IFILE);
 		
 		IDocument document = textFileBuffer.getDocument();
 		
-		DocumentChange anotherChange = new DocumentChange("Extract method", document);
+		DocumentChange anotherChange = new DocumentChange(RefactoringMessages.ExtractMethodPreviewPage_TextChangeName, document);
 		
 		MultiTextEdit rootEdit = new MultiTextEdit();
 		
 		anotherChange.setEdit(rootEdit);
 		
-		TextEditGroup newMethodEdit = new TextEditGroup("Create new method '"+fMethodName+"' from selected statements");
-		TextEditGroup inlineReplacementEdit = new TextEditGroup("Substitute statements with call to "+fMethodName);
-		TextEditGroup additionalInlineReplacementEdit = new TextEditGroup("Replace duplicate code fragments with call to "+fMethodName);
+		TextEditGroup newMethodEdit = new TextEditGroup(Messages.format(RefactoringMessages.ExtractMethodPreviewPage_TextChangeNewMethod, fMethodName));
+		TextEditGroup inlineReplacementEdit = new TextEditGroup(Messages.format(RefactoringMessages.ExtractMethodPreviewPage_TextChangeSubstituteStatements, fMethodName));
+		TextEditGroup additionalInlineReplacementEdit = new TextEditGroup(Messages.format(RefactoringMessages.ExtractMethodPreviewPage_TextChangeSubsituteDuplicateStatements, fMethodName));
 		anotherChange.addTextEditGroup(newMethodEdit);
 		anotherChange.addTextEditGroup(inlineReplacementEdit);
 		anotherChange.addTextEditGroup(additionalInlineReplacementEdit);
 		
 		AST ast = fProgram.getAST();
 		MethodDeclaration method = ast.newMethodDeclaration();
-		ArrayList<FormalParameter> formalParameters = new ArrayList<FormalParameter>();
-		Block body = ast.newBlock();
-		FormalParameter formalParameter = new FormalParameter(ast);
-		formalParameter.setParameterName(ast.newVariable("MY_PARAM"));
-		formalParameters.add(formalParameter);
+		Block extractedMethodBody = ast.newBlock();
 				
-		FunctionDeclaration functionDec = ast.newFunctionDeclaration(ast.newIdentifier(fMethodName), computeArguments(ast), body, false);
+		FunctionDeclaration functionDec = ast.newFunctionDeclaration(ast.newIdentifier(fMethodName), computeArguments(ast), extractedMethodBody, false);
 		method.setModifier(fModifierAccessFlag);
 		method.setFunction(functionDec);
 		
 		ASTRewrite rewriter = ASTRewrite.create(ast);
 		
 		ListRewrite classListRewrite = rewriter.getListRewrite( fCoveringDeclarationFinder.getCoveringClassDeclaration().getBody(), Block.STATEMENTS_PROPERTY);
-		VariableBase dispatcher = ast.newVariable("this"); 
+		VariableBase dispatcher = ast.newVariable(THIS_VARIABLE_NAME);
 		FunctionInvocation calledExtractedMethod = ast.newFunctionInvocation(ast.newFunctionName(ast.newIdentifier(fMethodName)), computeParameters(ast));
 		MethodInvocation inlineMethodCall = ast.newMethodInvocation(dispatcher, calledExtractedMethod);
 
@@ -352,8 +353,8 @@ public class ExtractMethodRefactoring extends Refactoring {
 			if(parent instanceof Block) {
 				
 				if(!createdMethodBody) {
-					body.statements().addAll(ASTNode.copySubtrees(ast, fSelectedNodesFinder.getNodes()));
-					addReturnStatement(ast, body, fReturnStatement);
+					extractedMethodBody.statements().addAll(ASTNode.copySubtrees(ast, selectedNodeOccurence));
+					addReturnStatement(ast, extractedMethodBody, fReturnStatement);
 					createdMethodBody = true;
 				}
 				
@@ -376,7 +377,7 @@ public class ExtractMethodRefactoring extends Refactoring {
 				
 			} else {
 				if(!createdMethodBody) {
-					addReturnStatement(ast, body, ASTNode.copySubtree(ast, selectedNodeOccurence.get(0)));
+					addReturnStatement(ast, extractedMethodBody, ASTNode.copySubtree(ast, selectedNodeOccurence.get(0)));
 					createdMethodBody = true;
 				}
 				rewriter.replace( selectedNodeOccurence.get(0), inlineMethodCall, inlineReplacementEditGroup);
@@ -386,9 +387,9 @@ public class ExtractMethodRefactoring extends Refactoring {
 
 		classListRewrite.insertAfter(method, fCoveringDeclarationFinder.getCoveringMethodDeclaration(), newMethodEdit);
 		
-		TextEdit asd = rewriter.rewriteAST(document, null);
+		TextEdit fullDocumentEdit = rewriter.rewriteAST(document, null);
 
-		anotherChange.addEdit(asd);
+		anotherChange.addEdit(fullDocumentEdit);
 		
 		return anotherChange;
 	}
@@ -409,10 +410,31 @@ public class ExtractMethodRefactoring extends Refactoring {
 
 	private void computeReplacements() {
 		
-		BlockContainsFinder replacementFinder = new BlockContainsFinder(fCoveringDeclarationFinder.getCoveringFunctionDeclaration().getBody(), fSelectedNodesFinder.getNodes().toArray(new ASTNode[]{}));
-		replacementFinder.perform();
+		// retrieve all method declarations
+		List<Statement> classStatements = ((Block) fCoveringDeclarationFinder.getCoveringMethodDeclaration().getParent()).statements();
 		
-		fDuplicates = replacementFinder.getMatches();
+		ASTNode[] toSearchNodes = fSelectedNodesFinder.getNodes().toArray(new ASTNode[]{});
+		fDuplicates = new ArrayList<Match>();
+		
+		// loop through every class statement, this might also include field declarations (etc..) so skip everything except MethodDeclarations.
+		// => Check every method in the covering class for similar nodes.
+		for(Statement statement : classStatements) {
+			if(!(statement instanceof MethodDeclaration) ){
+				continue;
+			}
+
+			// find all similar nodes
+			BlockContainsFinder replacementFinder = new BlockContainsFinder(((MethodDeclaration) statement).getFunction().getBody(), toSearchNodes);
+			replacementFinder.perform();
+			
+			// add the matches.
+			fDuplicates.addAll(replacementFinder.getMatches());
+		}
+		
+		// at least, the selected nodes have to get found...
+		//Assert.isLegal(fDuplicates.size() > 0);
+		// this does not work if the user doesnt select a statement (e.g. just a variable in a MethodInvocation)
+		// TODO: Currently, the replacement finder does only find statements. The finder should find any kind of an ASTNode!
 	}
 
 	private ArrayList<FormalParameter> computeArguments(AST ast)
@@ -435,7 +457,7 @@ public class ExtractMethodRefactoring extends Refactoring {
 				formalParameter.setDefaultValue(ast.newScalar(parameter.getParameterDefaultValue()));
 			}
 			
-			if(parameter.getParameterType() != null && !parameter.getParameterType().isEmpty()) {
+			if(fAddTypeHint && parameter.getParameterType() != null && !parameter.getParameterType().isEmpty()) {
 				formalParameter.setParameterType(ast.newIdentifier(parameter.getParameterType()));
 			}
 			
@@ -460,12 +482,11 @@ public class ExtractMethodRefactoring extends Refactoring {
 	}
 	
 	/**
-	 * The extracted method required an argument iff
+	 * The extracted method requires an argument iff
 	 * 	1. A variable is used in the selected code, and
 	 *  2. this variable was used in the code fragment, before the selected code, and
 	 *  3. the variable is local (local scope or a parameter for the covering method)
 	 * 
-	 * @throws ModelException
 	 */
 	private void computeRequiredArgumentsForExtractedMethod() {
 
@@ -478,7 +499,7 @@ public class ExtractMethodRefactoring extends Refactoring {
 		for(Variable possibleParameter : fMethodVariables) 
 		{
 			// this covers 1. and for performance reasons, we skipping if the possibleParameter is already a method parameter..
-			if(!SourceRangeUtil.covers(selectedRange, possibleParameter) && !isMethodParameter(possibleParameter)) {
+			if(!SourceRangeUtil.covers(selectedRange, possibleParameter) || isMethodParameter(possibleParameter)) {
 				continue;
 			}
 
@@ -492,8 +513,21 @@ public class ExtractMethodRefactoring extends Refactoring {
 	private void addMethodParameter(Variable variable) {
 		// only add a new method parameter, if it wasn't already one...
 		if (!isMethodParameter(variable)) {
-			fExtractedMethodParameters.add(new ParameterInfo(
-					((Identifier) variable.getName()).getName()));
+			
+			ParameterInfo newParameter = new ParameterInfo(
+					((Identifier) variable.getName()).getName());
+			
+			ITypeBinding binding = variable.resolveTypeBinding();
+
+			if (binding != null) {
+				if (binding.isArray()) {
+					newParameter.setParameterType(TYPE_HINT_ARRAY);
+				} else if (binding.isClass()) {
+					newParameter.setParameterType(binding.getName());
+				}
+			}
+			
+			fExtractedMethodParameters.add(newParameter);
 		}
 	}
 
@@ -516,6 +550,8 @@ public class ExtractMethodRefactoring extends Refactoring {
 	 * 	2. the variable is used in the selected code<br>
 	 *  3. the variable is local (local scope or argument for the covering method) <br>
 	 *  4. the variable is not an argument which references to an object and it will not get assigned in the selected code<br><br>
+	 *  OR
+	 *  5. the variable is an argument for the covering method and is passed by reference and is used in the selected code
 	 * 
 	 * Why 4.?<br>
 	 * Because in PHP every argument which is an object, is passed by reference, there is no need
@@ -541,7 +577,6 @@ public class ExtractMethodRefactoring extends Refactoring {
 	 * </pre>
 	 * which is not the same code! So we have to return $object even though $object is an object.
 	 * 
-	 * @throws ModelException
 	 */
 	private void computeMethodReturnValues() {
 
@@ -552,11 +587,23 @@ public class ExtractMethodRefactoring extends Refactoring {
 		// again, 3. is fulfilled, since fMethodVariables only contains local variables
 		for(Variable var : fMethodVariables)
 		{
+			// covers 5.
+			if (SourceRangeUtil.covers(selectedRange, var)) {
+				for (FormalParameter methodParameter : fMethodParameters) {
+					Expression parameterName = methodParameter.getParameterName();
+					if (parameterName instanceof Reference) {
+						if (areTheSameVariables((Variable) ((Reference) parameterName).getExpression(),var)) {
+							addMethodReturnValue(var);
+							break;
+						}
+					}
+				}
+			}
+			
 			// covers 1. and performance
-			if(!SourceRangeUtil.covers(postSelectionRange, var) && !isMethodReturnValue(var)) {
+			if(!SourceRangeUtil.covers(postSelectionRange, var) || isMethodReturnValue(var)) {
 				continue;
 			}
-						
 			// covers 2.
 			if(isVariableUsedInRange(var, selectedRange))
 			{
@@ -609,11 +656,7 @@ public class ExtractMethodRefactoring extends Refactoring {
 	 *  
 	 * But if we change $obj in the to be extracted code (by creating any new object or assigning any primitiv type) we have to return the state
 	 * of $obj at the end of the extracted method, since it's reference was changed.
-	 *  
-	 *  
-	 * @param var
-	 * @return
-	 * @throws ModelException 
+	 *   
 	 */
 	private boolean isUsedAsObject(Variable var) {
 		
@@ -774,6 +817,15 @@ public class ExtractMethodRefactoring extends Refactoring {
 		fReturnMultipleVariables = returnMultiple;
 	}
 	
+	public void setTypeHint(boolean addTypeHint) {
+		fAddTypeHint = addTypeHint;
+	}
+	
+	public boolean getTypeHint()
+	{
+		return fAddTypeHint;
+	}
+	
 	public int getMethodReturnVariablesCount()
 	{
 		return fExtractedMethodReturnValues.size();
@@ -790,20 +842,28 @@ public class ExtractMethodRefactoring extends Refactoring {
 	}
 
 	public String getMethodSignature() {
-		String signature = getMethodAccessModifiers() + " function " + fMethodName + "(";
+		
+		try {
 			
-		for(ParameterInfo parameter : fExtractedMethodParameters)
-		{
-			if(passByReference(parameter.getParameterName())) {
-				signature += "&";
-			}
+			StringReader stringReader = new StringReader(new String());
+			ASTParser previewParser = ASTParser.newParser(stringReader, ProjectOptions.getPhpVersion(fSourceModule), false);
+			Program previewProgram = previewParser.createAST(null);
 			
-			signature += "$"+parameter.getParameterName() + ", ";
+			previewProgram.recordModifications();
+			AST previewAST = previewProgram.getAST();
+			
+			FunctionDeclaration function = previewAST.newFunctionDeclaration(previewAST.newIdentifier(fMethodName), computeArguments(previewAST), previewAST.newBlock(), false);
+			MethodDeclaration method = previewAST.newMethodDeclaration(fModifierAccessFlag, function);
+			previewProgram.statements().add(method);
+			
+			Document myDoc = new Document();
+			previewProgram.rewrite(myDoc, null).apply(myDoc);
+			
+			return myDoc.get().substring(0, myDoc.get().indexOf(METHOD_ARGUMENT_CLOSING_CHAR) + 1);
+			
+		} catch (Exception e) {
+			return RefactoringMessages.ExtractMethodPreviewPage_NoSignaturePreviewAvailable;
 		}
-		if(fExtractedMethodParameters.size() > 0) {
-			signature = signature.substring(0, signature.length() - 2);
-		}
-		return signature+ ")";
 	}
 	
 	private boolean passByReference(String parameterName) {
@@ -840,30 +900,5 @@ public class ExtractMethodRefactoring extends Refactoring {
 		}
 		
 		return true;
-	}
-	
-	private String getMethodAccessModifiers() {
-
-		String access = "";
-		
-		int modifier = getAccessOfModifiers();
-
-		if ((modifier & Modifiers.AccPublic) != 0) {
-			access = "public";
-		} else if ((modifier & Modifiers.AccProtected) != 0) {
-			access = "protected";
-		} else if ((modifier & Modifiers.AccPrivate) != 0) {
-			access = "private";
-		}
-
-		if ((modifier & Modifiers.AccStatic) != 0) {
-			access += " static";
-		}
-
-		if ((modifier & Modifiers.AccFinal) != 0) {
-			access += " final";
-		}
-
-		return access;
 	}
 }
