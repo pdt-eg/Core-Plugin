@@ -131,7 +131,7 @@ public class RenameTypeProcessor extends PHPRenameProcessor {
 				PHPLanguageToolkit.getDefault()
 			),
 			new SearchParticipant[]{ SearchEngine.getDefaultSearchParticipant() },
-			SearchEngine.createWorkspaceScope(PHPLanguageToolkit.getDefault()),
+			SearchEngine.createSearchScope(modelElement.getScriptProject()),
 			new SearchRequestor() {
 				@Override
 				public void acceptSearchMatch(final SearchMatch match) throws CoreException {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 The PDT Extension Group (https://github.com/pdt-eg)
+ * Copyright (c) 2013-2014 The PDT Extension Group (https://github.com/pdt-eg)
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,6 @@ import org.eclipse.dltk.core.search.SearchPattern;
 import org.eclipse.dltk.core.search.SearchRequestor;
 import org.eclipse.dltk.internal.corext.refactoring.RefactoringAvailabilityTester;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPCallExpression;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.text.edits.MalformedTreeException;
@@ -69,7 +68,7 @@ public abstract class RenameFieldProcessor extends PHPRenameProcessor {
 		new SearchEngine().search(
 			createSearchPatternForReferences(),
 			new SearchParticipant[]{ SearchEngine.getDefaultSearchParticipant() },
-			SearchEngine.createWorkspaceScope(PHPLanguageToolkit.getDefault()),
+			SearchEngine.createSearchScope(modelElement.getScriptProject()),
 			new SearchRequestor() {
 				@Override
 				public void acceptSearchMatch(SearchMatch match) throws CoreException {
