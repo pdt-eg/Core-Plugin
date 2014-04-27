@@ -133,6 +133,11 @@ public class ExtractMethodRefactoring extends Refactoring {
 	}
 
 	private void parsePHPCode() throws RefactoringStatusException {
+		
+		if(fSourceModule == null) {
+			throw new RefactoringStatusException("The script must be on the build path of a project.");
+		}
+		
 		try {
 			// parse the php code and create a program
 			ASTParser parser = ASTParser.newParser(fSourceModule);
