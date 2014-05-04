@@ -50,7 +50,7 @@ import org.eclipse.php.internal.core.ast.nodes.Block;
 import org.eclipse.php.internal.core.ast.nodes.ClassDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.Program;
 import org.eclipse.php.internal.core.ast.nodes.Statement;
-import org.eclipse.php.internal.core.format.FormatPreferencesSupport;
+import org.eclipse.php.internal.core.format.FormatterUtils;
 import org.eclipse.php.internal.ui.actions.SelectionHandler;
 import org.eclipse.php.internal.ui.editor.PHPStructuredEditor;
 import org.eclipse.swt.graphics.Image;
@@ -287,7 +287,8 @@ public class GenerateGettersHandler extends SelectionHandler implements IHandler
 			return ;				
 		}
 		
-		char indentChar = FormatPreferencesSupport.getInstance().getIndentationChar(document);
+		char indentChar = FormatterUtils
+				.getFormatterCommonPrferences().getIndentationChar(document);
 		String indent = String.valueOf(indentChar);
 		
 		ClassDeclaration clazz = (ClassDeclaration) node;

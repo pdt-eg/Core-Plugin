@@ -155,7 +155,7 @@ public class GetterSetterUtil {
 	 * @param field The field to create a getter for
 	 * @param getterName The chosen name for the getter
 	 * @param addComments If <code>true</code>, comments will be added.
-	 * @param flags The flags signaling visibility, if static, synchronized or final
+	 * @param modifiers The modifiers signaling visibility, if static, synchronized or final
 	 * @return Returns the generated stub.
 	 * @throws CoreException
 	 */
@@ -207,7 +207,7 @@ public class GetterSetterUtil {
 	 * @param field The field to create a getter for
 	 * @param setterName The chosen name for the setter
 	 * @param addComments If <code>true</code>, comments will be added.
-	 * @param flags The flags signaling visibility, if static, synchronized or final
+	 * @param modifiers The modifiers signaling visibility, if static, synchronized or final
 	 * @param fluent 
 	 * @return Returns the generated stub.
 	 * @throws CoreException

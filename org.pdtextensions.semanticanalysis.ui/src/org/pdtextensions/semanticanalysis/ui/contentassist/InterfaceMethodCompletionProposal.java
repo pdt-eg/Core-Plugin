@@ -18,6 +18,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.php.internal.core.format.FormatPreferencesSupport;
+import org.eclipse.php.internal.core.format.FormatterUtils;
 import org.eclipse.php.internal.ui.editor.PHPStructuredEditor;
 import org.eclipse.php.internal.ui.editor.PHPStructuredTextViewer;
 import org.eclipse.php.internal.ui.editor.contentassist.PHPCompletionProposal;
@@ -88,7 +89,8 @@ public class InterfaceMethodCompletionProposal extends PHPCompletionProposal {
 						e.getClass();
 						e.printStackTrace();
 					}
-					char indentChar = FormatPreferencesSupport.getInstance().getIndentationChar(document);
+					char indentChar = FormatterUtils
+							.getFormatterCommonPrferences().getIndentationChar(document);
 					String indent = String.valueOf(indentChar);
 					
 					for (MissingMethodImplementation miss : validator.getMissing()) {

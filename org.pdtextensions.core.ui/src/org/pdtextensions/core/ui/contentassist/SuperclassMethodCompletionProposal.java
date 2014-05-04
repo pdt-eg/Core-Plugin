@@ -14,7 +14,7 @@ import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.php.internal.core.format.FormatPreferencesSupport;
+import org.eclipse.php.internal.core.format.FormatterUtils;
 import org.eclipse.php.internal.ui.editor.PHPStructuredEditor;
 import org.eclipse.php.internal.ui.editor.PHPStructuredTextViewer;
 import org.eclipse.php.internal.ui.editor.contentassist.PHPCompletionProposal;
@@ -106,7 +106,8 @@ public class SuperclassMethodCompletionProposal extends PHPCompletionProposal {
 						.getModelElement();
 				if (editorElement != null) {
 
-					char indentChar = FormatPreferencesSupport.getInstance()
+					char indentChar = FormatterUtils
+							.getFormatterCommonPrferences()
 							.getIndentationChar(document);
 					String indent = String.valueOf(indentChar);
 
