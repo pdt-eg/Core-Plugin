@@ -122,11 +122,9 @@ public class PHP54ValidationReportingTests extends AbstractPDTTTest {
 										public int compare(IMarker o1,
 												IMarker o2) {
 											try {
-												int charStart = (Integer) o1
-														.getAttribute(IMarker.CHAR_START);
-												int o2CharStart = (Integer) o2
-														.getAttribute(IMarker.CHAR_START);
-												return Integer.compare(charStart, o2CharStart);
+												return ((Integer) o1
+														.getAttribute(IMarker.CHAR_START)).compareTo( (Integer) o2
+																.getAttribute(IMarker.CHAR_START));
 											} catch (CoreException e) {
 												return -1;
 											}
