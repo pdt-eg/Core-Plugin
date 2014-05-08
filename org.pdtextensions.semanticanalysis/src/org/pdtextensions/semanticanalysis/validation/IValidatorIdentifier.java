@@ -28,4 +28,9 @@ public interface IValidatorIdentifier extends IProblemIdentifier, IProblemIdenti
 	 * @return Validator type
 	 */
 	String type();
+	
+	/**
+	 * @return CategorizedProblem category
+	 */
+	int getCategory();
 }

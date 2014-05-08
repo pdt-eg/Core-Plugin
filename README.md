@@ -14,6 +14,7 @@ Currently the core plugin supports following features:
 - Implementation of missing interface/abstract classes methods
 - Assign to local variable quick-fix
 - Import statements outline filters
+- Unused / uninitialized variable validator
 
 
 We are in the process of migrating general functionality of our plugins into the core plugin, and add more core features for
@@ -25,7 +26,7 @@ Join our [mailinglist](https://groups.google.com/forum/?fromgroups#!forum/pdt-ex
 ### Contributors
 
 - Kubo Atsuhiro - [iteman](https://github.com/iteman)
-- Dawid Pakula - [zulus](https://github.com/zulus)
+- Dawid Pakuła - [zulus](https://github.com/zulus)
 - Marek Maksimczyk- [mandos](https://github.com/Mandos)
 - Thomas Gossmann - [gossi](https://github.com/gossi)
 - Martin Eisengardt - [Martin Eisengardt](https://github.com/mepeisen)

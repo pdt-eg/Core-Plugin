@@ -31,7 +31,6 @@ import org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifi
 import org.pdtextensions.semanticanalysis.validation.AbstractValidator;
 import org.pdtextensions.semanticanalysis.validation.IValidatorContext;
 import org.pdtextensions.semanticanalysis.validation.MissingMethodImplementation;
-import org.pdtextensions.semanticanalysis.validation.Problem;
 
 /**
  * 
@@ -218,7 +217,7 @@ public class ImplementationValidator extends AbstractValidator{
 
 			String message = "The class " + getClassDeclaration().getName() + " must implement the inherited abstract method "
 			+ getMissing().get(0).getFirstMethodName();
-			context.registerProblem(PEXProblemIdentifier.INTERFACE_RELATED, Problem.CAT_RESTRICTION, message, start, stop);
+			context.registerProblem(PEXProblemIdentifier.INTERFACE_RELATED, message, start, stop);
 		}
 	}
 }

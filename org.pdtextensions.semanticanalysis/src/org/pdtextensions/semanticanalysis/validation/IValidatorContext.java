@@ -11,6 +11,7 @@ import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.builder.IBuildContext;
+import org.eclipse.php.internal.core.PHPVersion;
 
 /**
  * Validator context for each validator participant
@@ -31,18 +32,30 @@ public interface IValidatorContext {
 	public ISourceModule getSourceModule();
 
 	public IScriptProject getProject();
+	
+	public PHPVersion getPHPVersion();
 
 	public boolean isDerived();
 
 	public int getBuildType();
 
 	public IBuildContext getRawContext();
+	
 
-	public void registerProblem(IValidatorIdentifier identifier, int category, String message, int start, int stop);
+	public void registerProblem(IValidatorIdentifier identifier, String message, int start, int stop);
 
-	public void registerProblem(IValidatorIdentifier identifier, int category, String message, int start, int stop, int lineNumber);
+	public void registerProblem(IValidatorIdentifier identifier, String message, int start, int stop, int lineNumber);
 
-	public void registerProblem(IValidatorIdentifier identifier, int category, String message, int start, int stop, String[] arguments);
+	public void registerProblem(IValidatorIdentifier identifier, String message, int start, int stop, String[] arguments);
 
-	public void registerProblem(IValidatorIdentifier identifier, int category, String message, int start, int stop, int lineNumber, String[] arguments);
+	/**
+	 * @param identifier
+	 * @param category
+	 * @param message
+	 * @param start
+	 * @param end
+	 * @param lineNumber
+	 * @param arguments
+	 */
+	public void registerProblem(IValidatorIdentifier identifier, String message, int start, int stop, int lineNumber, String[] arguments);
 }

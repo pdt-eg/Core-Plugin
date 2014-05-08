@@ -13,7 +13,12 @@
 package org.pdtextensions.semanticanalysis.tests.validation;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import junit.extensions.TestSetup;
@@ -28,6 +33,8 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.dltk.compiler.problem.DefaultProblem;
 import org.eclipse.php.core.tests.AbstractPDTTTest;
 import org.eclipse.php.core.tests.PHPCoreTests;
 import org.eclipse.php.core.tests.PdttFile;
@@ -74,6 +81,7 @@ public class PHP54ValidationReportingTests extends AbstractPDTTTest {
 		project.build(IncrementalProjectBuilder.FULL_BUILD, null);
 
 		PHPCoreTests.waitForIndexer();
+		PHPCoreTests.waitForAutoBuild();
 	}
 
 	public static void tearDownSuite() throws Exception {
@@ -105,9 +113,28 @@ public class PHP54ValidationReportingTests extends AbstractPDTTTest {
 
 							StringBuilder buf = new StringBuilder();
 
-							IMarker[] markers = file.findMarkers(
-									PEXProblemIdentifier.MARKER_TYPE, true,
-									IResource.DEPTH_ZERO);
+							List<IMarker> markers = new ArrayList<IMarker>(
+									Arrays.asList(file.findMarkers(
+											PEXProblemIdentifier.MARKER_TYPE, true,
+											IResource.DEPTH_ZERO)));
+							Collections.sort(markers,
+									new Comparator<IMarker>() {
+										@Override
+										public int compare(IMarker o1,
+												IMarker o2) {
+											try {
+												return Integer.compare(
+														(Integer) o1
+																.getAttribute(IMarker.CHAR_START),
+														(Integer) o2
+																.getAttribute(IMarker.CHAR_START));
+											} catch (NumberFormatException e) {
+												return -1;
+											} catch (CoreException e) {
+												return -1;
+											}
+										}
+									});
 							for (IMarker marker : markers) {
 								buf.append("\n[line=");
 								buf.append(marker

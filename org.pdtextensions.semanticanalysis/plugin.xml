@@ -29,6 +29,22 @@
                  label="Missing method implementation"
                  defaultSeverity="warning" />
       </validator>
+      <validator
+            id="org.pdtextensions.semanticanalysis.validator.variableValidator" 
+            class="org.pdtextensions.semanticanalysis.validation.factory.VariableValidatorFactory">
+            <type
+                 id="undefined_variable"
+                 label="Undefined variable"
+                 defaultSeverity="warning" />
+            <type
+                 id="unused_variable"
+                 label="Variable is never used"
+                 defaultSeverity="warning" />
+            <type
+                 id="uninitialized_variable"
+                 label="Variable might not be initialized"
+                 defaultSeverity="warning" />
+      </validator>
    </extension>
     <extension point="org.eclipse.dltk.core.buildParticipant">
         <buildParticipant

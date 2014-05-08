@@ -15,10 +15,9 @@ import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.compiler.problem.ProblemSeverity;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
-import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.builder.IBuildContext;
-import org.eclipse.dltk.internal.core.AbstractSourceModule;
-import org.eclipse.dltk.internal.core.ModelManager;
+import org.eclipse.php.internal.core.PHPVersion;
+import org.eclipse.php.internal.core.project.ProjectOptions;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
 import org.pdtextensions.semanticanalysis.validation.IValidatorContext;
 import org.pdtextensions.semanticanalysis.validation.IValidatorIdentifier;
@@ -36,6 +35,7 @@ final public class ValidatorContext implements IValidatorContext {
 	private final Map<IValidatorIdentifier, ProblemSeverity> severities;
 	private final IValidatorManager manager;
 	private ISourceModule workingCopy;
+	private PHPVersion phpVersion;
 
 	public ValidatorContext(Validator validator, ISourceModule workingCopy, IBuildContext buildContext, IValidatorManager manager) {
 		this.buildContext = buildContext;
@@ -75,6 +75,15 @@ final public class ValidatorContext implements IValidatorContext {
 	public IScriptProject getProject() {
 		return buildContext.getSourceModule().getScriptProject();
 	}
+	
+	@Override
+	public PHPVersion getPHPVersion() {
+		if (phpVersion == null) {
+			phpVersion = ProjectOptions.getPhpVersion(getProject().getProject());
+		}
+		
+		return phpVersion;
+	}
 
 	@Override
 	public boolean isDerived() {
@@ -82,29 +91,29 @@ final public class ValidatorContext implements IValidatorContext {
 	}
 
 	@Override
-	public void registerProblem(IValidatorIdentifier identifier, int category,
+	public void registerProblem(IValidatorIdentifier identifier,
 			String message, int start, int stop) {
-		registerProblem(identifier, category, message, start, stop, buildContext.getLineTracker().getLineNumberOfOffset(start), emptyArguments);
+		registerProblem(identifier,  message, start, stop, buildContext.getLineTracker().getLineNumberOfOffset(start), emptyArguments);
 	}
 
 	@Override
-	public void registerProblem(IValidatorIdentifier identifier, int category,
+	public void registerProblem(IValidatorIdentifier identifier,
 			String message, int start, int stop, int lineNumber) {
-		registerProblem(identifier, category, message, start, stop, buildContext.getLineTracker().getLineNumberOfOffset(start), emptyArguments);
+		registerProblem(identifier, message, start, stop, buildContext.getLineTracker().getLineNumberOfOffset(start), emptyArguments);
 	}
 
 	@Override
-	public void registerProblem(IValidatorIdentifier identifier, int category,
+	public void registerProblem(IValidatorIdentifier identifier,
 			String message, int start, int stop, String[] arguments) {
-		registerProblem(identifier, category, message, start, stop, buildContext.getLineTracker().getLineNumberOfOffset(start), arguments);
+		registerProblem(identifier, message, start, stop, buildContext.getLineTracker().getLineNumberOfOffset(start), arguments);
 	}
 
 	@Override
-	public void registerProblem(IValidatorIdentifier identifier, int category,
+	public void registerProblem(IValidatorIdentifier identifier,
 			String message, int start, int stop, int lineNumber,
 			String[] arguments) {
 
-		buildContext.getProblemReporter().reportProblem(new Problem(identifier, getSeverity(identifier), category, arguments, message, buildContext.getFileName(), start, stop, lineNumber));
+		buildContext.getProblemReporter().reportProblem(new Problem(identifier, getSeverity(identifier), identifier.getCategory(), arguments, message, buildContext.getFileName(), start, stop, lineNumber));
 	}
 
 	private ProblemSeverity getSeverity(IValidatorIdentifier identifier) {

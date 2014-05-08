@@ -11,29 +11,34 @@ import org.eclipse.dltk.compiler.problem.IProblemCategory;
 import org.eclipse.dltk.compiler.problem.ProblemCategory;
 import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 import org.pdtextensions.semanticanalysis.validation.IValidatorIdentifier;
+import org.pdtextensions.semanticanalysis.validation.Problem;
 import org.pdtextensions.semanticanalysis.validation.validator.ImplementationValidator;
 import org.pdtextensions.semanticanalysis.validation.validator.UsageValidator;
+import org.pdtextensions.semanticanalysis.validation.validator.VariableValidator;
 
 /**
  * @author Robert Gruendler <r.gruendler@gmail.com>
  * @author Dawid zulus Pakula <zulus@w3des.net>
  */
 public enum PEXProblemIdentifier implements IValidatorIdentifier {
-	INTERFACE_RELATED(false, "methods", ImplementationValidator.ID), //$NON-NLS-1$
-	USAGE_RELATED(true, "use", UsageValidator.ID), //$NON-NLS-1$
-	UNRESOVABLE(true, "use", UsageValidator.ID), //$NON-NLS-1$
-	DUPLICATE(false, "duplicate", UsageValidator.ID); //$NON-NLS-1$
+	INTERFACE_RELATED("methods", Problem.CAT_RESTRICTION, ImplementationValidator.ID), //$NON-NLS-1$
+	USAGE_RELATED("use", Problem.CAT_POTENTIAL_PROGRAMMING_PROBLEM, UsageValidator.ID), //$NON-NLS-1$
+	UNRESOVABLE("use", Problem.CAT_IMPORT, UsageValidator.ID), //$NON-NLS-1$
+	DUPLICATE("duplicate", Problem.CAT_RESTRICTION, UsageValidator.ID),
+	UNUSED_VARIABLE("unused_variable", Problem.CAT_UNNECESSARY_CODE, VariableValidator.ID),
+	UNDEFINED_VARIABLE("undefined_variable", Problem.CAT_UNNECESSARY_CODE, VariableValidator.ID),
+	UNINITIALIZED_VARIABLE("uninitialized_variable", Problem.CAT_POTENTIAL_PROGRAMMING_PROBLEM, VariableValidator.ID); //$NON-NLS-1$
 
 	public static final String MARKER_TYPE = "org.pdtextensions.semanticanalysis.problem"; //$NON-NLS-1$
-
-	private final boolean isImport;
+	
 	private final String type;
 	private final String validator;
+	private final int category;
 
-	private PEXProblemIdentifier(boolean isImport, String type, String validator) {
-		this.isImport = isImport;
+	private PEXProblemIdentifier(String type, int category, String validator) {
 		this.type = type;
 		this.validator = validator;
+		this.category = category;
 	}
 
 	@Override
@@ -54,7 +59,7 @@ public enum PEXProblemIdentifier implements IValidatorIdentifier {
 
 	@Override
 	public boolean belongsTo(IProblemCategory category) {
-		if (category == ProblemCategory.IMPORT && isImport) {
+		if (category == ProblemCategory.IMPORT && this.category == Problem.CAT_IMPORT) {
 			return true;
 		}
 
@@ -64,5 +69,10 @@ public enum PEXProblemIdentifier implements IValidatorIdentifier {
 	@Override
 	public String getMarkerType() {
 		return MARKER_TYPE;
+	}
+
+	@Override
+	public int getCategory() {
+		return category;
 	}
 }

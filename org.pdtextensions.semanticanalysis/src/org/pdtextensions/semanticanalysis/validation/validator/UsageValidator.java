@@ -30,7 +30,6 @@ import org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifi
 import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 import org.pdtextensions.semanticanalysis.validation.AbstractValidator;
 import org.pdtextensions.semanticanalysis.validation.IValidatorContext;
-import org.pdtextensions.semanticanalysis.validation.Problem;
 
 /**
  * Checks a PHP sourcemodule for unresolved type references.
@@ -91,8 +90,7 @@ public class UsageValidator extends AbstractValidator {
 			for (UsePart existsPart : parts.keySet()) {
 				if (existsPart.toString().equals(part.toString())) {
 					
-					context.registerProblem(PEXProblemIdentifier.DUPLICATE,
-							Problem.CAT_RESTRICTION, String.format(
+					context.registerProblem(PEXProblemIdentifier.DUPLICATE, String.format(
 									MESSAGE_DUPLATE_USE, part.getNamespace()
 											.getFullyQualifiedName()), part
 									.getNamespace().sourceStart(), part
@@ -113,7 +111,7 @@ public class UsageValidator extends AbstractValidator {
 						sFullName.substring(1) + BACK_SLASH, MatchRule.PREFIX, 0, 0, //$NON-NLS-1$
 						searchScope, new NullProgressMonitor());
 				if (types.length == 0) {
-					context.registerProblem(PEXProblemIdentifier.UNRESOVABLE, Problem.CAT_IMPORT, String.format(MESSAGE_CANNOT_RESOLVE_USE,
+					context.registerProblem(PEXProblemIdentifier.UNRESOVABLE, String.format(MESSAGE_CANNOT_RESOLVE_USE,
 							part.getNamespace().getFullyQualifiedName()), part.getNamespace().sourceStart(), part.getNamespace().sourceEnd());
 				}
 			}
@@ -143,7 +141,7 @@ public class UsageValidator extends AbstractValidator {
 			FullyQualifiedReference fqr = (FullyQualifiedReference) s
 					.getParameterType();
 			if (!isResolved(fqr)) {
-				context.registerProblem(PEXProblemIdentifier.USAGE_RELATED, Problem.CAT_POTENTIAL_PROGRAMMING_PROBLEM, String.format(MESSAGE_CANNOT_RESOLVE_TYPE, s
+				context.registerProblem(PEXProblemIdentifier.USAGE_RELATED, String.format(MESSAGE_CANNOT_RESOLVE_TYPE, s
 						.getParameterType().getName()), s.getParameterType().sourceStart(), s.getParameterType().sourceEnd());
 			}
 		}
@@ -340,7 +338,6 @@ public class UsageValidator extends AbstractValidator {
 		if (!isResolved(fqr)) {
 			context.registerProblem(
 					PEXProblemIdentifier.USAGE_RELATED, 
-					Problem.CAT_POTENTIAL_PROGRAMMING_PROBLEM, 
 					String.format(MESSAGE_CANNOT_RESOLVE_TYPE, fqr.getFullyQualifiedName()), 
 					fqr.sourceStart(), 
 					fqr.sourceEnd()
