@@ -34,7 +34,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.dltk.compiler.problem.DefaultProblem;
 import org.eclipse.php.core.tests.AbstractPDTTTest;
 import org.eclipse.php.core.tests.PHPCoreTests;
 import org.eclipse.php.core.tests.PdttFile;
@@ -123,13 +122,11 @@ public class PHP54ValidationReportingTests extends AbstractPDTTTest {
 										public int compare(IMarker o1,
 												IMarker o2) {
 											try {
-												return Integer.compare(
-														(Integer) o1
-																.getAttribute(IMarker.CHAR_START),
-														(Integer) o2
-																.getAttribute(IMarker.CHAR_START));
-											} catch (NumberFormatException e) {
-												return -1;
+												int charStart = (Integer) o1
+														.getAttribute(IMarker.CHAR_START);
+												int o2CharStart = (Integer) o2
+														.getAttribute(IMarker.CHAR_START);
+												return Integer.compare(charStart, o2CharStart);
 											} catch (CoreException e) {
 												return -1;
 											}
