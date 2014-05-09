@@ -12,10 +12,12 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.ArrayVariableReference;
 import org.eclipse.php.internal.core.compiler.ast.nodes.Assignment;
 import org.eclipse.php.internal.core.compiler.ast.nodes.CatchClause;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ClassDeclaration;
+import org.eclipse.php.internal.core.compiler.ast.nodes.ConditionalExpression;
 import org.eclipse.php.internal.core.compiler.ast.nodes.FieldAccess;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ForEachStatement;
 import org.eclipse.php.internal.core.compiler.ast.nodes.FormalParameter;
 import org.eclipse.php.internal.core.compiler.ast.nodes.GlobalStatement;
+import org.eclipse.php.internal.core.compiler.ast.nodes.InfixExpression;
 import org.eclipse.php.internal.core.compiler.ast.nodes.LambdaFunctionDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.NamespaceDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPCallExpression;
@@ -25,6 +27,7 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.ReflectionArrayVariableR
 import org.eclipse.php.internal.core.compiler.ast.nodes.ReflectionVariableReference;
 import org.eclipse.php.internal.core.compiler.ast.nodes.Scalar;
 import org.eclipse.php.internal.core.compiler.ast.nodes.StaticFieldAccess;
+import org.eclipse.php.internal.core.compiler.ast.nodes.TraitDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.parser.ASTUtils;
 import org.eclipse.php.internal.core.language.PHPVariables;
 import org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier;
@@ -444,6 +447,7 @@ public class VariableValidator extends AbstractValidator {
 		return super.visit(s);
 	}
 
+	@Override
 	public boolean visit(ClassDeclaration s) throws Exception {
 		if (s.isInterface()) {
 			return false;
@@ -453,11 +457,53 @@ public class VariableValidator extends AbstractValidator {
 		return super.visit(s);
 	}
 	
+	@Override
 	public boolean endvisit(ClassDeclaration s) throws Exception {
 		inClassDecl = -1;
 		
 		return super.endvisit(s);
 	}
+	
+	@Override
+	public boolean visit(TraitDeclaration s) throws Exception {
+		inClassDecl = depth;
+		
+		return super.visit(s);
+	}
+	
+	@Override
+	public boolean endvisit(TraitDeclaration s) throws Exception {
+		inClassDecl = -1;
+		
+		return super.endvisit(s);
+	}
+	
+	@Override
+	public boolean visit(InfixExpression s) throws Exception {
+		operations.push(Operation.USE);
+		return super.visit(s);
+	}
+	
+	@Override
+	public boolean endvisit(InfixExpression s) throws Exception {
+		operations.pop();
+		return super.endvisit(s);
+	}
+	
+	@Override
+	public boolean visit(ConditionalExpression s) throws Exception {
+		operations.push(Operation.USE);
+		
+		return super.visit(s);
+	}
+	
+	@Override
+	public boolean endvisit(ConditionalExpression s) throws Exception {
+		operations.pop();
+		
+		return super.endvisit(s);
+	}
+	
 
 	private Scope pushScope() {
 		current = new Scope();
