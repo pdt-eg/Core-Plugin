@@ -285,7 +285,7 @@ public class VariableValidator extends AbstractValidator {
 
 	@Override
 	public boolean visit(VariableReference s) throws Exception {
-		if (isSuperGlobal(s.getName())) {
+		if (!s.getName().startsWith("$") || isSuperGlobal(s.getName())) {
 			return false;
 		} 
 		if (s.getVariableKind() == PHPVariableKind.GLOBAL && isGlobal(s.getName())) {
@@ -316,7 +316,7 @@ public class VariableValidator extends AbstractValidator {
 	
 	@Override
 	public boolean visit(ArrayVariableReference s) throws Exception {
-		if (isSuperGlobal(s.getName())) {
+		if (!s.getName().startsWith("$") || isSuperGlobal(s.getName())) {
 			return false;
 		} 
 		if (s.getVariableKind() == PHPVariableKind.GLOBAL && isGlobal(s.getName())) {
