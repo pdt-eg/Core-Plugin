@@ -368,7 +368,9 @@ public class VariableValidator extends AbstractValidator {
 	@Override
 	public boolean visit(FieldAccess s) throws Exception {
 		if (s.getDispatcher() != null) {
+			operations.push(Operation.USE);
 			s.getDispatcher().traverse(this);
+			operations.pop();
 		}
 		if (s.getField() != null) {
 			if (s.getField() instanceof ArrayVariableReference) {
@@ -389,7 +391,9 @@ public class VariableValidator extends AbstractValidator {
 	@Override
 	public boolean visit(StaticFieldAccess s) throws Exception {
 		if (s.getDispatcher() != null) {
+			operations.push(Operation.USE);
 			s.getDispatcher().traverse(this);
+			operations.pop();
 		}
 		if (s.getField() != null) {
 			if (s.getField() instanceof ArrayVariableReference) {
