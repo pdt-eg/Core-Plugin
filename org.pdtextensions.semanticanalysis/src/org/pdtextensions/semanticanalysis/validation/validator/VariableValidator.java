@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.ast.references.VariableReference;
+import org.eclipse.php.internal.core.PHPVersion;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ArrayVariableReference;
 import org.eclipse.php.internal.core.compiler.ast.nodes.Assignment;
 import org.eclipse.php.internal.core.compiler.ast.nodes.CatchClause;
@@ -49,6 +50,9 @@ public class VariableValidator extends AbstractValidator {
 	final private static String MESSAGE_UNDEFINED_VARIABLE = "Variable %s is undefined";
 
 	final public static String ID = "org.pdtextensions.semanticanalysis.validator.variableValidator"; //$NON-NLS-1$
+	
+	final private static String THIS_VAR = "$this"; //$NON-NLS-1$
+	final private static String DOLLAR = "$"; //$NON-NLS-1$
 
 	private Stack<Scope> scopes = new Stack<VariableValidator.Scope>();
 	private Stack<Operation> operations = new Stack<VariableValidator.Operation>();
@@ -175,8 +179,8 @@ public class VariableValidator extends AbstractValidator {
 		if (inClassDecl + 1 == depth && !node.isStatic()) {
 			Variable v = new ImportedVariable(node);
 			v.setInitialized(node.start());
-			current.variables.put("$this", v); //$NON-NLS-1$
-		}
+			current.variables.put(THIS_VAR, v);
+		} 
 		if (node.getBody() != null) {
 			node.getBody().traverse(this);
 		}
@@ -208,6 +212,9 @@ public class VariableValidator extends AbstractValidator {
 				}
 			}
 		}
+		if (PHPVersion.PHP5_3.isLessThan(context.getPHPVersion()) && inClassDecl + 1 < depth && prev.variables.containsKey(THIS_VAR)) { //$NON-NLS-1$
+			prev.variables.put(THIS_VAR, prev.variables.get(THIS_VAR)); //$NON-NLS-1$
+		}
 		decl.getBody().traverse(this);
 		
 		popScope();
@@ -222,7 +229,7 @@ public class VariableValidator extends AbstractValidator {
 		if (ex.getReceiver() == null && ex.getCallName() != null && ex.getCallName().getName().equals("compact") && ex.getArgs() != null) {
 			for (ASTNode node : ex.getArgs().getChilds()) {
 				if (node instanceof Scalar && ((Scalar) node).getScalarType() == Scalar.TYPE_STRING) {
-					String name = "$" + ASTUtils.stripQuotes(((Scalar)node).getValue());
+					String name = DOLLAR + ASTUtils.stripQuotes(((Scalar)node).getValue());
 					if (current.variables.containsKey(name)) {
 						current.variables.get(name).setUsed(node.start());
 					}
@@ -285,7 +292,7 @@ public class VariableValidator extends AbstractValidator {
 
 	@Override
 	public boolean visit(VariableReference s) throws Exception {
-		if (!s.getName().startsWith("$") || isSuperGlobal(s.getName())) {
+		if (!s.getName().startsWith(DOLLAR) || isSuperGlobal(s.getName())) {
 			return false;
 		} 
 		if (s.getVariableKind() == PHPVariableKind.GLOBAL && isGlobal(s.getName())) {
@@ -316,7 +323,7 @@ public class VariableValidator extends AbstractValidator {
 	
 	@Override
 	public boolean visit(ArrayVariableReference s) throws Exception {
-		if (!s.getName().startsWith("$") || isSuperGlobal(s.getName())) {
+		if (!s.getName().startsWith(DOLLAR) || isSuperGlobal(s.getName())) {
 			return false;
 		} 
 		if (s.getVariableKind() == PHPVariableKind.GLOBAL && isGlobal(s.getName())) {
@@ -529,7 +536,7 @@ public class VariableValidator extends AbstractValidator {
 	 * @return
 	 */
 	private boolean isSuperGlobal(String name) {
-		if ("$GLOBALS".equals(name)) {
+		if ("$GLOBALS".equals(name)) { //$NON-NLS-1$
 			return true;
 		}
 		if (!name.startsWith("$_")) { //$NON-NLS-1$
