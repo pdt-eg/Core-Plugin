@@ -11,7 +11,7 @@ import org.eclipse.php.internal.core.ast.nodes.ExpressionStatement;
 import org.eclipse.php.internal.core.ast.visitor.AbstractVisitor;
 
 @SuppressWarnings("restriction")
-public class BlockContainsFinder extends AbstractVisitor {
+public class BlockContainsFinder extends GenericVisitor {
 
 	private Block fStartNode;
 	private ASTNode[] fToSearch;
@@ -58,12 +58,7 @@ public class BlockContainsFinder extends AbstractVisitor {
 		fStartNode.accept(this);
 	}
 	
-	public boolean visit(ExpressionStatement node)
-	{
-		return visit((ASTNode) node);
-	}
-	
-	public boolean visit(ASTNode node)
+	protected boolean visitNode(ASTNode node)
 	{
 		// check whether the node matches
 		if(matches(node)) {

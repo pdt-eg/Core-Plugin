@@ -1,7 +1,6 @@
 package org.pdtextensions.core.ast.util;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.core.ISourceRange;
