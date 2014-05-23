@@ -373,16 +373,9 @@ public class VariableValidator extends AbstractValidator {
 			operations.pop();
 		}
 		if (s.getField() != null) {
-			if (s.getField() instanceof ArrayVariableReference) {
-				ArrayVariableReference ref = (ArrayVariableReference) s.getField();
-				if (ref.getIndex() != null) {
-					operations.push(Operation.USE);
-					ref.getIndex().traverse(this);
-					operations.pop();
-				}
-			} else if (!(s.getField() instanceof VariableReference)) {
-				s.getField().traverse(this);
-			}
+			operations.push(Operation.USE);
+			s.getField().traverse(this);
+			operations.pop();
 		}
 		
 		return false;
