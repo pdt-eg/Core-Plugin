@@ -323,12 +323,14 @@ public class VariableValidator extends AbstractValidator {
 	
 	@Override
 	public boolean visit(ArrayVariableReference s) throws Exception {
-		if (!s.getName().startsWith(DOLLAR) || isSuperGlobal(s.getName())) {
+		if (!s.getName().startsWith(DOLLAR) || isSuperGlobal(s.getName()) || (s.getVariableKind() == PHPVariableKind.GLOBAL && isGlobal(s.getName()))) {
+			if (s.getIndex() != null) {
+				operations.push(Operation.USE);
+				s.getIndex().traverse(this);
+				operations.pop();
+			}
 			return false;
 		} 
-		if (s.getVariableKind() == PHPVariableKind.GLOBAL && isGlobal(s.getName())) {
-			return false;
-		}
 		Variable var = current.variables.get(s.getName());
 		if (var == null) {
 			context.registerProblem(PEXProblemIdentifier.UNDEFINED_VARIABLE, String.format(MESSAGE_UNDEFINED_VARIABLE, s.getName()), s.start(), s.start() + s.getName().length());
