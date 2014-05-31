@@ -59,13 +59,13 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 			ModelManager.getModelManager().getIndexManager().waitUntilReady();
 		}
 		ISourceModule workingCopy = context.getSourceModule();
-		if (context.getBuildType() == IBuildContext.RECONCILE_BUILD) {
-			try {
-				workingCopy = context.getSourceModule().getWorkingCopy(null);
-			} catch (ModelException e) {
-				Logger.logException(e);
-			}
-		}
+		//if (context.getBuildType() == IBuildContext.RECONCILE_BUILD) {
+			//try {
+				//workingCopy = context.getSourceModule().getWorkingCopy(null);
+			//} catch (ModelException e) {
+			//	Logger.logException(e);
+			//} 
+		//}
 		for (Validator validator : manager.getValidators(context.getSourceModule().getScriptProject())) {
 			final ValidatorContext validatorContext = new ValidatorContext(validator, workingCopy, context, manager);
 
