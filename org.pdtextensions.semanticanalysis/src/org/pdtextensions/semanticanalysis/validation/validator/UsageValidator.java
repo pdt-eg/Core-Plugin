@@ -52,6 +52,8 @@ public class UsageValidator extends AbstractValidator {
 
 	Map<UsePart, Boolean> parts;
 	Map<String, Boolean> found;
+	
+	IType namespace = null;
 
 	public UsageValidator() {
 		super();
@@ -61,6 +63,8 @@ public class UsageValidator extends AbstractValidator {
 	
 	@Override
 	public void validate(IValidatorContext context) throws Exception {
+		namespace = PHPModelUtils.getCurrentNamespace(
+				context.getSourceModule(), 0);
 		super.validate(context);
 		parts.clear();
 		found.clear();
@@ -69,7 +73,16 @@ public class UsageValidator extends AbstractValidator {
 	@Override
 	public boolean visit(NamespaceDeclaration s) throws Exception {
 		parts = new HashMap<UsePart, Boolean>();
+		namespace = PHPModelUtils.getCurrentNamespace(
+				context.getSourceModule(), s.getNameEnd() + 2);
 		return super.visit(s);
+	}
+	
+	@Override
+	public boolean endvisit(NamespaceDeclaration s) throws Exception {
+		boolean res = super.endvisit(s);
+		namespace = null;
+		return res;
 	}
 
 	/**
@@ -255,17 +268,7 @@ public class UsageValidator extends AbstractValidator {
 
 		String check;
 		String sFullName = fqr.getFullyQualifiedName();
-		IType namespace = PHPModelUtils.getCurrentNamespace(
-				context.getSourceModule(), fqr.sourceStart());
 
-		if (namespace != null) {
-			check = BACK_SLASH + namespace.getFullyQualifiedName() + BACK_SLASH + sFullName;
-		} else {
-			check = BACK_SLASH + sFullName;
-		}
-		if (isResolved(check)) {
-			return true;
-		}
 		for (Entry<UsePart, Boolean> entry : parts.entrySet()) {
 
 			String useName = entry.getKey().getAlias() != null ? entry.getKey().getAlias().getName() :entry.getKey().getNamespace().getName();
@@ -286,6 +289,15 @@ public class UsageValidator extends AbstractValidator {
 			if (isResolved(check)) {
 				return true;
 			}
+		}
+		
+		if (namespace != null) {
+			check = BACK_SLASH + namespace.getFullyQualifiedName() + BACK_SLASH + sFullName;
+		} else {
+			check = BACK_SLASH + sFullName;
+		}
+		if (isResolved(check)) {
+			return true;
 		}
 
 		return false;
@@ -316,8 +328,8 @@ public class UsageValidator extends AbstractValidator {
 		if (found.containsKey(searchString)) {
 			return found.get(searchString);
 		}
-
-		if (PDTModelUtils.findTypes(context.getProject(), searchString).length > 0) {
+		
+		if (true || PDTModelUtils.findTypes(context.getProject(), searchString).length > 0) {
 			found.put(searchString, true);
 			return true;
 		}
