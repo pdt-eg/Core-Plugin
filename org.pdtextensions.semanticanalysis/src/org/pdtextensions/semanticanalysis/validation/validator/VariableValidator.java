@@ -442,17 +442,37 @@ public class VariableValidator extends AbstractValidator {
 	}
 	
 	@Override
+	/**
+	 * TODO Allow mark Variable as global
+	 */
 	public boolean visit(GlobalStatement s) throws Exception {
-		operations.push(Operation.ASSIGN);
-		return super.visit(s);
+		for (Expression el : s.getVariables()) {
+			if (el instanceof VariableReference) {
+				VariableReference ref = (VariableReference) el;
+				if (scopes.size() > 1) {
+					Scope parentScope = scopes.get(scopes.size()-2);
+					if (parentScope.variables.containsKey(ref.getName())) {
+						current.variables.put(ref.getName(), new ImportedVariable(parentScope.variables.get(ref.getName())));
+						continue;
+					}
+				}
+				Variable var = current.variables.get(ref.getName());
+				if (var == null) {
+					var = new Variable(ref);
+					current.variables.put(ref.getName(), var);
+				}
+				if (var.initialized < 0) {
+					var.initialized = ref.start();
+				}
+			} else {
+				operations.push(Operation.ASSIGN);
+				el.traverse(this);
+				operations.pop();
+			}
+		}
+		return false;
 	}
 	
-	@Override
-	public boolean endvisit(GlobalStatement s) throws Exception {
-		operations.pop();
-		return super.visit(s);
-	}
-
 	@Override
 	public boolean visit(ClassDeclaration s) throws Exception {
 		if (s.isInterface()) {
