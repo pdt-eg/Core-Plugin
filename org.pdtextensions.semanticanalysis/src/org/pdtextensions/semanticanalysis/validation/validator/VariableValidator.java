@@ -50,7 +50,7 @@ public class VariableValidator extends AbstractValidator {
 	final private static String MESSAGE_UNDEFINED_VARIABLE = "Variable %s is undefined";
 
 	final public static String ID = "org.pdtextensions.semanticanalysis.validator.variableValidator"; //$NON-NLS-1$
-	
+
 	final private static String THIS_VAR = "$this"; //$NON-NLS-1$
 	final private static String DOLLAR = "$"; //$NON-NLS-1$
 
@@ -66,7 +66,7 @@ public class VariableValidator extends AbstractValidator {
 
 	private class Scope {
 		public HashMap<String, Variable> variables = new HashMap<String, VariableValidator.Variable>();
-		
+
 		void copy(Scope scope) {
 			for (Entry<String, Variable> entry : scope.variables.entrySet()) {
 				variables.put(entry.getKey(), new ImportedVariable(entry.getValue()));
@@ -80,80 +80,91 @@ public class VariableValidator extends AbstractValidator {
 		private int initialized = -1;
 		private int used = -1;
 		public TreeMap<Integer, Integer> other = new TreeMap<Integer, Integer>();
-		
+
 		Variable() {
 		}
-		
+
 		Variable(ASTNode node) {
 			start = node.start();
 			end = node.end();
 		}
 		
+		Variable(int start, int end) {
+			this.start = start;
+			this.end = end;
+		}
+
 		public int initialized() {
 			return initialized;
 		}
-		
+
 		public void setInitialized(int init) {
 			initialized = init;
 		}
-		
+
 		public int used() {
 			return used;
 		}
-		
+
 		public void setUsed(int used) {
 			this.used = used;
 		}
-		
+
 		public void addAddress(ASTNode node) {
 			other.put(node.start(), node.end());
 		}
+		
+		public void addAddress(int start, int end) {
+			other.put(start, end);
+		}
 	}
-	
+
 	private class ImportedVariable extends Variable {
 		public Variable parent;
+
 		ImportedVariable(Variable variable) {
 			parent = variable;
 			start = variable.start;
 			end = variable.end;
 		}
+
 		ImportedVariable(ASTNode node) {
 			parent = new Variable(node);
 			start = parent.start;
 			end = parent.end;
 		}
-		
+
 		@Override
 		public int used() {
 			return parent.used();
 		}
-		
+
 		@Override
 		public void setUsed(int used) {
 			parent.setUsed(used);
 		}
-		
+
 		@Override
 		public int initialized() {
 			return parent.initialized();
 		}
-		
+
 		@Override
 		public void setInitialized(int init) {
 			parent.setInitialized(init);
 		}
-		
+
 		@Override
 		public void addAddress(ASTNode node) {
 			parent.addAddress(node);
 		}
-		
+
 	}
 
 	public VariableValidator() {
 		super();
 	}
-	
+
 	@Override
 	public void validate(IValidatorContext context) throws Exception {
 		pushScope();
@@ -164,7 +175,7 @@ public class VariableValidator extends AbstractValidator {
 	@Override
 	public boolean visit(PHPMethodDeclaration node) throws Exception {
 		pushScope();
-		if (node.isAbstract() || node.getBody() == null ) {
+		if (node.isAbstract() || node.getBody() == null) {
 			popScope();
 			return false;
 		}
@@ -180,7 +191,7 @@ public class VariableValidator extends AbstractValidator {
 			Variable v = new ImportedVariable(node);
 			v.setInitialized(node.start());
 			current.variables.put(THIS_VAR, v);
-		} 
+		}
 		if (node.getBody() != null) {
 			node.getBody().traverse(this);
 		}
@@ -207,7 +218,8 @@ public class VariableValidator extends AbstractValidator {
 					if (prev.variables.containsKey(name)) {
 						current.variables.put(name, new ImportedVariable(prev.variables.get(name)));
 					} else {
-						context.registerProblem(PEXProblemIdentifier.UNDEFINED_VARIABLE, String.format(MESSAGE_UNDEFINED_VARIABLE, name), var.start(), var.end());
+						context.registerProblem(PEXProblemIdentifier.UNDEFINED_VARIABLE, String.format(MESSAGE_UNDEFINED_VARIABLE, name), var.start(),
+								var.end());
 					}
 				}
 			}
@@ -216,34 +228,34 @@ public class VariableValidator extends AbstractValidator {
 			prev.variables.put(THIS_VAR, prev.variables.get(THIS_VAR)); //$NON-NLS-1$
 		}
 		decl.getBody().traverse(this);
-		
+
 		popScope();
-		
+
 		return false;
 	}
-	
+
 	@Override
 	public boolean visit(PHPCallExpression ex) throws Exception {
 		operations.push(Operation.USE);
-		
+
 		if (ex.getReceiver() == null && ex.getCallName() != null && ex.getCallName().getName().equals("compact") && ex.getArgs() != null) {
 			for (ASTNode node : ex.getArgs().getChilds()) {
 				if (node instanceof Scalar && ((Scalar) node).getScalarType() == Scalar.TYPE_STRING) {
-					String name = DOLLAR + ASTUtils.stripQuotes(((Scalar)node).getValue());
+					String name = DOLLAR + ASTUtils.stripQuotes(((Scalar) node).getValue());
 					if (current.variables.containsKey(name)) {
 						current.variables.get(name).setUsed(node.start());
 					}
 				}
 			}
 		}
-		
+
 		return super.visit(ex);
 	}
 
 	@Override
 	public boolean endvisit(PHPCallExpression ex) throws Exception {
 		operations.pop();
-		
+
 		return super.endvisit(ex);
 	}
 
@@ -269,7 +281,7 @@ public class VariableValidator extends AbstractValidator {
 		popScope();
 		return super.visit(s);
 	}
-	
+
 	public boolean visit(ForEachStatement s) throws Exception {
 		if (s.getExpression() != null) {
 			s.getExpression().traverse(this);
@@ -282,11 +294,11 @@ public class VariableValidator extends AbstractValidator {
 			s.getValue().traverse(this);
 		}
 		operations.pop();
-		
-		if (s.getStatement() != null ) {
+
+		if (s.getStatement() != null) {
 			s.getStatement().traverse(this);
 		}
-		
+
 		return false;
 	}
 
@@ -294,33 +306,39 @@ public class VariableValidator extends AbstractValidator {
 	public boolean visit(VariableReference s) throws Exception {
 		if (!s.getName().startsWith(DOLLAR) || isSuperGlobal(s.getName())) {
 			return false;
-		} 
+		}
 		if (s.getVariableKind() == PHPVariableKind.GLOBAL && isGlobal(s.getName())) {
 			return false;
 		} else if (s.getVariableKind() != PHPVariableKind.LOCAL && s.getVariableKind() != PHPVariableKind.GLOBAL) {
 			return false;
 		}
-		Variable var = current.variables.get(s.getName());
 		
-		if (isInit()) {
-			if (var == null) {
-				var = new Variable(s);
-				current.variables.put(s.getName(), var);
-			} else {
-				var.addAddress(s);
-			}
-			if (var.initialized()  < 0) {
-				var.setInitialized(s.start());
-			}
-		}
-		if (var == null) {
-			context.registerProblem(PEXProblemIdentifier.UNDEFINED_VARIABLE, String.format(MESSAGE_UNDEFINED_VARIABLE, s.getName()), s.start(), s.end());
-		} else if(!isInit()) {
-			var.setUsed(s.start());
-		}
+		check(s.getName(), s.start(), s.end());
+		
 		return super.visit(s);
 	}
 	
+	protected void check(String name, int start, int end) {
+		Variable var = current.variables.get(name);
+
+		if (isInit()) {
+			if (var == null) {
+				var = new Variable(start, end);
+				current.variables.put(name, var);
+			} else {
+				var.addAddress(start, end);
+			}
+			if (var.initialized() < 0) {
+				var.setInitialized(start);
+			}
+		}
+		if (var == null) {
+			context.registerProblem(PEXProblemIdentifier.UNDEFINED_VARIABLE, String.format(MESSAGE_UNDEFINED_VARIABLE, name), start, end);
+		} else if (!isInit()) {
+			var.setUsed(start);
+		}
+	}
+
 	@Override
 	public boolean visit(ArrayVariableReference s) throws Exception {
 		if (!s.getName().startsWith(DOLLAR) || isSuperGlobal(s.getName()) || (s.getVariableKind() == PHPVariableKind.GLOBAL && isGlobal(s.getName()))) {
@@ -330,11 +348,12 @@ public class VariableValidator extends AbstractValidator {
 				operations.pop();
 			}
 			return false;
-		} 
+		}
 		Variable var = current.variables.get(s.getName());
 		if (var == null) {
-			context.registerProblem(PEXProblemIdentifier.UNDEFINED_VARIABLE, String.format(MESSAGE_UNDEFINED_VARIABLE, s.getName()), s.start(), s.start() + s.getName().length());
-		} else if(!isInit()) {
+			context.registerProblem(PEXProblemIdentifier.UNDEFINED_VARIABLE, String.format(MESSAGE_UNDEFINED_VARIABLE, s.getName()), s.start(), s.start()
+					+ s.getName().length());
+		} else if (!isInit()) {
 			var.setUsed(s.start());
 		}
 		if (s.getIndex() != null) {
@@ -342,31 +361,47 @@ public class VariableValidator extends AbstractValidator {
 			s.getIndex().traverse(this);
 			operations.pop();
 		}
-		
+
 		return false;
 	}
-	
+
 	public boolean visit(ReflectionArrayVariableReference s) throws Exception {
-		operations.push(Operation.USE);
-		
+		if (s.getExpression() instanceof Scalar) {
+			Scalar name = (Scalar) s.getExpression();
+			if (name.getScalarType() == Scalar.TYPE_STRING) {
+				String dolarName = DOLLAR + name.getValue();
+				check(dolarName, name.start(), name.end());
+			}
+		}
+		operations.push(Operation.USE); 
+
 		return super.visit(s);
 	}
+
 	public boolean endvisit(ReflectionArrayVariableReference s) throws Exception {
 		operations.pop();
-		
+
 		return super.endvisit(s);
 	}
+
 	public boolean visit(ReflectionVariableReference s) throws Exception {
+		if (s.getExpression() instanceof Scalar) {
+			Scalar name = (Scalar) s.getExpression();
+			if (name.getScalarType() == Scalar.TYPE_STRING) {
+				String dolarName = DOLLAR + name.getValue();
+				check(dolarName, name.start(), name.end());
+			}
+		}
 		operations.push(Operation.USE);
-		
+
 		return super.visit(s);
 	}
+
 	public boolean endvisit(ReflectionVariableReference s) throws Exception {
 		operations.pop();
 		return super.endvisit(s);
 	}
-	
-	
+
 	@Override
 	public boolean visit(FieldAccess s) throws Exception {
 		if (s.getDispatcher() != null) {
@@ -379,10 +414,10 @@ public class VariableValidator extends AbstractValidator {
 			s.getField().traverse(this);
 			operations.pop();
 		}
-		
+
 		return false;
 	}
-	
+
 	@Override
 	public boolean visit(StaticFieldAccess s) throws Exception {
 		if (s.getDispatcher() != null) {
@@ -404,7 +439,7 @@ public class VariableValidator extends AbstractValidator {
 		}
 		return false;
 	}
-	
+
 	public boolean visit(CatchClause s) throws Exception {
 		Scope prev = current;
 		pushScope();
@@ -422,7 +457,7 @@ public class VariableValidator extends AbstractValidator {
 		} finally {
 			popScope();
 		}
-		
+
 		return false;
 	}
 
@@ -436,11 +471,10 @@ public class VariableValidator extends AbstractValidator {
 		return false;
 	};
 
-
 	private boolean isInit() {
 		return !operations.isEmpty() && operations.lastElement() == Operation.ASSIGN;
 	}
-	
+
 	@Override
 	/**
 	 * TODO Allow mark Variable as global
@@ -450,7 +484,7 @@ public class VariableValidator extends AbstractValidator {
 			if (el instanceof VariableReference) {
 				VariableReference ref = (VariableReference) el;
 				if (scopes.size() > 1) {
-					Scope parentScope = scopes.get(scopes.size()-2);
+					Scope parentScope = scopes.get(scopes.size() - 2);
 					if (parentScope.variables.containsKey(ref.getName())) {
 						current.variables.put(ref.getName(), new ImportedVariable(parentScope.variables.get(ref.getName())));
 						continue;
@@ -472,7 +506,7 @@ public class VariableValidator extends AbstractValidator {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean visit(ClassDeclaration s) throws Exception {
 		if (s.isInterface()) {
@@ -482,54 +516,53 @@ public class VariableValidator extends AbstractValidator {
 
 		return super.visit(s);
 	}
-	
+
 	@Override
 	public boolean endvisit(ClassDeclaration s) throws Exception {
 		inClassDecl = -1;
-		
+
 		return super.endvisit(s);
 	}
-	
+
 	@Override
 	public boolean visit(TraitDeclaration s) throws Exception {
 		inClassDecl = depth;
-		
+
 		return super.visit(s);
 	}
-	
+
 	@Override
 	public boolean endvisit(TraitDeclaration s) throws Exception {
 		inClassDecl = -1;
-		
+
 		return super.endvisit(s);
 	}
-	
+
 	@Override
 	public boolean visit(InfixExpression s) throws Exception {
 		operations.push(Operation.USE);
 		return super.visit(s);
 	}
-	
+
 	@Override
 	public boolean endvisit(InfixExpression s) throws Exception {
 		operations.pop();
 		return super.endvisit(s);
 	}
-	
+
 	@Override
 	public boolean visit(ConditionalExpression s) throws Exception {
 		operations.push(Operation.USE);
-		
+
 		return super.visit(s);
 	}
-	
+
 	@Override
 	public boolean endvisit(ConditionalExpression s) throws Exception {
 		operations.pop();
-		
+
 		return super.endvisit(s);
 	}
-	
 
 	private Scope pushScope() {
 		current = new Scope();
@@ -549,7 +582,7 @@ public class VariableValidator extends AbstractValidator {
 		depth--;
 		return tmp;
 	}
-	
+
 	/**
 	 * @param name
 	 * @return
@@ -561,10 +594,10 @@ public class VariableValidator extends AbstractValidator {
 		if (!name.startsWith("$_")) { //$NON-NLS-1$
 			return false;
 		}
-		
+
 		return isGlobal(name);
 	}
-	
+
 	/**
 	 * @param name
 	 * @return
