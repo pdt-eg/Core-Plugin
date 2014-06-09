@@ -329,7 +329,7 @@ public class UsageValidator extends AbstractValidator {
 			return found.get(searchString);
 		}
 		
-		if (true || PDTModelUtils.findTypes(context.getProject(), searchString).length > 0) {
+		if (PDTModelUtils.findTypes(context.getProject(), searchString).length > 0) {
 			found.put(searchString, true);
 			return true;
 		}
