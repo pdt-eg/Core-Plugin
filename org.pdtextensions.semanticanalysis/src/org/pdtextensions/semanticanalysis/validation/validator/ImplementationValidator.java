@@ -91,9 +91,6 @@ public class ImplementationValidator extends AbstractValidator{
 		}
 		
 		
-		IModelAccessCache cache = new PerFileModelAccessCache(sourceModule);
-		IMethod[] unimplementedMethods = PHPModelUtils.getUnimplementedMethods(classType, cache, null);
-		 
 		Map<String, IMethod> listImported = PDTModelUtils.getImportedMethods(classType);
 		// iterate over all interfaces and check if the current class
 		// or any of the superclasses implements the method
