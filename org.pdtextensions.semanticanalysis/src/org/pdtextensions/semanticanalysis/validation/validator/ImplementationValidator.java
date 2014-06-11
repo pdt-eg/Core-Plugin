@@ -22,7 +22,9 @@ import org.eclipse.dltk.ti.types.IEvaluatedType;
 import org.eclipse.php.core.compiler.PHPFlags;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ClassDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.FullyQualifiedReference;
+import org.eclipse.php.internal.core.model.PerFileModelAccessCache;
 import org.eclipse.php.internal.core.model.PhpModelAccess;
+import org.eclipse.php.internal.core.typeinference.IModelAccessCache;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.eclipse.php.internal.core.typeinference.PHPTypeInferenceUtils;
 import org.pdtextensions.core.log.Logger;
@@ -75,7 +77,7 @@ public class ImplementationValidator extends AbstractValidator{
 		PhpModelAccess model = PhpModelAccess.getDefault();		
 		IType nss = PHPModelUtils.getCurrentNamespace(sourceModule, getClassDeclaration().getNameStart());
 		String search = nss != null ? nss.getElementName() + BACK_SLASH + getClassDeclaration().getName() : getClassDeclaration().getName();
-		
+			
 		IType classType = context != null ? PDTModelUtils.findType(sourceModule, search) : null;
 				
 		if (classType == null) {
@@ -88,6 +90,10 @@ public class ImplementationValidator extends AbstractValidator{
 			}
 		}
 		
+		
+		IModelAccessCache cache = new PerFileModelAccessCache(sourceModule);
+		IMethod[] unimplementedMethods = PHPModelUtils.getUnimplementedMethods(classType, cache, null);
+		 
 		Map<String, IMethod> listImported = PDTModelUtils.getImportedMethods(classType);
 		// iterate over all interfaces and check if the current class
 		// or any of the superclasses implements the method
@@ -115,16 +121,19 @@ public class ImplementationValidator extends AbstractValidator{
 					continue;
 				}
 				IType[] types;
+				
 				if (PDTModelUtils.findType(sourceModule, name) != null) {
 					types = new IType[] {PDTModelUtils.findType(sourceModule, name)};
 				} else {
 					types = model.findTypes(name, MatchRule.EXACT, 0, 0, scope, new NullProgressMonitor());
 				}
+				
 				if (types.length != 1) {
 					continue;
 				}
 				
 				IType type = types[0];
+				
 				
 				try {
 					for (IMethod method : type.getMethods()) {
@@ -134,7 +143,8 @@ public class ImplementationValidator extends AbstractValidator{
 						if (methodSignature == null) {
 							continue;
 						}
-						IMethod[] ms = PDTModelUtils.getSuperTypeHierarchyMethod(classType, method.getElementName(), true, null);
+						
+						IMethod[] ms = PHPModelUtils.getTypeMethod(classType, method.getElementName(), true);
 						
 						for (IMethod me : ms) {
 							if (me.getParent().getElementName().equals(fqr.getName())) {
@@ -144,6 +154,7 @@ public class ImplementationValidator extends AbstractValidator{
 								implemented = true;
 							}
 						}
+						
 
 						for (MethodDeclaration typeMethod : getClassDeclaration().getMethods()) {
 							String signature = PDTModelUtils.getMethodSignature(typeMethod, project);
@@ -180,6 +191,7 @@ public class ImplementationValidator extends AbstractValidator{
 				}					
 			}				
 		}
+		
 		
 		if (unimplemented.size() > 0) {		
 			MissingMethodImplementation missing = new MissingMethodImplementation(getClassDeclaration(), unimplemented);
