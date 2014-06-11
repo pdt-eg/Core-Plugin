@@ -64,6 +64,7 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 		res.add(getKey(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID, PreferenceConstants.ENABLED));
 		for (Validator v : validators) {
 			for (Type t : v.getTypes()) {
+				
 				res.add(getKey(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID + "/" + v.getId(), t.getId()));
 			}
 		}
@@ -148,7 +149,8 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 
 			for (Validator v : category.getValidators()) {
 				for (Type t : v.getTypes()) {
-					Combo combo = fields[i] = addComboBox(inner, t.getLabel(), fAllKeys[++i], getSeverityValues(), getSeverityLabels());
+					
+					Combo combo = fields[i] = addComboBox(inner, t.getLabel(), new Key(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID + "/" + v.getId(), t.getId()), getSeverityValues(), getSeverityLabels());
 					Label object = (Label)fLabels.get(combo);
 					object.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 				}
