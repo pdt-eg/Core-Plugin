@@ -24,6 +24,7 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.NamespaceDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPCallExpression;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPMethodDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPVariableKind;
+import org.eclipse.php.internal.core.compiler.ast.nodes.ReferenceExpression;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ReflectionArrayVariableReference;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ReflectionVariableReference;
 import org.eclipse.php.internal.core.compiler.ast.nodes.Scalar;
@@ -53,6 +54,7 @@ public class VariableValidator extends AbstractValidator {
 
 	final private static String THIS_VAR = "$this"; //$NON-NLS-1$
 	final private static String DOLLAR = "$"; //$NON-NLS-1$
+	final private static String AMP = "&"; //$NON-NLS-1$
 
 	private Stack<Scope> scopes = new Stack<VariableValidator.Scope>();
 	private Stack<Operation> operations = new Stack<VariableValidator.Operation>();
@@ -213,6 +215,9 @@ public class VariableValidator extends AbstractValidator {
 		}
 		if (decl.getLexicalVars() != null) {
 			for (Expression var : decl.getLexicalVars()) {
+				if (var instanceof ReferenceExpression) {
+					var = ((ReferenceExpression) var).getVariable();
+				}
 				if (var instanceof VariableReference) {
 					final String name = ((VariableReference) var).getName();
 					if (prev.variables.containsKey(name)) {
@@ -251,6 +256,7 @@ public class VariableValidator extends AbstractValidator {
 
 		return super.visit(ex);
 	}
+	
 
 	@Override
 	public boolean endvisit(PHPCallExpression ex) throws Exception {
@@ -301,19 +307,28 @@ public class VariableValidator extends AbstractValidator {
 
 		return false;
 	}
+	
+	private String getName(String name) {
+		if (name.startsWith(AMP)) {
+			name = name.substring(1);
+		}
+		
+		return name;
+	}
 
 	@Override
 	public boolean visit(VariableReference s) throws Exception {
-		if (!s.getName().startsWith(DOLLAR) || isSuperGlobal(s.getName())) {
+		String name = getName(s.getName());
+		if (!name.startsWith(DOLLAR) || isSuperGlobal(name)) {
 			return false;
 		}
-		if (s.getVariableKind() == PHPVariableKind.GLOBAL && isGlobal(s.getName())) {
+		if (s.getVariableKind() == PHPVariableKind.GLOBAL && isGlobal(name)) {
 			return false;
 		} else if (s.getVariableKind() != PHPVariableKind.LOCAL && s.getVariableKind() != PHPVariableKind.GLOBAL) {
 			return false;
 		}
 		
-		check(s.getName(), s.start(), s.end());
+		check(name, s.start(), s.end());
 		
 		return super.visit(s);
 	}
@@ -341,7 +356,8 @@ public class VariableValidator extends AbstractValidator {
 
 	@Override
 	public boolean visit(ArrayVariableReference s) throws Exception {
-		if (!s.getName().startsWith(DOLLAR) || isSuperGlobal(s.getName()) || (s.getVariableKind() == PHPVariableKind.GLOBAL && isGlobal(s.getName()))) {
+		String name = getName(s.getName());
+		if (!name.startsWith(DOLLAR) || isSuperGlobal(name) || (s.getVariableKind() == PHPVariableKind.GLOBAL && isGlobal(name))) {
 			if (s.getIndex() != null) {
 				operations.push(Operation.USE);
 				s.getIndex().traverse(this);
@@ -349,9 +365,9 @@ public class VariableValidator extends AbstractValidator {
 			}
 			return false;
 		}
-		Variable var = current.variables.get(s.getName());
+		Variable var = current.variables.get(name);
 		if (var == null) {
-			context.registerProblem(PEXProblemIdentifier.UNDEFINED_VARIABLE, String.format(MESSAGE_UNDEFINED_VARIABLE, s.getName()), s.start(), s.start()
+			context.registerProblem(PEXProblemIdentifier.UNDEFINED_VARIABLE, String.format(MESSAGE_UNDEFINED_VARIABLE, name), s.start(), s.start()
 					+ s.getName().length());
 		} else if (!isInit()) {
 			var.setUsed(s.start());
