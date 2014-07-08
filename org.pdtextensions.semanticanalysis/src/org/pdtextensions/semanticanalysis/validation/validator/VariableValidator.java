@@ -324,7 +324,7 @@ public class VariableValidator extends AbstractValidator {
 		}
 		if (s.getVariableKind() == PHPVariableKind.GLOBAL && isGlobal(name)) {
 			return false;
-		} else if (s.getVariableKind() != PHPVariableKind.LOCAL && s.getVariableKind() != PHPVariableKind.GLOBAL) {
+		} else if (s.getVariableKind() != PHPVariableKind.LOCAL && s.getVariableKind() != PHPVariableKind.GLOBAL && s.getVariableKind() != PHPVariableKind.UNKNOWN) {
 			return false;
 		}
 		
