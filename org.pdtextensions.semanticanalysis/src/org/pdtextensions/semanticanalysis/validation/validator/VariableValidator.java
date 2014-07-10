@@ -8,7 +8,6 @@ import java.util.TreeMap;
 import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.ast.references.VariableReference;
-import org.eclipse.php.internal.core.PHPVersion;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ArrayVariableReference;
 import org.eclipse.php.internal.core.compiler.ast.nodes.Assignment;
 import org.eclipse.php.internal.core.compiler.ast.nodes.CatchClause;
@@ -229,8 +228,8 @@ public class VariableValidator extends AbstractValidator {
 				}
 			}
 		}
-		if (PHPVersion.PHP5_3.isLessThan(context.getPHPVersion()) && inClassDecl + 1 < depth && prev.variables.containsKey(THIS_VAR)) { //$NON-NLS-1$
-			prev.variables.put(THIS_VAR, prev.variables.get(THIS_VAR)); //$NON-NLS-1$
+		if (inClassDecl < depth && prev.variables.containsKey(THIS_VAR)) { //$NON-NLS-1$
+			current.variables.put(THIS_VAR, prev.variables.get(THIS_VAR)); //$NON-NLS-1$
 		}
 		decl.getBody().traverse(this);
 
