@@ -41,13 +41,13 @@
         <repository>
             <id>pdt-nightly</id>
             <layout>p2</layout>
-            <url>http://download.eclipse.org/tools/pdt/updates/3.3-nightly/</url>
+            <url>http://download.eclipse.org/tools/pdt/updates/latest-nightly/</url>
         </repository>
 
         <repository>
-            <id>kepler</id>
+            <id>luna</id>
             <layout>p2</layout>
-            <url>http://download.eclipse.org/releases/kepler</url>
+            <url>http://download.eclipse.org/releases/luna</url>
         </repository>
 
 
