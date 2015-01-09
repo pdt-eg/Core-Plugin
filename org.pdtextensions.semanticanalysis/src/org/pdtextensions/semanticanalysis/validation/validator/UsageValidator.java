@@ -1,5 +1,6 @@
 package org.pdtextensions.semanticanalysis.validation.validator;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -178,6 +179,10 @@ public class UsageValidator extends AbstractValidator {
 	
 	@Override
 	public boolean visit(ClassDeclaration s) throws Exception {
+		Collection<TypeReference> interfaceList = s.getInterfaceList();
+		if (interfaceList == null) {
+			return super.visit(s);
+		}
 		for (TypeReference fqr : s.getInterfaceList()) {
 			markIfNotExists(fqr);
 		}

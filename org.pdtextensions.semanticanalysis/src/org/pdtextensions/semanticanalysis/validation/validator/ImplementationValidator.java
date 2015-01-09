@@ -70,8 +70,6 @@ public class ImplementationValidator extends AbstractValidator{
 			return false;
 		}
 		
-		Collection<TypeReference> interfaces = getClassDeclaration().getInterfaceList();
-		
 		List<IMethod> unimplemented = new ArrayList<IMethod>();		
 		IDLTKSearchScope scope = SearchEngine.createSearchScope(project);		
 		PhpModelAccess model = PhpModelAccess.getDefault();		
@@ -92,9 +90,10 @@ public class ImplementationValidator extends AbstractValidator{
 		
 		
 		Map<String, IMethod> listImported = PDTModelUtils.getImportedMethods(classType);
+		Collection<TypeReference> interfaces = getClassDeclaration().getInterfaceList();
 		// iterate over all interfaces and check if the current class
 		// or any of the superclasses implements the method
-		if (listImported == null) {
+		if (listImported == null || interfaces == null) {
 			return true;
 		}
 		for (TypeReference interf : interfaces) {
