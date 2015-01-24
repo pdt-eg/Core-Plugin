@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ITypeHierarchy;
 import org.eclipse.dltk.core.ModelException;
+import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.pdtextensions.core.util.PDTModelUtils;
 
 /**
@@ -52,7 +53,7 @@ public class PHPType {
 	}
 
 	public boolean isInstanceOf(IType type) throws ModelException {
-		return isInstanceOf(type.getFullyQualifiedName(NAMESPACE_SEPARATOR));
+		return isInstanceOf(PHPModelUtils.getFullName(type));
 	}
 
 	public boolean isInstanceOf(String typeName) throws ModelException {

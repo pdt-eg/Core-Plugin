@@ -629,7 +629,7 @@ public class PDTModelUtils {
 	public static IType findType(ISourceModule module, String fqn) {
 		try {
 			for (IType t : module.getAllTypes()) {
-				if (t.getFullyQualifiedName(BACK_SLASH).equals(fqn)) {
+				if (PHPModelUtils.getFullName(t).equals(fqn)) {
 					return t;
 				}
 			}
@@ -654,7 +654,7 @@ public class PDTModelUtils {
 				MatchRule.EXACT, 0, 0, searchScope, new NullProgressMonitor());
 
 		for (IType type : types) {
-			if (fqn.equals(type.getFullyQualifiedName(BACK_SLASH))) {
+			if (fqn.equals(PHPModelUtils.getFullName(type))) {
 				list.add(type);
 			}
 		}
@@ -663,7 +663,7 @@ public class PDTModelUtils {
 				MatchRule.EXACT, 0, 0, searchScope, new NullProgressMonitor());
 
 		for (IType type : types) {
-			if (fqn.equals(type.getFullyQualifiedName(BACK_SLASH))) {
+			if (fqn.equals(PHPModelUtils.getFullName(type))) {
 				list.add(type);
 			}
 		}
@@ -701,7 +701,7 @@ public class PDTModelUtils {
 		} else if (el instanceof ISourceModule){
 			ISourceModule mod = (ISourceModule) el;
 			for (IType t : mod.getAllTypes()) {
-				if (t.getFullyQualifiedName(BACK_SLASH).equals(name)) {
+				if (PHPModelUtils.getFullName(t).equals(name)) {
 					
 					list.add(t);
 				}
