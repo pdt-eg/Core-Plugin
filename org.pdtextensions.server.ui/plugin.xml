@@ -28,7 +28,8 @@
     <page
           class="org.pdtextensions.server.ui.internal.web.ProjectPropertyPage"
           id="org.pdtextensions.server.ui.web.propertyPage"
-          name="PHP Web"
+          name="Web"
+          category="org.eclipse.php.ui.propertyPages.PHPBasePreferencePage"
           selectionFilter="single">
        <enabledWhen>
           <and>

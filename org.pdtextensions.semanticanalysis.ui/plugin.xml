@@ -10,7 +10,7 @@
             name="CS Fixer">
       </page>
       <page
-            category="org.eclipse.php.ui.preferences.PHPBasePreferencePage"
+            category="org.eclipse.php.ui.preferences.ValidationPreferencePage"
             class="org.pdtextensions.semanticanalysis.ui.preferences.validation.SemanticAnalysisPreferencePage"
             id="org.pdtextensions.semanticanalysis.ui.preferences.SemanticAnalysisPreferencePage"
             name="Semantic Analysis">
@@ -38,7 +38,8 @@
       <page
             class="org.pdtextensions.semanticanalysis.ui.preferences.validation.SemanticAnalysisPreferencePage"
             id="org.pdtextensions.semanticanalysis.ui.propertyPages.SemanticAnalysisPropertyPage"
-            name="Semantic Analysis">
+            name="Semantic Analysis"
+            category="org.eclipse.php.ui.propertyPages.ValidationPreferencePage">
             <enabledWhen>
                 <adapt type="org.eclipse.core.resources.IProject">
                    <instanceof
