@@ -27,14 +27,11 @@ Require-Bundle: org.eclipse.ui,
  javax.inject,
  org.eclipse.core.expressions,
  org.apache.commons.exec,
- org.eclipse.dltk.core.manipulation,
- org.eclipse.ltk.core.refactoring,
- org.eclipse.ltk.ui.refactoring
+ org.eclipse.dltk.core.manipulation
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.pdtextensions.core.ui,
  org.pdtextensions.core.ui.actions,
- org.pdtextensions.core.ui.actions.refactoring,
  org.pdtextensions.core.ui.codemanipulation,
  org.pdtextensions.core.ui.contentassist,
  org.pdtextensions.core.ui.dialog,
@@ -42,7 +39,6 @@ Export-Package: org.pdtextensions.core.ui,
  org.pdtextensions.core.ui.extension,
  org.pdtextensions.core.ui.preferences,
  org.pdtextensions.core.ui.preferences.launcher,
- org.pdtextensions.core.ui.refactoring,
  org.pdtextensions.core.ui.template,
  org.pdtextensions.core.ui.util,
  org.pdtextensions.core.ui.wizards
