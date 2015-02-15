@@ -8,7 +8,6 @@ The PDT extension group is a collobaration of PDT plugin maintainers to build a 
 Currently the core plugin supports following features:
 
 - [PHP Coding Standard Fixer](http://cs.sensiolabs.org/) integration
-- PHP Refactoring support
 - Use-Statement validation (injecting of missing use statements through quick-fixes)
 - Class / Interface dialog
 - Implementation of missing interface/abstract classes methods

@@ -158,11 +158,6 @@
             categoryId="org.eclipse.php.ui.category.source"
             id="org.pdtextensions.core.ui.correction.assignToLocal.assist">
       </command>
-      <command
-            categoryId="org.eclipse.php.ui.category.refactoring"
-            id="org.pdtextensions.core.ui.edit.text.extract.method"
-            name="Extract method">
-      </command>
    </extension>
 
 
@@ -245,21 +240,6 @@
       </propertyTester>
    </extension>
    <extension
-         point="org.eclipse.php.ui.phpActionDelegator">
-      <action
-            actionId="org.eclipse.php.ui.actions.ExtractMethod"
-            class="org.pdtextensions.core.ui.actions.refactoring.ExtractPHPMethodActionDelegate"
-            id="org.pdtextensions.core.ui.actions.refactoring.ExtractPHPMethodActionDelegate"
-            priority="8">
-      </action>
-      <action
-            actionId="org.eclipse.php.ui.actions.RenameElement"
-            class="org.pdtextensions.core.ui.actions.refactoring.RenamePHPElementActionDelegate"
-            id="org.pdtextensions.core.ui.actions.refactoring.RenamePHPElementActionDelegate"
-            priority="9">
-      </action>
-   </extension>
-   <extension
          point="org.eclipse.dltk.ui.sourceModuleWizardExtension">
       <wizardExtension
             class="org.pdtextensions.core.ui.wizards.extension.FormatterExtension"
@@ -290,34 +270,5 @@
             name="Hide import declarations"
             targetId="org.eclipse.php.ui.OutlinePage">
       </filter>
-   </extension>
-   <extension
-         point="org.eclipse.ui.popupMenus">
-      <viewerContribution
-            id="org.eclipse.php.refactoring.ui.editorPopupContribution"
-            targetID="org.eclipse.php.core.phpsource.source.EditorContext">
-         <action
-               class="org.pdtextensions.core.ui.actions.refactoring.ExtractPHPMethodActionDelegate"
-               definitionId="org.pdtextensions.core.ui.edit.text.extract.method"
-               id="org.eclipse.php.ui.refactoring.pop.extractmethod"
-               label="Extract Method"
-               menubarPath="refactorPopupMenuId/codingGroup"
-               tooltip="Extract a code fragment to a new method">
-         </action>
-      </viewerContribution>
-   </extension>
-   <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            id="org.eclipse.pdt.ui.RefactoringActionSet"
-            label="Coding">
-         <action
-               class="org.pdtextensions.core.ui.actions.refactoring.ExtractPHPMethodActionDelegate"
-               definitionId="org.pdtextensions.core.ui.edit.text.extract.method"
-               id="org.eclipse.php.ui.refactoring.extract.method"
-               label="Extract method"
-               style="push">
-         </action>
-      </actionSet>
    </extension>
 </plugin>
