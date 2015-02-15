@@ -14,6 +14,7 @@ Currently the core plugin supports following features:
 - Assign to local variable quick-fix
 - Import statements outline filters
 - Unused / uninitialized variable validator
+- ~~PHP Refactoring support~~ - _PDT since 3.4 have own refactoring support_
 
 
 We are in the process of migrating general functionality of our plugins into the core plugin, and add more core features for
