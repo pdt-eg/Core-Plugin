@@ -15,6 +15,7 @@ import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.internal.core.SourceType;
 import org.eclipse.php.internal.core.codeassist.contexts.AbstractCompletionContext;
+import org.eclipse.php.internal.core.documentModel.partitioner.PHPPartitionTypes;
 
 /**
  *
@@ -34,6 +35,9 @@ public class SuperclassMethodContext extends AbstractCompletionContext {
 			CompletionRequestor requestor) {
 
 		if (!super.isValid(sourceModule, offset, requestor)) {
+			return false;
+		}
+		if (getPartitionType() != PHPPartitionTypes.PHP_DEFAULT) {
 			return false;
 		}
 
