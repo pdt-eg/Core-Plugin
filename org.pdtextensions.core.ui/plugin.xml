@@ -222,12 +222,6 @@
             contextId="org.eclipse.php.ui.phpEditorScope"
             commandId="org.pdtextensions.core.ui.correction.assignToLocal.assist"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-      <key
-            commandId="org.pdtextensions.core.ui.edit.text.extract.method"
-            contextId="org.eclipse.php.ui.phpEditorScope"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Alt+Shift+M">
-      </key>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
