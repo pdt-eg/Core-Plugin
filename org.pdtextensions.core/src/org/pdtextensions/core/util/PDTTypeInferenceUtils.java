@@ -87,11 +87,7 @@ public class PDTTypeInferenceUtils {
 		IType[] receiverTypes = getTypes(expression.getReceiver(), sourceModule);
 		if (receiverTypes != null && receiverTypes.length > 0) {
 			IContext context = ASTUtils.findContext(sourceModule, SourceParserUtil.getModuleDeclaration(sourceModule), expression.sourceStart());
-			if (expression.getArgs() instanceof PHPCallArgumentsList && ((PHPCallArgumentsList) expression.getArgs()).getArrayDereferenceList() != null) {
-				return getFunctionArrayReturnTypes(expression, sourceModule, receiverTypes, context);
-			} else {
-				return getFunctionReturnTypes(expression, sourceModule, receiverTypes, context);
-			}
+			return getFunctionReturnTypes(expression, sourceModule, receiverTypes, context);
 		} else {
 			return EMPTY_TYPES;
 		}

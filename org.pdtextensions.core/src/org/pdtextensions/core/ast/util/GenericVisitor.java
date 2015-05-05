@@ -21,7 +21,6 @@ import org.eclipse.php.internal.core.ast.nodes.ConditionalExpression;
 import org.eclipse.php.internal.core.ast.nodes.ConstantDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.ContinueStatement;
 import org.eclipse.php.internal.core.ast.nodes.DeclareStatement;
-import org.eclipse.php.internal.core.ast.nodes.DereferenceNode;
 import org.eclipse.php.internal.core.ast.nodes.DoStatement;
 import org.eclipse.php.internal.core.ast.nodes.EchoStatement;
 import org.eclipse.php.internal.core.ast.nodes.EmptyStatement;
@@ -53,7 +52,6 @@ import org.eclipse.php.internal.core.ast.nodes.MethodDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.MethodInvocation;
 import org.eclipse.php.internal.core.ast.nodes.NamespaceDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.NamespaceName;
-import org.eclipse.php.internal.core.ast.nodes.PHPArrayDereferenceList;
 import org.eclipse.php.internal.core.ast.nodes.ParenthesisExpression;
 import org.eclipse.php.internal.core.ast.nodes.PostfixExpression;
 import org.eclipse.php.internal.core.ast.nodes.PrefixExpression;
@@ -899,17 +897,6 @@ abstract public class GenericVisitor implements Visitor {
 	}
 
 	@Override
-	public boolean visit(DereferenceNode node) {
-
-		return visitNode(node);
-	}
-
-	@Override
-	public void endVisit(DereferenceNode node) {
-
-	}
-
-	@Override
 	public boolean visit(FullyQualifiedTraitMethodReference node) {
 
 		return visitNode(node);
@@ -918,15 +905,6 @@ abstract public class GenericVisitor implements Visitor {
 	@Override
 	public void endVisit(FullyQualifiedTraitMethodReference node) {
 
-	}
-
-	@Override
-	public boolean visit(PHPArrayDereferenceList node) {
-		return visitNode(node);
-	}
-
-	@Override
-	public void endVisit(PHPArrayDereferenceList node) {
 	}
 
 	@Override
