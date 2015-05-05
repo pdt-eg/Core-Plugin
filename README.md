@@ -12,7 +12,7 @@ Currently the core plugin supports following features:
 - Class / Interface dialog
 - Implementation of missing interface/abstract classes methods
 - Assign to local variable quick-fix
-- Import statements outline filters
+- ~~Import statements outline filters~~ - _PDT since 3.5 have same filters_
 - Unused / uninitialized variable validator
 - ~~PHP Refactoring support~~ - _PDT since 3.4 have own refactoring support_
 

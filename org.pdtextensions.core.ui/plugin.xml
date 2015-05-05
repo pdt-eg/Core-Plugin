@@ -248,21 +248,4 @@
             class="org.pdtextensions.core.ui.quickassist.AssignToLocalQuickAssistProcessor">
       </quickAssistProcessor>
    </extension>
-   <extension
-         point="org.eclipse.dltk.ui.dltkElementFilters">
-      <filter
-            class="org.pdtextensions.core.ui.filter.UseStatementsFilter"
-            enabled="true"
-            id="org.pdtextensions.ui.outline.useStatmentsFilter"
-            name="Hide use statements"
-            targetId="org.eclipse.php.ui.OutlinePage">
-      </filter>
-      <filter
-            class="org.eclipse.dltk.internal.ui.filters.ImportDeclarationFilter"
-            enabled="false"
-            id="org.pdtextensions.ui.outline.importDelcarationsFilter"
-            name="Hide import declarations"
-            targetId="org.eclipse.php.ui.OutlinePage">
-      </filter>
-   </extension>
 </plugin>
