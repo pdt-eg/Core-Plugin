@@ -60,20 +60,8 @@ public class LaunchUtil {
 	}
 	
 	private static PHPexeItem getDefaultPHPExeItem(String debugger) throws ExecutableNotFoundException {
-		PHPexeItem phpExe = PHPexes.getInstance().getDefaultItem(debugger);
+		PHPexeItem phpExe = PHPexes.getInstance().getDefaultItem();
 		
-		if (phpExe != null) {
-			return phpExe;
-		}
-		
-		phpExe = PHPexes.getInstance().getDefaultItem(XDebugCommunicationDaemon.XDEBUG_DEBUGGER_ID);
-		
-		if (phpExe != null) {
-			return phpExe;
-		}
-		
-		phpExe = PHPexes.getInstance().getDefaultItem(DebuggerCommunicationDaemon.ZEND_DEBUGGER_ID);
-
 		if (phpExe != null) {
 			return phpExe;
 		}
