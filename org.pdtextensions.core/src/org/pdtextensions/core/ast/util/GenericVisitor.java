@@ -11,7 +11,6 @@ import org.eclipse.php.internal.core.ast.nodes.Block;
 import org.eclipse.php.internal.core.ast.nodes.BreakStatement;
 import org.eclipse.php.internal.core.ast.nodes.CastExpression;
 import org.eclipse.php.internal.core.ast.nodes.CatchClause;
-import org.eclipse.php.internal.core.ast.nodes.ChainingInstanceCall;
 import org.eclipse.php.internal.core.ast.nodes.ClassDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.ClassInstanceCreation;
 import org.eclipse.php.internal.core.ast.nodes.ClassName;
@@ -882,17 +881,6 @@ abstract public class GenericVisitor implements Visitor {
 
 	@Override
 	public void endVisit(ASTNode node) {
-
-	}
-
-	@Override
-	public boolean visit(ChainingInstanceCall node) {
-
-		return visitNode(node);
-	}
-
-	@Override
-	public void endVisit(ChainingInstanceCall node) {
 
 	}
 
