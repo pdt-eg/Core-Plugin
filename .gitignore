@@ -21,6 +21,8 @@ org.pdtextensions.semanticanalysis.tests/bin/*
 org.pdtextensions.semanticanalysis.tests/target/*
 org.pdtextensions.core.tests/bin/*
 org.pdtextensions.core.tests/target/*
+repository/target
+repository/bin
 
 target/
 *.swp
