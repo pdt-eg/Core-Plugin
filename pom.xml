@@ -25,13 +25,20 @@
 		<tycho-version>0.21.0</tycho-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<eclipse.name>luna</eclipse.name>
-		<stable>false</stable>
+		<release>false</release>
+		<bintray.user></bintray.user>
+		<bintray.apikey></bintray.apikey>
+		<bintray.owner></bintray.owner>
+		<bintray.repo>Core-Plugin</bintray.repo>
+		<bintray.version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</bintray.version>
+		<pdt.version>latest-nightly</pdt.version>
+		<dltk.version>latest-nightly</dltk.version>
 	</properties>
 	<repositories>
 		<repository>
 			<id>orbit</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20130517111416/repository/</url>
+			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20150519210750/repository/</url>
 		</repository>
 		<repository>
 			<id>eclipse</id>
@@ -42,6 +49,16 @@
 			<id>eclipse-tests</id>
 			<layout>p2</layout>
 			<url>http://download.eclipse.org/eclipse/updates/4.2/R-4.2-201206081400</url>
+		</repository>
+		<repository>
+			<id>dltk</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/technology/dltk/updates-dev/${dltk.version}/</url>
+		</repository>
+		<repository>
+			<id>pdt</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/tools/pdt/updates/${pdt.version}/</url>
 		</repository>
 	</repositories>
 	<build>
@@ -103,49 +120,53 @@
 					</environments>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>parse-version</id>
+						<goals>
+							<goal>parse-version</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<configuration>
+						<skip>true</skip>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 	<profiles>
 		<profile>
-			<id>stable</id>
+			<id>release</id>
 			<activation>
 				<property>
-					<name>stable</name>
+					<name>release</name>
 				</property>
 			</activation>
-			<repositories>
-				<repository>
-					<id>dltk-stable</id>
-					<layout>p2</layout>
-					<url>http://download.eclipse.org/technology/dltk/updates-dev/latest/</url>
-				</repository>
-				<repository>
-					<id>pdt-stable</id>
-					<layout>p2</layout>
-					<url>http://download.eclipse.org/tools/pdt/updates/latest/</url>
-				</repository>
-			</repositories>
+			<properties>
+				<bintray.package>release</bintray.package>
+			</properties>
 		</profile>
 		<profile>
 			<id>nightly</id>
 			<activation>
 				<property>
-					<name>!stable</name>
+					<name>!release</name>
 				</property>
 			</activation>
-			<repositories>
-				<repository>
-					<id>dltk-tests</id>
-					<layout>p2</layout>
-					<url>http://download.eclipse.org/technology/dltk/updates-dev/latest-nightly/</url>
-				</repository>
-				<repository>
-					<id>pdt-nightly</id>
-					<layout>p2</layout>
-					<url>http://download.eclipse.org/tools/pdt/updates/latest-nightly/</url>
-				</repository>
-			</repositories>
+			<properties>
+				<bintray.package>nightly</bintray.package>
+			</properties>
 		</profile>
 	</profiles>
-
 </project>

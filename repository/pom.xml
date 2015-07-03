@@ -34,6 +34,35 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.1.1</version>
+				<executions>
+					<execution>
+						<id>Upload</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<executable>${basedir}/publishToBintray.sh</executable>
+					<arguments>
+						<!-- 
+						${bintray.user} ${bintray.apikey} ${bintray.owner} ${bintray.repo} ${bintray.package} ${bintray.version} ${basedir}/target/repository/
+						-->
+						<argument>${bintray.user}</argument>
+						<argument>${bintray.apikey} </argument>
+						<argument>${bintray.owner}</argument>
+						<argument>${bintray.repo}</argument>
+						<argument>${bintray.package}</argument>
+						<argument>${bintray.version}</argument>
+						<argument>${basedir}/target/repository/</argument>
+					</arguments>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>
