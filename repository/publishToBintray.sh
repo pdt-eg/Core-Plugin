@@ -23,7 +23,7 @@ echo "${PCK_VERSION}"
 echo "${PATH_TO_REPOSITORY}"
 
 if [ ! -z "$PATH_TO_REPOSITORY" ]; then
-   cd $PATH_TO_REPOSITORY
+   cd "$PATH_TO_REPOSITORY"
 fi
 
 echo "Drop previous version"
@@ -39,7 +39,7 @@ for f in $FILES;
 do
 if [ ! -d $f ]; then
   echo "Processing $f file..."
-curl -X PUT -T $f -u ${BINTRAY_USER}:${BINTRAY_API_KEY} -H "X-Bintray-Package:$PCK_NAME" -H "X-Bintray-Version:$PCK_VERSION" -H "X-Bintray-Publish:0" -H "X-Bintray-Override:1" https://api.bintray.com/content/${BINTRAY_OWNER}/${BINTRAY_REPO}/${PCK_NAME}/${PCK_VERSION}/$f
+curl -X PUT -T "$f" -u ${BINTRAY_USER}:${BINTRAY_API_KEY} -H "X-Bintray-Package:$PCK_NAME" -H "X-Bintray-Version:$PCK_VERSION" -H "X-Bintray-Publish:0" -H "X-Bintray-Override:1" https://api.bintray.com/content/${BINTRAY_OWNER}/${BINTRAY_REPO}/${PCK_NAME}/${PCK_VERSION}/$f
 
   echo ""
 fi
@@ -49,7 +49,7 @@ echo "Processing features dir $FEATUREDIR file..."
 for f in $FEATUREDIR;
 do
   echo "Processing feature: $f file..."
-  curl -X PUT -T $f -u ${BINTRAY_USER}:${BINTRAY_API_KEY} -H "X-Bintray-Package:$PCK_NAME" -H "X-Bintray-Version:$PCK_VERSION" -H "X-Bintray-Publish:0" -H "X-Bintray-Override:1" https://api.bintray.com/content/${BINTRAY_OWNER}/${BINTRAY_REPO}/${PCK_NAME}/${PCK_VERSION}/features/`basename $f`
+  curl -X PUT -T "$f" -u ${BINTRAY_USER}:${BINTRAY_API_KEY} -H "X-Bintray-Package:$PCK_NAME" -H "X-Bintray-Version:$PCK_VERSION" -H "X-Bintray-Publish:0" -H "X-Bintray-Override:1" https://api.bintray.com/content/${BINTRAY_OWNER}/${BINTRAY_REPO}/${PCK_NAME}/${PCK_VERSION}/features/`basename $f`
   echo ""
 done
 
@@ -59,7 +59,7 @@ for f in $PLUGINDIR;
 do
    # take action on each file. $f store current file name
   echo "Processing plugin: $f file..."
-  curl -X PUT -T $f -u ${BINTRAY_USER}:${BINTRAY_API_KEY} -H "X-Bintray-Package:$PCK_NAME" -H "X-Bintray-Version:$PCK_VERSION" -H "X-Bintray-Publish:0" -H "X-Bintray-Override:1" https://api.bintray.com/content/${BINTRAY_OWNER}/${BINTRAY_REPO}/${PCK_NAME}/${PCK_VERSION}/plugins/`basename $f`
+  curl -X PUT -T "$f" -u ${BINTRAY_USER}:${BINTRAY_API_KEY} -H "X-Bintray-Package:$PCK_NAME" -H "X-Bintray-Version:$PCK_VERSION" -H "X-Bintray-Publish:0" -H "X-Bintray-Override:1" https://api.bintray.com/content/${BINTRAY_OWNER}/${BINTRAY_REPO}/${PCK_NAME}/${PCK_VERSION}/plugins/`basename $f`
   echo ""
 done
 
