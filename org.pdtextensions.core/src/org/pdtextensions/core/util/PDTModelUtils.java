@@ -182,17 +182,14 @@ public class PDTModelUtils {
 			PHPDocTag[] tags = docBlock.getTags(PHPDocTagKinds.PARAM);
 			if (tags != null && tags.length > 0) {
 				for (PHPDocTag phpDocTag : tags) {
-					if (phpDocTag.getReferences() != null
-							&& phpDocTag.getReferences().length > 0) {
+					if (phpDocTag.getTypeReferences() != null
+							&& phpDocTag.getTypeReferences().size() > 0) {
 						for (SimpleReference ref : phpDocTag
-								.getReferences()) {
-							
-							if (ref instanceof TypeReference) {
-								String type = ref.getName();
-								if (type != null && isValidType(type, project)) {
-									returnTypeList.add(type);
-								}								
-							}
+								.getTypeReferences()) {
+							String type = ref.getName();
+							if (type != null && isValidType(type, project)) {
+								returnTypeList.add(type);
+							}								
 						}
 					}
 				}

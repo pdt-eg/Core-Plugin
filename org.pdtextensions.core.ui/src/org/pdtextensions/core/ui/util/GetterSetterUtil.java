@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.dltk.ast.references.SimpleReference;
+import org.eclipse.dltk.ast.references.TypeReference;
 import org.eclipse.dltk.core.IField;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.IType;
@@ -50,7 +51,7 @@ public class GetterSetterUtil {
 		
 		private final IField field;
 		
-		private SimpleReference reference = null;
+		private TypeReference reference = null;
 		
 		public FieldReferenceParser(IField field) {
 			
@@ -64,10 +65,10 @@ public class GetterSetterUtil {
 				if (doc != null) {
 					if (doc.getTags().length == 1) {
 						PHPDocTag[] tags = doc.getTags();
-						if (tags[0].getReferences().length == 1) {
-							SimpleReference[] refs = tags[0].getReferences();
-							if (refs.length == 1) {							
-								reference = refs[0];
+						if (tags[0].getTypeReferences().size() == 1) {
+							List<TypeReference> refs = tags[0].getTypeReferences();
+							if (refs.size() == 1) {							
+								reference = refs.get(0);
 							}
 						}
 					}
@@ -77,7 +78,7 @@ public class GetterSetterUtil {
 			return true;
 		}
 		
-		public SimpleReference getReference() {
+		public TypeReference getReference() {
 			
 			return reference;
 		}
@@ -94,7 +95,7 @@ public class GetterSetterUtil {
 			module.traverse(typeParser);
 			
 			if (typeParser.getReference() != null) {			
-				SimpleReference ref = typeParser.getReference();			
+				TypeReference ref = typeParser.getReference();			
 				type = ref.getName();
 				
 				if (!PDTModelUtils.isValidType(type, field.getScriptProject())) {
