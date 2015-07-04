@@ -48,7 +48,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<executable>${basedir}/publishToBintray.sh</executable>
+					<executable>${project.basedir}/publishToBintray.sh</executable>
 					<arguments>
 						<!-- 
 						${bintray.user} ${bintray.apikey} ${bintray.owner} ${bintray.repo} ${bintray.package} ${bintray.version} ${basedir}/target/repository/
