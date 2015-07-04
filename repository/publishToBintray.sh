@@ -26,6 +26,9 @@ if [ ! -z "$PATH_TO_REPOSITORY" ]; then
    cd $PATH_TO_REPOSITORY
 fi
 
+echo "Drop previous version"
+curl -X DELETE -u ${BINTRAY_USER}:${BINTRAY_API_KEY} https://api.bintray.com/packages/${BINTRAY_OWNER}/${BINTRAY_REPO}/${PCK_NAME}/versions/${PCK_VERSION}
+echo ""
 
 FILES=./*
 BINARYDIR=./binary/*

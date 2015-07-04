@@ -151,6 +151,7 @@
 			<activation>
 				<property>
 					<name>release</name>
+					<value>true</value>
 				</property>
 			</activation>
 			<properties>
@@ -161,7 +162,8 @@
 			<id>nightly</id>
 			<activation>
 				<property>
-					<name>!release</name>
+					<name>release</name>
+					<value>false</value>
 				</property>
 			</activation>
 			<properties>
