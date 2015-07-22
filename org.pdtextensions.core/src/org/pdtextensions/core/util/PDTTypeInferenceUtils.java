@@ -94,13 +94,13 @@ public class PDTTypeInferenceUtils {
 	}
 
 	private static IType[] getFunctionReturnTypes(PHPCallExpression expression, ISourceModule sourceModule, IType[] receiverTypes, IContext context) {
-		IEvaluatedType evaluatedType = TYPE_INFERENCER.evaluateTypePHPDoc(new PHPDocMethodReturnTypeGoal(context, receiverTypes, expression.getName()));
+		IEvaluatedType evaluatedType = TYPE_INFERENCER.evaluateTypePHPDoc(new PHPDocMethodReturnTypeGoal(context, receiverTypes, expression.getName(), expression.sourceStart()));
 		IType[] modelElements = PHPTypeInferenceUtils.getModelElements(evaluatedType, (ISourceModuleContext) context, expression.sourceStart());
 		if (modelElements != null) {
 			return modelElements;
 		}
 
-		evaluatedType = TYPE_INFERENCER.evaluateType(new MethodElementReturnTypeGoal(context, receiverTypes, expression.getName()));
+		evaluatedType = TYPE_INFERENCER.evaluateType(new MethodElementReturnTypeGoal(context, receiverTypes, expression.getName(), new String[0], expression.sourceStart()));
 		if (evaluatedType instanceof PHPThisClassType && ((PHPThisClassType) evaluatedType).getType() != null) {
 			modelElements = new IType[] { ((PHPThisClassType) evaluatedType).getType() };
 		} else {
@@ -114,7 +114,7 @@ public class PDTTypeInferenceUtils {
 	}
 
 	private static IType[] getFunctionArrayReturnTypes(PHPCallExpression expression, ISourceModule sourceModule, IType[] receiverTypes, IContext context) {
-		IEvaluatedType evaluatedType = TYPE_INFERENCER.evaluateTypePHPDoc(new PHPDocMethodReturnTypeGoal(context, receiverTypes, expression.getName()));
+		IEvaluatedType evaluatedType = TYPE_INFERENCER.evaluateTypePHPDoc(new PHPDocMethodReturnTypeGoal(context, receiverTypes, expression.getName(), expression.sourceStart()));
 		if (evaluatedType instanceof MultiTypeType) {
 			List<IType> collectingTypes = new LinkedList<IType>();
 			for (IEvaluatedType possibleType : ((MultiTypeType) evaluatedType).getTypes()) {
@@ -127,7 +127,7 @@ public class PDTTypeInferenceUtils {
 			return collectingTypes.toArray(new IType[collectingTypes.size()]);
 		}
 
-		evaluatedType = TYPE_INFERENCER.evaluateType(new MethodElementReturnTypeGoal(context, receiverTypes, expression.getName()));
+		evaluatedType = TYPE_INFERENCER.evaluateType(new MethodElementReturnTypeGoal(context, receiverTypes, expression.getName(), new String[0], expression.sourceStart()));
 		if (evaluatedType instanceof MultiTypeType) {
 			List<IType> collectingTypes = new LinkedList<IType>();
 			for (IEvaluatedType possibleType : ((MultiTypeType) evaluatedType).getTypes()) {
