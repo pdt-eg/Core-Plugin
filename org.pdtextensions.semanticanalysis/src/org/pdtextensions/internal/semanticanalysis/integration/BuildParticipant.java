@@ -145,6 +145,9 @@ public class BuildParticipant implements IBuildParticipant, IBuildParticipantExt
 			}
 			final Files files = tmpTypes.get(searchString);
 			for (IPath f : files) {
+				if (context.getFile().getFullPath().equals(f)) {
+					continue;
+				}
 				context.recordDependency(f, IBuildState.STRUCTURAL); // mark as dependecy as structural
 			}
 			return true;
