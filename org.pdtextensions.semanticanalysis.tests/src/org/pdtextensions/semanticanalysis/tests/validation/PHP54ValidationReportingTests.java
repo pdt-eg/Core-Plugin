@@ -12,173 +12,53 @@
  *******************************************************************************/
 package org.pdtextensions.semanticanalysis.tests.validation;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import junit.extensions.TestSetup;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.php.core.tests.AbstractPDTTTest;
-import org.eclipse.php.core.tests.PHPCoreTests;
-import org.eclipse.php.core.tests.PdttFile;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.php.core.tests.errors.AbstractErrorReportingTests;
+import org.eclipse.php.core.tests.runner.AbstractPDTTRunner.Context;
+import org.eclipse.php.core.tests.runner.PDTTList;
+import org.eclipse.php.core.tests.runner.PDTTList.BeforeList;
+import org.eclipse.php.core.tests.runner.PDTTList.Parameters;
 import org.eclipse.php.internal.core.PHPVersion;
-import org.eclipse.php.internal.core.project.PHPNature;
+import org.junit.runner.RunWith;
+import org.osgi.framework.Bundle;
 import org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier;
-
+import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
+import org.pdtextensions.semanticanalysis.PreferenceConstants;
+import org.pdtextensions.semanticanalysis.tests.PEXAnalysisTestPlugin;
 
 @SuppressWarnings("restriction")
-/**
- * Little modified version of org.eclipse.php.core.tests.errors.PHP54ErrorReportingTests class
- */
-public class PHP54ValidationReportingTests extends AbstractPDTTTest {
 
-	protected static final String[] TEST_DIRS = { "/workspace/errors/php54",
-			"/workspace/errors/php53" };
+@RunWith(PDTTList.class)
+public class PHP54ValidationReportingTests extends AbstractErrorReportingTests {
 
-	protected static Map<PdttFile, IFile> filesMap = new LinkedHashMap<PdttFile, IFile>();
-	protected static IProject project;
-	protected static int count;
+	@Parameters
+	public static final String[] TEST_DIRS = { "/workspace/errors/php54", "/workspace/errors/php53" };
 
-	public static void setUpSuite() throws Exception {
-		project = ResourcesPlugin.getWorkspace().getRoot()
-				.getProject("ErrorReportingTests");
-		if (project.exists()) {
-			return;
-		}
-
-		project.create(null);
-		project.open(null);
-
-		// configure nature
-		IProjectDescription desc = project.getDescription();
-		desc.setNatureIds(new String[] { PHPNature.ID });
-		project.setDescription(desc, null);
-
-		for (PdttFile pdttFile : filesMap.keySet()) {
-			IFile file = createFile(pdttFile.getFile().trim());
-			filesMap.put(pdttFile, file);
-		}
-
-		PHPCoreTests.setProjectPhpVersion(project, PHPVersion.PHP5_4);
-		project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		project.build(IncrementalProjectBuilder.FULL_BUILD, null);
-
-		PHPCoreTests.waitForIndexer();
-		PHPCoreTests.waitForAutoBuild();
+	@Context
+	public static Bundle getBundle() {
+		return PEXAnalysisTestPlugin.getDefault().getBundle();
 	}
 
-	public static void tearDownSuite() throws Exception {
-		project.close(null);
-		project.delete(true, true, null);
-		project = null;
+	public PHP54ValidationReportingTests(String[] fileNames) {
+		super(fileNames);
 	}
 
-	public PHP54ValidationReportingTests(String description) {
-		super(description);
-	}
-	
-	public static Test suite() {
-
-		TestSuite suite = new TestSuite("php54");
-
-		for (String testsDirectory : TEST_DIRS) {
-
-			for (final String fileName : getPDTTFiles(testsDirectory)) {
-				try {
-					final PdttFile pdttFile = new PdttFile(fileName);
-					filesMap.put(pdttFile, null);
-
-					suite.addTest(new PHP54ValidationReportingTests("/" + fileName) {
-
-						protected void runTest() throws Throwable {
-							IFile file = filesMap.get(pdttFile);
-							Thread.sleep(4);
-
-							StringBuilder buf = new StringBuilder();
-
-							List<IMarker> markers = new ArrayList<IMarker>(
-									Arrays.asList(file.findMarkers(
-											PEXProblemIdentifier.MARKER_TYPE, true,
-											IResource.DEPTH_ZERO)));
-							Collections.sort(markers,
-									new Comparator<IMarker>() {
-										@Override
-										public int compare(IMarker o1,
-												IMarker o2) {
-											try {
-												return ((Integer) o1
-														.getAttribute(IMarker.CHAR_START)).compareTo( (Integer) o2
-																.getAttribute(IMarker.CHAR_START));
-											} catch (CoreException e) {
-												return -1;
-											}
-										}
-									});
-							for (IMarker marker : markers) {
-								buf.append("\n[line=");
-								buf.append(marker
-										.getAttribute(IMarker.LINE_NUMBER));
-								buf.append(", start=");
-								buf.append(marker
-										.getAttribute(IMarker.CHAR_START));
-								buf.append(", end=");
-								buf.append(marker
-										.getAttribute(IMarker.CHAR_END));
-								buf.append("] ");
-								buf.append(marker.getAttribute(IMarker.MESSAGE))
-										.append('\n');
-							}
-
-							assertContents(pdttFile.getExpected(),
-									buf.toString());
-						}
-					});
-				} catch (final Exception e) {
-					suite.addTest(new TestCase(fileName) { // dummy test
-															// indicating PDTT
-															// file parsing
-															// failure
-						protected void runTest() throws Throwable {
-							throw e;
-						}
-					});
-				}
-			}
-		}
-
-		// Create a setup wrapper
-		TestSetup setup = new TestSetup(suite) {
-			protected void setUp() throws Exception {
-				setUpSuite();
-			}
-
-			protected void tearDown() throws Exception {
-				tearDownSuite();
-			}
-		};
-
-		return setup;
+	@Override
+	protected String getMarkerType() {
+		return PEXProblemIdentifier.MARKER_TYPE;
 	}
 
-	protected static IFile createFile(String data) throws Exception {
-		IFile testFile = project.getFile("test" + (++count) + ".php");
-		testFile.create(new ByteArrayInputStream(data.getBytes()), true, null);
-		return testFile;
+	@Override
+	protected PHPVersion getPHPVersion() {
+		return PHPVersion.PHP5_4;
+	}
+
+	@BeforeList
+	@Override
+	public void setUpSuite() throws Exception {
+		Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE).node(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID)
+				.remove(PreferenceConstants.ENABLED);
+		super.setUpSuite();
 	}
 }

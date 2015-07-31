@@ -19,6 +19,7 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.FormalParameter;
 import org.eclipse.php.internal.core.compiler.ast.nodes.FullyQualifiedReference;
 import org.eclipse.php.internal.core.compiler.ast.nodes.InterfaceDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.NamespaceDeclaration;
+import org.eclipse.php.internal.core.compiler.ast.nodes.NamespaceReference;
 import org.eclipse.php.internal.core.compiler.ast.nodes.StaticConstantAccess;
 import org.eclipse.php.internal.core.compiler.ast.nodes.StaticFieldAccess;
 import org.eclipse.php.internal.core.compiler.ast.nodes.StaticMethodInvocation;
@@ -53,6 +54,8 @@ public class UsageValidator extends AbstractValidator {
 
 	Map<UsePart, Boolean> parts;
 	Map<String, Boolean> found;
+	Map<String, Boolean> namespaces;
+	String projectName;
 	
 	IType namespace = null;
 
@@ -60,6 +63,7 @@ public class UsageValidator extends AbstractValidator {
 		super();
 		parts = new HashMap<UsePart, Boolean>();
 		found = new HashMap<String, Boolean>();
+		namespaces = new HashMap<String, Boolean>();
 	}
 	
 	@Override
@@ -68,7 +72,11 @@ public class UsageValidator extends AbstractValidator {
 				context.getSourceModule(), 0);
 		super.validate(context);
 		parts.clear();
-		found.clear();
+		if (projectName == null || projectName.equals(context.getProject().getElementName())) {
+			namespaces.clear();
+			found.clear();
+			projectName = context.getProject().getElementName();
+		}
 	}
 	
 	@Override
@@ -334,10 +342,25 @@ public class UsageValidator extends AbstractValidator {
 			return found.get(searchString);
 		}
 		
+		if (namespaces.containsKey(searchString)) {
+			return namespaces.get(searchString);
+		}
+		
 		if (PDTModelUtils.findTypes(context.getProject(), searchString).length > 0) {
 			found.put(searchString, true);
 			return true;
 		}
+		IDLTKSearchScope scope = SearchEngine.createSearchScope(context.getProject());
+		if (PhpModelAccess.getDefault().findNamespaces(null, searchString, MatchRule.EXACT, 0, 0, scope, null).length > 0) {
+			namespaces.put(searchString, true);
+			return true;
+		}
+		
+		if (PhpModelAccess.getDefault().findNamespaces(null, searchString + NamespaceReference.NAMESPACE_SEPARATOR, MatchRule.PREFIX, 0, 0, scope, null).length > 0) {
+			namespaces.put(searchString, true);
+			return true;
+		}
+		
 		found.put(searchString, false);
 		
 		return false;

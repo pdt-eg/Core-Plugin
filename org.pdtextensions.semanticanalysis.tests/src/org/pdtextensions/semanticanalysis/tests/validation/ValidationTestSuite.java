@@ -1,19 +1,11 @@
 package org.pdtextensions.semanticanalysis.tests.validation;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-public class ValidationTestSuite extends TestSuite {
-	
-    public static Test suite() {
-        TestSuite suite = new TestSuite("org.pdtextensions.semanticanalysis.tests.validation");
-        //suite.addTest(PHP5ErrorReportingTests.suite());
-        //suite.addTest(PHP53ErrorReportingTests.suite());
-        suite.addTest(PHP54ValidationReportingTests.suite());
-
-        return suite;
-    }	
-    
-    
+@RunWith(Suite.class)
+@SuiteClasses({ PHP54ValidationReportingTests.class })
+public class ValidationTestSuite {
 
 }

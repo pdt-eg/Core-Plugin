@@ -1,0 +1,14 @@
+--TEST--
+Test import type
+--FILE--
+<?php
+namespace space\testClassUsage4\test {
+    class A {}
+}
+namespace text {
+    use space as el;
+    $x = new el\testClassUsage4\test\A();
+}
+?>
+--EXPECT--
+[line=7, start=104, end=106] Variable $x is never used

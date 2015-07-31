@@ -67,9 +67,10 @@ public class ValidatorPreferenceTest {
 	}
 	
 	@After
-	public void after() throws CoreException {
+	public void after() throws CoreException, BackingStoreException {
 		Preferences node = Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE).node(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID);
-		node.remove(PreferenceConstants.ENABLED);
+		node.clear();
+		node.flush();
 		
 		project.delete(true, true, null);
 	}
