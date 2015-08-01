@@ -12,8 +12,11 @@
  *******************************************************************************/
 package org.pdtextensions.semanticanalysis.tests.validation;
 
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.dltk.core.DLTKCore;
+import org.eclipse.dltk.core.IBuildpathEntry;
+import org.eclipse.dltk.core.IScriptProject;
+import org.eclipse.php.core.tests.PHPCoreTests;
 import org.eclipse.php.core.tests.errors.AbstractErrorReportingTests;
 import org.eclipse.php.core.tests.runner.AbstractPDTTRunner.Context;
 import org.eclipse.php.core.tests.runner.PDTTList;
@@ -23,8 +26,6 @@ import org.eclipse.php.internal.core.PHPVersion;
 import org.junit.runner.RunWith;
 import org.osgi.framework.Bundle;
 import org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier;
-import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
-import org.pdtextensions.semanticanalysis.PreferenceConstants;
 import org.pdtextensions.semanticanalysis.tests.PEXAnalysisTestPlugin;
 
 @SuppressWarnings("restriction")
@@ -54,11 +55,4 @@ public class PHP54ValidationReportingTests extends AbstractErrorReportingTests {
 		return PHPVersion.PHP5_4;
 	}
 
-	@BeforeList
-	@Override
-	public void setUpSuite() throws Exception {
-		Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE).node(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID)
-				.remove(PreferenceConstants.ENABLED);
-		super.setUpSuite();
-	}
 }

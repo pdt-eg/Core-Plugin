@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IScriptProject;
+import org.eclipse.php.core.tests.PHPCoreTests;
 import org.eclipse.php.internal.core.project.PHPNature;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -68,11 +69,14 @@ public class ValidatorPreferenceTest {
 	
 	@After
 	public void after() throws CoreException, BackingStoreException {
-		Preferences node = Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE).node(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID);
-		node.clear();
-		node.flush();
-		
 		project.delete(true, true, null);
+		PHPCoreTests.waitForAutoBuild();
+
+		Preferences node = Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE).node(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID);
+		for (String key : InstanceScope.INSTANCE.getNode(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID).keys()) {
+			node.remove(key);
+		}
+		node.flush();
 	}
 
 	@Test
@@ -93,5 +97,6 @@ public class ValidatorPreferenceTest {
 		assertFalse(manager.isEnabled(scriptProject));
 		
 		globalNode.putBoolean(PreferenceConstants.ENABLED, true);
+		globalNode.flush();
 	}
 }

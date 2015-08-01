@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.pdtextensions</groupId>
-    <artifactId>parent</artifactId>
-    <version>0.22.0-SNAPSHOT</version>  
-  </parent>
+	<parent>
+		<groupId>org.pdtextensions</groupId>
+		<artifactId>parent</artifactId>
+		<version>0.22.0-SNAPSHOT</version>
+	</parent>
 
-  <artifactId>org.pdtextensions.semanticanalysis</artifactId>
-  <packaging>eclipse-plugin</packaging>
-
+	<artifactId>org.pdtextensions.semanticanalysis</artifactId>
+	<packaging>eclipse-plugin</packaging>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-surefire-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<testClass>org.eclipse.php.core.tests.AllTests</testClass>
+					<dependencies>
+						<dependency>
+							<type>p2-installable-unit</type>
+							<artifactId>org.eclipse.dltk.core.index.sql.h2</artifactId>
+						</dependency>
+					</dependencies>
+					<testFailureIgnore>false</testFailureIgnore>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
