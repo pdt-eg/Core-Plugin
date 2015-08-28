@@ -1,3 +1,8 @@
+### 0.22.0
+
+- Add static properties into getter/setter generator
+- Improve code formating during code generation
+
 ### 0.17.0
 
 - [KUBO Atsuhiro](https://github.com/iteman) added refactoring support

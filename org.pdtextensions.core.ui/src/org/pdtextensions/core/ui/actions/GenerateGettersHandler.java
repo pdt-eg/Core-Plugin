@@ -33,6 +33,9 @@ import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.internal.core.SourceType;
 import org.eclipse.dltk.ui.DLTKPluginImages;
 import org.eclipse.dltk.ui.DLTKUIPlugin;
+import org.eclipse.dltk.ui.ScriptElementImageProvider;
+import org.eclipse.dltk.ui.ScriptElementLabels;
+import org.eclipse.dltk.ui.viewsupport.ScriptUILabelProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Region;
@@ -41,9 +44,11 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.php.core.compiler.IPHPModifiers;
 import org.eclipse.php.core.compiler.PHPFlags;
 import org.eclipse.php.internal.core.PHPCoreConstants;
 import org.eclipse.php.internal.core.PHPCorePlugin;
+import org.eclipse.php.internal.core.PHPLanguageToolkit;
 import org.eclipse.php.internal.core.ast.nodes.ASTNode;
 import org.eclipse.php.internal.core.ast.nodes.ASTParser;
 import org.eclipse.php.internal.core.ast.nodes.Block;
@@ -51,8 +56,11 @@ import org.eclipse.php.internal.core.ast.nodes.ClassDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.Program;
 import org.eclipse.php.internal.core.ast.nodes.Statement;
 import org.eclipse.php.internal.core.format.FormatterUtils;
+import org.eclipse.php.internal.core.typeinference.FakeMethod;
+import org.eclipse.php.internal.ui.PHPUILanguageToolkit;
 import org.eclipse.php.internal.ui.actions.SelectionHandler;
 import org.eclipse.php.internal.ui.editor.PHPStructuredEditor;
+import org.eclipse.php.ui.PHPElementLabels;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
@@ -148,18 +156,32 @@ public class GenerateGettersHandler extends SelectionHandler implements IHandler
 	}
 
 	private class GetterSetterLabelProvider extends LabelProvider {
+		private ScriptUILabelProvider subProvider = new ScriptUILabelProvider(ScriptElementLabels.ALL_DEFAULT,
+				ScriptElementImageProvider.OVERLAY_ICONS | ScriptElementImageProvider.SMALL_ICONS);
+		
+		private IMethod fakeMethod = new FakeMethod(type, "f", IPHPModifiers.AccPublic); //$NON-NLS-1$
+		
+		private IMethod fakeMethodStatic = new FakeMethod(type, "f", IPHPModifiers.AccPublic | IPHPModifiers.AccStatic); //$NON-NLS-1$
 
 		@Override
 		public Image getImage(Object element) {
 
 			if (element instanceof GetterSetterEntry) {
-				return DLTKUIPlugin.getImageDescriptorRegistry().get(DLTKPluginImages.DESC_FIELD_PUBLIC);
+				try {
+					return subProvider.getImage(PHPFlags.isStatic(((GetterSetterEntry) element).field.getFlags()) ? fakeMethodStatic : fakeMethod);
+				} catch (ModelException e) {
+				}
 			} else if (element instanceof IField) {
-				return DLTKUIPlugin.getImageDescriptorRegistry().get(DLTKPluginImages.DESC_FIELD_PRIVATE);
-
+				return subProvider.getImage(element);
 			}
 			return super.getImage(element);
 
+		}
+
+		@Override
+		public void dispose() {
+			super.dispose();
+			subProvider.dispose();
 		}
 
 		@Override
@@ -418,13 +440,12 @@ public class GenerateGettersHandler extends SelectionHandler implements IHandler
 			IField field = fields[i];
 
 			int flags = field.getFlags();
-			if (PHPFlags.isStatic(flags) || PHPFlags.isConstant(flags)) {
+			if (PHPFlags.isConstant(flags)) {
 				continue;
 			}
 
-			String name = field.getElementName().replace("$", "");
-			String getter = "get" + name.toLowerCase();
-			String setter = "set" + name.toLowerCase();
+			String getter = GetterSetterUtil.getGetterName(field);
+			String setter = GetterSetterUtil.getSetterName(field);
 
 			List l = new ArrayList(2);
 			List<GetterSetterEntry> entries = new ArrayList<GetterSetterEntry>();
@@ -433,11 +454,11 @@ public class GenerateGettersHandler extends SelectionHandler implements IHandler
 			boolean setterExists = false;
 
 			for (IMethod method : type.getMethods()) {
-				String methodName = method.getElementName().toLowerCase();
-				if (methodName.startsWith("get")) {
-					getterExists = methodName.equals(getter);
-				} else if (methodName.startsWith("set")) {
-					setterExists = methodName.equals(setter);
+				String methodName = method.getElementName();
+				if (methodName.equalsIgnoreCase(getter)) {
+					getterExists = true;
+				} else if (methodName.equalsIgnoreCase(setter)) {
+					setterExists = true;
 				}
 			}
 

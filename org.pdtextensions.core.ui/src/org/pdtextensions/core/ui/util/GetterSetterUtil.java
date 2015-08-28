@@ -17,6 +17,7 @@ import org.eclipse.dltk.core.IField;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.SourceParserUtil;
+import org.eclipse.php.core.compiler.IPHPModifiers;
 import org.eclipse.php.core.compiler.PHPFlags;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPDocBlock;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPDocTag;
@@ -164,6 +165,7 @@ public class GetterSetterUtil {
 	public static String getGetterStub(IField field, String getterName, boolean addComments, int flags, String indent)
 			throws CoreException {
 		String fieldName = field.getElementName();
+		boolean isStatic = PHPFlags.isStatic(field.getFlags());
 		IType parentType = field.getDeclaringType();
 
 		String typeName = "function";
@@ -185,7 +187,7 @@ public class GetterSetterUtil {
 			}
 		}
 
-		buf.append(PHPFlags.toString(flags));
+		buf.append(PHPFlags.toString(flags | (isStatic ? IPHPModifiers.AccStatic : 0)));
 		buf.append(' ');
 
 		buf.append(typeName);
@@ -193,8 +195,11 @@ public class GetterSetterUtil {
 		buf.append(getterName);
 		buf.append("() {"); //$NON-NLS-1$
 		buf.append(lineDelim);
-
-		fieldName = "$this->" + fieldName.replace("$", ""); //$NON-NLS-1$
+		if (isStatic) {
+			fieldName = "self::" + fieldName; //$NON-NLS-1$
+		} else {
+			fieldName = "$this->" + fieldName.replace("$", ""); //$NON-NLS-1$
+		}
 
 		String body = org.eclipse.php.ui.CodeGeneration.getGetterMethodBodyContent(field.getScriptProject(),
 				parentType.getTypeQualifiedName(), getterName, fieldName, lineDelim);
@@ -229,6 +234,7 @@ public class GetterSetterUtil {
 
 		String fieldName = field.getElementName();
 		IType parentType = field.getDeclaringType();
+		boolean isStatic = PHPFlags.isStatic(field.getFlags());
 		IScriptProject project = field.getScriptProject();
 		String accessorName = fieldName;
 
@@ -246,7 +252,7 @@ public class GetterSetterUtil {
 				buf.append(lineDelim);
 			}
 		}
-		buf.append(PHPFlags.toString(flags));
+		buf.append(PHPFlags.toString(flags | (isStatic ? IPHPModifiers.AccStatic : 0)));
 		buf.append(' ');
 
 		buf.append("function "); //$NON-NLS-1$
@@ -263,7 +269,12 @@ public class GetterSetterUtil {
 		buf.append(lineDelim);
 
 		String argname = fieldName;
-		fieldName = "$this->" + fieldName.replace("$", ""); //$NON-NLS-1$
+		if (isStatic) {
+			fieldName = "self::" + fieldName; //$NON-NLS-1$;
+		} else {
+			fieldName = "$this->" + fieldName.replace("$", ""); //$NON-NLS-1$
+		}
+		
 
 		String body = org.eclipse.php.ui.CodeGeneration.getSetterMethodBodyContent(project,
 				parentType.getFullyQualifiedName(), setterName, fieldName, argname, lineDelim);
@@ -271,7 +282,7 @@ public class GetterSetterUtil {
 			buf.append(indent + body);
 		}
 
-		if (fluent) {
+		if (fluent && !isStatic) {
 			buf.append(lineDelim);
 			buf.append(indent + "return $this;");
 		}
