@@ -9,6 +9,7 @@ package org.pdtextensions.core.ui.contentassist;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.dltk.core.ISourceModule;
+import org.eclipse.dltk.internal.ui.search.DLTKSearchScopeFactory;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.php.internal.core.ast.nodes.AST;
 import org.eclipse.php.internal.core.ast.nodes.ASTNode;
@@ -29,7 +30,6 @@ import org.eclipse.php.internal.ui.corext.fix.LinkedProposalModel;
 import org.eclipse.php.internal.ui.text.correction.proposals.ASTRewriteCorrectionProposal;
 import org.eclipse.php.internal.ui.util.PHPPluginImages;
 import org.eclipse.text.edits.TextEditGroup;
-import org.pdtextensions.core.ui.actions.CorrectionCommandHandler;
 
 /**
  * Create local variable for function/method call
@@ -82,6 +82,7 @@ public class AssignToLocalCompletionProposal extends ASTRewriteCorrectionProposa
 		if (coveringNode instanceof Assignment) {
 			return true;
 		}
+		
 
 		return isEnd(coveringNode) || coveringNode.getParent() == null ? false : isAssigned(coveringNode.getParent());
 	}
@@ -209,10 +210,5 @@ public class AssignToLocalCompletionProposal extends ASTRewriteCorrectionProposa
 			return super.visit(var);
 		}
 		
-	}
-	
-	@Override
-	public StyledString getStyledDisplayString() {
-		return CorrectionCommandHandler.appendStyledDisplay(super.getStyledDisplayString(), this); 
 	}
 }

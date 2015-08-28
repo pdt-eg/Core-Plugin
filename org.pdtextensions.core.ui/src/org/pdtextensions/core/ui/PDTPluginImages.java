@@ -40,9 +40,7 @@ public class PDTPluginImages {
 	private static final String T_OBJ = "obj16"; //$NON-NLS-1$
 	
 	public static final String IMG_OBJS_ROUTE = NAME_PREFIX + "route-icon.gif";
-	public static final String IMG_CORRECTION_CHANGE= NAME_PREFIX + "correction_change.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_ROUTE = createManagedFromKey(T_OBJ, IMG_OBJS_ROUTE);	
-	public static final ImageDescriptor DESC_CORRECTION_CHANGE= createManagedFromKey(T_OBJ, IMG_CORRECTION_CHANGE);
 
 	private static final String T_WIZBAN = "wizban"; //$NON-NLS-1$
 	

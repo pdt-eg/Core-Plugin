@@ -14,6 +14,7 @@ import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.SourceParserUtil;
 import org.eclipse.dltk.internal.core.ModelElement;
+import org.eclipse.dltk.ui.DLTKPluginImages;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextUtilities;
@@ -54,8 +55,7 @@ public class InterfaceMethodCompletionProposal extends PHPCompletionProposal {
 	
 	@Override
 	public Image getImage() {
-
-		return PEXUIPlugin.getImageDescriptorRegistry().get(PDTPluginImages.DESC_CORRECTION_CHANGE);
+		return DLTKPluginImages.get(DLTKPluginImages.IMG_CORRECTION_CHANGE);
 		
 	}
 

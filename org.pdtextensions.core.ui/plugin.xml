@@ -20,7 +20,7 @@
         category="org.eclipse.php.project.ui"
         class="org.pdtextensions.core.ui.wizards.NewClassWizard"
         hasPages="true"
-        icon="ico/full/obj16/newclass_wiz.gif"
+        icon="ico/full/obj16/newclass_wiz.png"
         id="org.pdtextensions.core.ui.wizards.classes.ClassCreationWizard"
         name="Class"
         project="false">
@@ -30,7 +30,7 @@
         category="org.eclipse.php.project.ui"
         class="org.pdtextensions.core.ui.wizards.NewInterfaceWizard"
         hasPages="true"
-        icon="ico/full/obj16/newint_wiz.gif"
+        icon="ico/full/obj16/newint_wiz.png"
         id="org.pdtextensions.core.ui.wizards.interface"
         name="Interface"
         project="false">
@@ -91,7 +91,7 @@
                id="org.pdtextensions.core.ui.newclasstoolbaritem">
             <command
                   commandId="org.pdtextensions.core.ui.createnewclass"
-                  icon="ico/full/obj16/class_obj.gif"
+                  icon="ico/full/obj16/newclass_wiz.png"
                   label="New class"
                   style="push"
                   tooltip="Create new PHP class">
@@ -110,7 +110,7 @@
                id="org.pdtextensions.core.ui.newinterfcaetoolbaritem">
             <command
                   commandId="org.pdtextensions.core.ui.createnewinterface"
-                  icon="ico/full/obj16/int_obj.gif"
+                  icon="ico/full/obj16/newint_wiz.png"
                   label="New interface"
                   style="push">
                <visibleWhen
@@ -246,6 +246,9 @@
             id="org.pdtextensions.core.ui.assignToLocalQuickAssistProcessor"
             name="Assign to local variable"
             class="org.pdtextensions.core.ui.quickassist.AssignToLocalQuickAssistProcessor">
+            <command
+                  id="org.pdtextensions.core.ui.correction.assignToLocal.assist">
+            </command>
       </quickAssistProcessor>
    </extension>
 </plugin>

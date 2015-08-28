@@ -32,10 +32,8 @@ import org.eclipse.php.internal.ui.corext.template.php.CodeTemplateContextType;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.themes.ColorUtil;
@@ -43,7 +41,6 @@ import org.eclipse.wst.sse.core.StructuredModelManager;
 import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.osgi.framework.BundleContext;
 import org.pdtextensions.core.log.Logger;
-import org.pdtextensions.core.ui.actions.CorrectionCommandHandler;
 import org.pdtextensions.core.ui.preferences.PDTTemplateStore;
 import org.pdtextensions.core.ui.preferences.PreferenceConstants;
 
@@ -75,24 +72,6 @@ public class PEXUIPlugin extends AbstractUIPlugin {
 
 	private IEclipseContext eclipseContext;
 	
-	/**
-	 * TODO Register prefixes by extension point
-	 */
-	private void registerCorrectionHandlers() {
-		final String COMMAND_PREFIX = "org.pdtextensions.core.ui.correction."; //$NON-NLS-1$
-		final ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
-		final IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
-		
-		for (final Object ob : commandService.getDefinedCommandIds()) {
-			String id = (String) ob;
-			if (!id.startsWith(COMMAND_PREFIX)) {
-				continue;
-			}
-			
-			handlerService.activateHandler(id, new CorrectionCommandHandler()); 
-		}
-	}
-	
 	
 	/*
 	 * (non-Javadoc)
@@ -102,8 +81,6 @@ public class PEXUIPlugin extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		eclipseContext = EclipseContextFactory.getServiceContext(context);
-		
-		registerCorrectionHandlers();
 	}
 	
 	/*
