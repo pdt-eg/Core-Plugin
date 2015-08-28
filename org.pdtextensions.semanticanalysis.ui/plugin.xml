@@ -144,4 +144,9 @@
          </handledMarkerTypes>
       </quickFixProcessor>
    </extension>
+   <extension point="org.eclipse.ui.ide.markerSupport">
+      <markerTypeCategory name="PHP">
+         <markerTypeReference id="org.pdtextensions.semanticanalysis.problem" />
+      </markerTypeCategory>
+   </extension>
 </plugin>
