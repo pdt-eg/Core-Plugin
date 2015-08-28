@@ -118,6 +118,9 @@ public class AssignToLocalCompletionProposal extends ASTRewriteCorrectionProposa
 		if (basic == null || basic.length() < 1) {
 			basic = DEFAULT_NAME;
 		}
+		if (basic.charAt(0) == '\\') {
+			basic = basic.substring(1);
+		}
 		basic = Character.toLowerCase(basic.charAt(0)) + basic.substring(1);
 		
 		ASTNode scope = searchScope(node);
