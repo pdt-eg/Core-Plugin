@@ -2,6 +2,7 @@
 
 - Add static properties into getter/setter generator
 - Improve code formating during code generation
+- Resolve phpdoc and varcoment variables during semantic analysis #104
 
 ### 0.17.0
 

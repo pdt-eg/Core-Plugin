@@ -1,6 +1,11 @@
 package org.pdtextensions.semanticanalysis.validation.validator;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.TreeMap;
@@ -12,6 +17,7 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.ArrayVariableReference;
 import org.eclipse.php.internal.core.compiler.ast.nodes.Assignment;
 import org.eclipse.php.internal.core.compiler.ast.nodes.CatchClause;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ClassDeclaration;
+import org.eclipse.php.internal.core.compiler.ast.nodes.Comment;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ConditionalExpression;
 import org.eclipse.php.internal.core.compiler.ast.nodes.FieldAccess;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ForEachStatement;
@@ -21,7 +27,11 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.InfixExpression;
 import org.eclipse.php.internal.core.compiler.ast.nodes.LambdaFunctionDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.NamespaceDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPCallExpression;
+import org.eclipse.php.internal.core.compiler.ast.nodes.PHPDocBlock;
+import org.eclipse.php.internal.core.compiler.ast.nodes.PHPDocTag;
+import org.eclipse.php.internal.core.compiler.ast.nodes.PHPDocTagKinds;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPMethodDeclaration;
+import org.eclipse.php.internal.core.compiler.ast.nodes.PHPModuleDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPVariableKind;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ReferenceExpression;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ReflectionArrayVariableReference;
@@ -29,6 +39,7 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.ReflectionVariableRefere
 import org.eclipse.php.internal.core.compiler.ast.nodes.Scalar;
 import org.eclipse.php.internal.core.compiler.ast.nodes.StaticFieldAccess;
 import org.eclipse.php.internal.core.compiler.ast.nodes.TraitDeclaration;
+import org.eclipse.php.internal.core.compiler.ast.nodes.VarComment;
 import org.eclipse.php.internal.core.compiler.ast.parser.ASTUtils;
 import org.eclipse.php.internal.core.language.PHPVariables;
 import org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier;
@@ -61,17 +72,67 @@ public class VariableValidator extends AbstractValidator {
 	private int depth = 0;
 	private int inClassDecl = -1;
 
+	private List<VarComment> varCommentList;
+
+	private List<PHPDocBlock> docBlocks;
+
 	private enum Operation {
 		ASSIGN, USE;
 	}
 
 	private class Scope {
-		public HashMap<String, Variable> variables = new HashMap<String, VariableValidator.Variable>();
+		
+		public Map<String, Variable> variables = new HashMap<String, VariableValidator.Variable>();
+		public int start;
+		public int end;
 
+		public Scope(int start, int end) {
+			this.start = start;
+			this.end = end;
+		}
+		
 		void copy(Scope scope) {
 			for (Entry<String, Variable> entry : scope.variables.entrySet()) {
 				variables.put(entry.getKey(), new ImportedVariable(entry.getValue()));
 			}
+		}
+		
+		boolean contains(String name, int offset) {
+			if (variables.containsKey(name)) {
+				return true;
+			}
+			
+			for (VarComment varComment : varCommentList) {
+				if (varComment.sourceStart() > offset || end < varComment.sourceStart()) {
+					continue;
+				}
+				if (varComment.getVariableReference().getName()
+						.equals(name)) {
+					this.variables.put(name, new DocVariable(varComment));
+					return true;
+				}
+			}
+
+			
+			for (PHPDocBlock block : docBlocks) {
+				if (block.sourceStart() > offset
+						|| end < block
+								.sourceStart()) {
+					continue;
+				}
+
+				for (PHPDocTag tag : block.getTags(PHPDocTagKinds.VAR)) {
+					if (tag.isValidVarTag()
+							&& tag.getVariableReference() != null
+							&& tag.getVariableReference().getName()
+									.equals(name)) {
+						this.variables.put(name, new DocVariable(block));
+						return true;
+					}
+				}
+			}
+			
+			return false;
 		}
 	}
 
@@ -118,6 +179,14 @@ public class VariableValidator extends AbstractValidator {
 		public void addAddress(int start, int end) {
 			other.put(start, end);
 		}
+	}
+	
+	private class DocVariable extends Variable {
+		public DocVariable(Comment varComment) {
+			super(varComment.sourceStart(), varComment.sourceEnd());
+			setInitialized(start);
+		}
+		
 	}
 
 	private class ImportedVariable extends Variable {
@@ -168,14 +237,37 @@ public class VariableValidator extends AbstractValidator {
 
 	@Override
 	public void validate(IValidatorContext context) throws Exception {
-		pushScope();
+		pushScope(0, context.getSourceModule().getSourceRange().getLength());
+		PHPModuleDeclaration phpModule = (PHPModuleDeclaration) context.getModuleDeclaration();
+		List<VarComment> varComments = phpModule.getVarComments();
+		varCommentList = new ArrayList<VarComment>(phpModule
+				.getVarComments().size());
+		varCommentList.addAll(varComments);
+		Collections.sort(varCommentList, new Comparator<VarComment>() {
+
+			public int compare(VarComment o1, VarComment o2) {
+				return o2.sourceStart() - o1.sourceStart();
+			}
+		});
+		
+		docBlocks = new ArrayList<PHPDocBlock>(
+				phpModule.getPhpDocBlocks().size());
+		docBlocks.addAll(phpModule.getPhpDocBlocks());
+		Collections.sort(docBlocks, new Comparator<PHPDocBlock>() {
+
+			@Override
+			public int compare(PHPDocBlock o1, PHPDocBlock o2) {
+				return o1.sourceStart() - o1.sourceStart();
+			}
+		});
+		
 		super.validate(context);
 		popScope();
 	}
 
 	@Override
 	public boolean visit(PHPMethodDeclaration node) throws Exception {
-		pushScope();
+		pushScope(node.sourceStart(), node.sourceEnd());
 		if (node.isAbstract() || node.getBody() == null) {
 			popScope();
 			return false;
@@ -203,7 +295,7 @@ public class VariableValidator extends AbstractValidator {
 	@Override
 	public boolean visit(LambdaFunctionDeclaration decl) throws Exception {
 		Scope prev = current;
-		pushScope();
+		pushScope(decl.sourceStart(), decl.sourceEnd());
 		for (Object o : decl.getArguments()) {
 			if (o instanceof FormalParameter) {
 				VariableReference parameterName = ((FormalParameter) o).getParameterName();
@@ -219,7 +311,7 @@ public class VariableValidator extends AbstractValidator {
 				}
 				if (var instanceof VariableReference) {
 					final String name = ((VariableReference) var).getName();
-					if (prev.variables.containsKey(name)) {
+					if (prev.contains(name, var.sourceStart())) {
 						current.variables.put(name, new ImportedVariable(prev.variables.get(name)));
 					} else {
 						context.registerProblem(PEXProblemIdentifier.UNDEFINED_VARIABLE, String.format(MESSAGE_UNDEFINED_VARIABLE, name), var.start(),
@@ -228,7 +320,7 @@ public class VariableValidator extends AbstractValidator {
 				}
 			}
 		}
-		if (inClassDecl < depth && prev.variables.containsKey(THIS_VAR)) { //$NON-NLS-1$
+		if (inClassDecl < depth && prev.contains(THIS_VAR, 0)) { //$NON-NLS-1$
 			current.variables.put(THIS_VAR, prev.variables.get(THIS_VAR)); //$NON-NLS-1$
 		}
 		decl.getBody().traverse(this);
@@ -246,7 +338,7 @@ public class VariableValidator extends AbstractValidator {
 			for (ASTNode node : ex.getArgs().getChilds()) {
 				if (node instanceof Scalar && ((Scalar) node).getScalarType() == Scalar.TYPE_STRING) {
 					String name = DOLLAR + ASTUtils.stripQuotes(((Scalar) node).getValue());
-					if (current.variables.containsKey(name)) {
+					if (current.contains(name, node.sourceStart())) {
 						current.variables.get(name).setUsed(node.start());
 					}
 				}
@@ -267,7 +359,7 @@ public class VariableValidator extends AbstractValidator {
 	private void endScope(Scope scope) {
 		for (Entry<String, Variable> entry : scope.variables.entrySet()) {
 			Variable value = entry.getValue();
-			if (value.used() < 0 && !(value instanceof ImportedVariable)) {
+			if (value.used() < 0 && !(value instanceof ImportedVariable) && !(value instanceof DocVariable)) {
 				String mess = String.format(MESSAGE_UNUSED_VARIABLE, entry.getKey());
 				context.registerProblem(PEXProblemIdentifier.UNUSED_VARIABLE, mess, value.start, value.end);
 				for (Entry<Integer, Integer> a : value.other.entrySet()) {
@@ -278,7 +370,7 @@ public class VariableValidator extends AbstractValidator {
 	}
 
 	public boolean visit(NamespaceDeclaration s) throws Exception {
-		pushScope();
+		pushScope(s.sourceStart(), s.sourceEnd());
 		return super.visit(s);
 	}
 
@@ -333,6 +425,7 @@ public class VariableValidator extends AbstractValidator {
 	}
 	
 	protected void check(String name, int start, int end) {
+		current.contains(name, start);
 		Variable var = current.variables.get(name);
 
 		if (isInit()) {
@@ -457,7 +550,7 @@ public class VariableValidator extends AbstractValidator {
 
 	public boolean visit(CatchClause s) throws Exception {
 		Scope prev = current;
-		pushScope();
+		pushScope(s.sourceStart(), s.sourceEnd());
 		current.copy(prev);
 		try {
 			if (s.getVariable() != null) {
@@ -500,7 +593,7 @@ public class VariableValidator extends AbstractValidator {
 				VariableReference ref = (VariableReference) el;
 				if (scopes.size() > 1) {
 					Scope parentScope = scopes.get(scopes.size() - 2);
-					if (parentScope.variables.containsKey(ref.getName())) {
+					if (parentScope.contains(ref.getName(), ref.sourceStart())) {
 						current.variables.put(ref.getName(), new ImportedVariable(parentScope.variables.get(ref.getName())));
 						continue;
 					}
@@ -579,8 +672,8 @@ public class VariableValidator extends AbstractValidator {
 		return super.endvisit(s);
 	}
 
-	private Scope pushScope() {
-		current = new Scope();
+	private Scope pushScope(int start, int end) {
+		current = new Scope(start, end);
 		scopes.push(current);
 		depth++;
 		return scopes.lastElement();
