@@ -38,6 +38,7 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.ReflectionArrayVariableR
 import org.eclipse.php.internal.core.compiler.ast.nodes.ReflectionVariableReference;
 import org.eclipse.php.internal.core.compiler.ast.nodes.Scalar;
 import org.eclipse.php.internal.core.compiler.ast.nodes.StaticFieldAccess;
+import org.eclipse.php.internal.core.compiler.ast.nodes.StaticStatement;
 import org.eclipse.php.internal.core.compiler.ast.nodes.TraitDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.VarComment;
 import org.eclipse.php.internal.core.compiler.ast.parser.ASTUtils;
@@ -422,6 +423,16 @@ public class VariableValidator extends AbstractValidator {
 		check(name, s.start(), s.end());
 		
 		return super.visit(s);
+	}
+	
+	@Override
+	public boolean visit(StaticStatement s) throws Exception {
+		operations.push(Operation.ASSIGN);
+		for (Expression expr : s.getExpressions()) {
+			expr.traverse(this);
+		}
+		operations.pop();
+		return false;
 	}
 	
 	protected void check(String name, int start, int end) {
