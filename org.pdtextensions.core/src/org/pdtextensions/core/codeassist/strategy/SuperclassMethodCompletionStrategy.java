@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ISourceModule;
+import org.eclipse.dltk.core.ISourceRange;
 import org.eclipse.dltk.core.IType;
 import org.eclipse.dltk.core.ITypeHierarchy;
 import org.eclipse.dltk.core.ModelException;
@@ -29,17 +30,16 @@ import org.eclipse.php.internal.core.codeassist.CodeAssistUtils;
 import org.eclipse.php.internal.core.codeassist.ICompletionReporter;
 import org.eclipse.php.internal.core.codeassist.strategies.AbstractCompletionStrategy;
 import org.eclipse.php.internal.core.model.PhpModelAccess;
+import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.pdtextensions.core.codeassist.PDTCompletionInfo;
 import org.pdtextensions.core.codeassist.context.SuperclassMethodContext;
-
 
 /**
  * Completionstrategy to insert method stubs from superclasses.
  *
  */
 @SuppressWarnings({ "restriction", "deprecation" })
-public class SuperclassMethodCompletionStrategy extends
-AbstractCompletionStrategy implements ICompletionStrategy {
+public class SuperclassMethodCompletionStrategy extends AbstractCompletionStrategy implements ICompletionStrategy {
 
 	/**
 	 * @param context
@@ -49,8 +49,12 @@ AbstractCompletionStrategy implements ICompletionStrategy {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.php.core.codeassist.ICompletionStrategy#apply(org.eclipse.php.internal.core.codeassist.ICompletionReporter)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.php.core.codeassist.ICompletionStrategy#apply(org.eclipse.php
+	 * .internal.core.codeassist.ICompletionReporter)
 	 */
 	@Override
 	public void apply(ICompletionReporter reporter) throws Exception {
@@ -61,7 +65,7 @@ AbstractCompletionStrategy implements ICompletionStrategy {
 		IModelElement element = module.getElementAt(context.getOffset());
 
 		if (!(element instanceof SourceType)) {
-			while(element.getParent() != null) {
+			while (element.getParent() != null) {
 				element = element.getParent();
 				if (element instanceof SourceType) {
 					break;
@@ -75,40 +79,29 @@ AbstractCompletionStrategy implements ICompletionStrategy {
 
 		IDLTKSearchScope scope = SearchEngine.createSearchScope(module.getScriptProject());
 		SourceType type = (SourceType) element;
-		SourceRange range = getReplacementRange(context);
+		ISourceRange range = getReplacementRange(context);
 		String prefix = context.getPrefix();
 
-		IType[] projectTypes = PhpModelAccess.getDefault().findTypes(type.getElementName(), MatchRule.EXACT, 0, 0, scope, null);
+		IType[] projectTypes = PhpModelAccess.getDefault().findTypes(type.getElementName(), MatchRule.EXACT, 0, 0,
+				scope, null);
 
 		if (projectTypes.length != 1) {
 			return;
 		}
 
 		IType currentType = projectTypes[0];
-		ITypeHierarchy hierarchy = this.getCompanion().getSuperTypeHierarchy(type, new NullProgressMonitor());
-		IType[] superTypes = hierarchy.getAllSupertypes(currentType);
+		IMethod[] unimplementedMethods = PHPModelUtils.getUnimplementedMethods(currentType, null);
 
 		List<String> reported = new ArrayList<String>();
 
-		for (IType superType : superTypes) {
+		for (IMethod method : unimplementedMethods) {
 
-			for (IMethod method : superType.getMethods()) {
+			IMethod moduleMethod = type.getMethod(method.getElementName());
 
-				IMethod moduleMethod = type.getMethod(method.getElementName());
-
-				try {
-					// throws a ModelException for methods not declared inside this sourcemodule,
-					// hence when it passes we can safely continue
-					moduleMethod.getUnderlyingResource();
-					continue;
-
-				} catch (ModelException e) {
-
-					if (CodeAssistUtils.startsWithIgnoreCase(moduleMethod.getElementName(), prefix) && !reported.contains(method.getElementName())) {
-						reporter.reportMethod(method, "", range, new PDTCompletionInfo(module));
-						reported.add(method.getElementName());
-					}
-				}
+			if (CodeAssistUtils.startsWithIgnoreCase(moduleMethod.getElementName(), prefix)
+					&& !reported.contains(method.getElementName())) {
+				reporter.reportMethod(method, "", range, new PDTCompletionInfo(module));
+				reported.add(method.getElementName());
 			}
 		}
 	}
