@@ -240,6 +240,9 @@ public class VariableValidator extends AbstractValidator {
 	public void validate(IValidatorContext context) throws Exception {
 		pushScope(0, context.getSourceModule().getSourceRange().getLength());
 		PHPModuleDeclaration phpModule = (PHPModuleDeclaration) context.getModuleDeclaration();
+		if (phpModule == null) {
+			return;
+		}
 		List<VarComment> varComments = phpModule.getVarComments();
 		varCommentList = new ArrayList<VarComment>(phpModule
 				.getVarComments().size());
