@@ -3,10 +3,10 @@
 <repository name="PEX Core-Plugin - latest"
     type="org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepository" version="1.0.0">
   <properties size="1">
-    <property name="p2.timestamp" value="1243822502442"/>
+    <property name="p2.timestamp" value="1243822502443"/>
   </properties>
   <children size="1">
-    <child location="http://dl.bintray.com/zulus/core-plugin/release/0.21.0/"/>
+    <child location="http://dl.bintray.com/zulus/core-plugin/release/0.22.0/"/>
   </children>
 </repository>
 
