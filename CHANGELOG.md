@@ -1,3 +1,6 @@
+### 0.22.1
+
+
 ### 0.22.0
 
 - Add static properties into getter/setter generator
