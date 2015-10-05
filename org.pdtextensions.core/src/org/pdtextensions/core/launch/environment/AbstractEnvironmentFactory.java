@@ -1,22 +1,26 @@
 package org.pdtextensions.core.launch.environment;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.php.internal.ui.preferences.util.PreferencesSupport;
 import org.pdtextensions.core.exception.ExecutableNotFoundException;
 import org.pdtextensions.core.util.LaunchUtil;
 
-@SuppressWarnings("restriction")
 public abstract class AbstractEnvironmentFactory implements EnvironmentFactory {
 
 	@Override
 	public Environment getEnvironment(IProject project) {
 
-		IPreferenceStore store = getPreferenceStore();
-		PreferencesSupport prefSupport = new PreferencesSupport(getPluginId(), store);
-		String executable = prefSupport.getPreferencesValue(getExecutableKey(), null, project);
-		String useProjectPhar = prefSupport.getPreferencesValue(getUseProjectKey(), null, project);
-		String systemPhar = prefSupport.getPreferencesValue(getScriptKey(), null, project);
+		IPreferencesService service = Platform.getPreferencesService();
+		IScopeContext[] contexts = new IScopeContext[]{new ProjectScope(project), InstanceScope.INSTANCE, DefaultScope.INSTANCE};
+		String executable = service.getString(getPluginId(), getExecutableKey(), null, contexts);
+		String useProjectPhar = service.getString(getPluginId(),getUseProjectKey(), null, contexts);
+		String systemPhar = service.getString(getPluginId(), getScriptKey(), null, contexts);
 		
 		if (executable == null || executable.isEmpty()) {
 			// the user has not set any preference for PHP executable yet,
