@@ -4,6 +4,7 @@ import org.eclipse.php.internal.core.ast.nodes.ClassDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.FunctionDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.MethodDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.NamespaceDeclaration;
+import org.eclipse.php.internal.core.ast.nodes.TraitDeclaration;
 import org.eclipse.php.internal.core.ast.visitor.AbstractVisitor;
 
 @SuppressWarnings("restriction")
@@ -32,6 +33,16 @@ public class CoveringDeclarationFinder extends AbstractRangeFinder {
 		}
 		
 		// php does not support classes in classes
+		return false;
+	}
+	
+	public boolean visit(TraitDeclaration declaration) {
+		if(covers(declaration)) {
+			fCoveringClassDeclaration = declaration;
+			return true;
+		}
+		
+		// php does not support traits in traits
 		return false;
 	}
 	

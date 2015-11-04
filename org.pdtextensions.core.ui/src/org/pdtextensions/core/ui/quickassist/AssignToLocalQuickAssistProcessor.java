@@ -36,6 +36,7 @@ public class AssignToLocalQuickAssistProcessor implements IQuickAssistProcessor 
 		case ASTNode.STATIC_METHOD_INVOCATION:
 		case ASTNode.FUNCTION_INVOCATION:
 		case ASTNode.CLASS_INSTANCE_CREATION:
+		case ASTNode.ARRAY_ACCESS:
 			return true;
 		}
 		

@@ -9,10 +9,9 @@ package org.pdtextensions.core.ui.contentassist;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.dltk.core.ISourceModule;
-import org.eclipse.dltk.internal.ui.search.DLTKSearchScopeFactory;
-import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.php.internal.core.ast.nodes.AST;
 import org.eclipse.php.internal.core.ast.nodes.ASTNode;
+import org.eclipse.php.internal.core.ast.nodes.ArrayAccess;
 import org.eclipse.php.internal.core.ast.nodes.Assignment;
 import org.eclipse.php.internal.core.ast.nodes.ClassInstanceCreation;
 import org.eclipse.php.internal.core.ast.nodes.Expression;
@@ -168,6 +167,8 @@ public class AssignToLocalCompletionProposal extends ASTRewriteCorrectionProposa
 				}
 			case ASTNode.VARIABLE:
 				return getBasicName(((Variable)node).getName());
+			case ASTNode.ARRAY_ACCESS:
+				return getBasicName(((ArrayAccess)node).getName());
 			case ASTNode.IDENTIFIER:
 			case ASTNode.NAMESPACE_NAME:
 				return ((Identifier)node).getName();
