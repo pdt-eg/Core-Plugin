@@ -9,7 +9,7 @@
 		<version>0.22.1-SNAPSHOT</version>
 	</parent>
 	<properties>
-		<test.vmargs>-Xmx512m -XX:MaxPermSize=256m</test.vmargs>
+		<test.vmargs>-Xmx128m -XX:MaxPermSize=64m</test.vmargs>
 	</properties>
 	<artifactId>org.pdtextensions.semanticanalysis.tests</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
