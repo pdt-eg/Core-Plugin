@@ -80,7 +80,7 @@ public abstract class ElementStub {
 	}
 
 	protected String extractNamespaceName(IType type) {
-		return PHPModelUtils.extractNameSapceName(type.getFullyQualifiedName().replace("$", "\\"));
+		return PHPModelUtils.extractNameSpaceName(type.getFullyQualifiedName().replace("$", "\\"));
 	}
 
 	protected abstract void generateCode();
