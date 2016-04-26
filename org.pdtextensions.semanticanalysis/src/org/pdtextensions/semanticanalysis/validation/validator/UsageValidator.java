@@ -20,6 +20,7 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.FullyQualifiedReference;
 import org.eclipse.php.internal.core.compiler.ast.nodes.InterfaceDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.NamespaceDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.NamespaceReference;
+import org.eclipse.php.internal.core.compiler.ast.nodes.PHPMethodDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.StaticConstantAccess;
 import org.eclipse.php.internal.core.compiler.ast.nodes.StaticFieldAccess;
 import org.eclipse.php.internal.core.compiler.ast.nodes.StaticMethodInvocation;
@@ -27,6 +28,7 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.UsePart;
 import org.eclipse.php.internal.core.compiler.ast.nodes.UseStatement;
 import org.eclipse.php.internal.core.model.PhpModelAccess;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
+import org.eclipse.php.internal.core.typeinference.PHPSimpleTypes;
 import org.pdtextensions.core.util.PDTModelUtils;
 import org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier;
 import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
@@ -51,8 +53,31 @@ public class UsageValidator extends AbstractValidator {
 	final private static String MESSAGE_DUPLATE_USE = "%s is a duplicate";
 
 	final public static String ID = "org.pdtextensions.semanticanalysis.validator.usageValidator"; //$NON-NLS-1$
+	
+	private class PartInfo {
+		public UsePart part;
+		//public UseStatement container;
+		public String fullName;
+		public PartInfo(UseStatement container, UsePart part) {
+			this.part = part;
+			//this.container = container;
+			StringBuilder sb = new StringBuilder(part.getNamespace().getFullyQualifiedName());
+			if (container.getNamespace() != null) {
+				sb.insert(0, BACK_SLASH);
+				sb.insert(0, container.getNamespace().getFullyQualifiedName());
+			}
+			if (sb.charAt(0) != '\\') {
+				sb.insert(0, BACK_SLASH);
+			}
+			fullName = sb.toString();
+		}
+		
+		public String getUseName() {
+			return part.getAlias() != null ? part.getAlias().getName() : part.getNamespace().getName();
+		}
+	}
 
-	Map<UsePart, Boolean> parts;
+	Map<PartInfo, Boolean> parts;
 	Map<String, Boolean> found;
 	Map<String, Boolean> namespaces;
 	String projectName;
@@ -61,7 +86,7 @@ public class UsageValidator extends AbstractValidator {
 
 	public UsageValidator() {
 		super();
-		parts = new HashMap<UsePart, Boolean>();
+		parts = new HashMap<PartInfo, Boolean>();
 		found = new HashMap<String, Boolean>();
 		namespaces = new HashMap<String, Boolean>();
 	}
@@ -81,7 +106,7 @@ public class UsageValidator extends AbstractValidator {
 	
 	@Override
 	public boolean visit(NamespaceDeclaration s) throws Exception {
-		parts = new HashMap<UsePart, Boolean>();
+		parts = new HashMap<PartInfo, Boolean>();
 		namespace = PHPModelUtils.getCurrentNamespace(
 				context.getSourceModule(), s.getNameEnd() + 2);
 		return super.visit(s);
@@ -105,12 +130,11 @@ public class UsageValidator extends AbstractValidator {
 			if (part.getNamespace() == null) {
 				continue;
 			}
-			String sFullName = part.getNamespace().getFullyQualifiedName();
-			if (!sFullName.startsWith(BACK_SLASH)) { //$NON-NLS-1$
-				sFullName = BACK_SLASH + sFullName; //$NON-NLS-1$
-			}
-			for (UsePart existsPart : parts.keySet()) {
-				if (existsPart.toString().equals(part.toString())) {
+			PartInfo partInfo = new PartInfo(s, part);
+			
+			
+			for (PartInfo existsPart : parts.keySet()) {
+				if (existsPart.fullName.equals(partInfo.fullName)) {
 					
 					context.registerProblem(PEXProblemIdentifier.DUPLICATE, String.format(
 									MESSAGE_DUPLATE_USE, part.getNamespace()
@@ -122,26 +146,37 @@ public class UsageValidator extends AbstractValidator {
 				}
 			}
 
-			boolean isRes = isResolved(sFullName);
-			parts.put(part, isRes);
+			boolean isRes = isResolved(partInfo.fullName);
+			parts.put(partInfo, isRes);
 
 			// add problem if namespace is empty
 			if (!isRes) {
 				IDLTKSearchScope searchScope = SearchEngine
 						.createSearchScope(context.getProject());
 				IType[] types = PhpModelAccess.getDefault().findTypes(
-						sFullName.substring(1) + BACK_SLASH, MatchRule.PREFIX, 0, 0, //$NON-NLS-1$
+						partInfo.fullName.substring(1) + BACK_SLASH, MatchRule.PREFIX, 0, 0, //$NON-NLS-1$
 						searchScope, new NullProgressMonitor());
 				if (types.length == 0) {
 					context.registerProblem(PEXProblemIdentifier.UNRESOVABLE, String.format(MESSAGE_CANNOT_RESOLVE_USE,
-							part.getNamespace().getFullyQualifiedName()), part.getNamespace().sourceStart(), part.getNamespace().sourceEnd());
+							partInfo.fullName.substring(1)), part.getNamespace().sourceStart(), part.getNamespace().sourceEnd());
 				}
 			}
 		}
 
 		return true;
 	}
-
+	
+	@Override
+	public boolean visit(PHPMethodDeclaration s) throws Exception {
+		if (s.getReturnType() instanceof FullyQualifiedReference) {
+			FullyQualifiedReference fqr = (FullyQualifiedReference) s
+					.getReturnType();
+			if (!isResolved(fqr)) {
+				context.registerProblem(PEXProblemIdentifier.USAGE_RELATED, String.format(MESSAGE_CANNOT_RESOLVE_TYPE, fqr.getName()), fqr.sourceStart(), fqr.sourceEnd());
+			}
+		}
+		return super.visit(s);
+	}
 	/**
 	 * Checks if a FormalParameter can be resolved.
 	 * 
@@ -272,6 +307,9 @@ public class UsageValidator extends AbstractValidator {
 		if (PDTModelUtils.isBuiltinType(fqr.getFullyQualifiedName())) {
 			return true;
 		}
+		if (PHPSimpleTypes.isHintable(fqr.getFullyQualifiedName(), context.getPHPVersion())) {
+			return true;
+		}
 		
 		// check this file
 		
@@ -282,20 +320,19 @@ public class UsageValidator extends AbstractValidator {
 		String check;
 		String sFullName = fqr.getFullyQualifiedName();
 
-		for (Entry<UsePart, Boolean> entry : parts.entrySet()) {
+		for (Entry<PartInfo, Boolean> entry : parts.entrySet()) {
 
-			String useName = entry.getKey().getAlias() != null ? entry.getKey().getAlias().getName() :entry.getKey().getNamespace().getName();
-			String realName = entry.getKey().getNamespace()
-					.getFullyQualifiedName();
+			String useName = entry.getKey().getUseName();
 			
 			if (!sFullName.contains(BACK_SLASH) && !sFullName.equals(useName)) {
 				continue;
 			} else if (sFullName.contains(BACK_SLASH) && !sFullName.startsWith(useName + BACK_SLASH)) {
 				continue;
 			}
-			StringBuilder builder = new StringBuilder(!realName.startsWith(BACK_SLASH) ? BACK_SLASH : "");
-			builder.append(realName);
-			builder.append(sFullName.contains(BACK_SLASH) ? sFullName.substring(useName.length()) : "");
+			StringBuilder builder = new StringBuilder(entry.getKey().fullName);
+			if (sFullName.contains(BACK_SLASH)) {
+				builder.append(sFullName.substring(useName.length()));
+			}
 			
 			check = builder.toString();
 			

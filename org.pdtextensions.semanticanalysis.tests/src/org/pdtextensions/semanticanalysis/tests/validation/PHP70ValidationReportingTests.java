@@ -25,17 +25,17 @@ import org.pdtextensions.semanticanalysis.tests.PEXAnalysisTestPlugin;
 @SuppressWarnings("restriction")
 
 @RunWith(PDTTList.class)
-public class PHP54ValidationReportingTests extends AbstractErrorReportingTests {
+public class PHP70ValidationReportingTests extends AbstractErrorReportingTests {
 
 	@Parameters
-	public static final String[] TEST_DIRS = { "/workspace/errors/php54" };
+	public static final String[] TEST_DIRS = { "/workspace/errors/php54", "/workspace/errors/php70" };
 
 	@Context
 	public static Bundle getBundle() {
 		return PEXAnalysisTestPlugin.getDefault().getBundle();
 	}
 
-	public PHP54ValidationReportingTests(String[] fileNames) {
+	public PHP70ValidationReportingTests(String[] fileNames) {
 		super(fileNames);
 	}
 
@@ -46,7 +46,7 @@ public class PHP54ValidationReportingTests extends AbstractErrorReportingTests {
 
 	@Override
 	protected PHPVersion getPHPVersion() {
-		return PHPVersion.PHP5_4;
+		return PHPVersion.PHP7_0;
 	}
 
 }

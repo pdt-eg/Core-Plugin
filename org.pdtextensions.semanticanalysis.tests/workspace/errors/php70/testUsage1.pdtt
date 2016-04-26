@@ -1,0 +1,11 @@
+--TEST--
+Grouped use
+--FILE--
+<?php
+use com\{name\B};
+
+class A extends B {}
+?>
+--EXPECT--
+[line=2, start=15, end=21] The type com\name\B cannot be resolved or namespace is empty
+[line=4, start=41, end=42] The type B cannot be resolved
