@@ -107,10 +107,12 @@ public class ImplementationValidator extends AbstractValidator{
 					name = fqr.getNamespace().getName() + BACK_SLASH + fqr.getName();
 				} else {
 					IEvaluatedType eval = PHPTypeInferenceUtils.resolveExpression(sourceModule, fqr);
-					name = eval.getTypeName();
-					if (eval.getTypeName().startsWith(BACK_SLASH)) {
-						name = eval.getTypeName().replaceFirst("\\\\", "");
-					}					
+					if (eval != null) {
+						name = eval.getTypeName();
+						if (eval.getTypeName().startsWith(BACK_SLASH)) {
+							name = eval.getTypeName().replaceFirst("\\\\", "");
+						}
+					}
 				}
 				
 				if (name == null) {
