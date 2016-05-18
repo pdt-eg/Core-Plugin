@@ -11,7 +11,7 @@ Currently the core plugin supports following features:
 - Use-Statement validation (injecting of missing use statements through quick-fixes)
 - Class / Interface dialog
 - Implementation of missing interface/abstract classes methods
-- Assign to local variable quick-fix
+- ~~Assign to local variable quick-fix~~ - _Moved to PDT 4.0_
 - ~~Import statements outline filters~~ - _PDT since 3.5 have same filters_
 - Unused / uninitialized variable validator
 - ~~PHP Refactoring support~~ - _PDT since 3.4 have own refactoring support_

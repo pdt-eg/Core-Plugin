@@ -152,12 +152,6 @@
             id="org.pdtextensions.core.ui.createnewinterface"
             name="Create new PHP interface">
       </command>
-      <command
-            name="Quick Assist - Assign to local variable"
-            description="Invokes quick assist and selects Assign to local variable"
-            categoryId="org.eclipse.php.ui.category.source"
-            id="org.pdtextensions.core.ui.correction.assignToLocal.assist">
-      </command>
    </extension>
 
 
@@ -217,11 +211,7 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+Shift+9">
       </key>
-      <key
-            sequence="M1+2 L"
-            contextId="org.eclipse.php.ui.phpEditorScope"
-            commandId="org.pdtextensions.core.ui.correction.assignToLocal.assist"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -240,15 +230,5 @@
             nature="org.eclipse.php.core.PHPNature">
       </wizardExtension>
    </extension>
-   <extension
-         point="org.eclipse.php.ui.quickAssistProcessors">
-      <quickAssistProcessor
-            id="org.pdtextensions.core.ui.assignToLocalQuickAssistProcessor"
-            name="Assign to local variable"
-            class="org.pdtextensions.core.ui.quickassist.AssignToLocalQuickAssistProcessor">
-            <command
-                  id="org.pdtextensions.core.ui.correction.assignToLocal.assist">
-            </command>
-      </quickAssistProcessor>
-   </extension>
+   
 </plugin>
