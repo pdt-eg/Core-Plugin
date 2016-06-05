@@ -2,6 +2,7 @@ PDT Extensions Group / Core Plugin
 ==================================
 
 [![Build Status](https://travis-ci.org/pdt-eg/Core-Plugin.svg?branch=master)](https://travis-ci.org/pdt-eg/Core-Plugin)
+[![Codeship](https://codeship.com/projects/156160/status?branch=master)](https://codeship.com/projects/156160)
 
 
 The PDT extension group is a collobaration of PDT plugin maintainers to build a central PDT extension platform and codebase.
