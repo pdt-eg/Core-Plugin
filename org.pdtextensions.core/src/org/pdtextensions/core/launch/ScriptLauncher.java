@@ -1,12 +1,16 @@
 package org.pdtextensions.core.launch;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.ExecuteException;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.php.internal.debug.core.launching.PHPLaunchUtilities;
 import org.pdtextensions.core.launch.environment.Environment;
 import org.pdtextensions.core.launch.execution.ExecutionResponseListener;
 import org.pdtextensions.core.launch.execution.ScriptExecutor;
@@ -68,7 +72,10 @@ public class ScriptLauncher {
 			executor.addResponseListener(listener);
 		}
 		
-		executor.execute(cmd);
+		Map<String, String> env = new HashMap<String, String>(System.getenv());
+		PHPLaunchUtilities.appendLibrarySearchPathEnv(env, new File(cmd.getExecutable()).getParentFile());
+		
+		executor.execute(cmd, env);
 	}
 	
 	public void abort() {
