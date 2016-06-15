@@ -3,6 +3,7 @@ package org.pdtextensions.core.launch.execution;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.exec.CommandLine;
@@ -121,7 +122,10 @@ public class ScriptExecutor {
 	}
 
 	public void execute(CommandLine cmd) {
-		
+		execute(cmd, null);
+	}
+
+	public void execute(CommandLine cmd, Map<String, String> env) {
 		try {
 			for (ExecutionResponseListener handler : listeners) {
 				handler.executionAboutToStart();
@@ -129,7 +133,7 @@ public class ScriptExecutor {
 			
 			Logger.debug("executing command using executable: " + cmd.getExecutable());
 			executor.setExitValue(0);
-			executor.execute(cmd, handler);
+			executor.execute(cmd, env, handler);
 			
 			for (ExecutionResponseListener handler : listeners) {
 				handler.executionStarted();
