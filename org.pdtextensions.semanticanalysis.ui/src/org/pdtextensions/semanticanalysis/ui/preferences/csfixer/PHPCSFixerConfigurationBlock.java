@@ -173,7 +173,7 @@ public class PHPCSFixerConfigurationBlock extends
 
 		addComboBox(fixerGroup, "Configuration", PREF_PHPCS_CONFIG,
 				PEXPreferenceNames.getPHPCSFixerConfig(),
-				PEXPreferenceNames.getPHPCSFixerConfigLabels());
+				PEXPreferenceNames.getPHPCSFixerConfigLabels(), 0);
 		
 		final Button defaultFixers = addCheckBox(fixerGroup,
 				"Use default PHP-CS fixer options",

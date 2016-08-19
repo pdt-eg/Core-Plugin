@@ -149,7 +149,7 @@ public class SemanticAnalysisConfigurationBlock extends AbstractOptionsConfigura
 
 			for (Validator v : category.getValidators()) {
 				for (Type t : v.getTypes()) {
-					Combo combo = fields[i] = addComboBox(inner, t.getLabel(), new Key(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID + "/" + v.getId(), t.getId()), getSeverityValues(), getSeverityLabels());
+					Combo combo = fields[i] = addComboBox(inner, t.getLabel(), new Key(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID + "/" + v.getId(), t.getId()), getSeverityValues(), getSeverityLabels(), 0);
 					Label object = (Label)fLabels.get(combo);
 					object.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 					i++;
