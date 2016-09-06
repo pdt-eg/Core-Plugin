@@ -22,9 +22,9 @@
 	</modules>
 
 	<properties>
-		<tycho-version>0.24.0</tycho-version>
+		<tycho-version>0.26.0</tycho-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<eclipse.name>mars</eclipse.name>
+		<eclipse.name>neon</eclipse.name>
 		<release>false</release>
 		<bintray.user></bintray.user>
 		<bintray.apikey></bintray.apikey>
