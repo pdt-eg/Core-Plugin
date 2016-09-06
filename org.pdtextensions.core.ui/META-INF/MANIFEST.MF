@@ -28,7 +28,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.expressions,
  org.apache.commons.exec,
  org.eclipse.ltk.core.refactoring,
- org.eclipse.dltk.core.manipulation
+ org.eclipse.dltk.core.manipulation,
+ org.eclipse.php.composer.core;resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.pdtextensions.core.ui,

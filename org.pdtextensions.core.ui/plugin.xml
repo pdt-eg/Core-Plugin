@@ -230,5 +230,11 @@
             nature="org.eclipse.php.core.PHPNature">
       </wizardExtension>
    </extension>
+   <extension
+         point="org.pdtextensions.core.ui.namespaceresolver">
+      <resolver
+            class="org.pdtextensions.core.ui.extension.ComposerNamespaceResolver">
+      </resolver>
+   </extension>
    
 </plugin>
