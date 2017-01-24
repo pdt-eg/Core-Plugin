@@ -11,6 +11,7 @@ import java.util.Stack;
 import java.util.TreeMap;
 
 import org.eclipse.dltk.ast.ASTNode;
+import org.eclipse.dltk.ast.declarations.ModuleDeclaration;
 import org.eclipse.dltk.ast.expressions.Expression;
 import org.eclipse.dltk.ast.references.VariableReference;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ArrayVariableReference;
@@ -239,10 +240,11 @@ public class VariableValidator extends AbstractValidator {
 	@Override
 	public void validate(IValidatorContext context) throws Exception {
 		pushScope(0, context.getSourceModule().getSourceRange().getLength());
-		PHPModuleDeclaration phpModule = (PHPModuleDeclaration) context.getModuleDeclaration();
-		if (phpModule == null) {
+		ModuleDeclaration module = context.getModuleDeclaration();
+		if (!(module instanceof PHPModuleDeclaration)) {
 			return;
 		}
+		PHPModuleDeclaration phpModule = (PHPModuleDeclaration) module;
 		List<VarComment> varComments = phpModule.getVarComments();
 		varCommentList = new ArrayList<VarComment>(phpModule
 				.getVarComments().size());
@@ -261,7 +263,7 @@ public class VariableValidator extends AbstractValidator {
 
 			@Override
 			public int compare(PHPDocBlock o1, PHPDocBlock o2) {
-				return o1.sourceStart() - o1.sourceStart();
+				return o2.sourceStart() - o1.sourceStart();
 			}
 		});
 		
