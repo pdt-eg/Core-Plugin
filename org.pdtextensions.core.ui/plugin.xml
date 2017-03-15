@@ -3,39 +3,6 @@
 <plugin>
 
    <extension-point id="namespaceresolver" name="PDT Namespaceresolver" schema="schema/namespaceresolver.exsd"/>
-
-	<extension point="org.eclipse.ui.perspectiveExtensions">
-		<perspectiveExtension targetID="org.eclipse.php.perspective">
-			<newWizardShortcut id="org.pdtextensions.core.ui.wizards.classes.ClassCreationWizard" />
-   <newWizardShortcut
-         id="org.pdtextensions.core.ui.wizards.interface">
-   </newWizardShortcut>
-		</perspectiveExtension>
-	</extension>
-
-   <extension
-         point="org.eclipse.ui.newWizards">
-		<wizard
-        canFinishEarly="false"
-        category="org.eclipse.php.project.ui"
-        class="org.pdtextensions.core.ui.wizards.NewClassWizard"
-        hasPages="true"
-        icon="ico/full/obj16/newclass_wiz.png"
-        id="org.pdtextensions.core.ui.wizards.classes.ClassCreationWizard"
-        name="Class"
-        project="false">
-        </wizard>
-  <wizard
-        canFinishEarly="false"
-        category="org.eclipse.php.project.ui"
-        class="org.pdtextensions.core.ui.wizards.NewInterfaceWizard"
-        hasPages="true"
-        icon="ico/full/obj16/newint_wiz.png"
-        id="org.pdtextensions.core.ui.wizards.interface"
-        name="Interface"
-        project="false">
-  </wizard>
-   </extension>
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -84,48 +51,6 @@
             </visibleWhen>
          </command>
       </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
-         <toolbar
-               id="org.pdtextensions.core.ui.newclasstoolbaritem">
-            <command
-                  commandId="org.pdtextensions.core.ui.createnewclass"
-                  icon="ico/full/obj16/newclass_wiz.png"
-                  label="New class"
-                  style="push"
-                  tooltip="Create new PHP class">
-               <visibleWhen
-                     checkEnabled="false">
-                  <with
-                        variable="activeWorkbenchWindow.activePerspective">
-                     <equals
-                           value="org.eclipse.php.perspective">
-                     </equals>
-                  </with>
-               </visibleWhen>
-            </command>
-         </toolbar>
-         <toolbar
-               id="org.pdtextensions.core.ui.newinterfcaetoolbaritem">
-            <command
-                  commandId="org.pdtextensions.core.ui.createnewinterface"
-                  icon="ico/full/obj16/newint_wiz.png"
-                  label="New interface"
-                  style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <with
-                        variable="activeWorkbenchWindow.activePerspective">
-                     <equals
-                           value="org.eclipse.php.perspective">
-                     </equals>
-                  </with>
-               </visibleWhen>
-            </command>
-         </toolbar>
-      </menuContribution>
-
    </extension>
 
 
@@ -144,14 +69,6 @@
             id="org.pdtextensions.core.ui.generategetters"
             name="Generate Getters and Setters">
       </command>
-      <command
-            id="org.pdtextensions.core.ui.createnewclass"
-            name="Create new PHP class">
-      </command>
-      <command
-            id="org.pdtextensions.core.ui.createnewinterface"
-            name="Create new PHP interface">
-      </command>
    </extension>
 
 
@@ -169,14 +86,6 @@
                   definitionId="org.eclipse.php.ui.phpContentType.definition">
             </reference>
          </enabledWhen>
-      </handler>
-      <handler
-            class="org.pdtextensions.core.ui.actions.CreateNewClassHandler"
-            commandId="org.pdtextensions.core.ui.createnewclass">
-      </handler>
-      <handler
-            class="org.pdtextensions.core.ui.actions.CreateNewInterfaceHandler"
-            commandId="org.pdtextensions.core.ui.createnewinterface">
       </handler>
    </extension>
    <extension
@@ -199,19 +108,6 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Ctrl+G">
       </key>
-      <key
-            commandId="org.pdtextensions.core.ui.createnewclass"
-            contextId="org.eclipse.ui.contexts.window"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+Shift+8">
-      </key>
-      <key
-            commandId="org.pdtextensions.core.ui.createnewinterface"
-            contextId="org.eclipse.ui.contexts.window"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+Shift+9">
-      </key>
-      
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">

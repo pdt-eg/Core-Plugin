@@ -11,7 +11,7 @@ Currently the core plugin supports following features:
 
 - [PHP Coding Standard Fixer](http://cs.sensiolabs.org/) integration
 - Use-Statement validation (injecting of missing use statements through quick-fixes)
-- Class / Interface dialog
+- ~~Class / Interface dialog~~ - _PDT since 5.0 have own dialogs_
 - Implementation of missing interface/abstract classes methods
 - ~~Assign to local variable quick-fix~~ - _Moved to PDT 4.0_
 - ~~Import statements outline filters~~ - _PDT since 3.5 have same filters_

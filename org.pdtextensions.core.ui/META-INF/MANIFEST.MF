@@ -42,5 +42,4 @@ Export-Package: org.pdtextensions.core.ui,
  org.pdtextensions.core.ui.preferences,
  org.pdtextensions.core.ui.preferences.launcher,
  org.pdtextensions.core.ui.template,
- org.pdtextensions.core.ui.util,
- org.pdtextensions.core.ui.wizards
+ org.pdtextensions.core.ui.util

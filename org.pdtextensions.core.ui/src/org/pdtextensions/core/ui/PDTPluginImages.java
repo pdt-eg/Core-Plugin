@@ -44,9 +44,6 @@ public class PDTPluginImages {
 
 	private static final String T_WIZBAN = "wizban"; //$NON-NLS-1$
 	
-	public static final ImageDescriptor DESC_WIZBAN_NEW_PHPCLASS = create(T_WIZBAN, "newclass_wiz.png");//$NON-NLS-1$	
-	public static final ImageDescriptor DESC_WIZBAN_NEW_PHPINTERFACE = create(T_WIZBAN, "newint_wiz.png");//$NON-NLS-1$	
-	
 	private static ImageDescriptor createManagedFromKey(String prefix, String key) {
 		return createManaged(prefix, key.substring(NAME_PREFIX_LENGTH), key);
 	}

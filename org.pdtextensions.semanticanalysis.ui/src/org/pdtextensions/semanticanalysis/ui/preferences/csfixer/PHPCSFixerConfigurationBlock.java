@@ -228,7 +228,7 @@ public class PHPCSFixerConfigurationBlock extends
 
 	}
 
-	private class PharListAdapter implements IListAdapter<Object>,
+	private class PharListAdapter<Object> implements IListAdapter<Object>,
 			IDialogFieldListener {
 
 		@Override
