@@ -16,7 +16,7 @@ import org.eclipse.php.core.tests.errors.AbstractErrorReportingTests;
 import org.eclipse.php.core.tests.runner.AbstractPDTTRunner.Context;
 import org.eclipse.php.core.tests.runner.PDTTList;
 import org.eclipse.php.core.tests.runner.PDTTList.Parameters;
-import org.eclipse.php.internal.core.PHPVersion;
+import org.eclipse.php.core.PHPVersion;
 import org.junit.runner.RunWith;
 import org.osgi.framework.Bundle;
 import org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier;
