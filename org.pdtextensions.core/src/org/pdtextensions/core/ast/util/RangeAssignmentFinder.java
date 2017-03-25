@@ -3,7 +3,7 @@ package org.pdtextensions.core.ast.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.php.internal.core.ast.nodes.Assignment;
+import org.eclipse.php.core.ast.nodes.Assignment;
 
 public class RangeAssignmentFinder extends AbstractRangeFinder {
 

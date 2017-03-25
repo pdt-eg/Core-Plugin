@@ -10,7 +10,7 @@ package org.pdtextensions.core.log;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.php.internal.core.ast.nodes.ASTNode;
+import org.eclipse.php.core.ast.nodes.ASTNode;
 import org.osgi.framework.Bundle;
 import org.pdtextensions.core.PEXCorePlugin;
 

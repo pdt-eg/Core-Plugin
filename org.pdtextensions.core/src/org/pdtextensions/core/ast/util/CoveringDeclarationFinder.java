@@ -1,10 +1,10 @@
 package org.pdtextensions.core.ast.util;
 
-import org.eclipse.php.internal.core.ast.nodes.ClassDeclaration;
-import org.eclipse.php.internal.core.ast.nodes.FunctionDeclaration;
-import org.eclipse.php.internal.core.ast.nodes.MethodDeclaration;
-import org.eclipse.php.internal.core.ast.nodes.NamespaceDeclaration;
-import org.eclipse.php.internal.core.ast.nodes.TraitDeclaration;
+import org.eclipse.php.core.ast.nodes.ClassDeclaration;
+import org.eclipse.php.core.ast.nodes.FunctionDeclaration;
+import org.eclipse.php.core.ast.nodes.MethodDeclaration;
+import org.eclipse.php.core.ast.nodes.NamespaceDeclaration;
+import org.eclipse.php.core.ast.nodes.TraitDeclaration;
 import org.eclipse.php.internal.core.ast.visitor.AbstractVisitor;
 
 @SuppressWarnings("restriction")

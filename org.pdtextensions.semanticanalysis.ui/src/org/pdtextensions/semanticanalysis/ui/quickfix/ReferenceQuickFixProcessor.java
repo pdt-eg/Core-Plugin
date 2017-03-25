@@ -7,14 +7,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.dltk.compiler.problem.IProblemIdentifier;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.ui.text.completion.IScriptCompletionProposal;
-import org.eclipse.php.internal.ui.text.correction.IInvocationContext;
-import org.eclipse.php.internal.ui.text.correction.IProblemLocation;
-import org.eclipse.php.internal.ui.text.correction.IQuickFixProcessor;
-import org.eclipse.php.internal.ui.text.correction.IQuickFixProcessorExtension;
+import org.eclipse.php.ui.text.correction.IInvocationContext;
+import org.eclipse.php.ui.text.correction.IProblemLocation;
+import org.eclipse.php.ui.text.correction.IQuickFixProcessor;
+import org.eclipse.php.ui.text.correction.IQuickFixProcessorExtension;
 import org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier;
 import org.pdtextensions.semanticanalysis.ui.contentassist.InjectUseStatementCompletionProposal;
 
-@SuppressWarnings("restriction")
 public class ReferenceQuickFixProcessor implements IQuickFixProcessor, IQuickFixProcessorExtension {
 
 

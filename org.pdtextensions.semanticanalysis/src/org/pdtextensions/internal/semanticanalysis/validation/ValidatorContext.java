@@ -17,7 +17,7 @@ import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.builder.IBuildContext;
 import org.eclipse.php.core.PHPVersion;
-import org.eclipse.php.internal.core.project.ProjectOptions;
+import org.eclipse.php.core.project.ProjectOptions;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
 import org.pdtextensions.semanticanalysis.validation.IValidatorContext;
 import org.pdtextensions.semanticanalysis.validation.IValidatorIdentifier;
@@ -79,7 +79,7 @@ final public class ValidatorContext implements IValidatorContext {
 	@Override
 	public PHPVersion getPHPVersion() {
 		if (phpVersion == null) {
-			phpVersion = ProjectOptions.getPhpVersion(getProject().getProject());
+			phpVersion = ProjectOptions.getPHPVersion(getProject().getProject());
 		}
 		
 		return phpVersion;

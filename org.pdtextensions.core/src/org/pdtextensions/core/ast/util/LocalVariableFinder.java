@@ -6,12 +6,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.php.internal.core.ast.nodes.ASTNode;
-import org.eclipse.php.internal.core.ast.nodes.Expression;
-import org.eclipse.php.internal.core.ast.nodes.FormalParameter;
-import org.eclipse.php.internal.core.ast.nodes.IVariableBinding;
-import org.eclipse.php.internal.core.ast.nodes.Identifier;
-import org.eclipse.php.internal.core.ast.nodes.Variable;
+import org.eclipse.php.core.ast.nodes.ASTNode;
+import org.eclipse.php.core.ast.nodes.Expression;
+import org.eclipse.php.core.ast.nodes.FormalParameter;
+import org.eclipse.php.core.ast.nodes.IVariableBinding;
+import org.eclipse.php.core.ast.nodes.Identifier;
+import org.eclipse.php.core.ast.nodes.Variable;
 
 @SuppressWarnings("restriction")
 /**

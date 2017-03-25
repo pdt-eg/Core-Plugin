@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.core.ISourceRange;
-import org.eclipse.php.internal.core.ast.nodes.ASTNode;
+import org.eclipse.php.core.ast.nodes.ASTNode;
 
 @SuppressWarnings("restriction")
 public class RangeNodeFinder extends GenericVisitor {

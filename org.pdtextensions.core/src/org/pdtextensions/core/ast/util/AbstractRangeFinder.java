@@ -1,7 +1,7 @@
 package org.pdtextensions.core.ast.util;
 
 import org.eclipse.dltk.core.ISourceRange;
-import org.eclipse.php.internal.core.ast.nodes.ASTNode;
+import org.eclipse.php.core.ast.nodes.ASTNode;
 import org.eclipse.php.internal.core.ast.visitor.AbstractVisitor;
 
 @SuppressWarnings("restriction")

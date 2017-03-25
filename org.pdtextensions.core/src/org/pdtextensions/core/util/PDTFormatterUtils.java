@@ -30,7 +30,7 @@ import org.eclipse.php.core.PHPVersion;
 import org.eclipse.php.internal.core.format.DefaultCodeFormattingProcessor;
 import org.eclipse.php.internal.core.format.ICodeFormattingProcessor;
 import org.eclipse.php.internal.core.format.IFormatterProcessorFactory;
-import org.eclipse.php.internal.core.project.ProjectOptions;
+import org.eclipse.php.core.project.ProjectOptions;
 import org.eclipse.php.internal.ui.PHPUiPlugin;
 import org.pdtextensions.core.log.Logger;
 
@@ -79,7 +79,7 @@ public class PDTFormatterUtils {
 		DocumentChange documentChange = new DocumentChange("Format region", document);
 		try {
 			ICodeFormattingProcessor formatter = createCodeFormatter(document, region,
-					ProjectOptions.getPhpVersion(project), ProjectOptions.useShortTags(project));
+					ProjectOptions.getPHPVersion(project), ProjectOptions.useShortTags(project));
 
 			documentChange.setEdit(formatter.getTextEdits());
 			if (document != null) {

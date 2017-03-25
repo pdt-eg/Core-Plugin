@@ -26,7 +26,7 @@ import org.eclipse.dltk.internal.core.SourceType;
 import org.eclipse.php.core.codeassist.ICompletionContext;
 import org.eclipse.php.core.codeassist.ICompletionStrategy;
 import org.eclipse.php.internal.core.codeassist.CodeAssistUtils;
-import org.eclipse.php.internal.core.codeassist.ICompletionReporter;
+import org.eclipse.php.core.codeassist.ICompletionReporter;
 import org.eclipse.php.internal.core.codeassist.strategies.AbstractCompletionStrategy;
 import org.eclipse.php.internal.core.model.PhpModelAccess;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;

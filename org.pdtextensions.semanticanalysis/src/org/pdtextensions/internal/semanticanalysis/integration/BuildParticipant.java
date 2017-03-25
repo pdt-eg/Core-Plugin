@@ -26,7 +26,7 @@ import org.eclipse.dltk.core.builder.IBuildParticipantExtension3;
 import org.eclipse.dltk.core.builder.IBuildState;
 import org.eclipse.dltk.internal.core.ModelManager;
 import org.eclipse.php.internal.core.PHPCorePlugin;
-import org.eclipse.php.internal.core.compiler.ast.nodes.UsePart;
+import org.eclipse.php.core.compiler.ast.nodes.UsePart;
 import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
 import org.pdtextensions.core.log.Logger;
 import org.pdtextensions.core.util.PDTModelUtils;

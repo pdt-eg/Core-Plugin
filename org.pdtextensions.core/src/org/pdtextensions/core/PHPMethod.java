@@ -15,9 +15,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dltk.core.IMethod;
-import org.eclipse.php.internal.core.ast.nodes.Bindings;
-import org.eclipse.php.internal.core.ast.nodes.IMethodBinding;
-import org.eclipse.php.internal.core.ast.nodes.Program;
+import org.eclipse.php.core.ast.nodes.Bindings;
+import org.eclipse.php.core.ast.nodes.IMethodBinding;
+import org.eclipse.php.core.ast.nodes.Program;
 import org.eclipse.php.internal.core.ast.visitor.AbstractVisitor;
 import org.eclipse.php.ui.editor.SharedASTProvider;
 
@@ -65,7 +65,7 @@ public class PHPMethod {
 		private IMethod overriddenMethod;
 
 		@Override
-		public boolean visit(org.eclipse.php.internal.core.ast.nodes.MethodDeclaration node) {
+		public boolean visit(org.eclipse.php.core.ast.nodes.MethodDeclaration node) {
 			if (node.getFunction().getFunctionName().getName().equals(method.getElementName())) {
 				IMethodBinding methodBinding = node.resolveMethodBinding();
 				if (methodBinding != null) {

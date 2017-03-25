@@ -27,7 +27,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
-import org.eclipse.php.internal.core.ast.nodes.ASTNode;
+import org.eclipse.php.core.ast.nodes.ASTNode;
 import org.eclipse.php.internal.ui.corext.template.php.CodeTemplateContextType;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;

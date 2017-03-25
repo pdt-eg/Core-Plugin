@@ -11,7 +11,7 @@ package org.pdtextensions.semanticanalysis.validation;
 import java.util.List;
 
 import org.eclipse.dltk.core.IMethod;
-import org.eclipse.php.internal.core.compiler.ast.nodes.ClassDeclaration;
+import org.eclipse.php.core.compiler.ast.nodes.ClassDeclaration;
 
 @SuppressWarnings("restriction")
 public class MissingMethodImplementation {

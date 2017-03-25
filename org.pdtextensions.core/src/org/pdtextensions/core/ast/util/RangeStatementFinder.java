@@ -2,8 +2,8 @@ package org.pdtextensions.core.ast.util;
 
 import java.util.ArrayList;
 
-import org.eclipse.php.internal.core.ast.nodes.Block;
-import org.eclipse.php.internal.core.ast.nodes.Statement;
+import org.eclipse.php.core.ast.nodes.Block;
+import org.eclipse.php.core.ast.nodes.Statement;
 
 @SuppressWarnings("restriction")
 public class RangeStatementFinder extends AbstractRangeFinder {
