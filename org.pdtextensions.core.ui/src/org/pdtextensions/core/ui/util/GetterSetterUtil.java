@@ -23,7 +23,7 @@ import org.eclipse.php.core.compiler.ast.nodes.PHPDocBlock;
 import org.eclipse.php.core.compiler.ast.nodes.PHPDocTag;
 import org.eclipse.php.core.compiler.ast.nodes.PHPFieldDeclaration;
 import org.eclipse.php.core.compiler.ast.nodes.PHPModuleDeclaration;
-import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
+import org.eclipse.php.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.php.ui.CodeGeneration;
 import org.pdtextensions.core.util.Inflector;
 import org.pdtextensions.core.util.PDTModelUtils;

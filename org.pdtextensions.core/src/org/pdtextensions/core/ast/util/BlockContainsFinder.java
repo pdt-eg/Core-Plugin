@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.php.internal.core.ast.match.ASTMatcher;
+import org.eclipse.php.core.ast.match.ASTMatcher;
 import org.eclipse.php.core.ast.nodes.ASTNode;
 import org.eclipse.php.core.ast.nodes.Block;
 import org.eclipse.php.core.ast.nodes.ExpressionStatement;
-import org.eclipse.php.internal.core.ast.visitor.AbstractVisitor;
+import org.eclipse.php.core.ast.visitor.AbstractVisitor;
 
 @SuppressWarnings("restriction")
 public class BlockContainsFinder extends GenericVisitor {

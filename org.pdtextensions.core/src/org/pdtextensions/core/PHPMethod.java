@@ -18,7 +18,7 @@ import org.eclipse.dltk.core.IMethod;
 import org.eclipse.php.core.ast.nodes.Bindings;
 import org.eclipse.php.core.ast.nodes.IMethodBinding;
 import org.eclipse.php.core.ast.nodes.Program;
-import org.eclipse.php.internal.core.ast.visitor.AbstractVisitor;
+import org.eclipse.php.core.ast.visitor.AbstractVisitor;
 import org.eclipse.php.ui.editor.SharedASTProvider;
 
 /**

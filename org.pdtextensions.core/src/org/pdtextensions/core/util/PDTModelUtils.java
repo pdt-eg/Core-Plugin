@@ -56,7 +56,7 @@ import org.eclipse.php.core.compiler.ast.nodes.PHPDocBlock;
 import org.eclipse.php.core.compiler.ast.nodes.PHPDocTag;
 import org.eclipse.php.core.compiler.ast.nodes.PHPDocTagKinds;
 import org.eclipse.php.core.compiler.ast.nodes.UsePart;
-import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
+import org.eclipse.php.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.php.internal.core.index.IPHPDocAwareElement;
 import org.eclipse.php.internal.core.model.PhpModelAccess;
 import org.eclipse.php.internal.core.typeinference.PHPClassType;

@@ -7,7 +7,7 @@
  ******************************************************************************/
 package org.pdtextensions.semanticanalysis.validation;
 
-import org.eclipse.php.internal.core.compiler.ast.visitor.PHPASTVisitor;
+import org.eclipse.php.core.compiler.ast.visitor.PHPASTVisitor;
 
 /**
  * Basic Validator implementation

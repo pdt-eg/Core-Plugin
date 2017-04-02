@@ -5,7 +5,7 @@ import org.eclipse.php.core.ast.nodes.FunctionDeclaration;
 import org.eclipse.php.core.ast.nodes.MethodDeclaration;
 import org.eclipse.php.core.ast.nodes.NamespaceDeclaration;
 import org.eclipse.php.core.ast.nodes.TraitDeclaration;
-import org.eclipse.php.internal.core.ast.visitor.AbstractVisitor;
+import org.eclipse.php.core.ast.visitor.AbstractVisitor;
 
 @SuppressWarnings("restriction")
 /**

@@ -81,7 +81,7 @@ import org.eclipse.php.core.ast.nodes.UseStatementPart;
 import org.eclipse.php.core.ast.nodes.Variable;
 import org.eclipse.php.core.ast.nodes.WhileStatement;
 import org.eclipse.php.core.ast.nodes.YieldExpression;
-import org.eclipse.php.internal.core.ast.visitor.Visitor;
+import org.eclipse.php.core.ast.visitor.Visitor;
 
 @SuppressWarnings("restriction")
 abstract public class GenericVisitor implements Visitor {
