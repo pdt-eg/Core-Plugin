@@ -11,22 +11,19 @@ package org.pdtextensions.core.codeassist.strategy;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ISourceRange;
 import org.eclipse.dltk.core.IType;
-import org.eclipse.dltk.core.ITypeHierarchy;
-import org.eclipse.dltk.core.ModelException;
 import org.eclipse.dltk.core.index2.search.ISearchEngine.MatchRule;
 import org.eclipse.dltk.core.search.IDLTKSearchScope;
 import org.eclipse.dltk.core.search.SearchEngine;
 import org.eclipse.dltk.internal.core.SourceType;
 import org.eclipse.php.core.codeassist.ICompletionContext;
-import org.eclipse.php.core.codeassist.ICompletionStrategy;
-import org.eclipse.php.internal.core.codeassist.CodeAssistUtils;
 import org.eclipse.php.core.codeassist.ICompletionReporter;
+import org.eclipse.php.core.codeassist.ICompletionStrategy;
 import org.eclipse.php.internal.core.codeassist.strategies.AbstractCompletionStrategy;
 import org.eclipse.php.internal.core.model.PhpModelAccess;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
@@ -37,7 +34,7 @@ import org.pdtextensions.core.codeassist.context.SuperclassMethodContext;
  * Completionstrategy to insert method stubs from superclasses.
  *
  */
-@SuppressWarnings({ "restriction", "deprecation" })
+@SuppressWarnings({ "restriction"})
 public class SuperclassMethodCompletionStrategy extends AbstractCompletionStrategy implements ICompletionStrategy {
 
 	/**
@@ -97,7 +94,7 @@ public class SuperclassMethodCompletionStrategy extends AbstractCompletionStrate
 
 			IMethod moduleMethod = type.getMethod(method.getElementName());
 
-			if (CodeAssistUtils.startsWithIgnoreCase(moduleMethod.getElementName(), prefix)
+			if (StringUtils.startsWithIgnoreCase(moduleMethod.getElementName(), prefix)
 					&& !reported.contains(method.getElementName())) {
 				reporter.reportMethod(method, "", range, new PDTCompletionInfo(module));
 				reported.add(method.getElementName());
