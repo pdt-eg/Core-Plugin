@@ -54,7 +54,6 @@ import org.eclipse.php.core.compiler.ast.nodes.FullyQualifiedReference;
 import org.eclipse.php.core.compiler.ast.nodes.NamespaceReference;
 import org.eclipse.php.core.compiler.ast.nodes.PHPDocBlock;
 import org.eclipse.php.core.compiler.ast.nodes.PHPDocTag;
-import org.eclipse.php.core.compiler.ast.nodes.PHPDocTagKinds;
 import org.eclipse.php.core.compiler.ast.nodes.UsePart;
 import org.eclipse.php.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.php.internal.core.index.IPHPDocAwareElement;
@@ -179,7 +178,7 @@ public class PDTModelUtils {
 			if (docBlock == null) {
 				return null;
 			}
-			PHPDocTag[] tags = docBlock.getTags(PHPDocTagKinds.PARAM);
+			PHPDocTag[] tags = docBlock.getTags(PHPDocTag.TagKind.PARAM);
 			if (tags != null && tags.length > 0) {
 				for (PHPDocTag phpDocTag : tags) {
 					if (phpDocTag.getTypeReferences() != null

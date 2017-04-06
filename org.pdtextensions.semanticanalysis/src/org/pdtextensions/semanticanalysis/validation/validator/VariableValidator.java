@@ -30,7 +30,6 @@ import org.eclipse.php.core.compiler.ast.nodes.NamespaceDeclaration;
 import org.eclipse.php.core.compiler.ast.nodes.PHPCallExpression;
 import org.eclipse.php.core.compiler.ast.nodes.PHPDocBlock;
 import org.eclipse.php.core.compiler.ast.nodes.PHPDocTag;
-import org.eclipse.php.core.compiler.ast.nodes.PHPDocTagKinds;
 import org.eclipse.php.core.compiler.ast.nodes.PHPMethodDeclaration;
 import org.eclipse.php.core.compiler.ast.nodes.PHPModuleDeclaration;
 import org.eclipse.php.core.compiler.ast.nodes.PHPVariableKind;
@@ -123,7 +122,7 @@ public class VariableValidator extends AbstractValidator {
 					continue;
 				}
 
-				for (PHPDocTag tag : block.getTags(PHPDocTagKinds.VAR)) {
+				for (PHPDocTag tag : block.getTags(PHPDocTag.TagKind.VAR)) {
 					if (tag.isValidVarTag()
 							&& tag.getVariableReference() != null
 							&& tag.getVariableReference().getName()
