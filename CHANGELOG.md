@@ -1,4 +1,7 @@
-### 0.22.1
+### 0.23.0
+
+- Drop getter / setter generator
+- Drop class / interface creation wizards
 
 
 ### 0.22.0
