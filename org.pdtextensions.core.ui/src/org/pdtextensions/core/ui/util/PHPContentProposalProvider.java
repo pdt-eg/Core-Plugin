@@ -27,7 +27,6 @@ public class PHPContentProposalProvider implements IContentProposalProvider {
 	public IContentProposal[] getProposals(String contents, int position) {
 		List<PHPTypeContentProposal> props = new ArrayList<PHPTypeContentProposal>();
 		IDLTKSearchScope scope = SearchEngine.createSearchScope(element);
-		@SuppressWarnings("restriction")
 		IType[] types = PhpModelAccess.getDefault().findTypes(contents, MatchRule.PREFIX,
 				0, PHPFlags.AccNameSpace | PHPFlags.AccInterface, scope, null);
 

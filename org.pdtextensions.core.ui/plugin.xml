@@ -21,7 +21,7 @@
          </menu>
       </menuContribution>
 
-      <menuContribution
+      <!--menuContribution
             allPopups="false"
             locationURI="menu:sourceMenuId?before=sourceBegin">
          <command
@@ -50,7 +50,7 @@
                </reference>
             </visibleWhen>
          </command>
-      </menuContribution>
+      </menuContribution-->
    </extension>
 
 
@@ -59,34 +59,6 @@
       <initializer
             class="org.pdtextensions.core.ui.preferences.PreferenceInitializer">
       </initializer>
-   </extension>
-
-
-   <extension point="org.eclipse.ui.commands">
-      <command
-            categoryId="org.eclipse.ui.category.edit"
-            description="Generate Getters and Setters"
-            id="org.pdtextensions.core.ui.generategetters"
-            name="Generate Getters and Setters">
-      </command>
-   </extension>
-
-
-      <extension point="org.eclipse.ui.handlers">
-      <handler
-            class="org.pdtextensions.core.ui.actions.GenerateGettersHandler"
-            commandId="org.pdtextensions.core.ui.generategetters">
-         <activeWhen>
-            <reference
-                  definitionId="org.eclipse.php.ui.phpContentType.definition">
-            </reference>
-         </activeWhen>
-         <enabledWhen>
-            <reference
-                  definitionId="org.eclipse.php.ui.phpContentType.definition">
-            </reference>
-         </enabledWhen>
-      </handler>
    </extension>
    <extension
          id="org.pdtextensions.core.ui.scriptCompletionProposalComputer"
@@ -101,15 +73,6 @@
       </scriptCompletionProposalComputer>
    </extension>
    <extension
-         point="org.eclipse.ui.bindings">
-      <key
-            commandId="org.pdtextensions.core.ui.generategetters"
-            contextId="org.eclipse.ui.contexts.window"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="Ctrl+G">
-      </key>
-   </extension>
-   <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
             class="org.pdtextensions.core.ui.expressions.NaturePropertyTester"
@@ -118,13 +81,6 @@
             properties="parentProjectNature"
             type="java.lang.Object">
       </propertyTester>
-   </extension>
-   <extension
-         point="org.eclipse.dltk.ui.sourceModuleWizardExtension">
-      <wizardExtension
-            class="org.pdtextensions.core.ui.wizards.extension.FormatterExtension"
-            nature="org.eclipse.php.core.PHPNature">
-      </wizardExtension>
    </extension>
    <extension
          point="org.pdtextensions.core.ui.namespaceresolver">
