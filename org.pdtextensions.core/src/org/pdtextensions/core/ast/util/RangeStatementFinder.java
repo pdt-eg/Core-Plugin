@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.eclipse.php.core.ast.nodes.Block;
 import org.eclipse.php.core.ast.nodes.Statement;
 
-@SuppressWarnings("restriction")
 public class RangeStatementFinder extends AbstractRangeFinder {
 
 	ArrayList<Statement> fCoveredStatements = new ArrayList<Statement>();

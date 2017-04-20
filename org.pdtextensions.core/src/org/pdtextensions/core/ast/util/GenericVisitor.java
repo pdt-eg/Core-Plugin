@@ -2,6 +2,7 @@ package org.pdtextensions.core.ast.util;
 
 import org.eclipse.php.core.ast.nodes.ASTError;
 import org.eclipse.php.core.ast.nodes.ASTNode;
+import org.eclipse.php.core.ast.nodes.AnonymousClassDeclaration;
 import org.eclipse.php.core.ast.nodes.ArrayAccess;
 import org.eclipse.php.core.ast.nodes.ArrayCreation;
 import org.eclipse.php.core.ast.nodes.ArrayElement;
@@ -83,7 +84,6 @@ import org.eclipse.php.core.ast.nodes.WhileStatement;
 import org.eclipse.php.core.ast.nodes.YieldExpression;
 import org.eclipse.php.core.ast.visitor.Visitor;
 
-@SuppressWarnings("restriction")
 abstract public class GenericVisitor implements Visitor {
 
 	abstract protected boolean visitNode(ASTNode node);
@@ -965,6 +965,13 @@ abstract public class GenericVisitor implements Visitor {
 
 	@Override
 	public void endVisit(FinallyClause YieldExpression) {
+	}
+	
+	public boolean visit(AnonymousClassDeclaration anonymousClassDeclaration) {
+		return visitNode(anonymousClassDeclaration);
+	}
+
+	public void endVisit(AnonymousClassDeclaration anonymousClassDeclaration) {
 	}
 
 }

@@ -6,7 +6,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.dltk.core.ISourceRange;
 import org.eclipse.php.core.ast.nodes.ASTNode;
 
-@SuppressWarnings("restriction")
 public class RangeNodeFinder extends GenericVisitor {
 
 	protected ArrayList<ASTNode> fCoveredNodes = new ArrayList<ASTNode>();

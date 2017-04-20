@@ -7,10 +7,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.php.core.ast.match.ASTMatcher;
 import org.eclipse.php.core.ast.nodes.ASTNode;
 import org.eclipse.php.core.ast.nodes.Block;
-import org.eclipse.php.core.ast.nodes.ExpressionStatement;
-import org.eclipse.php.core.ast.visitor.AbstractVisitor;
 
-@SuppressWarnings("restriction")
 public class BlockContainsFinder extends GenericVisitor {
 
 	private Block fStartNode;

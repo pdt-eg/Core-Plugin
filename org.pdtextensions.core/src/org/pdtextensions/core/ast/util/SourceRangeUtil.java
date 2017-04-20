@@ -5,7 +5,6 @@ import org.eclipse.dltk.core.ISourceRange;
 import org.eclipse.dltk.core.SourceRange;
 import org.eclipse.php.core.ast.nodes.ASTNode;
 
-@SuppressWarnings("restriction")
 public class SourceRangeUtil {
 
 	/**

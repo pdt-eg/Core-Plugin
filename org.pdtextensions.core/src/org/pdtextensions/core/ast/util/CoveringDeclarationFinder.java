@@ -5,9 +5,7 @@ import org.eclipse.php.core.ast.nodes.FunctionDeclaration;
 import org.eclipse.php.core.ast.nodes.MethodDeclaration;
 import org.eclipse.php.core.ast.nodes.NamespaceDeclaration;
 import org.eclipse.php.core.ast.nodes.TraitDeclaration;
-import org.eclipse.php.core.ast.visitor.AbstractVisitor;
 
-@SuppressWarnings("restriction")
 /**
  * TODO: create another abstract super class, which stops visiting if we found 
  * the desired ASTNode

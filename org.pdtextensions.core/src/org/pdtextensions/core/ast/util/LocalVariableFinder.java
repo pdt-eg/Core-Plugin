@@ -1,10 +1,7 @@
 package org.pdtextensions.core.ast.util;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.php.core.ast.nodes.ASTNode;
 import org.eclipse.php.core.ast.nodes.Expression;
@@ -13,7 +10,6 @@ import org.eclipse.php.core.ast.nodes.IVariableBinding;
 import org.eclipse.php.core.ast.nodes.Identifier;
 import org.eclipse.php.core.ast.nodes.Variable;
 
-@SuppressWarnings("restriction")
 /**
  * A ASTNode finder, which finds every local variable in the specified range in a method body.
  * 
