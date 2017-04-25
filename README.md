@@ -10,9 +10,9 @@ The PDT extension group is a collobaration of PDT plugin maintainers to build a 
 Currently the core plugin supports following features:
 
 - [PHP Coding Standard Fixer](http://cs.sensiolabs.org/) integration
-- Use-Statement validation (injecting of missing use statements through quick-fixes)
+- ~~Use-Statement validation (injecting of missing use statements through quick-fixes)~~ - _PDT since 5.0 have own implementation_
 - ~~Class / Interface dialog~~ - _PDT since 5.0 have own dialogs_
-- Implementation of missing interface/abstract classes methods
+- ~~Implementation of missing interface/abstract classes methods~~ - _PDT since 5.0 have own implementation_
 - ~~Assign to local variable quick-fix~~ - _Moved to PDT 4.0_
 - ~~Import statements outline filters~~ - _PDT since 3.5 have same filters_
 - Unused / uninitialized variable validator

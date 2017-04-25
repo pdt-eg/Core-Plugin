@@ -2,6 +2,7 @@
 
 - Drop getter / setter generator
 - Drop class / interface creation wizards
+- Drop implementation and usage validators
 
 
 ### 0.22.0

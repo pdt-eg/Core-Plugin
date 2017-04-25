@@ -9,7 +9,7 @@
             id="org.pdtextensions.semanticanalysis.defaultCategory"
             label="PHP Basic Analysis">
       </category>
-      <validator
+      <!--validator
             id="org.pdtextensions.semanticanalysis.validator.usageValidator" 
             class="org.pdtextensions.semanticanalysis.validation.factory.UsageValidatorFactory">
             <type
@@ -28,7 +28,7 @@
                  id="methods"
                  label="Missing method implementation"
                  defaultSeverity="warning" />
-      </validator>
+      </validator-->
       <validator
             id="org.pdtextensions.semanticanalysis.validator.variableValidator" 
             class="org.pdtextensions.semanticanalysis.validation.factory.VariableValidatorFactory">
