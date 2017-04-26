@@ -26,19 +26,13 @@ import org.eclipse.dltk.ui.text.completion.IScriptCompletionProposal;
 import org.eclipse.php.ui.text.correction.IInvocationContext;
 import org.eclipse.php.ui.text.correction.IProblemLocation;
 import org.eclipse.php.ui.text.correction.IQuickFixProcessor;
-import org.eclipse.php.ui.text.correction.IQuickFixProcessorExtension;
 import org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier;
 import org.pdtextensions.semanticanalysis.ui.contentassist.InterfaceMethodCompletionProposal;
 
 /**
  * Provides quick fixes for missing interface methods.
  */
-public class InterfaceMethodQuickFixProcessor implements IQuickFixProcessor, IQuickFixProcessorExtension {
-	@Override
-	public boolean hasCorrections(ISourceModule unit, int problemId) {
-		return false;
-	}
-
+public class InterfaceMethodQuickFixProcessor implements IQuickFixProcessor {
 	@Override
 	public IScriptCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations) throws CoreException {
 		List<IScriptCompletionProposal> corrections = new ArrayList<IScriptCompletionProposal>();
