@@ -57,7 +57,7 @@ import org.eclipse.php.core.compiler.ast.nodes.PHPDocTag;
 import org.eclipse.php.core.compiler.ast.nodes.UsePart;
 import org.eclipse.php.core.compiler.ast.visitor.PHPASTVisitor;
 import org.eclipse.php.internal.core.index.IPHPDocAwareElement;
-import org.eclipse.php.internal.core.model.PhpModelAccess;
+import org.eclipse.php.internal.core.model.PHPModelAccess;
 import org.eclipse.php.internal.core.typeinference.PHPClassType;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.eclipse.php.internal.core.typeinference.PHPSimpleTypes;
@@ -426,7 +426,7 @@ public class PDTModelUtils {
 			return (Boolean) typeCache.put(key, new Boolean(false));
 		
 		IDLTKSearchScope scope = SearchEngine.createSearchScope(project);
-		IType[] types = PhpModelAccess.getDefault().findTypes(type, MatchRule.EXACT, 0, 0, 
+		IType[] types = PHPModelAccess.getDefault().findTypes(type, MatchRule.EXACT, 0, 0, 
 				scope, new NullProgressMonitor());
 		
 		return (Boolean) typeCache.put(key, new Boolean(types.length > 0));
@@ -455,7 +455,7 @@ public class PDTModelUtils {
 				traits.put(traitName, findType(type.getSourceModule(), traitName)); // out of index
 				continue;
 			}
-			IType[] traitTypes = PhpModelAccess.getDefault().findTraits(traitName, MatchRule.EXACT, 0, 0, scope, new NullProgressMonitor());
+			IType[] traitTypes = PHPModelAccess.getDefault().findTraits(traitName, MatchRule.EXACT, 0, 0, scope, new NullProgressMonitor());
 			if (traitTypes.length != 1) {
 				continue; //more than one ignore it
 			}
@@ -646,7 +646,7 @@ public class PDTModelUtils {
 		Set<IType> list = new HashSet<IType>();
 		
 		IDLTKSearchScope searchScope = SearchEngine.createSearchScope(project);
-		IType[] types = PhpModelAccess.getDefault().findTypes(fqn,
+		IType[] types = PHPModelAccess.getDefault().findTypes(fqn,
 				MatchRule.EXACT, 0, 0, searchScope, new NullProgressMonitor());
 
 		for (IType type : types) {
@@ -655,7 +655,7 @@ public class PDTModelUtils {
 			}
 		}
 
-		types = PhpModelAccess.getDefault().findTraits(fqn,
+		types = PHPModelAccess.getDefault().findTraits(fqn,
 				MatchRule.EXACT, 0, 0, searchScope, new NullProgressMonitor());
 
 		for (IType type : types) {

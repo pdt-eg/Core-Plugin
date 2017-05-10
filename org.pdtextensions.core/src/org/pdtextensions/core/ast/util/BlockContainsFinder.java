@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.php.core.ast.match.ASTMatcher;
 import org.eclipse.php.core.ast.nodes.ASTNode;
 import org.eclipse.php.core.ast.nodes.Block;
+import org.eclipse.php.core.ast.nodes.ReturnType;
 
 public class BlockContainsFinder extends GenericVisitor {
 
@@ -103,4 +104,5 @@ public class BlockContainsFinder extends GenericVisitor {
 	{
 		return fResult;
 	}
+
 }

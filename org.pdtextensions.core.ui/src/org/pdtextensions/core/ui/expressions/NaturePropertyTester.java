@@ -6,8 +6,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ISourceModule;
-import org.eclipse.php.internal.core.documentModel.dom.ElementImplForPhp;
-import org.eclipse.php.internal.core.documentModel.dom.IImplForPhp;
+import org.eclipse.php.internal.core.documentModel.dom.ElementImplForPHP;
+import org.eclipse.php.internal.core.documentModel.dom.IImplForPHP;
 import org.pdtextensions.core.log.Logger;
 
 /**
@@ -34,9 +34,9 @@ public class NaturePropertyTester extends PropertyTester {
 			
 			IProject project = null;
 			
-			if (receiver instanceof IImplForPhp) {
+			if (receiver instanceof IImplForPHP) {
 				
-				IImplForPhp phpElement = (ElementImplForPhp) receiver;
+				IImplForPHP phpElement = (ElementImplForPHP) receiver;
 				IModelElement element = phpElement.getModelElement();
 				
 				if (element == null) {

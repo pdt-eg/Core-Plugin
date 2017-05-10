@@ -23,7 +23,7 @@ import org.eclipse.php.core.compiler.PHPFlags;
 import org.eclipse.php.core.compiler.ast.nodes.ClassDeclaration;
 import org.eclipse.php.core.compiler.ast.nodes.FullyQualifiedReference;
 import org.eclipse.php.internal.core.model.PerFileModelAccessCache;
-import org.eclipse.php.internal.core.model.PhpModelAccess;
+import org.eclipse.php.internal.core.model.PHPModelAccess;
 import org.eclipse.php.internal.core.typeinference.IModelAccessCache;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.eclipse.php.internal.core.typeinference.PHPTypeInferenceUtils;
@@ -72,7 +72,7 @@ public class ImplementationValidator extends AbstractValidator{
 		
 		List<IMethod> unimplemented = new ArrayList<IMethod>();		
 		IDLTKSearchScope scope = SearchEngine.createSearchScope(project);		
-		PhpModelAccess model = PhpModelAccess.getDefault();		
+		PHPModelAccess model = PHPModelAccess.getDefault();		
 		IType nss = PHPModelUtils.getCurrentNamespace(sourceModule, getClassDeclaration().getNameStart());
 		String search = nss != null ? nss.getElementName() + BACK_SLASH + getClassDeclaration().getName() : getClassDeclaration().getName();
 			

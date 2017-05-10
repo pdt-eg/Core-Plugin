@@ -38,7 +38,7 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.php.internal.core.documentModel.dom.ElementImplForPhp;
+import org.eclipse.php.internal.core.documentModel.dom.ElementImplForPHP;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.osgi.framework.Bundle;
 import org.pdtextensions.core.launch.ScriptLauncher;
@@ -121,9 +121,9 @@ public class RunPHPCSFixerHandler extends AbstractHandler {
 								processFolder(folder, monitor);
 							} else if (element instanceof ISourceModule) {
 								runFixer((ISourceModule) element, monitor);
-							} else if (element instanceof ElementImplForPhp) {
+							} else if (element instanceof ElementImplForPHP) {
 								
-								ElementImplForPhp impl = (ElementImplForPhp) element;
+								ElementImplForPHP impl = (ElementImplForPHP) element;
 								if (impl.getModelElement().getPrimaryElement() instanceof ISourceModule) {
 									runFixer((ISourceModule)impl.getModelElement().getPrimaryElement(), monitor);
 								}

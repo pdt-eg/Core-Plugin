@@ -14,7 +14,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
-import org.eclipse.php.internal.core.model.PhpModelAccess;
+import org.eclipse.php.internal.core.model.PHPModelAccess;
 import org.eclipse.php.internal.ui.editor.PHPStructuredEditor;
 import org.eclipse.php.internal.ui.editor.PHPStructuredTextViewer;
 import org.eclipse.php.internal.ui.editor.contentassist.PHPCompletionProposal;
@@ -67,7 +67,7 @@ public class InjectUseStatementCompletionProposal extends PHPCompletionProposal 
 						int length = getReplacementLength();
 						IDLTKSearchScope scope = SearchEngine.createSearchScope(input.getScriptProject());
 						String type = document.get(repOffset, length);
-						IType[] types = PhpModelAccess.getDefault().findTypes(null, type, MatchRule.EXACT, 0, 0, scope, new NullProgressMonitor());
+						IType[] types = PHPModelAccess.getDefault().findTypes(null, type, MatchRule.EXACT, 0, 0, scope, new NullProgressMonitor());
 						
 						if (types.length == 1) {
 							this.type = types[0];

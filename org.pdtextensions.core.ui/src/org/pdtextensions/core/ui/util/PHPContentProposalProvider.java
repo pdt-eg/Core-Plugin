@@ -12,7 +12,7 @@ import org.eclipse.dltk.core.search.SearchEngine;
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.php.core.compiler.PHPFlags;
-import org.eclipse.php.internal.core.model.PhpModelAccess;
+import org.eclipse.php.internal.core.model.PHPModelAccess;
 
 @SuppressWarnings("restriction")
 public class PHPContentProposalProvider implements IContentProposalProvider {
@@ -27,7 +27,7 @@ public class PHPContentProposalProvider implements IContentProposalProvider {
 	public IContentProposal[] getProposals(String contents, int position) {
 		List<PHPTypeContentProposal> props = new ArrayList<PHPTypeContentProposal>();
 		IDLTKSearchScope scope = SearchEngine.createSearchScope(element);
-		IType[] types = PhpModelAccess.getDefault().findTypes(contents, MatchRule.PREFIX,
+		IType[] types = PHPModelAccess.getDefault().findTypes(contents, MatchRule.PREFIX,
 				0, PHPFlags.AccNameSpace | PHPFlags.AccInterface, scope, null);
 
 		for (IType type : types) {

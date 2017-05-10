@@ -25,7 +25,7 @@ import org.eclipse.php.core.codeassist.ICompletionContext;
 import org.eclipse.php.core.codeassist.ICompletionReporter;
 import org.eclipse.php.core.codeassist.ICompletionStrategy;
 import org.eclipse.php.internal.core.codeassist.strategies.AbstractCompletionStrategy;
-import org.eclipse.php.internal.core.model.PhpModelAccess;
+import org.eclipse.php.internal.core.model.PHPModelAccess;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.pdtextensions.core.codeassist.PDTCompletionInfo;
 import org.pdtextensions.core.codeassist.context.SuperclassMethodContext;
@@ -78,7 +78,7 @@ public class SuperclassMethodCompletionStrategy extends AbstractCompletionStrate
 		ISourceRange range = getReplacementRange(context);
 		String prefix = context.getPrefix();
 
-		IType[] projectTypes = PhpModelAccess.getDefault().findTypes(type.getElementName(), MatchRule.EXACT, 0, 0,
+		IType[] projectTypes = PHPModelAccess.getDefault().findTypes(type.getElementName(), MatchRule.EXACT, 0, 0,
 				scope, null);
 
 		if (projectTypes.length != 1) {

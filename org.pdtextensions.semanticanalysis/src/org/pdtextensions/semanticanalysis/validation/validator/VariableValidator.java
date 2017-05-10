@@ -256,8 +256,8 @@ public class VariableValidator extends AbstractValidator {
 		});
 		
 		docBlocks = new ArrayList<PHPDocBlock>(
-				phpModule.getPhpDocBlocks().size());
-		docBlocks.addAll(phpModule.getPhpDocBlocks());
+				phpModule.getPHPDocBlocks().size());
+		docBlocks.addAll(phpModule.getPHPDocBlocks());
 		Collections.sort(docBlocks, new Comparator<PHPDocBlock>() {
 
 			@Override

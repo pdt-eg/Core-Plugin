@@ -26,7 +26,7 @@ import org.eclipse.php.core.compiler.ast.nodes.StaticFieldAccess;
 import org.eclipse.php.core.compiler.ast.nodes.StaticMethodInvocation;
 import org.eclipse.php.core.compiler.ast.nodes.UsePart;
 import org.eclipse.php.core.compiler.ast.nodes.UseStatement;
-import org.eclipse.php.internal.core.model.PhpModelAccess;
+import org.eclipse.php.internal.core.model.PHPModelAccess;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.eclipse.php.internal.core.typeinference.PHPSimpleTypes;
 import org.pdtextensions.core.util.PDTModelUtils;
@@ -153,7 +153,7 @@ public class UsageValidator extends AbstractValidator {
 			if (!isRes) {
 				IDLTKSearchScope searchScope = SearchEngine
 						.createSearchScope(context.getProject());
-				IType[] types = PhpModelAccess.getDefault().findTypes(
+				IType[] types = PHPModelAccess.getDefault().findTypes(
 						partInfo.fullName.substring(1) + BACK_SLASH, MatchRule.PREFIX, 0, 0, //$NON-NLS-1$
 						searchScope, new NullProgressMonitor());
 				if (types.length == 0) {
@@ -388,12 +388,12 @@ public class UsageValidator extends AbstractValidator {
 			return true;
 		}
 		IDLTKSearchScope scope = SearchEngine.createSearchScope(context.getProject());
-		if (PhpModelAccess.getDefault().findNamespaces(null, searchString, MatchRule.EXACT, 0, 0, scope, null).length > 0) {
+		if (PHPModelAccess.getDefault().findNamespaces(null, searchString, MatchRule.EXACT, 0, 0, scope, null).length > 0) {
 			namespaces.put(searchString, true);
 			return true;
 		}
 		
-		if (PhpModelAccess.getDefault().findNamespaces(null, searchString + NamespaceReference.NAMESPACE_SEPARATOR, MatchRule.PREFIX, 0, 0, scope, null).length > 0) {
+		if (PHPModelAccess.getDefault().findNamespaces(null, searchString + NamespaceReference.NAMESPACE_SEPARATOR, MatchRule.PREFIX, 0, 0, scope, null).length > 0) {
 			namespaces.put(searchString, true);
 			return true;
 		}

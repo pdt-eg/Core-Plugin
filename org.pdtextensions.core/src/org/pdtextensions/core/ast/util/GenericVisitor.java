@@ -60,6 +60,7 @@ import org.eclipse.php.core.ast.nodes.Quote;
 import org.eclipse.php.core.ast.nodes.Reference;
 import org.eclipse.php.core.ast.nodes.ReflectionVariable;
 import org.eclipse.php.core.ast.nodes.ReturnStatement;
+import org.eclipse.php.core.ast.nodes.ReturnType;
 import org.eclipse.php.core.ast.nodes.Scalar;
 import org.eclipse.php.core.ast.nodes.SingleFieldDeclaration;
 import org.eclipse.php.core.ast.nodes.StaticConstantAccess;
@@ -972,6 +973,15 @@ abstract public class GenericVisitor implements Visitor {
 	}
 
 	public void endVisit(AnonymousClassDeclaration anonymousClassDeclaration) {
+	}
+	
+	@Override
+	public boolean visit(ReturnType returnType) {
+		return visitNode(returnType);
+	}
+
+	@Override
+	public void endVisit(ReturnType returnType) {
 	}
 
 }
