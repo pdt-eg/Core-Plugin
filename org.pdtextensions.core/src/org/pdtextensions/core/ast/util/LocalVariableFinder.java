@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.php.core.ast.nodes.ASTNode;
+import org.eclipse.php.core.ast.nodes.ASTNodes;
 import org.eclipse.php.core.ast.nodes.Expression;
 import org.eclipse.php.core.ast.nodes.FormalParameter;
 import org.eclipse.php.core.ast.nodes.IVariableBinding;
@@ -45,7 +46,7 @@ public final class LocalVariableFinder extends AbstractRangeFinder {
 		Expression name = variable.getName();
 
 		if (name.getType() == ASTNode.IDENTIFIER
-				&& variable.isDollared()
+				&& (variable.isDollared() || ASTNodes.isQuotedDollaredCurlied(variable))
 				// skip self::$var
 				&& variable.getParent().getType() != ASTNode.STATIC_FIELD_ACCESS
 				// skip $this->var
