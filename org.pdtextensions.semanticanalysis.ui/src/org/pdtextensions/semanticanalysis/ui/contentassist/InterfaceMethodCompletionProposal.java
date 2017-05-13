@@ -90,7 +90,7 @@ public class InterfaceMethodCompletionProposal extends PHPCompletionProposal {
 						e.printStackTrace();
 					}
 					char indentChar = FormatterUtils
-							.getFormatterCommonPrferences().getIndentationChar(document);
+							.getFormatterCommonPreferences().getIndentationChar(document);
 					String indent = String.valueOf(indentChar);
 					
 					for (MissingMethodImplementation miss : validator.getMissing()) {

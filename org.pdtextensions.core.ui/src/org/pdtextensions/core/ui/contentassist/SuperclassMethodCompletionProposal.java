@@ -134,7 +134,7 @@ public class SuperclassMethodCompletionProposal extends PHPCompletionProposal {
 				IModelElement editorElement = ((PHPStructuredEditor) textEditor).getModelElement();
 				if (editorElement != null) {
 
-					char indentChar = FormatterUtils.getFormatterCommonPrferences().getIndentationChar(document);
+					char indentChar = FormatterUtils.getFormatterCommonPreferences().getIndentationChar(document);
 					String indent = String.valueOf(indentChar);
 
 					String code = "";
