@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.pdtextensions.feature_0.23.0.qualifier.jar" id="org.pdtextensions.feature" version="0.23.0.qualifier">
+   <feature url="features/org.pdtextensions.feature_0.23.1.qualifier.jar" id="org.pdtextensions.feature" version="0.23.1.qualifier">
       <category name="org.pdtextensions"/>
    </feature>
    <category-def name="org.pdtextensions" label="PDT Extensions"/>
