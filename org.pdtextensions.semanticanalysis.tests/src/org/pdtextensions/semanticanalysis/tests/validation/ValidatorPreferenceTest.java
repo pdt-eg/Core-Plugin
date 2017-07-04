@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.dltk.core.DLTKCore;
 import org.eclipse.dltk.core.IScriptProject;
 import org.eclipse.php.core.tests.PHPCoreTests;
+import org.eclipse.php.core.tests.TestUtils;
 import org.eclipse.php.internal.core.project.PHPNature;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -70,7 +71,7 @@ public class ValidatorPreferenceTest {
 	@After
 	public void after() throws CoreException, BackingStoreException {
 		project.delete(true, true, null);
-		PHPCoreTests.waitForAutoBuild();
+		TestUtils.waitForAutoBuild();
 
 		Preferences node = Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE).node(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID);
 		for (String key : InstanceScope.INSTANCE.getNode(PEXAnalysisPlugin.VALIDATORS_PREFERENCES_NODE_ID).keys()) {
