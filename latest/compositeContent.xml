@@ -3,7 +3,7 @@
 <repository name="PEX Core-Plugin - latest"
     type="org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository" version="1.0.0">
   <properties size="1">
-    <property name="p2.timestamp" value="1243822502506"/>
+    <property name="p2.timestamp" value="1499854135047"/>
   </properties>
  <children size="1">
    <child location="http://dl.bintray.com/zulus/core-plugin/release/0.23.0/"/>
