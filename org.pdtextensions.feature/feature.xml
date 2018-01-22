@@ -115,14 +115,14 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.php.core" version="5.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.php.debug.core" version="5.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.php.core" version="5.3.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.php.debug.core" version="5.3.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.php.ui" version="5.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.php.ui" version="5.3.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.dltk.core"/>
       <import plugin="org.eclipse.dltk.ui"/>
-      <import feature="org.eclipse.php" version="5.2.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.php" version="5.3.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.wst.server.core" version="1.4.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.wst.server.ui" version="1.4.0" match="greaterOrEqual"/>
    </requires>

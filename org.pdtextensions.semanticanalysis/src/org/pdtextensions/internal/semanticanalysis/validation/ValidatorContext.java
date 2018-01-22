@@ -18,6 +18,9 @@ import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.builder.IBuildContext;
 import org.eclipse.php.core.PHPVersion;
 import org.eclipse.php.core.project.ProjectOptions;
+import org.eclipse.php.core.validation.IProblemPreferences;
+import org.eclipse.php.internal.core.PHPCorePlugin;
+import org.eclipse.php.internal.debug.core.preferences.PHPProjectPreferences;
 import org.pdtextensions.semanticanalysis.model.validators.Validator;
 import org.pdtextensions.semanticanalysis.validation.IValidatorContext;
 import org.pdtextensions.semanticanalysis.validation.IValidatorIdentifier;
@@ -32,7 +35,6 @@ final public class ValidatorContext implements IValidatorContext {
 	private final ModuleDeclaration moduleDeclaration;
 	private final IBuildContext buildContext;
 	private final boolean derived;
-	private final Map<IValidatorIdentifier, ProblemSeverity> severities;
 	private final IValidatorManager manager;
 	private ISourceModule workingCopy;
 	private PHPVersion phpVersion;
@@ -40,7 +42,6 @@ final public class ValidatorContext implements IValidatorContext {
 	public ValidatorContext(Validator validator, ISourceModule workingCopy, IBuildContext buildContext, IValidatorManager manager) {
 		this.buildContext = buildContext;
 		this.derived = buildContext.getSourceModule().getResource().isDerived(IResource.CHECK_ANCESTORS);
-		this.severities = new HashMap<IValidatorIdentifier, ProblemSeverity>();
 		this.manager = manager;
 		this.workingCopy = workingCopy;
 
@@ -117,10 +118,7 @@ final public class ValidatorContext implements IValidatorContext {
 	}
 
 	private ProblemSeverity getSeverity(IValidatorIdentifier identifier) {
-		if (!severities.containsKey(identifier)) {
-			severities.put(identifier, manager.getSeverity(getProject(), manager.getType(identifier)));
-		}
-
-		return severities.get(identifier);
+		IProblemPreferences problemPreferences = PHPCorePlugin.getDefault().getProblemPreferences();
+		return problemPreferences.getSeverity(identifier, problemPreferences.getScopeContexts(getProject().getProject()));
 	}
 }
