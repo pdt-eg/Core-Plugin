@@ -111,16 +111,6 @@
             </markerType>
          </handledMarkerTypes>
       </quickFixProcessor>
-      <quickFixProcessor
-            class="org.pdtextensions.semanticanalysis.ui.quickfix.ReferenceQuickFixProcessor"
-            id="org.pdtextensions.core.ui.referenceQuickFixProcessor"
-            name="Validation Processors">
-         <handledMarkerTypes>
-            <markerType
-                  id="org.pdtextensions.semanticanalysis.problem">
-            </markerType>
-         </handledMarkerTypes>
-      </quickFixProcessor>
    </extension>
    <extension point="org.eclipse.ui.ide.markerSupport">
       <markerTypeCategory name="PHP">
