@@ -13,7 +13,6 @@ import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 import org.pdtextensions.semanticanalysis.validation.IValidatorIdentifier;
 import org.pdtextensions.semanticanalysis.validation.Problem;
 import org.pdtextensions.semanticanalysis.validation.validator.ImplementationValidator;
-import org.pdtextensions.semanticanalysis.validation.validator.UsageValidator;
 import org.pdtextensions.semanticanalysis.validation.validator.VariableValidator;
 
 /**
@@ -22,9 +21,6 @@ import org.pdtextensions.semanticanalysis.validation.validator.VariableValidator
  */
 public enum PEXProblemIdentifier implements IValidatorIdentifier {
 	INTERFACE_RELATED("methods", Problem.CAT_RESTRICTION, ImplementationValidator.ID), //$NON-NLS-1$
-	USAGE_RELATED("use", Problem.CAT_POTENTIAL_PROGRAMMING_PROBLEM, UsageValidator.ID), //$NON-NLS-1$
-	UNRESOVABLE("use", Problem.CAT_IMPORT, UsageValidator.ID), //$NON-NLS-1$
-	DUPLICATE("duplicate", Problem.CAT_RESTRICTION, UsageValidator.ID),
 	UNUSED_VARIABLE("unused_variable", Problem.CAT_UNNECESSARY_CODE, VariableValidator.ID),
 	UNDEFINED_VARIABLE("undefined_variable", Problem.CAT_UNNECESSARY_CODE, VariableValidator.ID),
 	UNINITIALIZED_VARIABLE("uninitialized_variable", Problem.CAT_POTENTIAL_PROGRAMMING_PROBLEM, VariableValidator.ID); //$NON-NLS-1$
