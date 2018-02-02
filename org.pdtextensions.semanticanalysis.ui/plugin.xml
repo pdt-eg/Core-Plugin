@@ -99,19 +99,6 @@
             id="org.pdtextensions.semanticanalysis.fixerLauncherFactory">
       </environmentFactory>
    </extension>
-   <extension
-         point="org.eclipse.php.ui.quickFixProcessors">
-         <quickFixProcessor
-            class="org.pdtextensions.semanticanalysis.ui.quickfix.InterfaceMethodQuickFixProcessor"
-            id="org.pdtextensions.core.ui.interfaceMethodQuickfixProcessor"
-            name="Validation Processors">
-         <handledMarkerTypes>
-            <markerType
-                  id="org.pdtextensions.semanticanalysis.problem">
-            </markerType>
-         </handledMarkerTypes>
-      </quickFixProcessor>
-   </extension>
    <extension point="org.eclipse.ui.ide.markerSupport">
       <markerTypeCategory name="PHP">
          <markerTypeReference id="org.pdtextensions.semanticanalysis.problem" />

@@ -12,7 +12,6 @@ import org.eclipse.dltk.compiler.problem.ProblemCategory;
 import org.pdtextensions.semanticanalysis.PEXAnalysisPlugin;
 import org.pdtextensions.semanticanalysis.validation.IValidatorIdentifier;
 import org.pdtextensions.semanticanalysis.validation.Problem;
-import org.pdtextensions.semanticanalysis.validation.validator.ImplementationValidator;
 import org.pdtextensions.semanticanalysis.validation.validator.VariableValidator;
 
 /**
@@ -20,7 +19,6 @@ import org.pdtextensions.semanticanalysis.validation.validator.VariableValidator
  * @author Dawid zulus Pakula <zulus@w3des.net>
  */
 public enum PEXProblemIdentifier implements IValidatorIdentifier {
-	INTERFACE_RELATED("methods", Problem.CAT_RESTRICTION, ImplementationValidator.ID), //$NON-NLS-1$
 	UNUSED_VARIABLE("unused_variable", Problem.CAT_UNNECESSARY_CODE, VariableValidator.ID),
 	UNDEFINED_VARIABLE("undefined_variable", Problem.CAT_UNNECESSARY_CODE, VariableValidator.ID),
 	UNINITIALIZED_VARIABLE("uninitialized_variable", Problem.CAT_POTENTIAL_PROGRAMMING_PROBLEM, VariableValidator.ID); //$NON-NLS-1$
