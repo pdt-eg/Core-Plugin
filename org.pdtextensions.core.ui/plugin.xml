@@ -61,18 +61,6 @@
       </initializer>
    </extension>
    <extension
-         id="org.pdtextensions.core.ui.scriptCompletionProposalComputer"
-         point="org.eclipse.dltk.ui.scriptCompletionProposalComputer">
-      <scriptCompletionProposalComputer
-            categoryId="org.eclipse.dltk.ui.scriptTypeProposalCategory"
-            class="org.pdtextensions.core.ui.contentassist.ScriptCompletionProposalComputer"
-            toolkitId="org.eclipse.php.core.PHPNature">
-         <partition
-               type="org.eclipse.php.PHP_DEFAULT">
-         </partition>
-      </scriptCompletionProposalComputer>
-   </extension>
-   <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
             class="org.pdtextensions.core.ui.expressions.NaturePropertyTester"
