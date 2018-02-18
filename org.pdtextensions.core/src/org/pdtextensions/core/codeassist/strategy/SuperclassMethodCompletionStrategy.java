@@ -55,50 +55,50 @@ public class SuperclassMethodCompletionStrategy extends AbstractCompletionStrate
 	@Override
 	public void apply(ICompletionReporter reporter) throws Exception {
 
-		SuperclassMethodContext context = (SuperclassMethodContext) getContext();
-		ISourceModule module = context.getSourceModule();
+//		SuperclassMethodContext context = (SuperclassMethodContext) getContext();
+//		ISourceModule module = context.getSourceModule();
+//
+//		IModelElement element = module.getElementAt(context.getOffset());
+//
+//		if (!(element instanceof SourceType)) {
+//			while (element.getParent() != null) {
+//				element = element.getParent();
+//				if (element instanceof SourceType) {
+//					break;
+//				}
+//			}
+//		}
+//
+//		if (element == null || !(element instanceof SourceType)) {
+//			return;
+//		}
+//
+//		IDLTKSearchScope scope = SearchEngine.createSearchScope(module.getScriptProject());
+//		SourceType type = (SourceType) element;
+//		ISourceRange range = getReplacementRange(context);
+//		String prefix = context.getPrefix();
+//
+//		IType[] projectTypes = PHPModelAccess.getDefault().findTypes(type.getElementName(), MatchRule.EXACT, 0, 0,
+//				scope, null);
+//
+//		if (projectTypes.length != 1) {
+//			return;
+//		}
 
-		IModelElement element = module.getElementAt(context.getOffset());
-
-		if (!(element instanceof SourceType)) {
-			while (element.getParent() != null) {
-				element = element.getParent();
-				if (element instanceof SourceType) {
-					break;
-				}
-			}
-		}
-
-		if (element == null || !(element instanceof SourceType)) {
-			return;
-		}
-
-		IDLTKSearchScope scope = SearchEngine.createSearchScope(module.getScriptProject());
-		SourceType type = (SourceType) element;
-		ISourceRange range = getReplacementRange(context);
-		String prefix = context.getPrefix();
-
-		IType[] projectTypes = PHPModelAccess.getDefault().findTypes(type.getElementName(), MatchRule.EXACT, 0, 0,
-				scope, null);
-
-		if (projectTypes.length != 1) {
-			return;
-		}
-
-		IType currentType = projectTypes[0];
-		IMethod[] unimplementedMethods = PHPModelUtils.getUnimplementedMethods(currentType, null);
-
-		List<String> reported = new ArrayList<String>();
-
-		for (IMethod method : unimplementedMethods) {
-
-			IMethod moduleMethod = type.getMethod(method.getElementName());
-
-			if (StringUtils.startsWithIgnoreCase(moduleMethod.getElementName(), prefix)
-					&& !reported.contains(method.getElementName())) {
-				reporter.reportMethod(method, "", range, new PDTCompletionInfo(module));
-				reported.add(method.getElementName());
-			}
-		}
+//		IType currentType = projectTypes[0];
+//		IMethod[] unimplementedMethods = PHPModelUtils.getUnimplementedMethods(currentType, null);
+//
+//		List<String> reported = new ArrayList<String>();
+//
+//		for (IMethod method : unimplementedMethods) {
+//
+//			IMethod moduleMethod = type.getMethod(method.getElementName());
+//
+//			if (StringUtils.startsWithIgnoreCase(moduleMethod.getElementName(), prefix)
+//					&& !reported.contains(method.getElementName())) {
+//				reporter.reportMethod(method, "", range, new PDTCompletionInfo(module));
+//				reported.add(method.getElementName());
+//			}
+//		}
 	}
 }

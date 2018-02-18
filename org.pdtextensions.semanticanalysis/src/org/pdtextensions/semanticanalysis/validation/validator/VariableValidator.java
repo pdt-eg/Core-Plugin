@@ -238,11 +238,12 @@ public class VariableValidator extends AbstractValidator {
 
 	@Override
 	public void validate(IValidatorContext context) throws Exception {
-		pushScope(0, context.getSourceModule().getSourceRange().getLength());
+		
 		ModuleDeclaration module = context.getModuleDeclaration();
 		if (!(module instanceof PHPModuleDeclaration)) {
 			return;
 		}
+		pushScope(0, module.end());
 		PHPModuleDeclaration phpModule = (PHPModuleDeclaration) module;
 		List<VarComment> varComments = phpModule.getVarComments();
 		varCommentList = new ArrayList<VarComment>(phpModule
