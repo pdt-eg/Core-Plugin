@@ -37,7 +37,7 @@ public class SuperclassMethodContext extends AbstractCompletionContext {
 		if (!super.isValid(sourceModule, offset, requestor)) {
 			return false;
 		}
-		if (getPartitionType() != PHPPartitionTypes.PHP_DEFAULT) {
+		if (getCompanion().getPartitionType() != PHPPartitionTypes.PHP_DEFAULT) {
 			return false;
 		}
 
