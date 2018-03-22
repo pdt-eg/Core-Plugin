@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.pdtextensions</groupId>
 		<artifactId>parent</artifactId>
-		<version>0.23.1-SNAPSHOT</version>
+		<version>0.24.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>org.pdtextensions.semanticanalysis</artifactId>

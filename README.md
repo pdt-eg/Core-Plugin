@@ -2,8 +2,6 @@ PDT Extensions Group / Core Plugin
 ==================================
 
 [![Build Status](https://travis-ci.org/pdt-eg/Core-Plugin.svg?branch=master)](https://travis-ci.org/pdt-eg/Core-Plugin)
-[![Codeship](https://codeship.com/projects/156160/status?branch=master)](https://codeship.com/projects/156160)
-
 
 The PDT extension group is a collobaration of PDT plugin maintainers to build a central PDT extension platform and codebase.
 
@@ -17,7 +15,6 @@ Currently the core plugin supports following features:
 - ~~Import statements outline filters~~ - _PDT since 3.5 have same filters_
 - Unused / uninitialized variable validator
 - ~~PHP Refactoring support~~ - _PDT since 3.4 have own refactoring support_
-
 
 We are in the process of migrating general functionality of our plugins into the core plugin, and add more core features for
 other PDT extenders.
