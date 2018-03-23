@@ -67,9 +67,9 @@ public class PDTFormatterUtils {
 	}
 
 	public static ICodeFormattingProcessor createCodeFormatter(IDocument document, IRegion region,
-			PHPVersion phpVersion, boolean useShortTags) throws Exception {
+			PHPVersion phpVersion, boolean useASPTags, boolean useShortTags) throws Exception {
 		if (getFormatterFactory() != null) {
-			return formatterFactory.getCodeFormattingProcessor(document, phpVersion, useShortTags, region);
+			return formatterFactory.getCodeFormattingProcessor(document, phpVersion, useASPTags, useShortTags, region);
 		}
 
 		return new DefaultCodeFormattingProcessor(new HashMap());
@@ -79,7 +79,7 @@ public class PDTFormatterUtils {
 		DocumentChange documentChange = new DocumentChange("Format region", document);
 		try {
 			ICodeFormattingProcessor formatter = createCodeFormatter(document, region,
-					ProjectOptions.getPHPVersion(project), ProjectOptions.useShortTags(project));
+					ProjectOptions.getPHPVersion(project), ProjectOptions.isSupportingASPTags(project), ProjectOptions.useShortTags(project));
 
 			documentChange.setEdit(formatter.getTextEdits());
 			if (document != null) {
