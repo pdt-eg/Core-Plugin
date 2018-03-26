@@ -11,10 +11,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.pdtextensions.semanticanalysis.tests.validation.ManagerTest;
-import org.pdtextensions.semanticanalysis.tests.validation.ValidationTestSuite;
 import org.pdtextensions.semanticanalysis.tests.validation.ValidatorPreferenceTest;
 
 @RunWith(Suite.class)
-@SuiteClasses({ManagerTest.class, ValidatorPreferenceTest.class, ValidationTestSuite.class})
+@SuiteClasses({ManagerTest.class, ValidatorPreferenceTest.class})
 public class TestRunner {
 }

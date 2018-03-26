@@ -13,7 +13,7 @@ Currently the core plugin supports following features:
 - ~~Implementation of missing interface/abstract classes methods~~ - _PDT since 5.0 have own implementation_
 - ~~Assign to local variable quick-fix~~ - _Moved to PDT 4.0_
 - ~~Import statements outline filters~~ - _PDT since 3.5 have same filters_
-- Unused / uninitialized variable validator
+- ~~Unused / uninitialized variable validator~~ - _Moved to PDT 6.0_
 - ~~PHP Refactoring support~~ - _PDT since 3.4 have own refactoring support_
 
 We are in the process of migrating general functionality of our plugins into the core plugin, and add more core features for

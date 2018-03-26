@@ -1,3 +1,7 @@
+### 0.24.0
+
+- Drop variable validator
+
 ### 0.23.0
 
 - Drop getter / setter generator
