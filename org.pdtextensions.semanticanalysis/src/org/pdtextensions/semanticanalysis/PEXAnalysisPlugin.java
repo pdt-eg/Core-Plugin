@@ -7,24 +7,15 @@
  ******************************************************************************/
 package org.pdtextensions.semanticanalysis;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.InjectorFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
-import org.pdtextensions.internal.semanticanalysis.validation.Manager;
-import org.pdtextensions.semanticanalysis.validation.IValidatorManager;
 
 /**
  * @author Dawid zulus Pakula <zulus@w3des.net>
  */
-@SuppressWarnings("restriction")
 public class PEXAnalysisPlugin extends Plugin {
 
 	public static final String PLUGIN_ID = "org.pdtextensions.semanticanalysis"; //$NON-NLS-1$
@@ -33,21 +24,14 @@ public class PEXAnalysisPlugin extends Plugin {
 
 	private static PEXAnalysisPlugin plugin;
 	
-	@Inject
-	private IValidatorManager validatorManager;
-
 	public static BundleContext getContext() {
 		return FrameworkUtil.getBundle(PEXAnalysisPlugin.class).getBundleContext();
 	}
 
 	public void start(BundleContext bundleContext) throws Exception {
 		plugin = this;
-		registerServices();
 	}
 	
-	private void registerServices() {
-		InjectorFactory.getDefault().addBinding(IValidatorManager.class).implementedBy(Manager.class);
-	}
 	
 	public void stop(BundleContext bundleContext) throws Exception {
 		plugin = null;
@@ -103,17 +87,5 @@ public class PEXAnalysisPlugin extends Plugin {
 		plugin.getLog().log(
 				new Status(IStatus.INFO, PLUGIN_ID, IStatus.OK, e
 						.getLocalizedMessage(), e));
-	}
-
-	public static IEclipseContext getEclipseContext() {
-		return EclipseContextFactory.getServiceContext(PEXAnalysisPlugin.getContext());
-	}
-	
-	public IValidatorManager getValidatorManager() {
-		if (validatorManager == null) {
-			ContextInjectionFactory.inject(this, getEclipseContext());
-		}
-		
-		return validatorManager;
 	}
 }

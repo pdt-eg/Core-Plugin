@@ -18,19 +18,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jface.text,
  org.eclipse.wst.validation,
  org.eclipse.wst.sse.core,
- org.apache.commons.exec,
- org.eclipse.e4.core.di,
- org.eclipse.e4.core.contexts,
- org.eclipse.e4.core.di.extensions,
- org.eclipse.ui,
- javax.inject;bundle-version="1.0.0"
+ org.apache.commons.exec
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.annotation;version="1.1.0"
-Export-Package: org.pdtextensions.internal.semanticanalysis.validation;x-friends:="org.pdtextensions.semanticanalysis.ui",
- org.pdtextensions.semanticanalysis,
- org.pdtextensions.semanticanalysis.model.validators,
- org.pdtextensions.semanticanalysis.model.validators.impl,
- org.pdtextensions.semanticanalysis.model.validators.util,
- org.pdtextensions.semanticanalysis.validation,
- org.pdtextensions.semanticanalysis.validation.validator
+Export-Package: org.pdtextensions.semanticanalysis,
+ org.pdtextensions.semanticanalysis.validation

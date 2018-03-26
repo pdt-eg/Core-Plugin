@@ -1,69 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension-point id="org.pdtextensions.semanticanalysis.validator" name="PEX Semantic Analysis Validation Extension" schema="schema/org.pdtextensions.semanticanalysis.validator.exsd"/>
-   <extension
-         id="org.pdtextensions.semanticanalysis.defaults"
-         point="org.pdtextensions.semanticanalysis.validator">
-      <category
-            id="org.pdtextensions.semanticanalysis.defaultCategory"
-            label="PHP Basic Analysis">
-      </category>
-      <!--validator
-            id="org.pdtextensions.semanticanalysis.validator.usageValidator" 
-            class="org.pdtextensions.semanticanalysis.validation.factory.UsageValidatorFactory">
-            <type
-                  id="duplicate"
-                  label="Duplicate use statement"
-                  defaultSeverity="error" />
-            <type
-                 id="use"
-                 label="Type not found"
-                 defaultSeverity="warning" />
-      </validator>
-      <validator
-            id="org.pdtextensions.semanticanalysis.validator.implementationValidator" 
-            class="org.pdtextensions.semanticanalysis.validation.factory.ImplementationValidatorFactory">
-            <type
-                 id="methods"
-                 label="Missing method implementation"
-                 defaultSeverity="warning" />
-      </validator-->
-   </extension>
-    <extension point="org.eclipse.dltk.core.buildParticipant">
-        <buildParticipant
-            id="org.pdtextensions.validation.buildParticipant"
-            class="org.pdtextensions.internal.semanticanalysis.integration.BuildParticipantFactory"
-            name="org.pdtextensions.validation.buildParticipant"
-            nature="org.eclipse.php.core.PHPNature">
-            <requires id="org.eclipse.php.core.buildParticipant.parser" />
-        </buildParticipant>
-    </extension> 
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated validators -->
-      <package
-            uri="http://validators/1.0"
-            class="org.pdtextensions.semanticanalysis.model.validators.ValidatorsPackage"
-            genModel="model/validators.genmodel"/>
-   </extension>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="org.pdtextensions.internal.semanticanalysis.validation.PreferenceInitializer">
-      </initializer>
-   </extension>
     <extension
         id="org.pdtextensions.semanticanalysis.problem"
         name="PHP Semantic analysis"
         point="org.eclipse.core.resources.markers">
         <persistent value="true"/>
         <super type="org.eclipse.dltk.core.problem" />
-    </extension>
-    <extension
-          point="org.eclipse.dltk.core.problemFactory">
-       <problemIdentifierFactory
-             class="org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifierFactory"
-             namespace="org.pdtextensions.internal.semanticanalysis.validation.PEXProblemIdentifier">
-       </problemIdentifierFactory>
     </extension>
 </plugin>
