@@ -8,6 +8,8 @@
  */
 package org.pdtextensions.core.ui.contentassist;
 
+import java.util.function.Supplier;
+
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IModelElement;
 import org.eclipse.dltk.core.ISourceModule;
@@ -20,6 +22,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.php.internal.core.format.FormatterUtils;
 import org.eclipse.php.internal.ui.editor.PHPStructuredEditor;
 import org.eclipse.php.internal.ui.editor.PHPStructuredTextViewer;
@@ -51,8 +54,13 @@ public class SuperclassMethodCompletionProposal extends PHPCompletionProposal {
 	 * @param iSourceModule
 	 */
 	public SuperclassMethodCompletionProposal(String replacementString, int replacementOffset, int replacementLength,
-			Image image, String displayString, int relevance, IMethod iMethod, ISourceModule iSourceModule) {
-		super(replacementString, replacementOffset, replacementLength, image, displayString, relevance);
+			final Image image, String displayString, int relevance, IMethod iMethod, ISourceModule iSourceModule) {
+		super(replacementString, replacementOffset, replacementLength, new Supplier<Image>() {
+			@Override
+			public Image get() {
+				return image;
+			}
+		}, new StyledString(displayString), relevance);
 
 		method = iMethod;
 

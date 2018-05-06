@@ -1,5 +1,7 @@
 package org.pdtextensions.semanticanalysis.ui.contentassist;
 
+import java.util.function.Supplier;
+
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dltk.core.ICodeAssist;
 import org.eclipse.dltk.core.IModelElement;
@@ -13,6 +15,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.window.Window;
 import org.eclipse.php.internal.core.model.PHPModelAccess;
 import org.eclipse.php.internal.ui.editor.PHPStructuredEditor;
@@ -31,10 +34,15 @@ public class InjectUseStatementCompletionProposal extends PHPCompletionProposal 
 	private IType type = null;
 	
 	public InjectUseStatementCompletionProposal(String replacementString,
-			int replacementOffset, int replacementLength, Image image,
+			int replacementOffset, int replacementLength, final Image image,
 			String displayString, int relevance) {
-		super(replacementString, replacementOffset, replacementLength, image,
-				displayString, relevance);
+		super(replacementString, replacementOffset, replacementLength, new Supplier<Image>() {
+
+			@Override
+			public Image get() {
+				return image;
+			}
+		}, new StyledString(displayString), relevance);
 	}
 	
 	public Image getImage() {
