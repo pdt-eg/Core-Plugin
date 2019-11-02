@@ -6,6 +6,8 @@ import org.eclipse.php.core.ast.nodes.AnonymousClassDeclaration;
 import org.eclipse.php.core.ast.nodes.ArrayAccess;
 import org.eclipse.php.core.ast.nodes.ArrayCreation;
 import org.eclipse.php.core.ast.nodes.ArrayElement;
+import org.eclipse.php.core.ast.nodes.ArraySpreadElement;
+import org.eclipse.php.core.ast.nodes.ArrowFunctionDeclaration;
 import org.eclipse.php.core.ast.nodes.Assignment;
 import org.eclipse.php.core.ast.nodes.BackTickExpression;
 import org.eclipse.php.core.ast.nodes.Block;
@@ -967,14 +969,14 @@ abstract public class GenericVisitor implements Visitor {
 	@Override
 	public void endVisit(FinallyClause YieldExpression) {
 	}
-	
+
 	public boolean visit(AnonymousClassDeclaration anonymousClassDeclaration) {
 		return visitNode(anonymousClassDeclaration);
 	}
 
 	public void endVisit(AnonymousClassDeclaration anonymousClassDeclaration) {
 	}
-	
+
 	@Override
 	public boolean visit(ReturnType returnType) {
 		return visitNode(returnType);
@@ -982,6 +984,25 @@ abstract public class GenericVisitor implements Visitor {
 
 	@Override
 	public void endVisit(ReturnType returnType) {
+	}
+
+	@Override
+	public boolean visit(ArraySpreadElement arraySpreadElement) {
+		return visitNode(arraySpreadElement);
+	}
+
+	@Override
+	public void endVisit(ArraySpreadElement arraySpreadElement) {
+
+	}
+
+	@Override
+	public boolean visit(ArrowFunctionDeclaration arrowFunctionDeclaration) {
+		return visitNode(arrowFunctionDeclaration);
+	}
+
+	@Override
+	public void endVisit(ArrowFunctionDeclaration arrowFunctionDeclaration) {
 	}
 
 }
