@@ -2,7 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
 
-   <extension-point id="namespaceresolver" name="PDT Namespaceresolver" schema="schema/namespaceresolver.exsd"/>
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -21,36 +20,6 @@
          </menu>
       </menuContribution>
 
-      <!--menuContribution
-            allPopups="false"
-            locationURI="menu:sourceMenuId?before=sourceBegin">
-         <command
-               commandId="org.pdtextensions.core.ui.generategetters"
-               label="Generate Getters and Setters"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.php.ui.phpContentType.definition">
-               </reference>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:sourcePopupMenuId?after=sourceBegin">
-         <command
-               commandId="org.pdtextensions.core.ui.generategetters"
-               label="Generate Getters and Setters"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <reference
-                     definitionId="org.eclipse.php.ui.phpContentType.definition">
-               </reference>
-            </visibleWhen>
-         </command>
-      </menuContribution-->
    </extension>
 
 
