@@ -70,11 +70,5 @@
             type="java.lang.Object">
       </propertyTester>
    </extension>
-   <extension
-         point="org.pdtextensions.core.ui.namespaceresolver">
-      <resolver
-            class="org.pdtextensions.core.ui.extension.ComposerNamespaceResolver">
-      </resolver>
-   </extension>
    
 </plugin>
