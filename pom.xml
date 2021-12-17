@@ -26,11 +26,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<eclipse.name>2020-03</eclipse.name>
 		<release>false</release>
-		<bintray.user></bintray.user>
-		<bintray.apikey></bintray.apikey>
-		<bintray.owner></bintray.owner>
-		<bintray.repo>Core-Plugin</bintray.repo>
-		<bintray.version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</bintray.version>
 		<pdt.version>latest-nightly</pdt.version>
 		<dltk.version>latest-nightly</dltk.version>
 	</properties>
@@ -135,30 +130,4 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	<profiles>
-		<profile>
-			<id>release</id>
-			<activation>
-				<property>
-					<name>release</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<properties>
-				<bintray.package>release</bintray.package>
-			</properties>
-		</profile>
-		<profile>
-			<id>nightly</id>
-			<activation>
-				<property>
-					<name>release</name>
-					<value>false</value>
-				</property>
-			</activation>
-			<properties>
-				<bintray.package>nightly</bintray.package>
-			</properties>
-		</profile>
-	</profiles>
 </project>
