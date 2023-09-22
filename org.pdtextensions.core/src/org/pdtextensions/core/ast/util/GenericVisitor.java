@@ -8,7 +8,10 @@ import org.eclipse.php.core.ast.nodes.ArrayCreation;
 import org.eclipse.php.core.ast.nodes.ArrayElement;
 import org.eclipse.php.core.ast.nodes.ArraySpreadElement;
 import org.eclipse.php.core.ast.nodes.ArrowFunctionDeclaration;
+import org.eclipse.php.core.ast.nodes.AsCallableExpression;
 import org.eclipse.php.core.ast.nodes.Assignment;
+import org.eclipse.php.core.ast.nodes.Attribute;
+import org.eclipse.php.core.ast.nodes.AttributeGroup;
 import org.eclipse.php.core.ast.nodes.BackTickExpression;
 import org.eclipse.php.core.ast.nodes.Block;
 import org.eclipse.php.core.ast.nodes.BreakStatement;
@@ -22,10 +25,13 @@ import org.eclipse.php.core.ast.nodes.Comment;
 import org.eclipse.php.core.ast.nodes.ConditionalExpression;
 import org.eclipse.php.core.ast.nodes.ConstantDeclaration;
 import org.eclipse.php.core.ast.nodes.ContinueStatement;
+import org.eclipse.php.core.ast.nodes.DNFType;
 import org.eclipse.php.core.ast.nodes.DeclareStatement;
 import org.eclipse.php.core.ast.nodes.DoStatement;
 import org.eclipse.php.core.ast.nodes.EchoStatement;
 import org.eclipse.php.core.ast.nodes.EmptyStatement;
+import org.eclipse.php.core.ast.nodes.EnumCaseDeclaration;
+import org.eclipse.php.core.ast.nodes.EnumDeclaration;
 import org.eclipse.php.core.ast.nodes.ExpressionStatement;
 import org.eclipse.php.core.ast.nodes.FieldAccess;
 import org.eclipse.php.core.ast.nodes.FieldsDeclaration;
@@ -50,8 +56,11 @@ import org.eclipse.php.core.ast.nodes.InstanceOfExpression;
 import org.eclipse.php.core.ast.nodes.InterfaceDeclaration;
 import org.eclipse.php.core.ast.nodes.LambdaFunctionDeclaration;
 import org.eclipse.php.core.ast.nodes.ListVariable;
+import org.eclipse.php.core.ast.nodes.MatchArm;
+import org.eclipse.php.core.ast.nodes.MatchExpression;
 import org.eclipse.php.core.ast.nodes.MethodDeclaration;
 import org.eclipse.php.core.ast.nodes.MethodInvocation;
+import org.eclipse.php.core.ast.nodes.NamedExpression;
 import org.eclipse.php.core.ast.nodes.NamespaceDeclaration;
 import org.eclipse.php.core.ast.nodes.NamespaceName;
 import org.eclipse.php.core.ast.nodes.ParenthesisExpression;
@@ -71,6 +80,7 @@ import org.eclipse.php.core.ast.nodes.StaticMethodInvocation;
 import org.eclipse.php.core.ast.nodes.StaticStatement;
 import org.eclipse.php.core.ast.nodes.SwitchCase;
 import org.eclipse.php.core.ast.nodes.SwitchStatement;
+import org.eclipse.php.core.ast.nodes.ThrowExpression;
 import org.eclipse.php.core.ast.nodes.ThrowStatement;
 import org.eclipse.php.core.ast.nodes.TraitAlias;
 import org.eclipse.php.core.ast.nodes.TraitAliasStatement;
@@ -1004,5 +1014,117 @@ abstract public class GenericVisitor implements Visitor {
 	@Override
 	public void endVisit(ArrowFunctionDeclaration arrowFunctionDeclaration) {
 	}
+
+	@Override
+	public boolean visit(Attribute attribute) {
+		// TODO Auto-generated method stub
+		return visitNode(attribute);
+	}
+
+	@Override
+	public void endvisit(Attribute attribute) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean visit(AttributeGroup attributeGroup) {
+		// TODO Auto-generated method stub
+		return visitNode(attributeGroup);
+	}
+
+	@Override
+	public void endvisit(AttributeGroup attributeGroup) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean visit(NamedExpression namedExpresion) {
+		// TODO Auto-generated method stub
+		return visitNode(namedExpresion);
+	}
+
+	@Override
+	public void endvisit(NamedExpression namedExpression) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean visit(MatchExpression matchExpression) {
+		// TODO Auto-generated method stub
+		return visitNode(matchExpression);
+	}
+
+	@Override
+	public void endvisit(MatchExpression matchExpression) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean visit(MatchArm matchArm) {
+		// TODO Auto-generated method stub
+		return visitNode(matchArm);
+	}
+
+	@Override
+	public void endvisit(MatchArm matchArm) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean visit(ThrowExpression throwExpression) {
+		return visitNode(throwExpression);
+	}
+
+	@Override
+	public void endvisit(ThrowExpression throwExpression) {
+		
+	}
+
+	@Override
+	public boolean visit(DNFType dnfType) {
+		return visitNode(dnfType);
+	}
+
+	@Override
+	public void endvisit(DNFType dnfType) {
+		
+	}
+
+	@Override
+	public boolean visit(EnumDeclaration enumDeclaration) {
+		return visitNode(enumDeclaration);
+	}
+
+	@Override
+	public void endvisit(EnumDeclaration enumDeclaration) {
+		
+	}
+
+	@Override
+	public boolean visit(EnumCaseDeclaration enumCaseDeclaration) {
+		return visitNode(enumCaseDeclaration);
+	}
+
+	@Override
+	public void endvisit(EnumCaseDeclaration enumCaseDeclaration) {
+		
+	}
+
+	@Override
+	public boolean visit(AsCallableExpression asCallableExpression) {
+		return visitNode(asCallableExpression);
+	}
+
+	@Override
+	public void endvisit(AsCallableExpression asCallableExpression) {
+		
+	}
+
+	
 
 }

@@ -11,7 +11,7 @@
 	<artifactId>org.pdtextensions.core.tests</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
 	<properties>
-		<test.vmargs>-Xmx128m -XX:MaxPermSize=64m</test.vmargs>
+		<test.vmargs>-Xmx128m</test.vmargs>
 	</properties>
 	<build>
 		<plugins>
