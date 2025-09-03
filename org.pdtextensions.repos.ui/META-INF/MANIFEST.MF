@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PDT Extensions Repository UI Plugin
 Bundle-SymbolicName: org.pdtextensions.repos.ui
-Bundle-Version: 0.27.0.qualifier
+Bundle-Version: 0.28.0.qualifier
 Bundle-Activator: org.pdtextensions.repos.ui.PEXReposUiPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Vendor: https://github.com/pdt-eg

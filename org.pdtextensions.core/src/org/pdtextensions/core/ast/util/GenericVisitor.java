@@ -69,6 +69,7 @@ import org.eclipse.php.core.ast.nodes.PrefixExpression;
 import org.eclipse.php.core.ast.nodes.Program;
 import org.eclipse.php.core.ast.nodes.Quote;
 import org.eclipse.php.core.ast.nodes.Reference;
+import org.eclipse.php.core.ast.nodes.ReflectionConstantAccess;
 import org.eclipse.php.core.ast.nodes.ReflectionVariable;
 import org.eclipse.php.core.ast.nodes.ReturnStatement;
 import org.eclipse.php.core.ast.nodes.ReturnType;
@@ -1124,7 +1125,15 @@ abstract public class GenericVisitor implements Visitor {
 	public void endvisit(AsCallableExpression asCallableExpression) {
 		
 	}
-
 	
+	@Override
+	public boolean visit(ReflectionConstantAccess constantAccess) {
+		return visitNode(constantAccess);
+	}
+
+	@Override
+	public void endvisit(ReflectionConstantAccess constantAccess) {
+		
+	}
 
 }
